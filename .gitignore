@@ -1,0 +1,19 @@
+# Ignore Mac system files
+.DS_store
+cpi_data
+nohup*
+dist
+IPAS_verification
+ADPAA
+*.swp
+resnet.pt
+.ipynb_checkpoints/
+guild-env
+guild-start
+logs
+notebooks
+saved_models
+vanessa
+node_modules
+plots
+__pycache__
