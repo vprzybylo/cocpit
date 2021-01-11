@@ -18,6 +18,8 @@
 [license-shield]: https://img.shields.io/github/license/vprzybylo/COCPIT?style=plastic
 [license-url]: https://github.com/vprzybylo/cocpit/blob/master/LICENSE.md
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1L9afVqbOYwHh836MFwnEzy88l3tPycWz?authuser=1#scrollTo=MKD112KpRCOe)
+
 
 <br />
 <p align="center">
