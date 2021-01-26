@@ -16,4 +16,11 @@ saved_models
 vanessa
 node_modules
 plots
+build
+final_databases
+*.csv
+*.db
+*.pkl
+configs
+git-sizer
 __pycache__

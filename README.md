@@ -18,6 +18,8 @@
 [license-shield]: https://img.shields.io/github/license/vprzybylo/COCPIT?style=plastic
 [license-url]: https://github.com/vprzybylo/cocpit/blob/master/LICENSE.md
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1L9afVqbOYwHh836MFwnEzy88l3tPycWz?authuser=1#scrollTo=MKD112KpRCOe)
+
 
 <br />
 <p align="center">
@@ -139,16 +141,6 @@ Include work flow diagram
 * Each image will have time-correlated in situ measurements added to the database via aircraft probes own through dierent cloud layers during field campaign initiatives. The CPI particle timestamp will be used to synchronize with other data systems on board to obtain environmental parameters, that include but are not limited to: location, atmospheric conditions, and other characteristics based on what was measured during the specic field program discussed.
 * Provide functions to determine a relative likelihood for a particular thermodynamic property to make up a predefined sample space, such as habit type.
 * It cannot be assumed that these particles initiated or grew within the environment at time of capture, hence, there is motivation to use trajectory analysis to track and associate particle characteristics with the environment in which they resided.
-
-## Contributing
-
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ## License
 
