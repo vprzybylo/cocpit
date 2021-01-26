@@ -30,7 +30,7 @@ if __name__ == "__main__":
     #run the category classification on quality images of ice particles
     ice_classification = True
     
-    campaign = 'AIRS_II'
+    campaign = 'CRYSTAL_FACE_UND'
     print(campaign)
     
     #####################
@@ -51,10 +51,9 @@ if __name__ == "__main__":
         desired_size = 1000
         
         #paths for opening training datasets
-        open_dirs_spheres = ['cpi_data/training_datasets/SPHERES/good/',\
-                            'cpi_data/training_datasets/SPHERES/bad/']
-        open_dirs_sift = ['cpi_data/training_datasets/SIFT/good/',\
-                          'cpi_data/training_datasets/SIFT/bad/'] 
+        base_dir='cpi_data/training_datasets/'
+        open_dirs_spheres = [base_dir+'SPHERES/good/', base_dir+'SPHERES/bad/']
+        open_dirs_sift = [base_dir+'SIFT/good/',base_dir+'SIFT/bad/'] 
         
         #paths for saving df's, logistic regression models, and transformations
         save_df_spheres = "saved_models/spheres_nomask_df.pkl"
@@ -75,6 +74,7 @@ if __name__ == "__main__":
         #resize images to desired_size
         desired_size = 1000
         cutoff = 10
+        
         #campaign = '2002_CRYSTAL-FACE-UND'
         #open_dir = 'cpi_data/campaigns/'+campaign+'/single_imgs/'
         open_dir = 'cpi_data/campaigns/'+campaign+'/single_imgs/'

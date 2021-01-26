@@ -40,7 +40,6 @@ class Image():
         ----------
         desired_size (int):
             the images are resized as a square according to desired_size
-
         '''
 
         self.im = cv2.resize(self.image_og, (desired_size, desired_size), interpolation = cv2.INTER_AREA)
@@ -81,7 +80,7 @@ class Image():
 #         plt.show()
 
     def cutoff(self):
-        '''determines the % of pixels that intersect the border or perimeter of the image'''
+        '''Determines the % of pixels that intersect the border or perimeter of the image'''
         #checking the percentage of the contour that touches the edge/border
         locations = np.where(self.thresh != 0)
         count = 0 #pixels touching border
@@ -94,7 +93,7 @@ class Image():
         return cutoff_perc
         
     def contrast(self):
-        '''returns the standard deviation of the image pixel values
+        '''Returns the standard deviation of the image pixel values -
         higher std has more contrast'''
         return self.im.std()
 
@@ -107,13 +106,13 @@ class Image():
         return cv2.Laplacian(self.gray,cv2.CV_64F).var()
 
     def edges(self):
-        '''The function finds edges in the input image image and marks
+        '''finds edges in the input image image and marks
         them in the output map edges using the Canny algorithm.
         The smallest value between threshold1 and threshold2 is used
         for edge linking. The largest value is used to find initial
         segments of strong edges.'''
         min_threshold = 0.66 * np.mean(self.im)
-        max_threshold = 1.33 * np.mean(self.im)
+        max_threshold = 1.33 * np.mean(self.xfim)
         edges = cv2.Canny(self.im, min_threshold, max_threshold)
         return edges
 
@@ -150,10 +149,13 @@ class Image():
     def create_ellipse(self):
         self.calculate_largest_contour()
         
-        
         if len(self.largest_contour) >= 5:
             ellipse = cv2.fitEllipse(self.largest_contour)
             self.ellipse = cv2.ellipse(self.im, ellipse, (255,255,255), 5)
+            
+            plt.imshow(self.im)
+            plt.show()
+            
             centerE = ellipse[0]
             # Gets rotation of ellipse; same as rotation of contour
             rotation = ellipse[2]
@@ -170,7 +172,7 @@ class Image():
             return np.nan
         
     def extreme_points(self):
-        '''computes how separated the outer most points are on the largest contour
+        '''Computes how separated the outer most points are on the largest contour
         higher std. deviation = more spread out'''
         leftmost = tuple(self.largest_contour[self.largest_contour[:,:,0].argmin()][0])
         rightmost = tuple(self.largest_contour[self.largest_contour[:,:,0].argmax()][0])
@@ -179,11 +181,9 @@ class Image():
         return np.std([leftmost, rightmost, topmost, bottommost])
 
     def filled_circular_area_ratio(self):
-        '''returns the area of the largest contour divided by the area of
-        an encompassing circle
-
-        useful for spheres that have reflection spots that are not captured
-        by the largest contour and leave a horseshoe pattern'''
+        '''Returns the area of the largest contour divided by the area of
+        an encompassing circle - useful for spheres that have reflection 
+        spots that are not captured by the largest contour and leave a horseshoe pattern'''
         (x,y), radius = cv2.minEnclosingCircle(self.largest_contour)
         center = (int(x),int(y))
         circle = cv2.circle(self.thresh, center, int(radius), (255,255,255), 5)
@@ -215,15 +215,20 @@ class Image():
         return self.convex_perim()/self.perim()
 
     def complexity(self):
-        '''similar to the fractal dimension of the particle
-
+        ''' 
+        how intricate & complicated the particle is
+        
         see:
             Schmitt, C. G., and A. J. Heymsfield (2014),
             Observational quantification of the separation of
             simple and complex atmospheric ice particles,
             Geophys. Res. Lett., 41, 1301–1307, doi:10.1002/ 2013GL058781.
         '''
-        return 10*(0.1-(self.area/(np.sqrt(self.area/self.hull_area)*self.perim**2)))
+        
+        (x,y), radius = cv2.minEnclosingCircle(self.largest_contour)
+        Ac = np.pi*radius**2
+        
+        return 10*(0.1-(self.area/(np.sqrt(self.area/Ac)*self.perim**2)))
 
     def solidity(self):
         return self.area/self.hull_area
