@@ -15,6 +15,7 @@ from natsort import natsorted
 import os
 from torch import nn
 import cv2
+import twilio
 
 class TestDataSet(Dataset):
     def __init__(self, open_dir, file_list):
@@ -78,6 +79,15 @@ def predict(test_loader, class_names, model, device):
                 top_class.append(class_names[np.argmax(pred)])
             
     return d, top_class
+
+def send_message():    
+    account_sid = "AC6034e88973d880bf2244f62eec6fe356"
+    auth_token = 'f374de1a9245649ef5c8bc3f6e4faa97'
+    client = Client(account_sid, auth_token)    
+    message = client.messages .create(body =  "ML predictions completed!", 
+                                      from_ = "+19285175160", #Provided phone number 
+                                      to =    "+15187969534") #Your phone number
+    message.sid
         
 
 def main(df, open_dir, device, class_names, model):
@@ -94,4 +104,5 @@ def main(df, open_dir, device, class_names, model):
     for column in sorted(d.keys()):
         df[column] = d[column]
     df['classification'] = top_class
+    send_message()
     return df                   

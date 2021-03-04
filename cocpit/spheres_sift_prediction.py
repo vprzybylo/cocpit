@@ -28,13 +28,13 @@ def open_model(model_path):
 def load_scaler(load_scaler_spheres):
     return pickle.load(open(load_scaler_spheres, 'rb'))
 
-def make_prediction_spheres(desired_size, cutoff, open_dir, model_path_spheres, load_scaler_spheres):
+def make_prediction_spheres(num_cpus, desired_size, cutoff, open_dir, model_path_spheres, load_scaler_spheres):
     
     spheres_lg = open_model(model_path_spheres)
     
     print('making new predictions spheres')
     start_time = time.time()
-    df = cocpit.build_spheres_sift.make_dataframe(open_dir, desired_size)
+    df = cocpit.build_spheres_sift.make_dataframe(num_cpus, open_dir, desired_size)
     print('time to create spheres df %.2f' %(time.time()-start_time))
     
     #Regression model prediction for spheres

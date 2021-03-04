@@ -57,16 +57,15 @@ def get_attributes(open_dir, filename, desired_size, good, train):
         image.calculate_area()  
         
         if image.area != 0.0:
-            image.calculate_perim()
-            image.calculate_hull_area()
-            image.morph_contours()
+            image.morph_contours() 
             #image.mask_background()
-
             count_edge_px = np.count_nonzero(image.edges())
             if count_edge_px > 0:
                 std=np.std(np.nonzero(image.edges()))
             else:
                 std=0
+            image.calculate_perim()
+            image.calculate_hull_area()
             lapl=image.laplacian()
             contours=len(image.contours)
             edges=count_edge_px
@@ -159,7 +158,7 @@ def get_attributes(open_dir, filename, desired_size, good, train):
         
     return(df)
 
-def make_dataframe(open_dir, desired_size, good=True, train=False):
+def make_dataframe(num_cpus, open_dir, desired_size, good=True, train=False):
     """
     loops through images in a directory of prelabeled spheres 
     to build a logistic regression model
@@ -170,9 +169,8 @@ def make_dataframe(open_dir, desired_size, good=True, train=False):
     """
          
     files= os.listdir(open_dir)
-    num_cores = multiprocessing.cpu_count()
     start = time.time()
-    dfs = Parallel(n_jobs=num_cores-2)(delayed(get_attributes)(open_dir, filename, desired_size, good, train) for filename in files)
+    dfs = Parallel(n_jobs=num_cpus)(delayed(get_attributes)(open_dir, filename, desired_size, good, train) for filename in files)
 
     # Concat dataframes to one dataframe
     df = pd.concat(dfs, ignore_index=True)
@@ -231,19 +229,18 @@ def build_model(X_train, y_train, X_test):
     #y_pred = lg1.predict(X_test)
     return lg
 
-def main(desired_size, open_dirs_spheres, open_dirs_sift, save_df_spheres, save_df_sift,\
+def main(num_cpus, desired_size, open_dirs_spheres, open_dirs_sift, save_df_spheres, save_df_sift,\
                                       save_model_spheres, save_model_sift, save_scaler_spheres, save_scaler_sift):
-    #these will be made available 
     #saving the dataframes for testing transformations
     #that way not reading in files each test
     dfs = []
     for open_dir in open_dirs_spheres:
         if open_dir == open_dirs_spheres[0]:
             print('training good spheres')
-            dfs.append(make_dataframe(open_dir, desired_size, good=True, train=True))
+            dfs.append(make_dataframe(num_cpus, open_dir, desired_size, good=True, train=True))
         else:
             print('training bad spheres')
-            dfs.append(make_dataframe(open_dir, desired_size, good=False, train=True))
+            dfs.append(make_dataframe(num_cpus, open_dir, desired_size, good=False, train=True))
     df_spheres = pd.concat([dfs[0], dfs[1]])
     df_spheres.to_pickle(save_df_spheres)
     
@@ -251,10 +248,10 @@ def main(desired_size, open_dirs_spheres, open_dirs_sift, save_df_spheres, save_
     for open_dir in open_dirs_sift:
         if open_dir == open_dirs_sift[0]:
             print('training good ice')
-            dfs.append(make_dataframe(open_dir, desired_size,  good=True, train=True))
+            dfs.append(make_dataframe(num_cpus, open_dir, desired_size,  good=True, train=True))
         else:
             print('training bad ice')
-            dfs.append(make_dataframe(open_dir, desired_size, good=False, train=True))
+            dfs.append(make_dataframe(num_cpus, open_dir, desired_size, good=False, train=True))
     df_sift = pd.concat([dfs[0], dfs[1]])
     df_sift.to_pickle(save_df_sift)
 

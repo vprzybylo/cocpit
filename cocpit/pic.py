@@ -63,8 +63,8 @@ class Image():
         self.contours, hierarchy = cv2.findContours(image_close, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         draw=cv2.drawContours(self.thresh, self.contours, -1, (0,0,255), 2)
         draw = cv2.fillPoly(self.thresh, self.contours, color=(255,255,255))
-#         plt.imshow(draw)
-#         plt.show()
+        #plt.imshow(draw)
+        #plt.show()
 
         self.contours, hierarchy = cv2.findContours(draw, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         #self.contours = sorted(contours, key=cv2.contourArea, reverse = True)
@@ -112,7 +112,7 @@ class Image():
         for edge linking. The largest value is used to find initial
         segments of strong edges.'''
         min_threshold = 0.66 * np.mean(self.im)
-        max_threshold = 1.33 * np.mean(self.xfim)
+        max_threshold = 1.33 * np.mean(self.im)
         edges = cv2.Canny(self.im, min_threshold, max_threshold)
         return edges
 
@@ -153,8 +153,8 @@ class Image():
             ellipse = cv2.fitEllipse(self.largest_contour)
             self.ellipse = cv2.ellipse(self.im, ellipse, (255,255,255), 5)
             
-            plt.imshow(self.im)
-            plt.show()
+            #plt.imshow(self.im)
+            #plt.show()
             
             centerE = ellipse[0]
             # Gets rotation of ellipse; same as rotation of contour
@@ -167,8 +167,8 @@ class Image():
             else:
                 return widthE/heightE
         else:
-            plt.imshow(self.im)
-            plt.show()
+            #plt.imshow(self.im)
+            #plt.show()
             return np.nan
         
     def extreme_points(self):

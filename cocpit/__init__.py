@@ -50,7 +50,7 @@ run_ML_model:
 import cocpit.build_ML_model
 import cocpit.build_spheres_sift
 import cocpit.pic
-import cocpit.preprocess_sheets
+import cocpit.process_png_sheets_with_text
 import cocpit.remove_duplicates
 import cocpit.run_ML_model
 import cocpit.spheres_sift_prediction

@@ -66,7 +66,7 @@ def make_histogram_classcounts(class_names, class_counts):
     for i, v in enumerate(class_counts):
         ax.text(v, i-.1, str(v), color='blue')
     ax.set_xlabel("Count")
-    plt.savefig('plots/class_counts.png', dpi=250, format='png', bbox_inches='tight')
+    #plt.savefig('plots/class_counts.png', dpi=250, format='png', bbox_inches='tight')
     
 def load_split_train_val(class_names, datadir, batch_size, num_workers=32, valid_size = .8):
     
@@ -148,9 +148,9 @@ def get_test_loader(datadir,
 
     return testloader
 
-# Flag for feature extracting. When False, we finetune the whole model,
-#   when True we only update the reshaped layer params
 def set_parameter_requires_grad(model, feature_extract):
+    #Flag for feature extracting. When False, we finetune the whole model,
+    #when True we only update the reshaped layer params
     if feature_extract:
         for param in model.parameters():
             param.requires_grad = False
@@ -270,12 +270,7 @@ def train_model(model_name, savename, dataloaders_dict, epochs, num_classes, is_
                 child.p = drop_rate
             set_dropout(child, drop_rate=drop_rate)
     set_dropout(model, drop_rate=0.0)
-    
-#     model.classifier = nn.Sequential(*[model.classifier()[i] for i in range(7) if i != 2 and i !=5])
-#     print(model.classifier())
-
-    #feature extract False for all layers to be updated
-   
+       
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # Send the model to GPU
     if torch.cuda.device_count() > 1:
