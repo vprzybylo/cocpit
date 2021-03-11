@@ -32,24 +32,24 @@ class ImageFolderWithPaths(datasets.ImageFolder):
         # make a new tuple that includes original and the path
         tuple_with_path = (original_tuple + (path,))
         return tuple_with_path
-    
+
 
 def make_weights_for_balanced_classes(train_imgs, nclasses):   
     #only weight the training dataset 
-    
-    class_sample_counts = [0] * nclasses                                                      
-    for item in train_imgs:  
-        class_sample_counts[item[1]] += 1      
+
+    class_sample_counts = [0] * nclasses
+    for item in train_imgs:
+        class_sample_counts[item[1]] += 1
     print('counts per class: ', class_sample_counts)
-    
-#     weight_per_class = [0.] * nclasses                                      
-#     N = float(sum(class_sample_counts))                                                   
+
+#     weight_per_class = [0.] * nclasses
+#     N = float(sum(class_sample_counts))
 #     for i in range(nclasses): 
-#         weight_per_class[i] = N/float(class_sample_counts[i])                                 
-#     weight = [0] * len(images)                                              
-#     for idx, val in enumerate(images):    
-#         weight[idx] = weight_per_class[val[1]]  
-        
+#         weight_per_class[i] = N/float(class_sample_counts[i])
+#     weight = [0] * len(images)
+#     for idx, val in enumerate(images):
+#         weight[idx] = weight_per_class[val[1]]
+
     class_weights = 1./torch.Tensor(class_sample_counts)
     train_targets = [sample[1] for sample in train_imgs]
     train_samples_weights = [class_weights[class_id] for class_id in train_targets]
@@ -57,62 +57,61 @@ def make_weights_for_balanced_classes(train_imgs, nclasses):
     return class_sample_counts, torch.DoubleTensor(train_samples_weights)
 
 def make_histogram_classcounts(class_names, class_counts):
-    fig, ax = plt.subplots(figsize=(10,4))    
+    fig, ax = plt.subplots(figsize=(10,4))
 
     width = 0.75 # the width of the bars 
     ind = np.arange(len(class_counts))  # the x locations for the groups
     ax.barh(class_names, class_counts, width, color="blue", align='center', tick_label=class_names)
-    
+
     for i, v in enumerate(class_counts):
         ax.text(v, i-.1, str(v), color='blue')
     ax.set_xlabel("Count")
     #plt.savefig('plots/class_counts.png', dpi=250, format='png', bbox_inches='tight')
-    
+
 def load_split_train_val(class_names, datadir, batch_size, num_workers=32, valid_size = .8):
-    
-    all_transforms = transforms.Compose([transforms.Resize(224,224),
+
+    all_transforms = transforms.Compose([transforms.Resize((224,224)),
                         transforms.ToTensor(),
                         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
-    
+
     all_data_wpath = ImageFolderWithPaths(datadir,transform=all_transforms) #custom dataset that includes entire path
-    
+
 #     num_train = len(all_data_wpath)
 #     indices = list(range(num_train))
 #     split = int(np.floor(valid_size * num_train))
 #     np.random.shuffle(indices)
 #     train_idx, val_idx = indices[split:], indices[:split-1]
-    
+
 #     train_data = torch.utils.data.Subset(all_data_wpath, train_idx)
 #     val_data = torch.utils.data.Subset(all_data_wpath, val_idx)
-    
+
     train_length = int(valid_size*len(all_data_wpath))
     val_length = len(all_data_wpath)-train_length
     train_data, val_data = torch.utils.data.random_split(all_data_wpath,(train_length,val_length))
     #print(len(train_data), len(val_data))
-    
+
     # For an unbalanced dataset we create a weighted sampler              
-    class_counts, train_samples_weights = make_weights_for_balanced_classes(train_data.dataset.imgs, len(class_names))                                                                 
+    class_counts, train_samples_weights = make_weights_for_balanced_classes(train_data.dataset.imgs, len(class_names))
     make_histogram_classcounts(class_names, class_counts)
-    
+
     train_sampler = torch.utils.data.sampler.WeightedRandomSampler(train_samples_weights, 
                                                                    len(train_samples_weights),
                                                                    replacement=True)                     
     trainloader = torch.utils.data.DataLoader(train_data.dataset, batch_size=batch_size,                         
                                             sampler = train_sampler, num_workers=num_workers, pin_memory=True)    
-    
-    val_sampler = SubsetRandomSampler(val_data.indices)                 
+
+    val_sampler = SubsetRandomSampler(val_data.indices)
     valloader = torch.utils.data.DataLoader(val_data.dataset, batch_size=batch_size,                             
                                             sampler = val_sampler, num_workers=num_workers, pin_memory=True)  
 
-#     val_samples_weights = make_weights_for_balanced_classes(val_data.dataset.imgs, len(range(num_classes)))                                                                   
-    
+#     val_samples_weights = make_weights_for_balanced_classes(val_data.dataset.imgs, len(range(num_classes)))
 #     val_sampler = torch.utils.data.sampler.WeightedRandomSampler(val_samples_weights, 
 #                                                                    len(val_samples_weights),
 #                                                                    replacement=True)                     
 #     valloader = torch.utils.data.DataLoader(val_data.dataset, batch_size=batch_size,                              
 #                                             sampler = val_sampler, num_workers=num_workers, pin_memory=True)    
 
-            
+
     return trainloader, valloader
 
 
@@ -137,10 +136,10 @@ def get_test_loader(datadir,
     -------
     - data_loader: test set iterator.
     """
-    transforms_ = transforms.Compose([transforms.Resize(224,224),  #resizing helps memory usage
+    transforms_ = transforms.Compose([transforms.Resize((224)),  #resizing helps memory usage
                                        transforms.ToTensor(),
                                        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
-    
+
     all_data_wpath = ImageFolderWithPaths(datadir,transform=transforms_)
 
     testloader = torch.utils.data.DataLoader(all_data_wpath,pin_memory=True,shuffle=shuffle,
@@ -157,19 +156,16 @@ def set_parameter_requires_grad(model, feature_extract):
 
 
 def initialize_model(model_name, num_classes, feature_extract, use_pretrained=False):
-    # Initialize these variables which will be set in this if statement. Each of these
-    # variables is model specific.
-    model_ft = None
-    input_size = 0
 
     if model_name == "resnet18":
+        #input_size = 224
         model_ft = models.resnet18(pretrained=use_pretrained)
         set_parameter_requires_grad(model_ft, feature_extract)
         num_ftrs = model_ft.fc.in_features
         model_ft.fc = nn.Linear(num_ftrs, num_classes)
-        input_size = 224
-        
+
     elif model_name == "resnet34":
+        #input_size = 224
         model_ft = models.resnet34(pretrained=use_pretrained)
         set_parameter_requires_grad(model_ft, feature_extract)
         num_ftrs = model_ft.fc.in_features
@@ -177,6 +173,7 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Fa
         input_size = 224
 
     elif model_name == "resnet152":
+        #input_size = 224
         model_ft = models.resnet152(pretrained=use_pretrained)
         set_parameter_requires_grad(model_ft, feature_extract)
         num_ftrs = model_ft.fc.in_features
@@ -184,17 +181,15 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Fa
         input_size = 224
 
     elif model_name == "alexnet":
-        """ Alexnet
-        """
+        #input_size = 224
         model_ft = models.alexnet(pretrained=use_pretrained)
         set_parameter_requires_grad(model_ft, feature_extract)
         num_ftrs = model_ft.classifier[6].in_features
         model_ft.classifier[6] = nn.Linear(num_ftrs,num_classes)
         input_size = 224
-        
+
     elif model_name == "vgg16":
-        """ VGG
-        """
+        #input_size = 224
         model_ft = models.vgg16_bn(pretrained=use_pretrained)
         set_parameter_requires_grad(model_ft, feature_extract)
         num_ftrs = model_ft.classifier[6].in_features
@@ -202,8 +197,7 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Fa
         input_size = 224
 
     elif model_name == "vgg19":
-        """ VGG
-        """
+        #input_size = 224
         model_ft = models.vgg19_bn(pretrained=use_pretrained)
         set_parameter_requires_grad(model_ft, feature_extract)
         num_ftrs = model_ft.classifier[6].in_features
@@ -211,8 +205,7 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Fa
         input_size = 224
 
     elif model_name == "squeezenet":
-        """ Squeezenet
-        """
+        #input_size = 224
         model_ft = models.squeezenet1_1(pretrained=use_pretrained)
         set_parameter_requires_grad(model_ft, feature_extract)
         model_ft.classifier[1] = nn.Conv2d(512, num_classes, kernel_size=(7,7), stride=(2,2))
@@ -220,25 +213,21 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Fa
         input_size = 224
 
     elif model_name == "densenet169":
-        """ Densenet
-        """ 
+        #input_size = 224 
         model_ft = models.densenet169(pretrained=use_pretrained)
         set_parameter_requires_grad(model_ft, feature_extract)
         num_ftrs = model_ft.classifier.in_features
         model_ft.classifier = nn.Linear(num_ftrs, num_classes)
-        input_size = 224
-        
+
     elif model_name == "densenet201":
-        """ Densenet
-        """ 
+        #input_size = 224
         model_ft = models.densenet201(pretrained=use_pretrained)
         set_parameter_requires_grad(model_ft, feature_extract)
         num_ftrs = model_ft.classifier.in_features
         model_ft.classifier = nn.Linear(num_ftrs, num_classes)
-        input_size = 224
 
     elif model_name == "inception":
-        """ Inception v3
+        """ 
         Be careful, expects (299,299) sized images and has auxiliary output
         """
         model_ft = models.inception_v3(pretrained=use_pretrained)
@@ -249,28 +238,31 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Fa
         # Handle the primary net
         num_ftrs = model_ft.fc.in_features
         model_ft.fc = nn.Linear(num_ftrs,num_classes)
-        input_size = 299
 
+    elif model_name == "efficient":
+        torch.hub.list('rwightman/gen-efficientnet-pytorch')
+        model_ft = torch.hub.load('rwightman/gen-efficientnet-pytorch', 'efficientnet_b0', pretrained=False)
+        input_size=224
     else:
         print("Invalid model name, exiting...")
         exit()
 
-    return model_ft, input_size
-            
+    return model_ft
+
 def train_model(model_name, savename, dataloaders_dict, epochs, num_classes, is_inception, feature_extract=False):
     #current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     #logger_train = Logger('./logs/'+current_time+'/train/')
     #logger_val = Logger('./logs/'+current_time+'/val/')
-    model, input_size = initialize_model(model_name=model_name, num_classes=num_classes, feature_extract=feature_extract, use_pretrained=False)
-    
+    model = initialize_model(model_name=model_name, num_classes=num_classes, feature_extract=feature_extract, use_pretrained=False)
+
     def set_dropout(model, drop_rate=0.1):
         for name, child in model.named_children():
-            
+
             if isinstance(child, torch.nn.Dropout):
                 child.p = drop_rate
             set_dropout(child, drop_rate=drop_rate)
     set_dropout(model, drop_rate=0.0)
-       
+    
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # Send the model to GPU
     if torch.cuda.device_count() > 1:
@@ -308,23 +300,23 @@ def train_model(model_name, savename, dataloaders_dict, epochs, num_classes, is_
     print(scheduler)
     # Setup the loss fxn
     criterion = nn.CrossEntropyLoss()
-     
+
     val_acc_history = []
     train_acc_history = []
     val_loss_history = []
     train_loss_history = []
-    
+
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc_val = 0.0
     since_total = time.time()
-    
+
     step = 0
     label_counts = [0]*len(range(num_classes))
     for epoch in range(epochs):
         since_epoch = time.time()
         #print('Epoch {}/{}'.format(epoch+1,num_epochs))
         print('-' * 20)
-        
+
         # Each epoch has a training and validation phase
         for phase in ['train', 'val']:
             print('Phase: {}'.format(phase))
@@ -334,32 +326,31 @@ def train_model(model_name, savename, dataloaders_dict, epochs, num_classes, is_
             running_loss_val = 0.0
             running_corrects_train = 0
             running_corrects_val = 0
-            
+
             if phase == 'train':
                 model.train() 
                 #logger = logger_train
-                
+
             else:
-                model.eval()   
+                model.eval()
                 #logger = logger_val
-            
-            
+
             # Iterate over data.
             for i, (inputs, labels, paths) in enumerate(dataloaders_dict[phase]):
                 for n in range(len(range(num_classes))):
                     label_counts[n] += len(np.where(labels.numpy() == n)[0])
-                    
+
 #                 for n in range(len(range(num_classes))):
 #                     print("batch index {}, {} counts: {}".format(
 #                         i, n, (labels == n).sum()))
 
-                
+
 #                print('LABEL COUNT = ', label_counts)
 
                 inputs = inputs.to(device)
                 labels = labels.to(device)
                 #print(inputs.device)
-                
+
                 # zero the parameter gradients
                 optimizer.zero_grad() # a clean up step for PyTorch
 
@@ -382,39 +373,36 @@ def train_model(model_name, savename, dataloaders_dict, epochs, num_classes, is_
                     # backward + optimize only if in training phase
                     if phase == 'train':
                         loss.backward() # compute updates for each parameter
-                        optimizer.step() # make the updates for each parameter                        
+                        optimizer.step() # make the updates for each parameter
 
-                
                 if phase == 'train':
                     #Batch accuracy and loss statistics   
                     batch_loss_train = loss.item() * inputs.size(0)     
                     batch_corrects_train = torch.sum(preds == labels.data) 
                     #tensorboard_logging(logger, batch_loss_train, labels, batch_corrects_train, step, model)
-                    
+
                     #for accuracy and loss statistics overall 
                     running_loss_train += loss.item() * inputs.size(0)
                     running_corrects_train += torch.sum(preds == labels.data)
                     totals_train += labels.size(0)
-                    
+
                     if (i+1) % 5 == 0:
                         print("Training, Batch {}/{}, Loss: {:.3f}, Accuracy: {:.3f}".format(i+1,\
                                                                       len(dataloaders_dict[phase]), \
                                                                       batch_loss_train/labels.size(0), \
                                                                       float(batch_corrects_train)/labels.size(0)))
-
                     step += 1
-                    
+
                 else:
-                    #Batch accuracy and loss statistics  
-                    batch_loss_val = loss.item() * inputs.size(0)     
+                    #Batch accuracy and loss statistics
+                    batch_loss_val = loss.item() * inputs.size(0)
                     batch_corrects_val = torch.sum(preds == labels.data) 
-                    
-                    
+
                     #for accuracy and loss statistics overall
                     running_loss_val += loss.item() * inputs.size(0)
                     running_corrects_val += torch.sum(preds == labels.data)
                     totals_val += labels.size(0)
-                    
+
                     if (i+1) % 3 == 0:
                         print("Validation, Batch {}/{}, Loss: {:.3f}, Accuracy: {:.3f}".format(i+1,\
                                                                       len(dataloaders_dict[phase]), \
@@ -422,7 +410,7 @@ def train_model(model_name, savename, dataloaders_dict, epochs, num_classes, is_
                                                                       float(batch_corrects_val)/labels.size(0)))
 
             if phase == 'train':
-                #epoch loss and accuracy stats    
+                #epoch loss and accuracy stats
                 epoch_loss_train = running_loss_train / totals_train
                 epoch_acc_train = running_corrects_train.double() / totals_train
                 scheduler.step(epoch_acc_train) #reduce learning rate if not improving acc
@@ -440,13 +428,13 @@ def train_model(model_name, savename, dataloaders_dict, epochs, num_classes, is_
                 #tensorboard_logging(logger, epoch_loss_val, epoch_acc_val, epoch, model)
                 val_acc_history.append(epoch_acc_val)
                 val_loss_history.append(epoch_loss_val)
-                
+
                 #deep copy the model
                 if epoch_acc_val > best_acc_val:
                     best_acc_val = epoch_acc_val
                     best_model_wts = copy.deepcopy(model.state_dict())
                     # save/load best model weights
-                    if savename is not 'None':
+                    if savename is not None:
                         torch.save(model, savename)
 
         time_elapsed = time.time() - since_epoch
@@ -458,11 +446,11 @@ def train_model(model_name, savename, dataloaders_dict, epochs, num_classes, is_
     return model, train_acc_history, val_acc_history, train_loss_history, val_loss_history
 
 def main(params, num_workers, num_classes):
-    
+
     for batch_size in params['batch_size']:
-        print('NEW BATCH SIZE: ', batch_size) 
+        print('NEW BATCH SIZE: ', batch_size)
         train_loader, val_loader = load_split_train_val(
-            class_names=params['class_names'], 
+            class_names=params['class_names'],
             datadir=params['data_dir'],
             batch_size=batch_size,
             num_workers=num_workers)
@@ -470,7 +458,7 @@ def main(params, num_workers, num_classes):
         dataloaders_dict = {'train': train_loader, 'val': val_loader}
 
         model_train_accs = []
-        model_val_accs = []  
+        model_val_accs = []
         model_train_loss = []
         model_val_loss = []
         for model_name in params['model_names']: 
@@ -479,16 +467,15 @@ def main(params, num_workers, num_classes):
                     model_name,
                     params['savename'],
                     dataloaders_dict,
-                    epochs, 
+                    epochs,
                     num_classes,
                     is_inception=False
                 )
-                
+
                 model_val_accs.append(val_acc_history)
                 model_train_accs.append(train_acc_history)
                 model_train_loss.append(train_loss_history)
                 model_val_loss.append(val_loss_history)
-                
-                
+
     return model_name, model_train_accs, model_val_accs, model_train_loss, model_val_loss
 

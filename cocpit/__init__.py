@@ -13,7 +13,7 @@ preprocess_sheets:
 pic: 'particle image classification'
     holds the main Image class for image manipulation using opencv 
     and calculates particle geometrical attributes 
-    
+
 build_spheres_sift:
     Trains and saves a logistic regression model on prelabeled data
     to predict if an image is a sphere 
@@ -32,7 +32,7 @@ spheres_sift_prediction:
     made to the single image directiory from preprocess_sheets and 
     a dataframe is created for quality ice images holding image/particle
     attributes determined in pic.py
-    
+
 build_ML_model:
     -loads the prebuilt pytorch models
     see: https://pytorch.org/docs/stable/torchvision/models.html
@@ -40,12 +40,11 @@ build_ML_model:
     -returns training, validation, and testing dataloaders
     -houses the execution of training the model for all epochs and batches 
     -returns accuracy and loss logs for each dataset (training and validation)
-    
+
 run_ML_model:
     -classifies good ice images through a convolutional neural network that
     was presaved or built in build_ML_model
     -transforms, makes predictions, and appends classification to dataframe 
-    
 """
 import cocpit.build_ML_model
 import cocpit.build_spheres_sift

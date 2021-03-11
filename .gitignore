@@ -1,5 +1,6 @@
 # Ignore Mac system files
 .DS_store
+.virtual_documents
 cpi_data
 nohup*
 dist

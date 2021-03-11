@@ -201,7 +201,7 @@ class Image:
                     self.largest_contour(cnts)
                     #mask the background so that text is removed if it was 
                     #left behind due to being overlaid
-            
+
                     if mask:
                         masked = self.mask_background(cropped, show_mask)
                         if save_images:
@@ -214,7 +214,7 @@ class Image:
                             if not os.path.exists(self.save_dir):
                                 os.makedirs(self.save_dir)
                             cv2.imwrite(self.save_dir+self.file[:-4]+'_'+str(i)+'.png', cropped)
-    
+
     def run(self, mask, show_original, show_dilate, show_cropped, show_mask, save_images):
         ''' main method calls '''
 
@@ -224,7 +224,7 @@ class Image:
         self.remove_text()
         #self.connected_component_label(show_threshold, show_rois)
         self.extract_contours(mask, show_cropped, show_mask, save_images)
-        
+
 def send_message():    
     account_sid = "AC6034e88973d880bf2244f62eec6fe356"
     auth_token = 'f374de1a9245649ef5c8bc3f6e4faa97'
@@ -233,7 +233,7 @@ def send_message():
                                       from_ = "+19285175160", #Provided phone number 
                                       to =    "+15187969534") #Your phone number
     message.sid
-    
+
 def main(open_dir,\
          mask, \
          save_dir, \
@@ -243,7 +243,7 @@ def main(open_dir,\
          show_dilate,\
          show_cropped,\
          show_mask):
-    
+
     start = time()
     p = Pool(num_cpus)
     instances=[]
@@ -251,7 +251,7 @@ def main(open_dir,\
         img = Image(open_dir, file, save_dir)
         #img.main()
         instances.append(img)
-    
+
     p.map(partial(Image.run, \
                   mask=mask,\
                   show_original=show_original,\
@@ -260,9 +260,7 @@ def main(open_dir,\
                   show_mask=show_mask,\
                   save_images=save_images), instances)
     p.close()
-    
+
     end = time()
     print('It took ', (end - start)/60,' mins')
     send_message()
-    
-    

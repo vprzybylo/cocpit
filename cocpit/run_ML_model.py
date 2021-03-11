@@ -16,6 +16,8 @@ import os
 from torch import nn
 import cv2
 import twilio
+from twilio.rest import Client
+
 
 class TestDataSet(Dataset):
     def __init__(self, open_dir, file_list):

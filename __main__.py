@@ -17,9 +17,10 @@ import torch
 import time
 from sqlalchemy import create_engine
 import pandas as pd
+import os
 
 def main():
-    
+
     if preprocess_sheets:
         #change to ROI_PNGS if 'sheets' came from processing rois in IDL
         #sheets came from data archived pngs online
@@ -28,8 +29,12 @@ def main():
         print('save images', save_images)
         if mask:
             save_dir = '/data/data/cpi_data/campaigns/'+campaign+'/single_imgs_masked/'
+            if not os.path.exists(save_dir):
+                os.makedirs(save_dir)
         else:
             save_dir = '/data/data/cpi_data/campaigns/'+campaign+'/single_imgs/'
+            if not os.path.exists(save_dir):
+                os.makedirs(save_dir)
 
         cocpit.process_png_sheets_with_text.main(open_dir, \
                                                  mask,\
@@ -40,7 +45,6 @@ def main():
                                                  show_dilate=False,\
                                                  show_cropped=False,\
                                                  show_mask=False)
-
 
     if build_spheres_sift:
         """
@@ -58,7 +62,6 @@ def main():
 
         #paths for saving df's, logistic regression models, and transformations
         if mask:
-            
             save_df_spheres = "saved_models/masked/spheres_df.pkl"
             save_df_sift = "saved_models/masked/sift_df.pkl"
             #save final logistic regression models 
@@ -125,16 +128,16 @@ def main():
         'batch_size': [128],
         'max_epochs': [20],
         'data_dir':'cpi_data/training_datasets/hand_labeled_resized_multcampaigns_clean/',
-        'optimizer':[torch.optim.Adam, torch.optim.Adagrad, torch.optim.Adadelta, torch.optim.Adamax],
         #'momentum': [0.9, 0.999], 
         'class_names':['aggs','blank','blurry','budding','bullets','columns','compact irregulars',\
                        'fragments','needles','plates','rimed aggs','rimed columns','spheres'],
-        #'model_names':['vgg19'],
-        'model_names':['resnet18', 'resnet34', 'resnet152', 'alexnet', 'vgg16', 'vgg19', 'densenet169', 'densenet201'],
-        #'savename': 'saved_models/vgg19_bs128_e20_13classes',
-        'savename':None}
+        'model_names':['efficient'],
+        #'model_names':['resnet18', 'resnet34', 'resnet152', 'alexnet', 'vgg16', 'vgg19', 'densenet169', 'densenet201'],
+        'savename': 'saved_models/efficientb0_bs128_e20_13classes'}
+        #'savename':'None'}
 
         #change to # of cores available to load images
+        #above 20 tends to slow down due to overhead
         num_workers = 20
         num_classes = len(params['class_names'])
 
@@ -149,9 +152,9 @@ def main():
                                                   keep='first')
         print('removed %d duplicates' %(len_before - len(df_good_ice)))
         if mask:
-            df_good_ice.to_pickle('final_databases/masked/df_good_ice_'+campaign+'.pkl')
+            df_good_ice.to_pickle('final_databases_v2/masked/df_good_ice_'+campaign+'.pkl')
         else:
-            df_good_ice.to_pickle('final_databases/no_mask/df_good_ice_'+campaign+'.pkl')
+            df_good_ice.to_pickle('final_databases_v2/no_mask/df_good_ice_'+campaign+'.pkl')
 
 
     if ice_classification:
@@ -160,14 +163,14 @@ def main():
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         class_names=['agg','blank','blurry','budding','bullet','column','compact irregular',\
                        'fragment','needle','plate','rimed agg','rimed column','sphere']
-        model = torch.load('saved_models/bs128_e50_13classes_clean_vgg19')
+        model = torch.load('saved_models/efficientb0_bs128_e20_13classes')
 
         if mask:
             open_dir = 'cpi_data/campaigns/'+campaign+'/single_imgs_masked/'  #same as above
-            df_good_ice = pd.read_pickle('final_databases/masked/df_good_ice_'+campaign+'.pkl')
+            df_good_ice = pd.read_pickle('final_databases_v2/masked/df_good_ice_'+campaign+'.pkl')
         else:
             open_dir = 'cpi_data/campaigns/'+campaign+'/single_imgs/'  #same as above
-            df_good_ice = pd.read_pickle('final_databases/no_mask/df_good_ice_'+campaign+'.pkl')
+            df_good_ice = pd.read_pickle('final_databases_v2/no_mask/df_good_ice_'+campaign+'.pkl')
 
         df = cocpit.run_ML_model.main(df_good_ice, \
                                       open_dir, \
@@ -177,35 +180,43 @@ def main():
 
         #write database to file that holds predictions
         if mask:
-            engine = create_engine('sqlite:///final_databases/masked/'+campaign+'.db', echo=False)
+            engine = create_engine('sqlite:///final_databases_v3/masked/'+campaign+'.db', echo=False)
             df.to_sql(name=campaign, con=engine, index=False, if_exists='replace')
-            df.to_csv('final_databases/masked/'+campaign+'.csv', index=False)
+            df.to_csv('final_databases_v3/masked/'+campaign+'.csv', index=False)
         else:
-            engine = create_engine('sqlite:///final_databases/no_mask/'+campaign+'.db', echo=False)
+            engine = create_engine('sqlite:///final_databases_v3/no_mask/'+campaign+'.db', echo=False)
             df.to_sql(name=campaign, con=engine, index=False, if_exists='replace')
-            df.to_csv('final_databases/no_mask/'+campaign+'.csv', index=False)
+            df.to_csv('final_databases_v3/no_mask/'+campaign+'.csv', index=False)
         print('done classifying all images!')
-        print('time to classify ice = %.2f' %(time.time() - start_time))
-    
-        
+        print('time to classify ice = %.2f seconds' %(time.time() - start_time))
+
 if __name__ == "__main__":
     #extract each image from sheet of images
     preprocess_sheets = False
-    #creates spheres and sift model from prelabeled datasets
-    build_spheres_sift = False
-    #makes predictions on new data and return quality ice dataframe
-    #if this is on, also turn remove_duplicates on to save df
-    make_predictions = True
-    #create CNN
-    build_ML = False
-    #remove duplicates after saving good ice
-    remove_duplicates = True
-    #run the category classification on quality images of ice particles
-    ice_classification = True
 
-    campaign = 'OLYMPEX'
-    print(campaign)
-    mask=True #mask background?
+    #creates and saves spheres and sift model from prelabeled datasets
+    build_spheres_sift = False
+
+    #makes predictions for spheres/sift on new data and return quality ice dataframe
+    #if this is on, also turn remove_duplicates on to save df
+    make_predictions = False
+
+    #create CNN
+    build_ML = True
+
+    #remove duplicates after saving good ice
+    remove_duplicates = False
+
+    #run the category classification on quality images of ice particles
+    ice_classification = False
+    campaigns=['ISDAC']
+    #campaigns=['ICE_L','CRYSTAL_FACE_UND','IPHEX','MACPEX','MC3E','MIDCIX','MPACE','POSIDON']
+
+    #campaigns=['ARM','ATTREX','CRYSTAL_FACE_NASA','CRYSTAL_FACE_UND',\
+    #           'ICE_L','IPHEX','MACPEX','MC3E','MIDCIX','MPACE','POSIDON']
+    mask=False #mask background?
     print('masked background = ', mask)
     num_cpus=28  #workers for parallelization
-    main()
+    for campaign in campaigns:
+        print(campaign)
+        main()

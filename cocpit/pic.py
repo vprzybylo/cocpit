@@ -7,6 +7,7 @@ Opens image, calculates parameters using opencv
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 class Image():
 
@@ -91,7 +92,7 @@ class Image():
                 count+=1
         cutoff_perc = (count/(2*self.height+2*self.width))*100
         return cutoff_perc
-        
+
     def contrast(self):
         '''Returns the standard deviation of the image pixel values -
         higher std has more contrast'''
@@ -118,18 +119,18 @@ class Image():
 
     def calculate_largest_contour(self):
         self.largest_contour = sorted(self.contours, key=cv2.contourArea, reverse = True)[0]
-    
+
     def calculate_area(self):
         self.area = cv2.contourArea(self.largest_contour)
-        
+
     def calculate_perim(self):
         self.perim = cv2.arcLength(self.largest_contour, False)
-    
+
     def cutoff_perim(self):
         #checking the percentage of the contour that touches the edge/border
         locations = np.where(self.thresh != 0)
         count = 0 #pixels touching border
-        
+
         for xl,yl in zip(locations[0], locations[1]):
             if xl == 5 or yl == 5 or xl == self.height-5 or yl == self.width-5:
                 count+=1
@@ -145,17 +146,17 @@ class Image():
         self.rect_length = max(x,y)
         self.rect_width = min(x,y)
         return self.rect_width/self.rect_length
-    
+
     def create_ellipse(self):
         self.calculate_largest_contour()
         
         if len(self.largest_contour) >= 5:
             ellipse = cv2.fitEllipse(self.largest_contour)
             self.ellipse = cv2.ellipse(self.im, ellipse, (255,255,255), 5)
-            
+
             #plt.imshow(self.im)
             #plt.show()
-            
+
             centerE = ellipse[0]
             # Gets rotation of ellipse; same as rotation of contour
             rotation = ellipse[2]
@@ -170,7 +171,7 @@ class Image():
             #plt.imshow(self.im)
             #plt.show()
             return np.nan
-        
+
     def extreme_points(self):
         '''Computes how separated the outer most points are on the largest contour
         higher std. deviation = more spread out'''
@@ -215,19 +216,19 @@ class Image():
         return self.convex_perim()/self.perim()
 
     def complexity(self):
-        ''' 
+        '''
         how intricate & complicated the particle is
-        
+
         see:
             Schmitt, C. G., and A. J. Heymsfield (2014),
             Observational quantification of the separation of
             simple and complex atmospheric ice particles,
             Geophys. Res. Lett., 41, 1301–1307, doi:10.1002/ 2013GL058781.
         '''
-        
+
         (x,y), radius = cv2.minEnclosingCircle(self.largest_contour)
         Ac = np.pi*radius**2
-        
+
         return 10*(0.1-(self.area/(np.sqrt(self.area/Ac)*self.perim**2)))
 
     def solidity(self):
@@ -243,10 +244,10 @@ class Image():
         self.hull_area = cv2.contourArea(hull)
 
     def flip_imgs(self, save_dir):
-        plt.imsave(save_dir+self.filename,np.array(self.saveimg))
-        plt.imsave(save_dir+self.filename[:-4]+'_ud.png',np.flipud(self.saveimg))
-        plt.imsave(save_dir+self.filename[:-4]+'_lr.png',np.fliplr(self.saveimg))
-        plt.imsave(save_dir+self.filename[:-4]+'_ud_lr.png',np.flipud(np.fliplr(self.saveimg)))
+        plt.imsave(save_dir+self.filename,np.array(self.image_og))
+        plt.imsave(save_dir+self.filename[:-4]+'_ud.png',np.flipud(self.image_og))
+        plt.imsave(save_dir+self.filename[:-4]+'_lr.png',np.fliplr(self.image_og))
+        plt.imsave(save_dir+self.filename[:-4]+'_ud_lr.png',np.flipud(np.fliplr(self.image_og)))
 
     def rotate(self):
         # loop over the rotation angles
@@ -260,7 +261,6 @@ class Image():
 
         attributes:
         ----------
-
             save_dir (str):
                 directory to be saved
             flip (boolean): False
