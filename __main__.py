@@ -124,26 +124,46 @@ def main():
     if build_ML:
         print('training the ML model and saving best iteration...')
 
-        params = {'lr': [0.01],
-        'batch_size': [128],
-        'max_epochs': [20],
-        'data_dir':'cpi_data/training_datasets/hand_labeled_resized_multcampaigns_clean/',
-        #'momentum': [0.9, 0.999], 
-        'class_names':['aggs','blank','blurry','budding','bullets','columns','compact irregulars',\
-                       'fragments','needles','plates','rimed aggs','rimed columns','spheres'],
-        'model_names':['efficient'],
-        #'model_names':['resnet18', 'resnet34', 'resnet152', 'alexnet', 'vgg16', 'vgg19', 'densenet169', 'densenet201'],
-        'savename': 'saved_models/efficientb0_bs128_e20_13classes'}
-        #'savename':'None'}
+        params = {'kfold': 0, #set to 0 to turn off kfold cross validation
+              'masked': mask,              
+              'batch_size': [128],
+              'max_epochs': [50],
+              'data_dir': '/data/data/cpi_data/training_datasets/hand_labeled_resized_multcampaigns_masked/',
+              'class_names': ['aggs','blank','blurry','budding','bullets','columns','compact irregulars',\
+                           'fragments','needles','plates','rimed aggs','rimed columns','spheres'],
+              'model_names': ['efficient']}#, 'resnet34', 'resnet152', 'alexnet', 'vgg16', 'vgg19', 'densenet169', 'densenet201']}
+    
+        if params['masked']:
+            masked_dir='masked/'
+        else:
+            masked_dir='no_mask/'
 
-        #change to # of cores available to load images
-        #above 20 tends to slow down due to overhead
-        num_workers = 20
+        model_savename = '/data/data/saved_models/'+masked_dir+\
+                        'e'+str(params['max_epochs'][0])+\
+                        '_bs'+str(params['batch_size'][0])+\
+                        '_k'+str(params['kfold'])+'_'+\
+                        str(len(params['model_names']))+'models'
+        acc_savename_train = '/data/data/saved_models/'+masked_dir+\
+                        'save_train_acc_loss_e'+\
+                        str(params['max_epochs'][0])+\
+                        '_bs'+str(params['batch_size'][0])+\
+                        '_k'+str(params['kfold'])+'_'+\
+                        str(len(params['model_names']))+'models.csv'
+        acc_savename_val = '/data/data/saved_models/'+masked_dir+\
+                        'save_val_acc_loss_e'+\
+                        str(params['max_epochs'][0])+\
+                        '_bs'+str(params['batch_size'][0])+\
+                        '_k'+str(params['kfold'])+'_'+\
+                        str(len(params['model_names']))+'models.csv'
+
+        save_acc = True
+        save_model = True
+        valid_size = 0.8 #80-20 split training-val
+        num_workers = 20  #change to # of cores available to load images
         num_classes = len(params['class_names'])
 
-        model_name, model_train_accs, model_val_accs, model_train_loss, \
-            model_val_loss = cocpit.build_ML_model.main(params, num_workers, num_classes)
-
+        cocpit.build_ML_model.main(params, model_savename, acc_savename_train, acc_savename_val,\
+                                   save_acc, save_model, valid_size, num_workers, num_classes)
 
     if remove_duplicates:
         print('removing duplicates...')
@@ -156,15 +176,15 @@ def main():
         else:
             df_good_ice.to_pickle('final_databases_v2/no_mask/df_good_ice_'+campaign+'.pkl')
 
-
     if ice_classification:
         print('running ML model to classify ice...')
         start_time = time.time()
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        class_names=['agg','blank','blurry','budding','bullet','column','compact irregular',\
-                       'fragment','needle','plate','rimed agg','rimed column','sphere']
-        model = torch.load('saved_models/efficientb0_bs128_e20_13classes')
 
+        class_names=['agg','blank','blurry','budding','bullet','column','compact irregular',\
+                    'fragment','needle','plate','rimed agg','rimed column','sphere']
+        model=torch.load('/data/data/saved_models/e50_bs128_k0_1models_efficient')
+        
         if mask:
             open_dir = 'cpi_data/campaigns/'+campaign+'/single_imgs_masked/'  #same as above
             df_good_ice = pd.read_pickle('final_databases_v2/masked/df_good_ice_'+campaign+'.pkl')
@@ -202,19 +222,20 @@ if __name__ == "__main__":
     make_predictions = False
 
     #create CNN
-    build_ML = True
+    build_ML = False
 
     #remove duplicates after saving good ice
     remove_duplicates = False
 
     #run the category classification on quality images of ice particles
-    ice_classification = False
-    campaigns=['ISDAC']
+    ice_classification = True
+    campaigns=['ATTREX']
     #campaigns=['ICE_L','CRYSTAL_FACE_UND','IPHEX','MACPEX','MC3E','MIDCIX','MPACE','POSIDON']
 
     #campaigns=['ARM','ATTREX','CRYSTAL_FACE_NASA','CRYSTAL_FACE_UND',\
     #           'ICE_L','IPHEX','MACPEX','MC3E','MIDCIX','MPACE','POSIDON']
-    mask=False #mask background?
+    
+    mask=True #mask background?
     print('masked background = ', mask)
     num_cpus=28  #workers for parallelization
     for campaign in campaigns:

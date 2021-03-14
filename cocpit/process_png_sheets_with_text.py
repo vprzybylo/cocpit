@@ -2,12 +2,10 @@
 import copy
 import cv2
 from functools import partial
-from itertools import repeat
 from multiprocessing import Pool
 import numpy as np
 import os
 from time import time
-import twilio
 from twilio.rest import Client
 
 

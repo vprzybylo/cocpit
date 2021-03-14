@@ -15,7 +15,6 @@ remove: Indicates whether duplicates should be removed (deleted permanently) or 
 
 from imutils import paths
 import numpy as np
-import argparse
 import cv2
 import os
 

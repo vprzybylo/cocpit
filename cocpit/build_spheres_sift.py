@@ -14,7 +14,6 @@ measurement)
 
 import os 
 import cocpit
-import cv2
 import pickle
 import numpy as np
 import time
@@ -22,7 +21,6 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.linear_model import LogisticRegression
-import multiprocessing
 from joblib import Parallel, delayed
 from dask_ml.wrappers import ParallelPostFit
 

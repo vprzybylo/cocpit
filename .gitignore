@@ -18,7 +18,7 @@ vanessa
 node_modules
 plots
 build
-final_databases
+final_databases*
 *.csv
 *.db
 *.pkl

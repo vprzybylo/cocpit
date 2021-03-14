@@ -11,13 +11,10 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 import pandas as pd
 from collections import defaultdict
-from natsort import natsorted
 import os
 from torch import nn
 import cv2
-import twilio
 from twilio.rest import Client
-
 
 class TestDataSet(Dataset):
     def __init__(self, open_dir, file_list):
@@ -99,7 +96,6 @@ def main(df, open_dir, device, class_names, model):
 
     test_loader = torch.utils.data.DataLoader(testdata, batch_size=100, shuffle=False, 
                                num_workers=20, drop_last=False)
-
     
     d, top_class = predict(test_loader, class_names, model, device)
 

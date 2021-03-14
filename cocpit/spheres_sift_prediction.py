@@ -6,11 +6,8 @@ builds dataframe using build_spheres_sift module but with no training flag (file
 
 import time
 import pickle
-import os
 import cocpit
 import numpy as np
-import pandas as pd
-from sklearn.preprocessing import StandardScaler
 
 # Create the decorator function
 # def logging_time(func):
