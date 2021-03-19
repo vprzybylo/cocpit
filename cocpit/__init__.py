@@ -46,14 +46,16 @@ run_ML_model:
     was presaved or built in build_ML_model
     -transforms, makes predictions, and appends classification to dataframe 
 """
+
+import cocpit.data_loaders
 import cocpit.build_ML_model
+import cocpit.check_classifications
 import cocpit.build_spheres_sift
 import cocpit.pic
 import cocpit.process_png_sheets_with_text
 import cocpit.remove_duplicates
 import cocpit.run_ML_model
 import cocpit.spheres_sift_prediction
-
 
 # from os.path import dirname, basename, isfile, join
 # import glob

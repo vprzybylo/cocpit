@@ -34,7 +34,7 @@ from dask_ml.wrappers import ParallelPostFit
 #         return logged
 #      return logging_time
 
-def get_attributes(open_dir, filename, desired_size, good, train):
+def get_attributes(mask, open_dir, filename, desired_size, good, train):
     
     #want a good/bad index for every file
     if train:
@@ -56,7 +56,8 @@ def get_attributes(open_dir, filename, desired_size, good, train):
         
         if image.area != 0.0:
             image.morph_contours() 
-            #image.mask_background()
+            if mask:
+                image.mask_background()
             count_edge_px = np.count_nonzero(image.edges())
             if count_edge_px > 0:
                 std=np.std(np.nonzero(image.edges()))
@@ -156,7 +157,7 @@ def get_attributes(open_dir, filename, desired_size, good, train):
         
     return(df)
 
-def make_dataframe(num_cpus, open_dir, desired_size, good=True, train=False):
+def make_dataframe(mask, num_cpus, open_dir, desired_size, good=True, train=False):
     """
     loops through images in a directory of prelabeled spheres 
     to build a logistic regression model
@@ -168,7 +169,7 @@ def make_dataframe(num_cpus, open_dir, desired_size, good=True, train=False):
          
     files= os.listdir(open_dir)
     start = time.time()
-    dfs = Parallel(n_jobs=num_cpus)(delayed(get_attributes)(open_dir, filename, desired_size, good, train) for filename in files)
+    dfs = Parallel(n_jobs=num_cpus)(delayed(get_attributes)(mask, open_dir, filename, desired_size, good, train) for filename in files)
 
     # Concat dataframes to one dataframe
     df = pd.concat(dfs, ignore_index=True)
@@ -227,7 +228,7 @@ def build_model(X_train, y_train, X_test):
     #y_pred = lg1.predict(X_test)
     return lg
 
-def main(num_cpus, desired_size, open_dirs_spheres, open_dirs_sift, save_df_spheres, save_df_sift,\
+def main(mask, num_cpus, desired_size, open_dirs_spheres, open_dirs_sift, save_df_spheres, save_df_sift,\
                                       save_model_spheres, save_model_sift, save_scaler_spheres, save_scaler_sift):
     #saving the dataframes for testing transformations
     #that way not reading in files each test

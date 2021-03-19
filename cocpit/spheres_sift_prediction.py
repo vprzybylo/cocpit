@@ -25,13 +25,27 @@ def open_model(model_path):
 def load_scaler(load_scaler_spheres):
     return pickle.load(open(load_scaler_spheres, 'rb'))
 
-def make_prediction_spheres(num_cpus, desired_size, cutoff, open_dir, model_path_spheres, load_scaler_spheres):
+def make_prediction_spheres(mask, num_cpus, desired_size, cutoff, open_dir, model_path_spheres, load_scaler_spheres):
+    '''
+    predicts if an image is a sphere
+        Parameters:
+            mask (bool): whether to mask the background of the particle image
+            num_cpus (int): number of cpus for parallelization
+            desired_size (int): dimension of images for resizing to square dimensions
+            cutoff (int): percentage of image allowed to intersect border w.r.t perimeter
+            open_dir (str): directory that holds raw single images to be procesesed
+            model_path_spheres (str): path to logistic regression model for SPHERES
+            load_scalar_spheres (str): path to pickled file that holds SPHERES transformations 
+
+        Returns:
+            df_nospheres (df): a dataframe of nonspherical images
+    '''
     
     spheres_lg = open_model(model_path_spheres)
     
     print('making new predictions spheres')
     start_time = time.time()
-    df = cocpit.build_spheres_sift.make_dataframe(num_cpus, open_dir, desired_size)
+    df = cocpit.build_spheres_sift.make_dataframe(mask, num_cpus, open_dir, desired_size)
     print('time to create spheres df %.2f' %(time.time()-start_time))
     
     #Regression model prediction for spheres
@@ -53,7 +67,16 @@ def make_prediction_spheres(num_cpus, desired_size, cutoff, open_dir, model_path
 
 
 def make_prediction_sift(df_nospheres, model_path_sift, load_scaler_sift):
+    '''
+    predicts if an image is of good quality
+        Parameters:
+            df_nospheres (df): a dataframe of nonspherical images
+            model_path_sift (str): path to SIFT model
+            load_scalar_sift (str): path to transformation .pkl file for SIFT
 
+        Returns:
+            df_good_ice (df): a dataframe of nonspherical, quality, images    
+    '''
     sift_lg = open_model(model_path_sift)
     print('making new predictions sift')
     #Find ice that is not blurry or broken
@@ -69,4 +92,3 @@ def make_prediction_sift(df_nospheres, model_path_sift, load_scaler_sift):
     print('# of good ice images: ', len(df_good_ice))
 
     return df_good_ice
-        
