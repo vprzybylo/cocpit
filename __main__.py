@@ -142,15 +142,15 @@ def _build_ML():
 
     params = {'kfold': 0,  # set to 0 to turn off kfold cross validation
               'masked': mask,
-              'batch_size': [128],
-              'max_epochs': [10],
+              'batch_size': [512],
+              'max_epochs': [50],
               'class_names': ['aggs','blank','blurry','budding',
                               'bullets','columns','compact irregulars',
                               'fragments','needles','plates','rimed aggs',
                               'rimed columns','spheres'],
-              'model_names': ['efficient']}#, 'resnet18', 'resnet34',
-                              #'resnet152', 'alexnet', 'vgg16', 'vgg19',
-                              #'densenet169', 'densenet201']}
+              'model_names': ['resnet18', 'resnet34',
+                              'resnet152', 'alexnet', 'vgg16', 'vgg19',
+                              'densenet169', 'densenet201']}
     if mask:
         params['data_dir'] = '/data/data/cpi_data/training_datasets/' + \
                              'hand_labeled_resized_multcampaigns_masked/'
@@ -168,17 +168,17 @@ def _build_ML():
                          str(params['max_epochs'][0]) + \
                          '_bs' + str(params['batch_size'][0]) + \
                          '_k' + str(params['kfold']) + '_' + \
-                         str(len(params['model_names']))+'models.csv'
+                         str(len(params['model_names']))+'models_2.csv'
     acc_savename_val = '/data/data/saved_models/' + masked_dir + \
                        '/save_val_acc_loss_e' + \
                        str(params['max_epochs'][0]) + \
                        '_bs' + str(params['batch_size'][0]) + \
                        '_k' + str(params['kfold']) + '_' + \
-                       str(len(params['model_names'])) + 'models.csv'
+                       str(len(params['model_names'])) + 'models_2.csv'
 
     log_exp = False  # log experiment to comet
     save_acc = False
-    save_model = True
+    save_model = False
     valid_size = 0.2  # 80-20 split training-val
     num_workers = 20  # change to # of cores available to load images
     num_classes = len(params['class_names'])
@@ -208,7 +208,7 @@ def _ice_classification():
         open_dir = 'cpi_data/campaigns/'+campaign+'/single_imgs/'
 
     model=torch.load('/data/data/saved_models/'+
-                     masked_dir+'/e50_bs128_k0_1models_efficient')
+                     masked_dir+'/e50_bs128_k0_8models_vgg19')
 
     df_good_ice = pd.read_pickle('final_databases_v2/'+
                                  masked_dir+'df_good_ice_'+campaign+'.pkl')

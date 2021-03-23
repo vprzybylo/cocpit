@@ -1,5 +1,6 @@
 '''
 Check predictions from a saved CNN
+called in check_classifications.ipynb for bar chart plot returns
 '''
 
 import numpy as np
@@ -21,7 +22,8 @@ def process_image(image):
 
 def predict(path, device, model, topk=9):
     ''' 
-    Predict the class (or classes) of an image using a trained deep learning model.
+    Predict the class (or classes) of an image
+    using a trained deep learning model.
     '''
     img = Image.open(path)
     img = img.convert('RGB')

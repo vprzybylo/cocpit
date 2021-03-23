@@ -13,12 +13,15 @@ from comet_ml import Experiment
 import copy
 import numpy as np
 import time
-import pandas as pd
+import os
+import random
 import csv
 from operator import add
 from collections import Counter
+import warnings
 
 import torch
+import torch.backends.cudnn as cudnn
 from torch import nn
 from torchvision import models
 from torch import optim
@@ -26,12 +29,6 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from efficientnet_pytorch import EfficientNet
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import train_test_split
-
-import PIL
-from PIL import Image
-from PIL import ImageFile
-from pathlib import Path
-ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 def set_random_seed(random_seed):
     if random_seed is not None:
@@ -285,7 +282,6 @@ def train_model(experiment, log_exp, model, kfold, model_name, model_savename,
                 #deep copy the model
                 if epoch_acc_val > best_acc_val:
                     best_acc_val = epoch_acc_val
-                    best_model_wts = copy.deepcopy(model.state_dict())
                     #save/load best model weights
                     if save_model:
                         torch.save(model, model_savename+'_'+model_name)
@@ -296,9 +292,9 @@ def train_model(experiment, log_exp, model, kfold, model_name, model_savename,
     time_elapsed = time.time() - since_total
     print('All epochs comlete in {:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))
 
-    #with open('/data/data/saved_models/model_timing.csv', 'a', newline='') as file:
-    #    writer = csv.writer(file)
-    #    writer.writerow([model_name, epoch, kfold, time_elapsed])
+#     with open('/data/data/saved_models/no_mask/model_timing.csv', 'a', newline='') as file:
+#         writer = csv.writer(file)
+#         writer.writerow([model_name, epoch, kfold, time_elapsed])
 
 
 def train_val_composition(data, train_indices, val_indices):
@@ -334,7 +330,6 @@ def main(params, log_exp, model_savename, acc_savename_train,
 
                 #K-FOLD 
                 if params['kfold']!=0:
-                    kfold=True
                     # preserve the percentage of samples for each class with stratified
                     skf = StratifiedKFold(n_splits=params['kfold'])
                     for i, (train_indices, val_indices) in enumerate(skf.split(data.imgs, data.targets)):
@@ -371,7 +366,6 @@ def main(params, log_exp, model_savename, acc_savename_train,
                                     epochs,
                                     num_classes)
                 else:  # no kfold
-                    kfold=False
                     i=0  # kfold false for savename
                     total_size = len(data)
                     # randomly split indices for training and validation indices according to valid_size

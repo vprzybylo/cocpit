@@ -1,4 +1,5 @@
 import torch
+import csv
 
 def batch_train_metrics(i, loss, inputs, preds, labels, running_loss_train,\
                   running_corrects_train, totals_train, dataloaders_dict, phase):

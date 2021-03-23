@@ -3,16 +3,14 @@ classifies good ice images:
 transforms, makes predictions, and appends classification to dataframe 
 """
 from torchvision import transforms
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 import torch
 import numpy as np
 from PIL import Image
-from torch.autograd import Variable
 import torch.nn.functional as F
 import pandas as pd
 from collections import defaultdict
 import os
-from torch import nn
 import cv2
 from twilio.rest import Client
 
@@ -33,11 +31,14 @@ class TestDataSet(Dataset):
 
     def __getitem__(self, idx):
         img_path = os.path.join(self.open_dir, self.file_list[idx])
-        image = Image.open(img_path)
+       
+        #image = Image.open(img_path)
         
-        #training images were resized to 1000x1000 initially
-        image = cv2.cvtColor(cv2.imread(self.open_dir+self.file_list[idx], cv2.IMREAD_UNCHANGED), cv2.COLOR_BGR2RGB)
-        image = cv2.resize(image, (self.desired_size, self.desired_size), interpolation = cv2.INTER_AREA)
+        #images were resized to 1000x1000 initially
+        image = cv2.cvtColor(cv2.imread(self.open_dir+self.file_list[idx],
+                                        cv2.IMREAD_UNCHANGED), cv2.COLOR_BGR2RGB)
+        image = cv2.resize(image, (self.desired_size, self.desired_size),
+                           interpolation = cv2.INTER_AREA)
 
         image = Image.fromarray(image) #convert back to PIL for transforms
         image = image.convert('RGB')
@@ -58,7 +59,6 @@ def predict(test_loader, class_names, model, device):
     model = model.to(device)
     model = model.cuda()
     model.eval()
-    criterion = nn.CrossEntropyLoss()
     
     d = defaultdict(list)
     top_class = []
@@ -102,5 +102,5 @@ def main(df, open_dir, device, class_names, model):
     for column in sorted(d.keys()):
         df[column] = d[column]
     df['classification'] = top_class
-    send_message()
+    send_message();
     return df                   

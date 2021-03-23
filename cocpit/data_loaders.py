@@ -1,12 +1,9 @@
 '''
 Retrives data loaders from Pytorch for training and validation data
 '''
-import numpy as np
 import torch
-import matplotlib.pyplot as plt
 from torchvision import datasets, transforms
 import torch.utils.data.sampler as sampler
-import torchvision
 
 class ImageFolderWithPaths(datasets.ImageFolder):
     """Custom dataset that includes image file paths. Extends
@@ -65,7 +62,6 @@ def make_weights_for_balanced_classes(train_labels, nclasses):
     print('counts per class: ', class_sample_counts)
 
     class_weights = 1./torch.Tensor(class_sample_counts)
-    train_targets = [sample for sample in train_labels]
     train_samples_weights = [class_weights[class_id] for class_id in train_labels]
 
     return class_sample_counts, torch.DoubleTensor(train_samples_weights)
@@ -93,7 +89,7 @@ def create_dataloaders(data, train_indices, val_indices,
     - val_loader (obj): dataloader iterable for validation dataset
     '''
 
-    # Get a list of labels according to train_idx to obtain weighting for sampling
+    # Get a list of labels according to train_indices to obtain weighting for sampling
     train_labels = list(map(data.targets.__getitem__, train_indices))
 
     # Make a training and validation dataset of images and labels according to indices
@@ -112,7 +108,7 @@ def create_dataloaders(data, train_indices, val_indices,
                                                batch_size=batch_size,        
                                                sampler=train_sampler,
                                                num_workers=num_workers,
-                                               pin_memory=True)    
+                                               pin_memory=True)
 
     # Make an iterable of batches across the validation dataset
     val_loader = torch.utils.data.DataLoader(val_data,

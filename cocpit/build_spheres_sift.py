@@ -20,6 +20,7 @@ import time
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 from joblib import Parallel, delayed
 from dask_ml.wrappers import ParallelPostFit
