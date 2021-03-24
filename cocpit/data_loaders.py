@@ -132,7 +132,7 @@ def create_dataloaders(data, train_indices, val_indices,
                                              num_workers=num_workers,
                                              pin_memory=True)
     if save_model:
-        torch.save(val_data, '/data/data/saved_models/'+masked_dir+'val_data_vgg19_e20_b128.pt')
+        torch.save(val_data, '/data/data/saved_models/'+masked_dir+'val_data_vgg19_e20_b128_8classes.pt')
 
     return train_loader, val_loader
 
