@@ -56,9 +56,9 @@ def predict(test_loader, class_names, model, device):
 #     print(torch.cuda.device_count())
 #     if torch.cuda.device_count() > 1:
 #         model = nn.DataParallel(model)
-    model = model.to(device)
-    model = model.cuda()
-    model.eval()
+#     model = model.to(device)
+#     model = model.cuda()
+#     model.eval()
     
     d = defaultdict(list)
     top_class = []
