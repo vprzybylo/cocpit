@@ -5,11 +5,11 @@
 Build and train the ML model for different CNNs to predict
 ice crystal type
 '''
+from comet_ml import Experiment
 
 import cocpit.data_loaders as data_loaders
 import cocpit.calculate_metrics as metrics
 
-from comet_ml import Experiment
 import copy
 import numpy as np
 import time
@@ -211,6 +211,8 @@ def train_model(experiment, log_exp, model, kfold, model_name, model_savename,
         print('-' * 20)
     
         # Each epoch has a training and validation phase
+        indices_train = []
+        indices_val = []
         for phase in ['train', 'val']:
             print('Phase: {}'.format(phase))
             totals_train = 0
@@ -227,7 +229,12 @@ def train_model(experiment, log_exp, model, kfold, model_name, model_savename,
             
             # Iterate over data in batches
             label_cnts_total = [0]*len(range(num_classes))
-            for i, (inputs, labels, paths) in enumerate(dataloaders_dict[phase]):
+            for i, ((inputs, labels, paths),index)  in enumerate(dataloaders_dict[phase]):
+#                 if phase == 'train':
+#                     indices_train.append(index.numpy().tolist())
+#                     #print(type(indices_train), indices_train)
+#                 else:
+#                     indices_val.append(index.numpy().tolist())
                 # uncomment to print cumulative sum of images per class, per batch
                 # ensures weighted sampler is working properly
                 #if phase == 'train':
@@ -285,6 +292,11 @@ def train_model(experiment, log_exp, model, kfold, model_name, model_savename,
                     #save/load best model weights
                     if save_model:
                         torch.save(model, model_savename+'_'+model_name)
+        
+        # see how many images are in the validation dataset from training
+#         indices_train = [item for sublist in indices_train for item in sublist]
+#         indices_val = [item for sublist in indices_val for item in sublist]
+#         print(len(set(indices_train).intersection(set(indices_val))))
 
         time_elapsed = time.time() - since_epoch
         print('Epoch complete in {:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))
@@ -314,8 +326,9 @@ def main(params, log_exp, model_savename, acc_savename_train,
     
     if log_exp:
         experiment = Experiment(api_key="6tGmiuOfY08czs2b4SHaHI2hw",
-                        project_name="multi-campaigns", workspace="vprzybylo")
-        experiment.log_code('/data/data/notebooks/Pytorch_mult_campaigns.ipynb')
+                        project_name="cocpit", workspace="vprzybylo")
+        experiment.log_parameters(params)
+        experiment.add_tag('v1.0.0')
     else:
         experiment = None
     
