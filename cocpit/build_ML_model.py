@@ -321,8 +321,8 @@ def train_val_composition(data, train_indices, val_indices):
 ########## MAIN ###########
 
 def main(params, log_exp, model_savename, acc_savename_train,
-         acc_savename_val, save_acc, save_model, masked_dir,
-         valid_size, num_workers, num_classes):
+         acc_savename_val, save_acc, save_model, val_loader_savename,
+         masked_dir, valid_size, num_workers, num_classes):
     
     if log_exp:
         experiment = Experiment(api_key="6tGmiuOfY08czs2b4SHaHI2hw",
@@ -358,6 +358,7 @@ def main(params, log_exp, model_savename, acc_savename_train,
                                                             data_dir=params['data_dir'],
                                                             batch_size=batch_size,
                                                             save_model=save_model,
+                                                            val_loader_savename = val_loader_savename,
                                                             masked_dir=masked_dir,
                                                             num_workers=num_workers,
                                                             valid_size=valid_size)
@@ -394,6 +395,7 @@ def main(params, log_exp, model_savename, acc_savename_train,
                                                         data_dir=params['data_dir'],
                                                         batch_size=batch_size,
                                                         save_model=save_model,
+                                                        val_loader_savename = val_loader_savename,
                                                         masked_dir=masked_dir,
                                                         num_workers=num_workers,
                                                         valid_size=valid_size)

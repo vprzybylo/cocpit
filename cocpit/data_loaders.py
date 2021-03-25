@@ -69,7 +69,7 @@ def make_weights_for_balanced_classes(train_labels, nclasses):
 
 def create_dataloaders(data, train_indices, val_indices,
                        class_names, data_dir, batch_size,
-                       save_model, masked_dir, 
+                       save_model, val_loader_savename, masked_dir, 
                        num_workers=32, valid_size=0.2):
     '''
     get dataloaders when kfold is False, no concatenation of indices
@@ -95,21 +95,6 @@ def create_dataloaders(data, train_indices, val_indices,
     # Make a training and validation dataset of images and labels according to indices
     train_data = torch.utils.data.Subset(data, train_indices)
     val_data = torch.utils.data.Subset(data, val_indices)
-    
-# #OVERFITTING
-     # For an unbalanced dataset create a weighted sampler 
-#     class_counts, train_samples_weights = make_weights_for_balanced_classes(train_data.dataset.targets,
-#                                                                             len(class_names))
-#     # Make a sampler to undersample classes with the highest counts
-#     train_sampler = sampler.WeightedRandomSampler(train_samples_weights,
-#                                                   len(train_samples_weights),
-#                                                   replacement=True)
-#     # Make an iterable of batches across the training dataset
-#     train_loader = torch.utils.data.DataLoader(train_data.dataset,
-#                                                batch_size=batch_size,        
-#                                                sampler=train_sampler,
-#                                                num_workers=num_workers,
-#                                                pin_memory=True)
 
     # For an unbalanced dataset create a weighted sampler 
     class_counts, train_samples_weights = make_weights_for_balanced_classes(train_labels,
@@ -132,7 +117,7 @@ def create_dataloaders(data, train_indices, val_indices,
                                              num_workers=num_workers,
                                              pin_memory=True)
     if save_model:
-        torch.save(val_data, '/data/data/saved_models/'+masked_dir+'val_data_vgg19_e20_b128_8classes.pt')
+        torch.save(val_data, val_loader_savename)
 
     return train_loader, val_loader
 
