@@ -145,9 +145,10 @@ def _build_ML():
               'masked': mask,
               'batch_size': [128],
               'max_epochs': [20],
-              'class_names': ['aggs','blank','blurry','budding','bullets','columns',
-                              'compact irregulars','fragments','needles','plates','rimed_aggs',
-                              'rimed_columns','spheres'],
+              'class_names': ['aggs','blank','blurry',
+                              'budding','bullets','columns',
+                              'compact_irregs','fragments','needles',
+                              'plates','rimed_aggs','rimed_columns','spheres'],
               'model_names': ['vgg19']}
 #               'model_names': ['efficient', 'resnet18', 'resnet34',
 #                               'resnet152', 'alexnet', 'vgg16',
