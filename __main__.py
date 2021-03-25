@@ -158,18 +158,18 @@ def _build_ML():
                              'hand_labeled_resized_multcampaigns_masked/'
     else:
         params['data_dir'] = '/data/data/cpi_data/training_datasets/' + \
-                             'hand_labeled_resized_multcampaigns_v1.0.0_combined/'
+                             'hand_labeled_resized_multcampaigns_v1.0.0_removed/'
 
     model_savename = '/data/data/saved_models/' + masked_dir + \
                      'e' + str(params['max_epochs'][0]) + \
                      '_bs' + str(params['batch_size'][0]) + \
                      '_k' + str(params['kfold']) + '_' + \
-                     str(len(params['model_names']))+'models_v1.0.0_combined'
+                     str(len(params['model_names']))+'models_v1.0.0_removed'
     val_loader_savename = '/data/data/saved_val_loaders/' + masked_dir + \
                      'val_loader' + str(params['max_epochs'][0]) + \
                      '_bs' + str(params['batch_size'][0]) + \
                      '_k' + str(params['kfold']) + '_' + \
-                     str(len(params['model_names']))+'models_v1.0.0_combined.pt'
+                     str(len(params['model_names']))+'models_v1.0.0_removed.pt'
     acc_savename_train = '/data/data/saved_accuracies/'+masked_dir + \
                          '/save_train_acc_loss_e' + \
                          str(params['max_epochs'][0]) + \
