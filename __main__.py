@@ -145,9 +145,10 @@ def _build_ML():
               'masked': mask,
               'batch_size': [128],
               'max_epochs': [20],
-              'class_names': ['blank','blurry','bullets',
-                              'columns','compact_irregs',
-                              'large_irreg','plates','spheres'],
+              'class_names': ['aggs','blank','blurry',
+                              'budding','bullets','columns',
+                              'compact_irregs','fragments','needles',
+                              'plates','rimed_aggs','rimed_columns','spheres'],
               'model_names': ['vgg19']}
 #               'model_names': ['efficient', 'resnet18', 'resnet34',
 #                               'resnet152', 'alexnet', 'vgg16',
@@ -158,13 +159,13 @@ def _build_ML():
                              'hand_labeled_resized_multcampaigns_masked/'
     else:
         params['data_dir'] = '/data/data/cpi_data/training_datasets/' + \
-                             '8classes/'
+                             'hand_labeled_resized_multcampaigns_clean/'
 
     model_savename = '/data/data/saved_models/' + masked_dir + \
                      '/e' + str(params['max_epochs'][0]) + \
                      '_bs' + str(params['batch_size'][0]) + \
                      '_k' + str(params['kfold']) + '_' + \
-                     str(len(params['model_names']))+'models_8classes'
+                     str(len(params['model_names']))+'models'
     acc_savename_train = '/data/data/saved_accuracies/'+masked_dir + \
                          '/save_train_acc_loss_e' + \
                          str(params['max_epochs'][0]) + \
