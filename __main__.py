@@ -145,10 +145,9 @@ def _build_ML():
               'masked': mask,
               'batch_size': [128],
               'max_epochs': [20],
-              'class_names': ['aggs','blank','blurry',
-                              'budding','bullets','columns',
-                              'compact_irregs','fragments','needles',
-                              'plates','rimed_aggs','rimed_columns','spheres'],
+              'class_names': ['aggs','blank','bullets',
+                              'columns','compact_irregs',
+                              'fragments','plates','rimed_aggs','spheres'],
               'model_names': ['vgg19']}
 #               'model_names': ['efficient', 'resnet18', 'resnet34',
 #                               'resnet152', 'alexnet', 'vgg16',
@@ -159,13 +158,18 @@ def _build_ML():
                              'hand_labeled_resized_multcampaigns_masked/'
     else:
         params['data_dir'] = '/data/data/cpi_data/training_datasets/' + \
-                             'hand_labeled_resized_multcampaigns_clean/'
+                             'hand_labeled_resized_multcampaigns_v1.0.0_combined/'
 
     model_savename = '/data/data/saved_models/' + masked_dir + \
-                     '/e' + str(params['max_epochs'][0]) + \
+                     'e' + str(params['max_epochs'][0]) + \
                      '_bs' + str(params['batch_size'][0]) + \
                      '_k' + str(params['kfold']) + '_' + \
-                     str(len(params['model_names']))+'models'
+                     str(len(params['model_names']))+'models_v1.0.0_combined'
+    val_loader_savename = '/data/data/saved_val_loaders/' + masked_dir + \
+                     'val_loader' + str(params['max_epochs'][0]) + \
+                     '_bs' + str(params['batch_size'][0]) + \
+                     '_k' + str(params['kfold']) + '_' + \
+                     str(len(params['model_names']))+'models_v1.0.0_combined.pt'
     acc_savename_train = '/data/data/saved_accuracies/'+masked_dir + \
                          '/save_train_acc_loss_e' + \
                          str(params['max_epochs'][0]) + \
@@ -188,7 +192,8 @@ def _build_ML():
 
     cocpit.build_ML_model.main(params, log_exp, model_savename,
                                acc_savename_train, acc_savename_val,
-                               save_acc, save_model, masked_dir, valid_size,
+                               save_acc, save_model, val_loader_savename,
+                               masked_dir, valid_size,
                                num_workers, num_classes)
 
 

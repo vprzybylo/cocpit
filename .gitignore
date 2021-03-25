@@ -14,6 +14,8 @@ guild-start
 logs
 notebooks
 saved_models
+saved_val_loaders
+saved_accuracies
 vanessa
 node_modules
 plots
