@@ -1,6 +1,8 @@
 '''
 Retrives data loaders from Pytorch for training and validation data
 '''
+import itertools
+import numpy as np
 import torch
 from torchvision import datasets, transforms
 import torch.utils.data.sampler as sampler
@@ -67,12 +69,12 @@ def make_weights_for_balanced_classes(train_labels, nclasses):
     return class_sample_counts, torch.DoubleTensor(train_samples_weights)
 
 
-def create_dataloaders(data, train_indices, val_indices,
-                       class_names, data_dir, batch_size,
+def create_dataloaders(data, train_indices, val_indices, batch_size,
                        save_model, val_loader_savename, masked_dir, 
-                       num_workers=32, valid_size=0.2):
+                       class_names, data_dir, num_workers=32,
+                       shuffle=True, valid_size=0.2):
     '''
-    get dataloaders when kfold is False, no concatenation of indices
+    get dataloaders
     Params
     -----
     - data (tuple): (sample, target) where target is class_index of the target class 
@@ -82,6 +84,7 @@ def create_dataloaders(data, train_indices, val_indices,
     - data_dir (str): directory for training dataset
     - batch_size (int): batch size for dataloader
     - num_workers (int): # of cpus to be used during data loading
+    - shuffle (bool): whether to shuffle the data per epoch
     - valid_size (float): % of data used for validation dataset (0.0-1.0 = 0%-100%)
     Returns
     -------
@@ -113,7 +116,7 @@ def create_dataloaders(data, train_indices, val_indices,
 #     # Make an iterable of batches across the validation dataset
     val_loader = torch.utils.data.DataLoader(val_data,
                                              batch_size=batch_size,
-                                             shuffle=True,
+                                             shuffle=shuffle,
                                              num_workers=num_workers,
                                              pin_memory=True)
     if save_model:
@@ -132,15 +135,15 @@ def get_test_loader(datadir,
     If using CUDA, num_workers should be set to 1 and pin_memory to True.
     Params
     ------
-    - data_dir: path directory to the dataset.
-    - batch_size: how many samples per batch to load.
-    - num_workers: number of subprocesses to use when loading the dataset.
-    - shuffle: whether to shuffle the dataset after every epoch.
-    - pin_memory: whether to copy tensors into CUDA pinned memory. Set it to
+    - data_dir (str): path directory to the dataset.
+    - batch_size (int): how many samples per batch to load.
+    - num_workers (int): number of subprocesses to use when loading the dataset.
+    - shuffle (bool): whether to shuffle the dataset after every epoch.
+    - pin_memory (bool): whether to copy tensors into CUDA pinned memory. Set it to
       True if using GPU.
     Returns
     -------
-    - data_loader: test set iterator.
+    - data_loader: test set iterator
     """
     # resizing helps memory usage
     transforms_ = transforms.Compose([transforms.Resize((224,224)), 
@@ -151,6 +154,50 @@ def get_test_loader(datadir,
     all_data_wpath = ImageFolderWithPaths(datadir, transform=transforms_)
 
     testloader = torch.utils.data.DataLoader(all_data_wpath, pin_memory=True,
-                                             shuffle=shuffle,batch_size=batch_size,
+                                             shuffle=shuffle, batch_size=batch_size,
                                              num_workers=num_workers)
     return testloader
+
+def get_val_loader_predictions(model, val_data, device, batch_size, shuffle=True, num_workers=20):
+    '''
+    get a list of hand labels and predictions from a saved dataloader/model
+    Params
+    ------
+    - model (obj): torch.nn.parallel.data_parallel.DataParallel loaded from saved file
+    - val_data (obj): Loads an object saved with torch.save() from a file
+    - device (obj): use cuda if available
+    - batch_size (int): how many samples per batch to load
+    - shuffle (bool): whether to shuffle the dataset after every epoch.
+    - num_workers (int): number of subprocesses to use when loading the dataset
+    
+    Returns
+    -------
+    - all_preds (list): predictions from a model
+    - all_labels (list): correct/hand labels 
+    '''
+    #transforms already applied in get_data() before saving
+    val_loader = torch.utils.data.DataLoader(val_data,
+                                             batch_size=batch_size,
+                                             shuffle=shuffle,
+                                             num_workers=num_workers,
+                                             pin_memory=True)
+    all_preds= []
+    all_labels = []
+    with torch.no_grad():
+
+        for batch_idx, ((imgs, labels, img_paths), index) in enumerate(val_loader):
+            # get the inputs
+            inputs = imgs.to(device)
+            labels = labels.to(device)
+
+            output = model(inputs)
+            pred = torch.argmax(output, 1)
+
+            all_preds.append(pred.cpu().numpy())
+            all_labels.append(labels.cpu().numpy())
+    
+    all_preds = np.asarray(list(itertools.chain(*all_preds)))
+    all_labels = np.asarray(list(itertools.chain(*all_labels)))
+    
+    return all_preds, all_labels
+

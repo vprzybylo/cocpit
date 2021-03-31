@@ -43,7 +43,7 @@ def batch_val_metrics(i, loss, inputs, preds, labels, running_loss_val,\
 def epoch_train_metrics(experiment, running_loss_train, totals_train,\
                        running_corrects_train, scheduler, log_exp,\
                        save_acc, acc_savename_train, model_name,\
-                       epoch, epochs, kfold):
+                       epoch, epochs, kfold, batch_size):
     '''
     Calculate epoch loss and accuracy during training
     '''
@@ -58,7 +58,7 @@ def epoch_train_metrics(experiment, running_loss_train, totals_train,\
     if save_acc:
         with open(acc_savename_train, 'a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([model_name, epoch, kfold,\
+            writer.writerow([model_name, epoch, kfold, batch_size,\
                              epoch_acc_train.cpu().numpy(), epoch_loss_train])
         file.close()
 
@@ -74,7 +74,7 @@ def epoch_train_metrics(experiment, running_loss_train, totals_train,\
 def epoch_val_metrics(experiment, running_loss_val, totals_val,\
                        running_corrects_val, scheduler, log_exp,\
                        save_acc, acc_savename_val, model_name,\
-                       epoch, epochs, kfold):
+                       epoch, epochs, kfold, batch_size):
     '''
     Calculate epoch loss and accuracy during validation
     '''
@@ -88,7 +88,7 @@ def epoch_val_metrics(experiment, running_loss_val, totals_val,\
     if save_acc:
         with open(acc_savename_val, 'a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([model_name, epoch, kfold,\
+            writer.writerow([model_name, epoch, kfold, batch_size,\
                              epoch_acc_val.cpu().numpy(), epoch_loss_val])
         file.close()
 

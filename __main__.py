@@ -141,17 +141,17 @@ def _build_ML():
     '''
     print('training...')
 
-    params = {'kfold': 0,  # set to 0 to turn off kfold cross validation
+    params = {'kfold': 5,  # set to 0 to turn off kfold cross validation
               'masked': mask,
-              'batch_size': [128],
+              'batch_size': [64],
               'max_epochs': [20],
-              'class_names': ['aggs','blank','bullets',
+              'class_names': ['aggs','blank','budding','bullets',
                               'columns','compact_irregs',
-                              'fragments','plates','rimed_aggs','spheres'],
-              'model_names': ['vgg19']}
-#               'model_names': ['efficient', 'resnet18', 'resnet34',
-#                               'resnet152', 'alexnet', 'vgg16',
-#                               'vgg19', 'densenet169', 'densenet201']}
+                              'fragments','plates','rimed','spheres'],
+              #'model_names': ['vgg16']}
+              'model_names': ['efficient', 'resnet18', 'resnet34',
+                             'resnet152', 'alexnet', 'vgg16',
+                             'vgg19', 'densenet169', 'densenet201']}
 
     if mask:
         params['data_dir'] = '/data/data/cpi_data/training_datasets/' + \
@@ -175,26 +175,31 @@ def _build_ML():
                          str(params['max_epochs'][0]) + \
                          '_bs' + str(params['batch_size'][0]) + \
                          '_k' + str(params['kfold']) + '_' + \
-                         str(len(params['model_names']))+'models_3.csv'
+                         str(len(params['model_names']))+'models.csv'
     acc_savename_val = '/data/data/saved_accuracies/' + masked_dir + \
                        '/save_val_acc_loss_e' + \
                        str(params['max_epochs'][0]) + \
                        '_bs' + str(params['batch_size'][0]) + \
                        '_k' + str(params['kfold']) + '_' + \
-                       str(len(params['model_names'])) + 'models_3.csv'
+                       str(len(params['model_names'])) + 'models.csv'
+    metrics_savename = '/data/data/saved_accuracies/' + masked_dir + \
+                       '/save_val_metrics_e' + \
+                       str(params['max_epochs'][0]) + \
+                       '_bs' + str(params['batch_size'][0]) + \
+                       '_k' + str(params['kfold']) + '_' + \
+                       str(len(params['model_names'])) + '.csv'
 
     log_exp = True  # log experiment to comet
-    save_acc = False
+    save_acc = True
     save_model = True
     valid_size = 0.2  # 80-20 split training-val
-    num_workers = 20  # change to # of cores available to load images
     num_classes = len(params['class_names'])
 
     cocpit.build_ML_model.main(params, log_exp, model_savename,
-                               acc_savename_train, acc_savename_val,
+                               acc_savename_train, acc_savename_val, metrics_savename,
                                save_acc, save_model, val_loader_savename,
                                masked_dir, valid_size,
-                               num_workers, num_classes)
+                               num_workers)
 
 
 def _ice_classification():
@@ -206,17 +211,16 @@ def _ice_classification():
     start_time = time.time()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    class_names=['agg','blank','blurry','budding','bullet',
-                 'column','compact irregular','fragment','needle',
-                 'plate','rimed agg','rimed column','sphere']
+    class_names=['agg','blank','budding','bullet',
+                 'column','compact irregular','fragment',
+                 'plate','rimed','sphere']
 
     if mask:
         open_dir = 'cpi_data/campaigns/'+campaign+'/single_imgs_masked/'
     else:
         open_dir = 'cpi_data/campaigns/'+campaign+'/single_imgs/'
 
-    model=torch.load('/data/data/saved_models/'+
-                     masked_dir+'/e50_bs128_k0_8models_vgg19')
+    model=torch.load('/data/data/saved_models/no_mask/e20_bs128_k0_1models_v1.0.0_removed_vgg19')
 
     df_good_ice = pd.read_pickle('final_databases_v2/'+
                                  masked_dir+'df_good_ice_'+campaign+'.pkl')
@@ -225,7 +229,8 @@ def _ice_classification():
                                   open_dir,
                                   device,
                                   class_names,
-                                  model)
+                                  model,
+                                  num_workers)
 
     # write database to file that holds predictions
     engine = create_engine('sqlite:///final_databases_v3/' +
@@ -270,7 +275,7 @@ if __name__ == "__main__":
 
     # run the category classification on quality images of ice particles
     ice_classification = False
-    campaigns=['ICE_L']
+    campaigns=['CRYSTAL_FACE_NASA']
     # campaigns=['ARM','ATTREX','CRYSTAL_FACE_NASA','CRYSTAL_FACE_UND',\
     #           'ICE_L','IPHEX','MACPEX','MC3E','MIDCIX','MPACE','POSIDON']
 
@@ -281,7 +286,8 @@ if __name__ == "__main__":
     else:
         masked_dir = 'no_mask/'
 
-    num_cpus=28  # workers for parallelization
+    num_cpus = 28  # workers for parallelization
+    num_workers = 20  # workers for data loaders
     for campaign in campaigns:
         print(campaign)
         main()

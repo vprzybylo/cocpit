@@ -89,18 +89,19 @@ def send_message():
     message.sid
         
 
-def main(df, open_dir, device, class_names, model):
+def main(df, open_dir, device, class_names, model, num_workers):
     pd.options.mode.chained_assignment = None  # default='warn'
 
     testdata = TestDataSet(open_dir, file_list = df['filename'])
 
     test_loader = torch.utils.data.DataLoader(testdata, batch_size=100, shuffle=False, 
-                               num_workers=20, drop_last=False)
+                               num_workers=num_workers, drop_last=False)
     
     d, top_class = predict(test_loader, class_names, model, device)
 
     for column in sorted(d.keys()):
         df[column] = d[column]
     df['classification'] = top_class
+    df = df[(df['classification'] != 'fragment') & (df['classification'] != 'blurry')]
     send_message();
     return df                   

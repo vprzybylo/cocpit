@@ -79,7 +79,7 @@ class Image:
                                     cv2.CHAIN_APPROX_SIMPLE)
         #overlay white contours on white background to cover or mask text
         #only mask contours with small area (aka the text)
-        #should a very small particle be < 200 px^2, it is also masked
+        #should a very small particle be < 2000 px^2, it is also masked
         for i, c in enumerate(cnts):
             if cv2.contourArea(c)<2000:
                 cv2.drawContours(self.thresh, [c], 0, (255,255,255), -1)  #-1 fills contour
