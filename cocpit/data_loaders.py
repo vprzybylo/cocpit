@@ -61,7 +61,7 @@ def make_weights_for_balanced_classes(train_labels, nclasses):
     class_sample_counts = [0] * nclasses
     for target in train_labels:  
         class_sample_counts[target] += 1
-    print('counts per class: ', class_sample_counts)
+    print('counts per class (training): ', class_sample_counts)
 
     class_weights = 1./torch.Tensor(class_sample_counts)
     train_samples_weights = [class_weights[class_id] for class_id in train_labels]
@@ -70,7 +70,7 @@ def make_weights_for_balanced_classes(train_labels, nclasses):
 
 
 def create_dataloaders(data, train_indices, val_indices, batch_size,
-                       save_model, val_loader_savename, masked_dir, 
+                       save_model, val_loader_savename,
                        class_names, data_dir, num_workers=32,
                        shuffle=True, valid_size=0.2):
     '''
@@ -80,9 +80,11 @@ def create_dataloaders(data, train_indices, val_indices, batch_size,
     - data (tuple): (sample, target) where target is class_index of the target class 
     - train_indices (list): training dataset indices
     - val_indices (list): validation dataset indices
+    - batch_size (int): batch size for dataloader
+    - save_model (bool): save validation loader if saving model
+    - val_loader_savename (str): name of path+file to save validation loader to
     - class_names (list): list of strings of classes
     - data_dir (str): directory for training dataset
-    - batch_size (int): batch size for dataloader
     - num_workers (int): # of cpus to be used during data loading
     - shuffle (bool): whether to shuffle the data per epoch
     - valid_size (float): % of data used for validation dataset (0.0-1.0 = 0%-100%)

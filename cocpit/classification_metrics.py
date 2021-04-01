@@ -49,7 +49,6 @@ def metrics_report(all_labels, all_preds, class_names):
     -------
     - clf_report (df): classifcation report from sklearn
     '''
-    print(class_names, len(class_names), Counter(all_labels).keys(), Counter(all_preds).keys())
     # sklearn classifcation report outputs metrics in dictionary
     clf_report = classification_report(all_labels, all_preds,
                                        digits=3, target_names=class_names, output_dict=True)

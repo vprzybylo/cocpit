@@ -141,17 +141,17 @@ def _build_ML():
     '''
     print('training...')
 
-    params = {'kfold': 5,  # set to 0 to turn off kfold cross validation
+    params = {'kfold': 0,  # set to 0 to turn off kfold cross validation
               'masked': mask,
               'batch_size': [64],
               'max_epochs': [20],
               'class_names': ['aggs','blank','budding','bullets',
                               'columns','compact_irregs',
                               'fragments','plates','rimed','spheres'],
-              #'model_names': ['vgg16']}
-              'model_names': ['efficient', 'resnet18', 'resnet34',
-                             'resnet152', 'alexnet', 'vgg16',
-                             'vgg19', 'densenet169', 'densenet201']}
+              'model_names': ['vgg16']}
+              #'model_names': ['efficient', 'resnet18', 'resnet34',
+              #               'resnet152', 'alexnet', 'vgg16',
+              #               'vgg19', 'densenet169', 'densenet201']}
 
     if mask:
         params['data_dir'] = '/data/data/cpi_data/training_datasets/' + \
@@ -189,9 +189,9 @@ def _build_ML():
                        '_k' + str(params['kfold']) + '_' + \
                        str(len(params['model_names'])) + '.csv'
 
-    log_exp = True  # log experiment to comet
-    save_acc = True
-    save_model = True
+    log_exp = False  # log experiment to comet
+    save_acc = False
+    save_model = False
     valid_size = 0.2  # 80-20 split training-val
     num_classes = len(params['class_names'])
 
@@ -219,9 +219,10 @@ def _ice_classification():
         open_dir = 'cpi_data/campaigns/'+campaign+'/single_imgs_masked/'
     else:
         open_dir = 'cpi_data/campaigns/'+campaign+'/single_imgs/'
-
+    
+    # load ML model for predictions
     model=torch.load('/data/data/saved_models/no_mask/e20_bs128_k0_1models_v1.0.0_removed_vgg19')
-
+    # load df of quality ice particles to make predictions on
     df_good_ice = pd.read_pickle('final_databases_v2/'+
                                  masked_dir+'df_good_ice_'+campaign+'.pkl')
 
@@ -275,7 +276,7 @@ if __name__ == "__main__":
 
     # run the category classification on quality images of ice particles
     ice_classification = False
-    campaigns=['CRYSTAL_FACE_NASA']
+    campaigns=['MC3E']
     # campaigns=['ARM','ATTREX','CRYSTAL_FACE_NASA','CRYSTAL_FACE_UND',\
     #           'ICE_L','IPHEX','MACPEX','MC3E','MIDCIX','MPACE','POSIDON']
 
@@ -286,7 +287,7 @@ if __name__ == "__main__":
     else:
         masked_dir = 'no_mask/'
 
-    num_cpus = 28  # workers for parallelization
+    num_cpus = 2  # workers for parallelization
     num_workers = 20  # workers for data loaders
     for campaign in campaigns:
         print(campaign)

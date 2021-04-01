@@ -140,7 +140,7 @@ def main(params, log_exp, model_savename, acc_savename_train,
          masked_dir, valid_size, num_workers):
     
     num_classes = len(params['class_names'])
-    
+    print('classes: ', params['class_names'])
     if log_exp:
         experiment = Experiment(api_key="6tGmiuOfY08czs2b4SHaHI2hw",
                         project_name="cocpit", workspace="vprzybylo")
@@ -165,7 +165,7 @@ def main(params, log_exp, model_savename, acc_savename_train,
                     skf = StratifiedKFold(n_splits=params['kfold'])
                     for i, (train_indices, val_indices) in enumerate(skf.split(data.imgs, data.targets)):
                         print('KFOLD iteration: ', i)
-                        #train_val_composition(data, train_indices, val_indices)
+                        train_val_composition(data, train_indices, val_indices)
 
                         # DATALOADERS
                         train_loader, val_loader = \
@@ -175,7 +175,6 @@ def main(params, log_exp, model_savename, acc_savename_train,
                                                             batch_size,
                                                             save_model,
                                                             val_loader_savename,
-                                                            masked_dir,
                                                             class_names=params['class_names'],
                                                             data_dir=params['data_dir'],
                                                             num_workers=num_workers,
@@ -204,10 +203,12 @@ def main(params, log_exp, model_savename, acc_savename_train,
                 else:  # no kfold
                     i=0  # kfold false for savename
                     total_size = len(data)
+                    print(data.__dict__.keys())
                     # randomly split indices for training and validation indices according to valid_size
+                    # shuffled by default before splitting
                     train_indices, val_indices = train_test_split(list(range(total_size)),
-                                                          test_size=valid_size)
-                    #train_val_composition(data, train_indices, val_indices)
+                                                          test_size=valid_size, stratify=data.targets)
+                    train_val_composition(data, train_indices, val_indices)
         
                     #DATALOADERS
                     train_loader, val_loader = \
@@ -217,7 +218,6 @@ def main(params, log_exp, model_savename, acc_savename_train,
                                                         batch_size,
                                                         save_model,
                                                         val_loader_savename,
-                                                        masked_dir,
                                                         class_names=params['class_names'],
                                                         data_dir=params['data_dir'],
                                                         num_workers=num_workers,
