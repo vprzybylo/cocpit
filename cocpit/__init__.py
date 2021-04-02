@@ -59,6 +59,14 @@ data_loaders:
     
 calculate_metrics:
     - outputs batch and epoch accuracy and losses to .csv's
+    
+classification_metrics:
+    - calculation and plotting functions for reporting performance metrics from sklearn
+    - precision, recall, f1, etc
+    
+plot:
+    - plotting scripts for publication
+    
 """
 
 import cocpit.data_loaders

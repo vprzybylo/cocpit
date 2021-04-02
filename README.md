@@ -63,7 +63,7 @@
 
 ## About
 
-A tool for the characterization of cloud particle images from the (<a href="http://www.specinc.com/cloud-particle-imager">CPI</a>) probe.  Three models are featured: one to separate cloud drops (liquid) from all other images, one to separate quality images of ice crystals from blurry, fragmented, and blank images, and the last to classify frozen hydrometeors from the remaining good images.  Probe images are classified into 11 categories (aggregates, blurry, budding rosettes, bullet rosettes, columns, compact irregulars, fragments, needles, plates, rimed aggregates and rimed columns) using a convolutional neural network.
+A tool for the characterization of cloud particle images from the (<a href="http://www.specinc.com/cloud-particle-imager">CPI</a>) probe.  Three models are featured: the SPHERES Model (logistic regression) to separate cloud drops (liquid) from all other images, the SIFT Model (logistic regression) to separate quality images of ice crystals from blurry, fragmented, and blank images, and a convolutional neural netowrk to classify frozen hydrometeors from the remaining good images.  Probe images are classified into 10 categories: aggregates, blank images, blurry or fragmented, budding rosettes, bullet rosettes, columns, compact irregulars, plates, rimed particles, and spheres.
 
 
 ### Preprocessing

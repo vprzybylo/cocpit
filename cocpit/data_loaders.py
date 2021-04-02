@@ -21,7 +21,7 @@ class ImageFolderWithPaths(datasets.ImageFolder):
         # make a new tuple that includes original and the path
         tuple_with_path = (original_tuple + (path,))
         return (tuple_with_path, index)
-    
+
 def get_data(data_dir):
     '''
     Use the Pytorch ImageFolder class to read in root directory
@@ -61,7 +61,7 @@ def make_weights_for_balanced_classes(train_labels, nclasses):
     class_sample_counts = [0] * nclasses
     for target in train_labels:  
         class_sample_counts[target] += 1
-    print('counts per class (training): ', class_sample_counts)
+    #print('counts per class (training): ', class_sample_counts)
 
     class_weights = 1./torch.Tensor(class_sample_counts)
     train_samples_weights = [class_weights[class_id] for class_id in train_labels]

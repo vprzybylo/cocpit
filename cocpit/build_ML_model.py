@@ -14,7 +14,6 @@ import csv
 from collections import Counter
 import numpy as np
 import time
-from operator import add
 import os
 import pandas as pd
 import random
@@ -125,11 +124,8 @@ def initialize_model(model_name, num_classes,
 def train_val_composition(data, train_indices, val_indices):
     train_y = list(map(data.targets.__getitem__, train_indices))
     test_y = list(map(data.targets.__getitem__, val_indices))
-    print(len(train_y), len(test_y), len(train_y)+len(test_y))
-    print('train counts')
-    print(Counter(train_y))
-    print('val counts')
-    print(Counter(test_y))
+    print('train counts per class', Counter(train_y))
+    print('val counts per class', Counter(test_y))
 
 
 ########## MAIN ###########
@@ -161,11 +157,15 @@ def main(params, log_exp, model_savename, acc_savename_train,
 
                 #K-FOLD 
                 if params['kfold'] != 0:
+                    print('TOTAL FOLDS: ', params['kfold'])
+                    
                     # preserve the percentage of samples for each class with stratified
-                    skf = StratifiedKFold(n_splits=params['kfold'])
+                    skf = StratifiedKFold(n_splits=params['kfold'], shuffle=True, random_state=42)
                     for i, (train_indices, val_indices) in enumerate(skf.split(data.imgs, data.targets)):
                         print('KFOLD iteration: ', i)
                         train_val_composition(data, train_indices, val_indices)
+                        print('val', val_indices)
+                        print('train', train_indices)
 
                         # DATALOADERS
                         train_loader, val_loader = \
@@ -201,9 +201,10 @@ def main(params, log_exp, model_savename, acc_savename_train,
                         fold_report.append(clf_report)
                         
                 else:  # no kfold
+                    print('NO FOLDS')
                     i=0  # kfold false for savename
                     total_size = len(data)
-                    print(data.__dict__.keys())
+                    
                     # randomly split indices for training and validation indices according to valid_size
                     # shuffled by default before splitting
                     train_indices, val_indices = train_test_split(list(range(total_size)),

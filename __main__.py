@@ -141,17 +141,17 @@ def _build_ML():
     '''
     print('training...')
 
-    params = {'kfold': 0,  # set to 0 to turn off kfold cross validation
+    params = {'kfold': 5,  # set to 0 to turn off kfold cross validation
               'masked': mask,
               'batch_size': [64],
               'max_epochs': [20],
               'class_names': ['aggs','blank','budding','bullets',
                               'columns','compact_irregs',
                               'fragments','plates','rimed','spheres'],
-              'model_names': ['vgg16']}
-              #'model_names': ['efficient', 'resnet18', 'resnet34',
-              #               'resnet152', 'alexnet', 'vgg16',
-              #               'vgg19', 'densenet169', 'densenet201']}
+              #'model_names': ['efficient']}
+              'model_names': ['efficient', 'resnet18', 'resnet34',
+                             'resnet152', 'alexnet', 'vgg16',
+                             'vgg19', 'densenet169', 'densenet201']}
 
     if mask:
         params['data_dir'] = '/data/data/cpi_data/training_datasets/' + \
@@ -189,9 +189,9 @@ def _build_ML():
                        '_k' + str(params['kfold']) + '_' + \
                        str(len(params['model_names'])) + '.csv'
 
-    log_exp = False  # log experiment to comet
-    save_acc = False
-    save_model = False
+    log_exp = True  # log experiment to comet
+    save_acc = True
+    save_model = True
     valid_size = 0.2  # 80-20 split training-val
     num_classes = len(params['class_names'])
 

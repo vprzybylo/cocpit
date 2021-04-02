@@ -12,6 +12,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch import nn
 import copy
 import numpy as np
+from operator import add
 import time
 
 def set_dropout(model, drop_rate=0.1):
@@ -125,10 +126,10 @@ def train_model(experiment, log_exp, model, kfold, batch_size, class_names,
                
                 # uncomment to print cumulative sum of images per class, per batch
                 # ensures weighted sampler is working properly
-                #if phase == 'train':
-#                     label_cnts = label_counts(i, labels, num_classes)
-#                     label_cnts_total = list(map(add, label_cnts, label_cnts_total))
-#                     print(label_cnts_total)
+                #if phase == 'val':
+                #    label_cnts = label_counts(i, labels, num_classes)
+                #    label_cnts_total = list(map(add, label_cnts, label_cnts_total))
+                #    print(label_cnts_total)
 
                 inputs = inputs.to(device)
                 labels = labels.to(device)
@@ -192,11 +193,6 @@ def train_model(experiment, log_exp, model, kfold, batch_size, class_names,
                     clf_report = classification_metrics.metrics_report(all_labels, all_preds, class_names)
                     clf_report = classification_metrics.add_model_fold_to_clf_report(clf_report, kfold, model_name)
         
-        # see how many images are in the validation dataset from training
-#         indices_train = [item for sublist in indices_train for item in sublist]
-#         indices_val = [item for sublist in indices_val for item in sublist]
-#         print(len(set(indices_train).intersection(set(indices_val))))
-
         time_elapsed = time.time() - since_epoch
         print('Epoch complete in {:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))
 
