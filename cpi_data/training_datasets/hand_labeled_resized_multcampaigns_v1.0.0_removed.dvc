@@ -1,5 +1,5 @@
 outs:
-- md5: 70296aa2470bdb20bc8ec9b404f97175.dir
-  size: 5858588903
-  nfiles: 20725
+- md5: 6af8f496114f74e0183b0a36d4faf195.dir
+  size: 5589510212
+  nfiles: 26789
   path: hand_labeled_resized_multcampaigns_v1.0.0_removed
