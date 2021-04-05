@@ -93,21 +93,33 @@ def plot_confusion_matrix(all_preds, all_labels, class_names,
     plt.show()
     
     
-def plot_model_metric_folds(metric_filename, convert_names, save_name, save_fig=False):
+def plot_model_metric_folds(metric_filename, convert_names, save_name,
+                            plot_classes=True, save_fig=False):
     '''
     Plot each model w.r.t. precision, recall, and f1-score
     Params
     ------
     metric_filename (str): holds the csv file of metric scores per fold and model
+    convert_names (dict): keys: model names used during training, 
+                    values: model names used for publication (capitalized and hyphenated)
+    plot_classes (dict): keeps metrics in terms of each class from the
+                    clf report in the df for plotting
+                    if False, only use macro avg across classes
+    - save_name (str): 
+    - save_fig (bool): save the figure to file
     '''
     
     fig, ax = plt.subplots(figsize=(13,9))
     df = pd.read_csv(metric_filename)
     df.columns.values[0] = 'class'
     df.replace(convert_names, inplace=True)
-    df = df[(df['class'] == 'macro avg')]
-#     df = df[(df['class'] != 'accuracy') & (df['class'] != 'macro avg')
-#             & (df['class'] != 'weighted avg')]
+    
+    if plot_classes:
+        df = df[(df['class'] != 'accuracy') & (df['class'] != 'macro avg')
+                & (df['class'] != 'weighted avg')]
+    else:
+        df = df[(df['class'] == 'macro avg')]
+        
     dd=pd.melt(df, id_vars=['model'],
                value_vars=['precision', 'recall', 'f1-score'], var_name='Metric')
     g = sns.boxplot(x='model', y='value', data=dd, hue='Metric')
@@ -120,8 +132,10 @@ def plot_model_metric_folds(metric_filename, convert_names, save_name, save_fig=
 
     g.yaxis.grid(True, linestyle='-', which='major', color='lightgrey',
                alpha=0.5)
-    
-    g.set_ylim(0.6, 1.001)
+    if plot_classes:
+        g.set_ylim(0.70, 1.001)
+    else:
+        g.set_ylim(0.885, 1.001)
     if save_fig:
         plt.savefig(savename, dpi=300, bbox_inches='tight')
     plt.show()
@@ -137,6 +151,8 @@ def plot_classification_report_classes(clf_report, save_name, save_fig=False):
     ------
     - clf_report: classification report from sklearn 
         or from metrics_report() above
+    - save_name (str): 
+    - save_fig (bool): save the figure to file
     '''
     fig, ax = plt.subplots(figsize=(9,7))
     

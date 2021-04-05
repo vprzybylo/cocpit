@@ -141,53 +141,53 @@ def _build_ML():
     '''
     print('training...')
 
-    params = {'kfold': 5,  # set to 0 to turn off kfold cross validation
+    params = {'kfold': 0,  # set to 0 to turn off kfold cross validation
               'masked': mask,
               'batch_size': [64],
               'max_epochs': [20],
-              'class_names': ['aggs','blank','budding','bullets',
+              'class_names': ['aggs','budding','bullets',
                               'columns','compact_irregs',
                               'fragments','plates','rimed','spheres'],
-              #'model_names': ['efficient']}
-              'model_names': ['efficient', 'resnet18', 'resnet34',
-                             'resnet152', 'alexnet', 'vgg16',
-                             'vgg19', 'densenet169', 'densenet201']}
+              'model_names': ['vgg16']}
+              #'model_names': ['efficient', 'resnet18', 'resnet34',
+              #               'resnet152', 'alexnet', 'vgg16',
+              #               'vgg19', 'densenet169', 'densenet201']}
 
     if mask:
         params['data_dir'] = '/data/data/cpi_data/training_datasets/' + \
                              'hand_labeled_resized_multcampaigns_masked/'
     else:
         params['data_dir'] = '/data/data/cpi_data/training_datasets/' + \
-                             'hand_labeled_resized_multcampaigns_v1.0.0_removed/'
+                             'hand_labeled_resized_multcampaigns_v1.0.0_no_blank/'
 
     model_savename = '/data/data/saved_models/' + masked_dir + \
                      'e' + str(params['max_epochs'][0]) + \
                      '_bs' + str(params['batch_size'][0]) + \
                      '_k' + str(params['kfold']) + '_' + \
-                     str(len(params['model_names']))+'models_v1.0.0_removed'
+                     str(len(params['model_names']))+'models_v1.0.0_no_blank'
     val_loader_savename = '/data/data/saved_val_loaders/' + masked_dir + \
                      'val_loader' + str(params['max_epochs'][0]) + \
                      '_bs' + str(params['batch_size'][0]) + \
                      '_k' + str(params['kfold']) + '_' + \
-                     str(len(params['model_names']))+'models_v1.0.0_removed.pt'
+                     str(len(params['model_names']))+'models_v1.0.0_no_blank.pt'
     acc_savename_train = '/data/data/saved_accuracies/'+masked_dir + \
                          '/save_train_acc_loss_e' + \
                          str(params['max_epochs'][0]) + \
                          '_bs' + str(params['batch_size'][0]) + \
                          '_k' + str(params['kfold']) + '_' + \
-                         str(len(params['model_names']))+'models.csv'
+                         str(len(params['model_names']))+'models_no_blank.csv'
     acc_savename_val = '/data/data/saved_accuracies/' + masked_dir + \
                        '/save_val_acc_loss_e' + \
                        str(params['max_epochs'][0]) + \
                        '_bs' + str(params['batch_size'][0]) + \
                        '_k' + str(params['kfold']) + '_' + \
-                       str(len(params['model_names'])) + 'models.csv'
+                       str(len(params['model_names'])) + 'models_no_blank.csv'
     metrics_savename = '/data/data/saved_accuracies/' + masked_dir + \
                        '/save_val_metrics_e' + \
                        str(params['max_epochs'][0]) + \
                        '_bs' + str(params['batch_size'][0]) + \
                        '_k' + str(params['kfold']) + '_' + \
-                       str(len(params['model_names'])) + '.csv'
+                       str(len(params['model_names'])) + '_no_blank.csv'
 
     log_exp = True  # log experiment to comet
     save_acc = True
