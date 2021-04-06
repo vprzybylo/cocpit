@@ -89,7 +89,7 @@ def plot_confusion_matrix(all_preds, all_labels, class_names,
     heat.set_xticklabels(heat.get_xticklabels(), rotation=90, fontsize=18)
     heat.set_yticklabels(heat.get_xticklabels(), rotation=0, fontsize=18)
     if save_fig:
-        plt.savefig(savename, dpi=300, bbox_inches='tight')
+        plt.savefig(save_name, bbox_inches='tight')
     plt.show()
     
     
@@ -137,7 +137,7 @@ def plot_model_metric_folds(metric_filename, convert_names, save_name,
     else:
         g.set_ylim(0.885, 1.001)
     if save_fig:
-        plt.savefig(savename, dpi=300, bbox_inches='tight')
+        plt.savefig(save_name, dpi=300, bbox_inches='tight')
     plt.show()
     
     
@@ -156,9 +156,11 @@ def plot_classification_report_classes(clf_report, save_name, save_fig=False):
     '''
     fig, ax = plt.subplots(figsize=(9,7))
     
-    sns.heatmap(pd.DataFrame(clf_report).iloc[:-1, :].T, annot=True, cmap='coolwarm',
-            linecolor='k', linewidths=1, annot_kws={"fontsize": 14}, vmin=0.86, vmax=1.00)
     
+    clf_report = pd.DataFrame(clf_report).iloc[:-1, :].T  
+    
+    g = sns.heatmap(clf_report, annot=True, cmap='coolwarm',
+            linecolor='k', linewidths=1, annot_kws={"fontsize": 14}, vmin=0.90, vmax=1.00)
     if save_fig:
-        plt.savefig(savename, dpi=300, bbox_inches='tight')
+        plt.savefig(save_name, dpi=300, bbox_inches='tight')
     plt.show()

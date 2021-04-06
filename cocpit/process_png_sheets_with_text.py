@@ -1,4 +1,3 @@
-
 import copy
 import cv2
 from functools import partial
@@ -100,8 +99,8 @@ class Image:
         # self.thresh = cv2.threshold(gray, 252, 255, cv2.THRESH_BINARY_INV)[1]
 
         if show_threshold:
-           cv2.imshow('thresh', self.thresh)
-           cv2.waitKey(0)
+            cv2.imshow('thresh', self.thresh)
+            cv2.waitKey(0)
 
         # Applying cv2.connectedComponents()
         num_labels, labels = cv2.connectedComponents(self.thresh)
@@ -163,7 +162,9 @@ class Image:
         Finds, extracts, masks, and saves ROIs
 
         Parameters:
+            mask (bool): whether to mask the background of the particles
             show_cropped (bool): whether to show the ROI regions
+            show_mask (bool): if mask, whether to show the images before saving
             save_images (bool): whether to save the final masked images
         """
         (cnts, _) = cv2.findContours(self.thresh,

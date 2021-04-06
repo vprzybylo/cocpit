@@ -146,7 +146,6 @@ def main(params, log_exp, model_savename, acc_savename_train,
         experiment = None
     
     data = data_loaders.get_data(params['data_dir'])
-    fold_report = []  # holds classification metric performances per kfold
 
     for batch_size in params['batch_size']:
         print('BATCH SIZE: ', batch_size) 
@@ -158,7 +157,7 @@ def main(params, log_exp, model_savename, acc_savename_train,
                 #K-FOLD 
                 if params['kfold'] != 0:
                     print('TOTAL FOLDS: ', params['kfold'])
-                    
+                    fold_report = []  # holds classification metric performances per kfold
                     # preserve the percentage of samples for each class with stratified
                     skf = StratifiedKFold(n_splits=params['kfold'], shuffle=True, random_state=42)
                     for i, (train_indices, val_indices) in enumerate(skf.split(data.imgs, data.targets)):
@@ -199,7 +198,11 @@ def main(params, log_exp, model_savename, acc_savename_train,
                                                                 epochs,
                                                                 num_classes)
                         fold_report.append(clf_report)
-                        
+                    #concatenate all metric reports from each fold and model and write 
+                    concat_df = pd.concat(fold_report)
+                    if save_acc:
+                        concat_df.to_csv(metrics_savename, mode='a')
+
                 else:  # no kfold
                     print('NO FOLDS')
                     i=0  # kfold false for savename
@@ -242,11 +245,9 @@ def main(params, log_exp, model_savename, acc_savename_train,
                                                             dataloaders_dict,
                                                             epochs,
                                                             num_classes)
+                    if save_acc:
+                        clf_report.to_csv(metrics_savename, mode='a')
 
-    #concatenate all metric reports from each fold and model and write 
-    concat_df = pd.concat(fold_report)
-    if save_acc:
-        concat_df.to_csv(metrics_savename, mode='a')
                     
 if __name__ == '__main__':
 
