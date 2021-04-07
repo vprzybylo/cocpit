@@ -3,14 +3,15 @@ calculation and plotting functions for reporting performance metrics
 '''
 
 from cocpit.data_loaders import get_val_loader_predictions
+from collections import Counter
+import numpy as np
+import pandas as pd
 
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
+
 import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
 import seaborn as sns
-from collections import Counter
 
 def add_model_fold_to_clf_report(clf_report, fold, model_name):
     '''
@@ -66,7 +67,7 @@ def plot_confusion_matrix(all_preds, all_labels, class_names,
     - all_labels (list): actual labels (correctly hand labeled)
     - class_names (list): list of strings of classes
     - norm (bool): whether or not to normalize the conf matrix (for unbalanced classes)
-    - save_name (str): 
+    - save_name (str): plot filename to save as 
     - save_fig (bool): save the conf matrix to file
     '''        
     fig, ax = plt.subplots(figsize=(13,9))
@@ -102,10 +103,10 @@ def plot_model_metric_folds(metric_filename, convert_names, save_name,
     metric_filename (str): holds the csv file of metric scores per fold and model
     convert_names (dict): keys: model names used during training, 
                     values: model names used for publication (capitalized and hyphenated)
-    plot_classes (dict): keeps metrics in terms of each class from the
+    plot_classes (bool): keeps metrics in terms of each class from the
                     clf report in the df for plotting
                     if False, only use macro avg across classes
-    - save_name (str): 
+    - save_name (str): plot filename to save as 
     - save_fig (bool): save the figure to file
     '''
     
@@ -122,6 +123,7 @@ def plot_model_metric_folds(metric_filename, convert_names, save_name,
         
     dd=pd.melt(df, id_vars=['model'],
                value_vars=['precision', 'recall', 'f1-score'], var_name='Metric')
+    
     g = sns.boxplot(x='model', y='value', data=dd, hue='Metric')
     g.set_xticklabels(g.get_xticklabels(), rotation=90)
     g.set_xlabel("Model")
@@ -151,13 +153,15 @@ def plot_classification_report_classes(clf_report, save_name, save_fig=False):
     ------
     - clf_report: classification report from sklearn 
         or from metrics_report() above
-    - save_name (str): 
+    - save_name (str): plot filename to save as 
     - save_fig (bool): save the figure to file
     '''
     fig, ax = plt.subplots(figsize=(9,7))
     
     
+    
     clf_report = pd.DataFrame(clf_report).iloc[:-1, :].T  
+    print(clf_report[clf_report['model'] == 'vgg16'])
     
     g = sns.heatmap(clf_report, annot=True, cmap='coolwarm',
             linecolor='k', linewidths=1, annot_kws={"fontsize": 14}, vmin=0.90, vmax=1.00)

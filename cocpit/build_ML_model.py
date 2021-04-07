@@ -131,9 +131,8 @@ def train_val_composition(data, train_indices, val_indices):
 ########## MAIN ###########
 
 def main(params, log_exp, model_savename, acc_savename_train,
-         acc_savename_val, metrics_savename, 
-         save_acc, save_model, val_loader_savename,
-         masked_dir, valid_size, num_workers):
+         acc_savename_val, save_acc, save_model, metrics_savename,
+        valid_size, num_workers):
     
     num_classes = len(params['class_names'])
     print('classes: ', params['class_names'])
@@ -162,10 +161,13 @@ def main(params, log_exp, model_savename, acc_savename_train,
                     skf = StratifiedKFold(n_splits=params['kfold'], shuffle=True, random_state=42)
                     for i, (train_indices, val_indices) in enumerate(skf.split(data.imgs, data.targets)):
                         print('KFOLD iteration: ', i)
-                        train_val_composition(data, train_indices, val_indices)
-                        print('val', val_indices)
-                        print('train', train_indices)
-
+                        #train_val_composition(data, train_indices, val_indices)
+                        
+                        val_loader_savename = '/data/data/saved_val_loaders/no_mask/' + \
+                                             'val_loader' + str(params['max_epochs'][0]) + \
+                                             '_bs' + str(params['batch_size'][0]) + \
+                                             '_k' + str(i) + '_' + \
+                                             str(len(params['model_names']))+'models_vgg16_no_blank.pt'
                         # DATALOADERS
                         train_loader, val_loader = \
                             data_loaders.create_dataloaders(data,
@@ -211,9 +213,13 @@ def main(params, log_exp, model_savename, acc_savename_train,
                     # randomly split indices for training and validation indices according to valid_size
                     # shuffled by default before splitting
                     train_indices, val_indices = train_test_split(list(range(total_size)),
-                                                          test_size=valid_size, stratify=data.targets)
-                    train_val_composition(data, train_indices, val_indices)
-        
+                                                          test_size=valid_size)
+                    #train_val_composition(data, train_indices, val_indices)
+                    val_loader_savename = '/data/data/saved_val_loaders/no_mask/' + \
+                                             'val_loader' + str(params['max_epochs'][0]) + \
+                                             '_bs' + str(params['batch_size'][0]) + '_' + \
+                                             str(len(params['model_names']))+'models_v1.0.0_no_blank.pt'
+                     
                     #DATALOADERS
                     train_loader, val_loader = \
                         data_loaders.create_dataloaders(data,
@@ -253,6 +259,6 @@ if __name__ == '__main__':
 
     main(params, log_exp, model_savename,
          acc_savename_train, acc_savename_val,
-         metrics_savename, save_acc, save_model, masked_dir, 
+         metrics_savename, save_acc, save_model,
          valid_size, num_workers, num_classes)
     

@@ -6,32 +6,13 @@ Classification of Cloud Particle Imagery and Thermodynamics
 modules:
 -------
 
-preprocess_sheets:
+preprocess_sheets_with_text:
     - Extracts single images from the muliple images per frame or sheet
     - Saves single images to a directory for later creation of the database
 
 pic: 'particle image classification'
     - Holds the main Image class for image manipulation using opencv 
     and calculates particle geometrical attributes 
-
-build_spheres_sift:
-    - Trains and saves a logistic regression model on prelabeled data
-    to predict if an image is a sphere 
-
-    - If the image is not a sphere, another logistic regression model
-    is used to predict if an image represents quality ice or a 
-    blurry/broken/blank/fragmented image. This model is called 
-    SIFT or separate ice for training.
-
-    - In the case of quality ice, the amount of pixels touching the 
-    image border are taken into account (i.e., an alterable cutoff
-    measurement)
-
-spheres_sift_prediction: 
-    - Using the prebuilt logistic regression models, new predictions are 
-    made to the single image directiory from preprocess_sheets and 
-    a dataframe is created for quality ice images holding image/particle
-    attributes determined in pic.py
 
 build_ML_model:
     - Loads the prebuilt pytorch models
@@ -69,15 +50,12 @@ plot:
     
 """
 
+import cocpit.pic
+import cocpit.process_png_sheets_with_text
 import cocpit.data_loaders
 import cocpit.build_ML_model
 import cocpit.check_classifications
-import cocpit.build_spheres_sift
-import cocpit.pic
-import cocpit.process_png_sheets_with_text
-import cocpit.remove_duplicates
 import cocpit.run_ML_model
-import cocpit.spheres_sift_prediction
 import cocpit.train_ML_model
 import cocpit.classification_metrics
 
