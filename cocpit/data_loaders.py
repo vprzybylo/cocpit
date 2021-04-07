@@ -70,7 +70,7 @@ def make_weights_for_balanced_classes(train_labels, nclasses):
 
 
 def create_dataloaders(data, train_indices, val_indices, batch_size,
-                       save_model, val_loader_savename, masked_dir, 
+                       save_model, val_loader_savename, 
                        class_names, data_dir, num_workers=32,
                        shuffle=True, valid_size=0.2):
     '''
@@ -113,7 +113,7 @@ def create_dataloaders(data, train_indices, val_indices, batch_size,
                                                num_workers=num_workers,
                                                pin_memory=True)
 
-#     # Make an iterable of batches across the validation dataset
+    # Make an iterable of batches across the validation dataset
     val_loader = torch.utils.data.DataLoader(val_data,
                                              batch_size=batch_size,
                                              shuffle=shuffle,

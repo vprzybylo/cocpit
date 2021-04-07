@@ -14,13 +14,12 @@ More information is available at:
 - https://vprzybylo.github.io/COCPIT/
 """
 from comet_ml import Experiment
-
+import cocpit
 import os
 import time
 import pandas as pd
 import torch
 from sqlalchemy import create_engine
-import cocpit
 
 
 def _preprocess_sheets():
@@ -28,179 +27,99 @@ def _preprocess_sheets():
     separate individual images from sheets of images to be saved
     text can be on the sheet
     """
+    start_time = time.time()
     # change to ROI_PNGS if 'sheets' came from processing rois in IDL
     # sheets came from data archived pngs online
     open_dir = '/data/data/cpi_data/campaigns/'+campaign+'/sheets/'
     save_images=True
-    print('save images', save_images)
+    print('save images: ', save_images)
+    
+    # resize images to desired_size
+    desired_size = 1000
+    cutoff = 10
+    print('cutoff percentage allowed: ', cutoff)
 
-    if mask:
-        save_dir = '/data/data/cpi_data/campaigns/'+campaign+'/single_imgs_masked/'
-    else:
-        save_dir = '/data/data/cpi_data/campaigns/'+campaign+'/single_imgs/'
+    save_dir = '/data/data/cpi_data/campaigns/'+campaign+'/single_imgs/'
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
+        
+    outname = 'df_'+campaign+'.csv'
+    outdir = '/data/data/final_databases_test/no_mask/'
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+    save_df = os.path.join(outdir, outname)    
 
     cocpit.process_png_sheets_with_text.main(open_dir,
-                                             mask,
+                                             cutoff,
                                              save_dir,
                                              num_cpus,
                                              save_images,
+                                             save_df=save_df,
                                              show_original=False,
                                              show_dilate=False,
                                              show_cropped=False,
                                              show_mask=False)
+    
 
+    print('time to preprocess sheets: %.2f' %(time.time()-start_time))
 
-def _build_spheres_sift():
-    """
-    creates spheres and sift model from prelabeled datasets
-    """
-
-    print('building spheres and sift models...')
-    # resize images to desired_size
-    desired_size = 1000
-
-    # paths for opening training datasets
-    base_dir='/data/data/cpi_data/training_datasets/'
-    open_dirs_spheres = [base_dir+'SPHERES/good/', base_dir+'SPHERES/bad/']
-    open_dirs_sift = [base_dir+'SIFT/good/',base_dir+'SIFT/bad/']
-
-    # paths for saving df's, logistic regression models, and transformations
-    save_df_spheres = '/data/data/saved_models/'+masked_dir+'/spheres_df.pkl'
-    save_df_sift = '/data/data/saved_models/'+masked_dir+'/sift_df.pkl'
-    # save final logistic regression models
-    save_model_spheres = '/data/data/saved_models/'+masked_dir+'/spheres_lg.pkl'
-    save_model_sift = '/data/data/saved_models/'+masked_dir+'/sift_lg.pkl'
-    # save transformations
-    save_scaler_spheres = '/data/data/saved_models/'+masked_dir+'/stand_scaler_spheres.pkl'
-    save_scaler_sift = '/data/data/saved_models/'+masked_dir+'/stand_scaler_sift.pkl'
-
-    cocpit.build_spheres_sift.main(mask, num_cpus,
-                                   desired_size,
-                                   open_dirs_spheres,
-                                   open_dirs_sift,
-                                   save_df_spheres, save_df_sift,
-                                   save_model_spheres,
-                                   save_model_sift,
-                                   save_scaler_spheres,
-                                   save_scaler_sift)
-
-
-def _make_predictions():
-    '''
-    makes new predictions on campaign data for liquid/ice and good/bad quality
-    returns a dataframe of quality ice particles including:
-    -filename
-    -particle attributes
-    -binary prediction
-    '''
-    print('counting liquid drops and returning a dataframe'+
-          'with quality ice images...')
-
-    start_time = time.time()
-    # resize images to desired_size
-    desired_size = 1000
-    cutoff = 10
-
-    if mask:
-        open_dir = '/data/data/cpi_data/campaigns/'+campaign+'/single_imgs_masked/'
-    else:
-        open_dir = '/data/data/cpi_data/campaigns/'+campaign+'/single_imgs/'
-
-    model_path_spheres = '/data/data/saved_models/'+masked_dir+'/spheres_lg.pkl'
-    model_path_sift = '/data/data/saved_models/'+masked_dir+'/sift_lg.pkl'
-    load_scaler_spheres = '/data/data/saved_models/'+masked_dir+'/stand_scaler_spheres.pkl'
-    load_scaler_sift = '/data/data/saved_models/'+masked_dir+'/stand_scaler_sift.pkl'
-
-    df_nospheres = cocpit.spheres_sift_prediction.make_prediction_spheres(mask, num_cpus,
-                                                                          desired_size,
-                                                                          cutoff,
-                                                                          open_dir,
-                                                                          model_path_spheres,
-                                                                          load_scaler_spheres)
-
-    df_good_ice = cocpit.spheres_sift_prediction.make_prediction_sift(df_nospheres,
-                                                                      model_path_sift,
-                                                                      load_scaler_sift)
-    print('time to create quality ice df %.2f' %(time.time()-start_time))
-    print('removing duplicates...')
-
-    len_before = len(df_good_ice)
-    df_good_ice = df_good_ice.drop_duplicates(subset=df_good_ice.columns.difference(['filename']),
-                                              keep='first')
-    print('removed %d duplicates' %(len_before - len(df_good_ice)))
-
-    df_good_ice.to_pickle('final_databases_v2/'+
-                          masked_dir+'/df_good_ice_'+campaign+'.pkl')
-
-
+    
 def _build_ML():
     '''
-    train ML models. params holds some hyperparams
+    train ML models
     '''
     print('training...')
 
     params = {'kfold': 5,  # set to 0 to turn off kfold cross validation
-              'masked': mask,
               'batch_size': [64],
               'max_epochs': [20],
-              'class_names': ['aggs','blank','budding','bullets',
+              'class_names': ['aggs','budding','bullets',
                               'columns','compact_irregs',
                               'fragments','plates','rimed','spheres'],
-              #'model_names': ['vgg16']}
-              'model_names': ['efficient', 'resnet18', 'resnet34',
-                             'resnet152', 'alexnet', 'vgg16',
-                             'vgg19', 'densenet169', 'densenet201']}
+              'model_names': ['vgg16']}
+              #'model_names': ['efficient', 'resnet18', 'resnet34',
+              #               'resnet152', 'alexnet', 'vgg16',
+              #               'vgg19', 'densenet169', 'densenet201']}
 
-    if mask:
-        params['data_dir'] = '/data/data/cpi_data/training_datasets/' + \
-                             'hand_labeled_resized_multcampaigns_masked/'
-    else:
-        params['data_dir'] = '/data/data/cpi_data/training_datasets/' + \
-                             'hand_labeled_resized_multcampaigns_v1.0.0_removed/'
 
-    model_savename = '/data/data/saved_models/' + masked_dir + \
+    params['data_dir'] = '/data/data/cpi_data/training_datasets/' + \
+                             'hand_labeled_resized_multcampaigns_v1.0.0_no_blank/'
+
+    model_savename = '/data/data/saved_models/no_mask/' + \
                      'e' + str(params['max_epochs'][0]) + \
                      '_bs' + str(params['batch_size'][0]) + \
                      '_k' + str(params['kfold']) + '_' + \
-                     str(len(params['model_names']))+'models_v1.0.0_removed'
-    val_loader_savename = '/data/data/saved_val_loaders/' + masked_dir + \
-                     'val_loader' + str(params['max_epochs'][0]) + \
-                     '_bs' + str(params['batch_size'][0]) + \
-                     '_k' + str(params['kfold']) + '_' + \
-                     str(len(params['model_names']))+'models_v1.0.0_removed.pt'
-    acc_savename_train = '/data/data/saved_accuracies/'+masked_dir + \
+                     str(len(params['model_names']))+'models_no_blank'
+    acc_savename_train = '/data/data/saved_accuracies/no_mask/' + \
                          '/save_train_acc_loss_e' + \
                          str(params['max_epochs'][0]) + \
                          '_bs' + str(params['batch_size'][0]) + \
                          '_k' + str(params['kfold']) + '_' + \
-                         str(len(params['model_names']))+'models.csv'
-    acc_savename_val = '/data/data/saved_accuracies/' + masked_dir + \
+                         str(len(params['model_names']))+'models_no_blank.csv'
+    acc_savename_val = '/data/data/saved_accuracies/no_mask/' + \
                        '/save_val_acc_loss_e' + \
                        str(params['max_epochs'][0]) + \
                        '_bs' + str(params['batch_size'][0]) + \
                        '_k' + str(params['kfold']) + '_' + \
-                       str(len(params['model_names'])) + 'models.csv'
-    metrics_savename = '/data/data/saved_accuracies/' + masked_dir + \
+                       str(len(params['model_names'])) + 'models_no_blank.csv'
+    metrics_savename = '/data/data/saved_accuracies/no_mask/'+ \
                        '/save_val_metrics_e' + \
                        str(params['max_epochs'][0]) + \
                        '_bs' + str(params['batch_size'][0]) + \
                        '_k' + str(params['kfold']) + '_' + \
-                       str(len(params['model_names'])) + '.csv'
+                       str(len(params['model_names'])) + '_no_blank.csv'
+                            
 
-    log_exp = True  # log experiment to comet
+    log_exp = False  # log experiment to comet
     save_acc = True
     save_model = True
     valid_size = 0.2  # 80-20 split training-val
     num_classes = len(params['class_names'])
 
-    cocpit.build_ML_model.main(params, log_exp, model_savename,
-                               acc_savename_train, acc_savename_val, metrics_savename,
-                               save_acc, save_model, val_loader_savename,
-                               masked_dir, valid_size,
-                               num_workers)
-
+    cocpit.build_ML_model.main(params, log_exp, model_savename, 
+                               acc_savename_train, acc_savename_val,
+                               save_acc, save_model, metrics_savename,
+                               valid_size, num_workers)
 
 def _ice_classification():
     '''
@@ -209,34 +128,26 @@ def _ice_classification():
     print('running ML model to classify ice...')
 
     start_time = time.time()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    class_names=['agg','blank','budding','bullet',
+    class_names=['agg','budding','bullet',
                  'column','compact irregular','fragment',
                  'plate','rimed','sphere']
 
-    if mask:
-        open_dir = 'cpi_data/campaigns/'+campaign+'/single_imgs_masked/'
-    else:
-        open_dir = 'cpi_data/campaigns/'+campaign+'/single_imgs/'
+    open_dir = 'cpi_data/campaigns/'+campaign+'/single_imgs/'
+    
+    # load ML model for predictions
+    model=torch.load('/data/data/saved_models/no_mask/e20_bs64_k5_9models_v1.0.0_no_blank_vgg16')
+    
+    # load df of quality ice particles to make predictions on
+    df = pd.read_csv('final_databases_v2/no_mask/df_'+campaign+'.csv')
 
-    model=torch.load('/data/data/saved_models/no_mask/e20_bs128_k0_1models_v1.0.0_removed_vgg19')
-
-    df_good_ice = pd.read_pickle('final_databases_v2/'+
-                                 masked_dir+'df_good_ice_'+campaign+'.pkl')
-
-    df = cocpit.run_ML_model.main(df_good_ice,
-                                  open_dir,
-                                  device,
-                                  class_names,
-                                  model,
-                                  num_workers)
+    df = cocpit.run_ML_model.main(df, open_dir, class_names,
+                                  model, num_workers)
 
     # write database to file that holds predictions
-    engine = create_engine('sqlite:///final_databases_v3/' +
-                           masked_dir + '/' + campaign+'.db', echo=False)
+    engine = create_engine('sqlite:///final_databases_v3/no_mask/' + campaign+'.db', echo=False)
     df.to_sql(name=campaign, con=engine, index=False, if_exists='replace')
-    df.to_csv('final_databases_v3/' + masked_dir + '/' + campaign+'.csv', index=False)
+    df.to_csv('final_databases_v3/no_mask/' + campaign+'.csv', index=False)
 
     print('done classifying all images!')
     print('time to classify ice = %.2f seconds' %(time.time() - start_time))
@@ -246,12 +157,6 @@ def main():
 
     if preprocess_sheets:
         _preprocess_sheets()
-
-    if build_spheres_sift:
-        _build_spheres_sift()
-
-    if make_predictions:
-        _make_predictions()
 
     if build_ML:
         _build_ML()
@@ -263,30 +168,16 @@ if __name__ == "__main__":
     # extract each image from sheet of images
     preprocess_sheets = False
 
-    # creates and saves spheres and sift model from prelabeled datasets
-    build_spheres_sift = False
-
-    # makes predictions for spheres/sift on new
-    # data and return quality ice dataframe
-    make_predictions = False
-
     # create CNN
     build_ML = True
 
     # run the category classification on quality images of ice particles
     ice_classification = False
-    campaigns=['CRYSTAL_FACE_NASA']
+    campaigns=['MC3E']
     # campaigns=['ARM','ATTREX','CRYSTAL_FACE_NASA','CRYSTAL_FACE_UND',\
     #           'ICE_L','IPHEX','MACPEX','MC3E','MIDCIX','MPACE','POSIDON']
 
-    mask=False  # mask background?
-    print('masked background = ', mask)
-    if mask:
-        masked_dir = 'masked/'
-    else:
-        masked_dir = 'no_mask/'
-
-    num_cpus = 28  # workers for parallelization
+    num_cpus = 2  # workers for parallelization
     num_workers = 20  # workers for data loaders
     for campaign in campaigns:
         print(campaign)

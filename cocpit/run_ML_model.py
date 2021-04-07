@@ -2,17 +2,19 @@
 classifies good ice images:
 transforms, makes predictions, and appends classification to dataframe 
 """
-from torchvision import transforms
-from torch.utils.data import Dataset
-import torch
 import numpy as np
-from PIL import Image
-import torch.nn.functional as F
 import pandas as pd
-from collections import defaultdict
 import os
 import cv2
+from PIL import Image
+from collections import defaultdict
 from twilio.rest import Client
+
+import torch
+from torchvision import transforms
+from torch.utils.data import Dataset
+import torch.nn.functional as F
+
 
 class TestDataSet(Dataset):
     def __init__(self, open_dir, file_list):
@@ -89,19 +91,22 @@ def send_message():
     message.sid
         
 
-def main(df, open_dir, device, class_names, model, num_workers):
+def main(df, open_dir, class_names, model, num_workers):
     pd.options.mode.chained_assignment = None  # default='warn'
 
     testdata = TestDataSet(open_dir, file_list = df['filename'])
 
     test_loader = torch.utils.data.DataLoader(testdata, batch_size=100, shuffle=False, 
                                num_workers=num_workers, drop_last=False)
-    
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     d, top_class = predict(test_loader, class_names, model, device)
 
     for column in sorted(d.keys()):
         df[column] = d[column]
+    
     df['classification'] = top_class
-    df = df[(df['classification'] != 'fragment') & (df['classification'] != 'blurry')]
+    df = df[(df['classification'] != 'fragment') & (df['classification'] != 'sphere')]
+    
     send_message();
+    
     return df                   
