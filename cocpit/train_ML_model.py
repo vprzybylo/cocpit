@@ -76,7 +76,7 @@ def label_counts(i, labels, num_classes):
 def train_model(experiment, log_exp, model, kfold, batch_size, class_names,
                 model_name, model_savename, acc_savename_train, acc_savename_val,
                 save_acc, save_model, dataloaders_dict, epochs,
-                num_classes, clf_report=None):
+                num_classes, valid_size=0.2, clf_report=None):
                                     
     set_dropout(model, drop_rate=0.0)
     
@@ -94,6 +94,7 @@ def train_model(experiment, log_exp, model, kfold, batch_size, class_names,
     
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc_val = 0.0
+    best_acc_train = 0.0
     since_total = time.time()
     
     for epoch in range(epochs):
@@ -104,7 +105,12 @@ def train_model(experiment, log_exp, model, kfold, batch_size, class_names,
         # Each epoch has a training and validation phase
         indices_train = []
         indices_val = []
-        for phase in ['train', 'val']:
+        if valid_size < 0.1:
+            phases = ['train']
+        else:
+            phases = ['train', 'val']
+            
+        for phase in phases:
             print('Phase: {}'.format(phase))
             totals_train = 0
             totals_val = 0
@@ -172,6 +178,12 @@ def train_model(experiment, log_exp, model, kfold, batch_size, class_names,
                                                 scheduler, log_exp, save_acc,
                                                 acc_savename_train, model_name,
                                                 epoch, epochs, kfold, batch_size)
+                
+                if valid_size < 0.01 and epoch_acc_train > best_acc_train and save_model:
+                    best_acc_train = epoch_acc_train
+                    #save/load best model weights
+                    torch.save(model, model_savename+'_'+model_name)
+                
 
             else: 
                 epoch_loss_val, epoch_acc_val = \
@@ -180,11 +192,10 @@ def train_model(experiment, log_exp, model, kfold, batch_size, class_names,
                                               save_acc, acc_savename_val, model_name,
                                               epoch, epochs, kfold, batch_size)
                 #deep copy the model
-                if epoch_acc_val > best_acc_val:
+                if epoch_acc_val > best_acc_val and save_model:
                     best_acc_val = epoch_acc_val
                     #save/load best model weights
-                    if save_model:
-                        torch.save(model, model_savename+'_'+model_name)
+                    torch.save(model, model_savename+'_'+model_name)
                 
                 if epoch == epochs-1:
                     # flatten from appending in batches

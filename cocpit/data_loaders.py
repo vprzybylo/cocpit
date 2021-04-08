@@ -71,8 +71,9 @@ def make_weights_for_balanced_classes(train_labels, nclasses):
 
 def create_dataloaders(data, train_indices, val_indices, batch_size,
                        save_model, val_loader_savename, 
-                       class_names, data_dir, num_workers=32,
-                       shuffle=True, valid_size=0.2):
+                       class_names, data_dir, valid_size=0.2, num_workers=20,
+                       shuffle=True):
+
     '''
     get dataloaders
     Params
@@ -108,23 +109,29 @@ def create_dataloaders(data, train_indices, val_indices, batch_size,
     train_sampler = sampler.WeightedRandomSampler(train_samples_weights,
                                                   len(train_samples_weights),
                                                   replacement=True)
+    
     # Make an iterable of batches across the training dataset
     train_loader = torch.utils.data.DataLoader(train_data,
                                                batch_size=batch_size,        
                                                sampler=train_sampler,
                                                num_workers=num_workers,
                                                pin_memory=True)
+    
+    if valid_size < 0.01:
+        # use all data for training - no val loader
+        return train_loader, None
+    else:
 
-    # Make an iterable of batches across the validation dataset
-    val_loader = torch.utils.data.DataLoader(val_data,
-                                             batch_size=batch_size,
-                                             shuffle=shuffle,
-                                             num_workers=num_workers,
-                                             pin_memory=True)
-    if save_model:
-        torch.save(val_data, val_loader_savename)
+        # Make an iterable of batches across the validation dataset
+        val_loader = torch.utils.data.DataLoader(val_data,
+                                                 batch_size=batch_size,
+                                                 shuffle=shuffle,
+                                                 num_workers=num_workers,
+                                                 pin_memory=True)
+        if save_model:
+            torch.save(val_data, val_loader_savename)
 
-    return train_loader, val_loader
+        return train_loader, val_loader
 
 
 def get_test_loader(datadir,

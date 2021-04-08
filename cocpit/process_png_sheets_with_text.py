@@ -14,11 +14,16 @@ class Image:
     Attributes:
         file (str): file [including path] to sheet with cpi images
     """
-    def __init__(self, open_dir, file, save_dir, save_df):
+    def __init__(self, open_dir, file, save_dir):
         self.open_dir = open_dir
         self.file = file
+        print(open_dir, file)
         self.save_dir = save_dir
-        self.save_df = save_df
+        self.files = []
+        self.widths = []
+        self.heights = []
+        self.cutoffs = []
+        
 
     def read_image(self, show_original):
         """
@@ -27,6 +32,7 @@ class Image:
         Parameters:
             show_original (bool): whether to show the original sheet in an opencv window
         """
+        
         self.image = cv2.imread(self.open_dir+self.file)
         # make a copy so that image can be altered and processed
         # image_og holds the original sheet to extract contours from
@@ -163,11 +169,7 @@ class Image:
             save_images (bool): whether to save the final images
         """
         
-        files = [] # only save the filenames to csv that pass the following criteria
-        widths = []
-        heights = []
-        cutoffs = []
-        
+
         (cnts, _) = cv2.findContours(self.thresh,
                                 cv2.RETR_EXTERNAL,
                                 cv2.CHAIN_APPROX_SIMPLE)
@@ -201,16 +203,16 @@ class Image:
                 if cnts and self.cutoff() < cutoff:  # make sure the thresholding picks up a contour in the rectangle
                     
                     # get cutoff of each particle and append to list
-                    cutoffs.append(self.cutoff())
+                    self.cutoffs.append(self.cutoff())
 
                     # resize the cropped images to be the same size for CNN
                     cropped = cv2.resize(cropped, (1000,1000), interpolation = cv2.INTER_AREA)
                     
                     self.file_out=self.file[:-4]+'_'+str(i)+'.png'
                     
-                    files.append(self.file_out)
-                    widths.append(self.width)
-                    heights.append(self.height)
+                    self.files.append(self.file_out)
+                    self.widths.append(self.width)
+                    self.heights.append(self.height)
                     
                     self.largest_contour(cnts)
 
@@ -220,8 +222,6 @@ class Image:
                             os.makedirs(self.save_dir)
                         cv2.imwrite(self.save_dir+self.file_out, cropped)
                         
-        return files, widths, heights, cutoffs
-
     def run(self, cutoff, show_original,
             show_dilate, show_cropped, save_images):
         
@@ -232,13 +232,10 @@ class Image:
         self.dilate(show_dilate)
         self.remove_text()
         #self.connected_component_label(show_threshold, show_rois)
-        files, widths, heights, cutoffs = self.extract_contours(cutoff,
-                                                                 show_cropped,
-                                                                 save_images)
-        
-        return files, widths, heights, cutoffs
+        self.extract_contours(cutoff,show_cropped,save_images)
+        return self.files, self.widths, self.heights, self.cutoffs
 
-def make_df(files, widths, heights, cutoffs):
+def make_df(save_df, files, widths, heights, cutoffs):
         """
         write files, original image widths, heights, and % cutoff
         to csv file per campaign
@@ -247,11 +244,13 @@ def make_df(files, widths, heights, cutoffs):
         df_dict = {'filename': files, 'width': widths,
                   'height': heights, 'cutoff': cutoffs_formatted}
         df = pd.DataFrame(df_dict)
-        len_before = len(df)
-        df.drop_duplicates(subset=['width', 'height','cutoff'], keep='first', inplace=True)
-        print('removed %d duplicates' %(len_before - len(df)))
+        print(len(df))
+
+#         len_before = len(df)
+#         df.drop_duplicates(subset=['width', 'height','cutoff'], keep='first', inplace=True)
+#         print('removed %d duplicates' %(len_before - len(df)))
     
-        df.to_csv(self.save_df)
+        df.to_csv(save_df)
 
 def send_message():    
     account_sid = "AC6034e88973d880bf2244f62eec6fe356"
@@ -270,17 +269,26 @@ def main(open_dir, cutoff, save_dir, num_cpus,
     instances=[]
     files = os.listdir(open_dir)
     for file in files:
-        img = Image(open_dir, file, save_dir, save_df)
+        img = Image(open_dir, file, save_dir)
         #img.main()
         instances.append(img)
+    
+    results = p.map(partial(Image.run, 
+                  cutoff=cutoff,
+                  show_original=show_original,
+                  show_dilate=show_dilate,
+                  show_cropped=show_cropped,
+                  save_images=save_images), instances)
 
-    files, widths, heights, cutoffs = p.map(partial(Image.run, 
-                                          cutoff=cutoff,
-                                          show_original=show_original,
-                                          show_dilate=show_dilate,
-                                          show_cropped=show_cropped,
-                                          save_images=save_images), instances)
     p.close()
     p.join()
-    make_df(files, widths, heights, cutoffs)
+
+    results = np.array(results, dtype=object)
+
+    files = np.concatenate(results[:,0])
+    widths = np.concatenate(results[:,1])
+    heights = np.concatenate(results[:,2])
+    cutoffs = np.concatenate(results[:,3])
+    
+    make_df(save_df, files, widths, heights, cutoffs)
     send_message()

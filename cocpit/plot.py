@@ -54,11 +54,12 @@ def plot_train_val_acc_loss(model_names, num_models, num_epochs, train_accs, col
                     c=colors[new_names[i]], marker='o', s=35, label=new_names[i])
     plt.ylabel("Accuracy [%]")
     plt.ylim(40,100)
-    plt.xlim(1,num_epochs)
-    ax1.legend(title='Model type:', loc='best', prop={'size': 12}, ncol=2)
+    plt.xlim(0,num_epochs+1)
+    ax1.legend(title='Model type:', loc='lower right', prop={'size': 12}, ncol=2)
     #ax1.axes.xaxis.set_ticks([])
     ax1.yaxis.set_ticks_position('both')
     ax1.minorticks_on()
+    plt.xticks(np.arange(0,num_epochs+1, 5))
     ax1.tick_params(axis='y', which='minor', direction='out')
     #ax1.xaxis.set_tick_params(which='minor', bottom=False)
     ax1.title.set_text('Training Data')
@@ -66,10 +67,12 @@ def plot_train_val_acc_loss(model_names, num_models, num_epochs, train_accs, col
     #fig = plt.figure(figsize=(20,5))
     ax2 = plt.subplot(2, 2, 2)
     for i in range(num_models):
-        ax2.scatter(np.arange(1,(num_epochs+1)), [i*100 for i in val_accs[i,:]], c=colors[new_names[i]],
+        ax2.scatter(np.arange(1,(num_epochs+1)),
+                    [i*100 for i in val_accs[i,:]], c=colors[new_names[i]],
                     marker='*', s=55, label=model_names[i])
     plt.ylim(40,100)
-    plt.xlim(1,num_epochs)
+    plt.xlim(0,num_epochs+1)
+    plt.xticks(np.arange(0,num_epochs+1, 5))
     #ax2.legend(title='Model type:', loc='best', prop={'size': 10})
 #     ax2.axes.yaxis.set_ticks([])
 #     ax2.axes.xaxis.set_ticks([])
@@ -83,11 +86,12 @@ def plot_train_val_acc_loss(model_names, num_models, num_epochs, train_accs, col
     for i in range(num_models):
         ax3.scatter(np.arange(1,(num_epochs+1)), [i for i in train_losses[i,:]],
                     c=colors[new_names[i]], marker='o', s=35, label=model_names[i])
-    plt.xlabel("Epochs")
+    plt.xlabel("Epoch")
     plt.ylabel("Loss")
     #ax3.legend(title='Model type:', loc='best', prop={'size': 10})
     plt.ylim(0,2.4)
-    plt.xlim(1,num_epochs)
+    plt.xlim(0,num_epochs+1)
+    plt.xticks(np.arange(0,num_epochs+1, 5))
     plt.tight_layout()
     ax3.yaxis.set_ticks_position('both')
     ax3.minorticks_on()
@@ -98,10 +102,11 @@ def plot_train_val_acc_loss(model_names, num_models, num_epochs, train_accs, col
     for i in range(num_models):
         ax4.scatter(np.arange(1,(num_epochs+1)), [i for i in val_losses[i,:]],
                     c=colors[new_names[i]], marker='*', s=55, label=model_names[i])
-    plt.xlabel("Epochs")
+    plt.xlabel("Epoch")
     #ax4.legend(title='Model type:', loc='best', prop={'size': 10})
     plt.ylim(0,2.4)
-    plt.xlim(1,num_epochs)
+    plt.xlim(0,num_epochs+1)
+    plt.xticks(np.arange(0,num_epochs+1, 5))
     #ax4.axes.yaxis.set_ticks([])
     plt.tight_layout()
     #ax4.yaxis.set_ticks_position('both')
