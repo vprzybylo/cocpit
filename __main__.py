@@ -36,15 +36,15 @@ def _preprocess_sheets():
     
     # resize images to desired_size
     desired_size = 1000
-    cutoff = 10
+    cutoff = 100
     print('cutoff percentage allowed: ', cutoff)
 
-    save_dir = '/data/data/cpi_data/campaigns/'+campaign+'/single_imgs/'
+    save_dir = '/data/data/cpi_data/campaigns/'+campaign+'/single_imgs_all/'
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
         
     outname = 'df_'+campaign+'.csv'
-    outdir = '/data/data/final_databases_test/no_mask/'
+    outdir = '/data/data/final_databases/no_mask/'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     save_df = os.path.join(outdir, outname)    
@@ -57,10 +57,8 @@ def _preprocess_sheets():
                                              save_df=save_df,
                                              show_original=False,
                                              show_dilate=False,
-                                             show_cropped=False,
-                                             show_mask=False)
+                                             show_cropped=False)
     
-
     print('time to preprocess sheets: %.2f' %(time.time()-start_time))
 
     
@@ -70,9 +68,9 @@ def _build_ML():
     '''
     print('training...')
 
-    params = {'kfold': 5,  # set to 0 to turn off kfold cross validation
+    params = {'kfold': 0,  # set to 0 to turn off kfold cross validation
               'batch_size': [64],
-              'max_epochs': [20],
+              'max_epochs': [50],
               'class_names': ['aggs','budding','bullets',
                               'columns','compact_irregs',
                               'fragments','plates','rimed','spheres'],
@@ -85,11 +83,7 @@ def _build_ML():
     params['data_dir'] = '/data/data/cpi_data/training_datasets/' + \
                              'hand_labeled_resized_multcampaigns_v1.0.0_no_blank/'
 
-    model_savename = '/data/data/saved_models/no_mask/' + \
-                     'e' + str(params['max_epochs'][0]) + \
-                     '_bs' + str(params['batch_size'][0]) + \
-                     '_k' + str(params['kfold']) + '_' + \
-                     str(len(params['model_names']))+'models_no_blank'
+
     acc_savename_train = '/data/data/saved_accuracies/no_mask/' + \
                          '/save_train_acc_loss_e' + \
                          str(params['max_epochs'][0]) + \
@@ -111,15 +105,14 @@ def _build_ML():
                             
 
     log_exp = False  # log experiment to comet
-    save_acc = True
+    save_acc = False
     save_model = True
-    valid_size = 0.2  # 80-20 split training-val
+    valid_size = 0.0  # if <0.01, use all data with kfold set to 0 also
     num_classes = len(params['class_names'])
 
-    cocpit.build_ML_model.main(params, log_exp, model_savename, 
-                               acc_savename_train, acc_savename_val,
-                               save_acc, save_model, metrics_savename,
-                               valid_size, num_workers)
+    cocpit.build_ML_model.main(params, log_exp, acc_savename_train,
+                               acc_savename_val, save_acc, save_model,
+                               metrics_savename, valid_size, num_workers)
 
 def _ice_classification():
     '''
@@ -133,13 +126,13 @@ def _ice_classification():
                  'column','compact irregular','fragment',
                  'plate','rimed','sphere']
 
-    open_dir = 'cpi_data/campaigns/'+campaign+'/single_imgs/'
+    open_dir = 'cpi_data/campaigns/'+campaign+'/single_imgs_all/'
     
     # load ML model for predictions
     model=torch.load('/data/data/saved_models/no_mask/e20_bs64_k5_9models_v1.0.0_no_blank_vgg16')
     
     # load df of quality ice particles to make predictions on
-    df = pd.read_csv('final_databases_v2/no_mask/df_'+campaign+'.csv')
+    df = pd.read_csv('final_databases/no_mask/df_'+campaign+'.csv')
 
     df = cocpit.run_ML_model.main(df, open_dir, class_names,
                                   model, num_workers)
@@ -166,19 +159,20 @@ def main():
 
 if __name__ == "__main__":
     # extract each image from sheet of images
-    preprocess_sheets = False
+    preprocess_sheets = True
 
     # create CNN
-    build_ML = True
-
+    build_ML = False
+    
     # run the category classification on quality images of ice particles
     ice_classification = False
-    campaigns=['MC3E']
-    # campaigns=['ARM','ATTREX','CRYSTAL_FACE_NASA','CRYSTAL_FACE_UND',\
-    #           'ICE_L','IPHEX','MACPEX','MC3E','MIDCIX','MPACE','POSIDON']
 
-    num_cpus = 2  # workers for parallelization
+    campaigns=['MPACE','POSIDON', 'OLYMPEX']
+    if build_ML == True:
+        campaigns = ['test'] # only run once
+        
+    num_cpus = 5  # workers for parallelization
     num_workers = 20  # workers for data loaders
     for campaign in campaigns:
-        print(campaign)
+        print('campaign: ', campaign)
         main()

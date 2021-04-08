@@ -110,7 +110,7 @@ def plot_model_metric_folds(metric_filename, convert_names, save_name,
     - save_fig (bool): save the figure to file
     '''
     
-    fig, ax = plt.subplots(figsize=(13,9))
+    fig, ax = plt.subplots(figsize=(9,6))
     df = pd.read_csv(metric_filename)
     df.columns.values[0] = 'class'
     df.replace(convert_names, inplace=True)
@@ -135,9 +135,9 @@ def plot_model_metric_folds(metric_filename, convert_names, save_name,
     g.yaxis.grid(True, linestyle='-', which='major', color='lightgrey',
                alpha=0.5)
     if plot_classes:
-        g.set_ylim(0.70, 1.001)
+        g.set_ylim(0.75, 1.001)
     else:
-        g.set_ylim(0.885, 1.001)
+        g.set_ylim(0.75, 1.001)
     if save_fig:
         plt.savefig(save_name, dpi=300, bbox_inches='tight')
     plt.show()
@@ -158,10 +158,7 @@ def plot_classification_report_classes(clf_report, save_name, save_fig=False):
     '''
     fig, ax = plt.subplots(figsize=(9,7))
     
-    
-    
     clf_report = pd.DataFrame(clf_report).iloc[:-1, :].T  
-    print(clf_report[clf_report['model'] == 'vgg16'])
     
     g = sns.heatmap(clf_report, annot=True, cmap='coolwarm',
             linecolor='k', linewidths=1, annot_kws={"fontsize": 14}, vmin=0.90, vmax=1.00)
