@@ -59,7 +59,7 @@
 
 ## About
 
-A tool for the characterization of cloud particle images from the (<a href="http://www.specinc.com/cloud-particle-imager">CPI</a>) probe.  Probe images are classified into 9 categories:
+A tool for the characterization of cloud particle images from the (<a href="http://www.specinc.com/cloud-particle-imager">CPI</a>) probe using convolutional neural networks.  Probe images are classified into 9 categories:
 
 | Category         | Description                                                                                                                                                                 |
 |-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -73,11 +73,8 @@ A tool for the characterization of cloud particle images from the (<a href="http
 | plate             | Hexagonal and largely independent of aggregation unless the secondary particle is relatively insignificant in size. The surface is smooth and can have transparent regions. |
 | rimed             | Evidence of the collection of supercooled water droplets visually apparent as jagged edges                                                                                  |
 | sphere            | circular water droplets                                                                                                                                                     |
-<p align="center">
-<a>
-<img src="https://github.com/vprzybylo/cocpit/blob/master/README_graphics/example_image_categories.pdf" alt="class_categories" width="1000" height="1000">
-</a>
-</p>
+<p align='center'><img src="README_graphics/example_image_categories-1.png"/, height=500px></p>
+
 ### Additional descriptors that can be processed on the images:
 
 * found in cocpit/pic.py
@@ -146,17 +143,22 @@ see requirements.txt
 * <a href="https://pytorch.org/docs/stable/torchvision/models.html">Pytorch</a> 
 * <a href="http://www.specinc.com/sites/default/files/software_and_manuals/CPI_Post Processing Software Manual_rev1.2_20120116.pdf">cpiview</a> 
   * Desktop-developed software will need to be used to extract ''sheets'' of CPI images from region of interest (ROI) files output from the CPI probe should new data be wished to be processed and classified.
-  * ![flowchart](https://github.com/vprzybylo/cocpit/blob/master/README_graphics/flow_chart_sheets.pdf)
+  * A conceptual diagram follows with corresponding code under cocpit/process_png_sheets_with_text.py
+  * <p align='center'><img src="README_graphics/flow_chart_sheets-1.png"/></p>
 
 * <a href="https://www.nvidia.com/en-us/">nvidia</a> 
   * Resources used: NVIDIA DGX-1 server utilizing Tesla V100 GPUs. This system is housed in the University at Albanys Tier-3 Data Center, and managed/maintained by the xCITE (ExTREME Collaboration, Innovation and TEchnology) laboratory. The base DGX-1 V100 system contains 8 Tesla V100 GPUs with a combined total of 40,960 CUDA (graphics) cores, 5120 Tensor cores, and 256GB of GPU memory, all linked by NVIDIAs 300GB/s NVLINK interconnect. The DGX-1 is optimized for data loading, data transformations, and training, which are all critical to the ML processes required by this project.
 
+## CNN Results
+
+<p align='center'><img src="README_graphics/loss_acc_9models_bs64_e20_9classes_avg5kfold_noblank-1.png"/></p>
 
 ## Roadmap
 
-* Each image will have time-correlated in situ measurements added to the database via aircraft probes own through dierent cloud layers during field campaign initiatives. The CPI particle timestamp will be used to synchronize with other data systems on board to obtain environmental parameters, that include but are not limited to: location, atmospheric conditions, and other characteristics based on what was measured during the specic field program discussed.
-* Provide functions to determine a relative likelihood for a particular thermodynamic property to make up a predefined sample space, such as habit type.
-* It cannot be assumed that these particles initiated or grew within the environment at time of capture, hence, there is motivation to use trajectory analysis to track and associate particle characteristics with the environment in which they resided.
+* Each image will have time-correlated in situ measurements added to the database of images from each campaign via aircraft probes 
+* The CPI particle timestamp will be used to synchronize with other data systems on board to obtain environmental parameters, that include but are not limited to: location, atmospheric conditions, and other characteristics based on what was measured during the specic field program discussed.
+* There is motivation to use trajectory analysis to track and associate particle characteristics with the environment in which they resided since it cannot be assumed that these particles initiated or grew within the environment at time of capture
+* More campaigns will be processed and final databases will be available upon project completion
 
 ## License
 
