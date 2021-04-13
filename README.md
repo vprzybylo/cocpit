@@ -61,7 +61,7 @@
 
 A tool for the characterization of cloud particle images from the (<a href="http://www.specinc.com/cloud-particle-imager">CPI</a>) probe.  Probe images are classified into 9 categories:
 
-| Predictor         | Description                                                                                                                                                                 |
+| Category         | Description                                                                                                                                                                 |
 |-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | aggregate         | A combination of several different monomers with a spread out shape in comparison to a compact irregular. Largely irregular.                                                |
 | blank             | No target or contrast.  Typically, few pixels.                                                                                                                              |
@@ -73,10 +73,11 @@ A tool for the characterization of cloud particle images from the (<a href="http
 | plate             | Hexagonal and largely independent of aggregation unless the secondary particle is relatively insignificant in size. The surface is smooth and can have transparent regions. |
 | rimed             | Evidence of the collection of supercooled water droplets visually apparent as jagged edges                                                                                  |
 | sphere            | circular water droplets                                                                                                                                                     |
-
-
-<img src="https://github.com/vprzybylo/cocpit/blob/master/README_graphics/example_image_categories.pdf" alt="class_categories" width="150" height="150">
-
+<p align="center">
+<a>
+<img src="https://github.com/vprzybylo/cocpit/blob/master/README_graphics/example_image_categories.pdf" alt="class_categories" width="1000" height="1000">
+</a>
+</p>
 ### Additional descriptors that can be processed on the images:
 
 * found in cocpit/pic.py
@@ -94,12 +95,12 @@ A tool for the characterization of cloud particle images from the (<a href="http
 | Contrast             | Standard deviation of the image pixel values.                                                                                                                                                            |
 | Circularity          | 4*pi*area/perimeter^2                                                                                                                                                                              |
 | Solidity             | Area of a convex hull surrounding the largest contour divided by the largest contour area.                                                                                                               |
-| Complexity           | How intricate the particle is. See [@Schmitt2010] for the mathematical representation.                                                                                                                   |
+| Complexity           | How intricate the particle is. See Schmitt (2010) for the mathematical representation.                                                                                                                   |
 | Equivalent Diameter  | Diameter of a circle with the same area as the largest contour.                                                                                                                                          |
 | Convex Perimeter     | Perimeter of the convex hull of the largest contour.                                                                                                                                                     |
 | Hull Area            | Area of a convex hull surrounding the largest contour.                                                                                                                                                   |
 | Perimeter            | Arc-length of the largest contour.                                                                                                                                                                       |
-| Aspect Ratio         | Aspect ratio calculated from a rectangle always $\le$ 1.                                                                                                                                                 |
+| Aspect Ratio         | Aspect ratio calculated from a rectangle always <= 1.                                                                                                                                                 |
 | Cutoff               | Percentage of pixels that intersect the border or perimeter of the image.                                                                                                                                |
 | Extreme Points       | How separated the outer most points are on the largest contour using the minimum and maximum x and y extent. The standard deviation in these points represents the spread of the particle.               |
 | Area Ratio           | The area of the largest contour divided by the area of an encompassing circle - useful for spheres that have reflection spots that are not captured by the largest contour and leave a horseshoe pattern |
@@ -145,6 +146,8 @@ see requirements.txt
 * <a href="https://pytorch.org/docs/stable/torchvision/models.html">Pytorch</a> 
 * <a href="http://www.specinc.com/sites/default/files/software_and_manuals/CPI_Post Processing Software Manual_rev1.2_20120116.pdf">cpiview</a> 
   * Desktop-developed software will need to be used to extract ''sheets'' of CPI images from region of interest (ROI) files output from the CPI probe should new data be wished to be processed and classified.
+  * ![flowchart](https://github.com/vprzybylo/cocpit/blob/master/README_graphics/flow_chart_sheets.pdf)
+
 * <a href="https://www.nvidia.com/en-us/">nvidia</a> 
   * Resources used: NVIDIA DGX-1 server utilizing Tesla V100 GPUs. This system is housed in the University at Albanys Tier-3 Data Center, and managed/maintained by the xCITE (ExTREME Collaboration, Innovation and TEchnology) laboratory. The base DGX-1 V100 system contains 8 Tesla V100 GPUs with a combined total of 40,960 CUDA (graphics) cores, 5120 Tensor cores, and 256GB of GPU memory, all linked by NVIDIAs 300GB/s NVLINK interconnect. The DGX-1 is optimized for data loading, data transformations, and training, which are all critical to the ML processes required by this project.
 
