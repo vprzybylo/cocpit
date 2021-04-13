@@ -24,7 +24,7 @@
 <br />
 <p align="center">
   <a>
-    <img src="https://github.com/vprzybylo/cocpit/blob/master/logo.png" alt="Logo" width="150" height="150">
+    <img src="https://github.com/vprzybylo/cocpit/README_graphics/logo.png" alt="Logo" width="150" height="150">
   </a>
 
   <h3 align="center">COCPIT</h3>
@@ -49,54 +49,93 @@
 # Table of Contents
 
 * [About](#about)
-
-  * [Built With](#built-with)
-  * [Prerequisites](#prerequisites)
   * [Installation](#installation)
-
-* [Usage](#usage)
+  * [Prerequisites](#prerequisites)
+* [Built With](#built-with)
 * [Roadmap](#roadmap)
-* [Contributing](#contributing)
 * [License](#license)
 * [Contact](#contact)
 * [Acknowledgements](#acknowledgements)
 
 ## About
 
-A tool for the characterization of cloud particle images from the (<a href="http://www.specinc.com/cloud-particle-imager">CPI</a>) probe.  Three models are featured: the SPHERES Model (logistic regression) to separate cloud drops (liquid) from all other images, the SIFT Model (logistic regression) to separate quality images of ice crystals from blurry, fragmented, and blank images, and a convolutional neural netowrk to classify frozen hydrometeors from the remaining good images.  Probe images are classified into 10 categories: aggregates, blank images, blurry or fragmented, budding rosettes, bullet rosettes, columns, compact irregulars, plates, rimed particles, and spheres.
+A tool for the characterization of cloud particle images from the (<a href="http://www.specinc.com/cloud-particle-imager">CPI</a>) probe.  Probe images are classified into 9 categories:
+
+Category            Description
+--------            -----------
+  Aggregate           A combination of several different monomers with a spread out shape in comparison to a compact irregular. Largely irregular.
+  Blank               No target or contrast spanning typically only a few pixels.
+  Blurry/Fragment     Indistinguishable frame due to motion or a particle that largely intersects the image border, is too small to distinguish, or is too pixelated.
+  Budding Rosette     A rosette shape with short branches.
+  Bullet Rosette      A rosette shape with long branches.
+  Column              Rectangular with one axis longer than the other and no signs of aggregation.
+  Compact Irregular   A small, condensed particle with few to no distinguishable monomers that has an arbitrary shape.
+  Plate               Hexagonal and largely independent of aggregation unless the secondary particle is relatively insignificant in size. Exhibits a smooth surface but can have transparent regions.
+  Rimed               Evidence of the collection of supercooled water droplets visually apparent as jagged edges. Can obtain any shape.
+  Sphere              Circular water droplets
 
 
-### Preprocessing
+<img src="https://github.com/vprzybylo/cocpit/blob/master/logo.png" alt="Logo" width="150" height="150">
 
-* <b>SPHERES</b> model
-  * Liquified cloud drops are filtered via a logistic regression model 
-    * These predictors are used as independent variables to predict whether or not the particles are spherical (liquid):
-      * variance of the laplacian (image blurriness)
-      * height of image
-      * width of image
-      * number of contours
-      * number of edges using the canny edge detector
-      * standard deviation in the location of the edges 
-      * contour area  (largest contour)
-      * image contrast 
-      * circularity (largest contour)
-      * solidity (largest contour)
-      * complexity  (largest contour)
-      * equivalent diameter
-      * convex perimeter
-      * hull area  (largest contour)
-      * perimeter  (largest contour)
-      * aspect ratio (largest contour)
-      * cutoff (percentage of pixels touching the border)
-      * separation of the extreme points of the particle
-      * filled circular area ratio
-      * roundness (largest contour)
-      * perim area ratio (largest contour)
+### Additional descriptors that can be processed on the images:
 
-* <b>SIFT</b> (Separate Ice for Training)
-  * If the particles are predicted as not spherical, the SIFT model is then used to predict whether or not the image of ice is of good or bad quality' (e.g., blurry, fragmented or shattered, too dark, etc.)
-  * The same predictors as the SPHERES model are used to filter bad images but a different training dataset was used.
+* found in cocpit/pic.py
 
+  Predictor              Description
+  ---------              ------------
+  Height                 Height of the image in pixels.
+  Width                  Width of the image in pixels.
+  Laplacian              The variance (standard deviation squared) of a convolved matrix across a single channel image. Lower values are "blurry".
+  Number of Contours     Number of contours or closed boundaries from a black and white thresholded image.
+  Edges                  Number of edges or localized pixels that meet a contrast gradient requirement in a binary image using the Canny edge detection algorithm.
+  $\sigma$ of Edges      Standard deviation or spread in image edge locations.
+  Contour Area           Area of the largest contour of a binary image in pixels.
+  Contrast               Standard deviation of the image pixel values.
+  Circularity            $4*\pi*area/(perimeter^2)$.
+  Solidity               Area of a convex hull surrounding the largest contour divided by the largest contour area.
+  Complexity             How intricate the particle is. See [@Schmitt2010] for the mathematical representation.
+  Equivalent Diameter    Diameter of a circle with the same area as the largest contour.
+  Convex Perimeter       Perimeter of the convex hull of the largest contour.
+  Hull Area              Area of a convex hull surrounding the largest contour.
+  Perimeter              Arc-length of the largest contour.
+  Aspect Ratio           Aspect ratio calculated from a rectangle always $\le$ 1.
+  Cutoff                 Percentage of pixels that intersect the border or perimeter of the image.
+  Extreme Points         How separated the outer most points are on the largest contour using the minimum and maximum x and y extent. The standard deviation in these points represents the spread of the particle.
+  Area Ratio             The area of the largest contour divided by the area of an encompassing circle - useful for spheres that have reflection spots that are not captured by the largest contour and leave a horseshoe pattern
+  Roundness              Similar to circularity but divided by the convex perimeter that surrounds the largest contour squared instead of the actual convoluted perimeter.
+  Perimeter-Area Ratio   Perimeter divided by the area of the largest contour.
+
+## Supported campaigns
+
+**Campaign**       **Location**                       **Date**            **Aircraft**             **\# of images**
+  ------------------ ---------------------------------- ------------------- ------------------------ ------------------
+  **AIRS-II**        Ottawa, Canada                     Nov 2003-Feb 2004   NSF C-130                504,675
+  **ARM IOP**        Western U.S.                       Mar 2000            UND Citation             448,266
+  **ATTREX**         Western Pacific                    Feb--Mar 2014       Global Hawk              129,232
+  **CRYSTAL-FACE**   Southern Florida                   Jul 2002            NASA's WB-57             225,439
+  **CRYSTAL-FACE**   Southern Florida                   Jul 2002            UND Citation             2,483,54
+  **Ice-L**          Colorado and Wyoming               Nov-Dec 2007        NSF C-130                1,794,81
+  **IPHEX**          Southern Appalachian Mountains     May-June 2014       UND Citation             1,593,537
+  **MACPEX**         Central North America (SGP site)   Mar-Apr 2011        WB-57 & Learjet          80,677
+  **MC3E**           Central Oklahoma                   April-June 2011     UND Citation             1,614,03
+  **MidCix**         Western U.S.                       Apr-May 2004        NASA's WB-57 & Learjet   515,895
+  **MPACE**          Alaska                             Sept-Oct 2004       UND Citation             1,177,74
+  **OLYMPEX**        Olympic Mountains                  Nov 2015-May 2016   UND Citation             1,308,02
+  **POSIDON**        Western Pacific                    Oct 2016            NASA's WB-57             210,497
+
+**TOTAL IMAGES: 12,086,384**
+
+
+# Installation
+
+1. Clone the repo <br>
+	git clone: [git@github.com:vprzybylo/cocpit.git](git@github.com:vprzybylo/cocpit.git)<br/>
+3. docker image on docker hub under: vprzybylo/cocpit:v1.2.0 <br>
+note to run ./__main__.py requires raw image files (multiple GB per campaign) - contact for image request
+
+
+## Prerequisites
+see requirements.txt
 
 ### Built With
 
@@ -106,34 +145,6 @@ A tool for the characterization of cloud particle images from the (<a href="http
   * Desktop-developed software will need to be used to extract ''sheets'' of CPI images from region of interest (ROI) files output from the CPI probe should new data be wished to be processed and classified.
 * <a href="https://www.nvidia.com/en-us/">nvidia</a> 
   * Resources used: NVIDIA DGX-1 server utilizing Tesla V100 GPUs. This system is housed in the University at Albanys Tier-3 Data Center, and managed/maintained by the xCITE (ExTREME Collaboration, Innovation and TEchnology) laboratory. The base DGX-1 V100 system contains 8 Tesla V100 GPUs with a combined total of 40,960 CUDA (graphics) cores, 5120 Tensor cores, and 256GB of GPU memory, all linked by NVIDIAs 300GB/s NVLINK interconnect. The DGX-1 is optimized for data loading, data transformations, and training, which are all critical to the ML processes required by this project.
-
-## Supported campaigns
-
-|   Campaign   |              Aircraft               | Date              |
-| :----------: | :---------------------------------: | ----------------- |
-|   ARM IOP    | University of North Dakota Citation | March 2000        |
-| CRYSTAL-FACE |            NASA's WB-57             | Jul 2002          |
-| CRYSTAL-FACE | University of North Dakota Citation | Jul 2002          |
-|   AIRS II    |           NRC Convair-580           | Nov 2003-Feb 2004 |
-|    Midcix    |       NASA's WB-57 & Learjet        | Apr 2004-May 2004 |
-|    Ice-L     |              NSF C-130              | Nov-Dec 2007      |
-|    OLYPEX    | University of North Dakota Citation | Nov 2015-May 2016 |
-|    MPACE     | University of North Dakota Citation | Sept-Oct 2004     |
-
-
-# Installation
-
-1. Clone the repo <br>
-	git clone: [git@github.com:vprzybylo/cocpit.git](git@github.com:vprzybylo/cocpit.git)<br/>
-## Usage 
-
-Add video 
-
-## Feature Descriptions
-
-Include work flow diagram
-
-## Prerequisites
 
 
 ## Roadmap
