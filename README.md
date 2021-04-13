@@ -24,7 +24,7 @@
 <br />
 <p align="center">
   <a>
-    <img src="https://github.com/vprzybylo/cocpit/README_graphics/logo.png" alt="Logo" width="150" height="150">
+    <img src="https://github.com/vprzybylo/cocpit/blob/master/README_graphics/logo.png" alt="Logo" width="150" height="150">
   </a>
 
   <h3 align="center">COCPIT</h3>
@@ -61,67 +61,68 @@
 
 A tool for the characterization of cloud particle images from the (<a href="http://www.specinc.com/cloud-particle-imager">CPI</a>) probe.  Probe images are classified into 9 categories:
 
-Category            Description
---------            -----------
-  Aggregate           A combination of several different monomers with a spread out shape in comparison to a compact irregular. Largely irregular.
-  Blank               No target or contrast spanning typically only a few pixels.
-  Blurry/Fragment     Indistinguishable frame due to motion or a particle that largely intersects the image border, is too small to distinguish, or is too pixelated.
-  Budding Rosette     A rosette shape with short branches.
-  Bullet Rosette      A rosette shape with long branches.
-  Column              Rectangular with one axis longer than the other and no signs of aggregation.
-  Compact Irregular   A small, condensed particle with few to no distinguishable monomers that has an arbitrary shape.
-  Plate               Hexagonal and largely independent of aggregation unless the secondary particle is relatively insignificant in size. Exhibits a smooth surface but can have transparent regions.
-  Rimed               Evidence of the collection of supercooled water droplets visually apparent as jagged edges. Can obtain any shape.
-  Sphere              Circular water droplets
+| Predictor         | Description                                                                                                                                                                 |
+|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| aggregate         | A combination of several different monomers with a spread out shape in comparison to a compact irregular. Largely irregular.                                                |
+| blank             | No target or contrast.  Typically, few pixels.                                                                                                                              |
+| blurry/fragment   | Indistinguishable frame due to motion or a particle that largely intersects the image border, is too small to distinguish, or is too pixelated.                             |
+| budding rosette   | A rosette shape with short branches.                                                                                                                                        |
+| bullet rosette    | A rosette shape with long branches.                                                                                                                                         |
+| column            | Rectangular with one axis longer than the other and no signs of aggregation.                                                                                                |
+| compact irregular | A small, condensed particle with few to no distinguishable monomers that has an arbitrary shape.                                                                            |
+| plate             | Hexagonal and largely independent of aggregation unless the secondary particle is relatively insignificant in size. The surface is smooth and can have transparent regions. |
+| rimed             | Evidence of the collection of supercooled water droplets visually apparent as jagged edges                                                                                  |
+| sphere            | circular water droplets                                                                                                                                                     |
 
 
-<img src="https://github.com/vprzybylo/cocpit/blob/master/logo.png" alt="Logo" width="150" height="150">
+<img src="https://github.com/vprzybylo/cocpit/blob/master/README_graphics/example_image_categories.pdf" alt="class_categories" width="150" height="150">
 
 ### Additional descriptors that can be processed on the images:
 
 * found in cocpit/pic.py
 
-  Predictor              Description
-  ---------              ------------
-  Height                 Height of the image in pixels.
-  Width                  Width of the image in pixels.
-  Laplacian              The variance (standard deviation squared) of a convolved matrix across a single channel image. Lower values are "blurry".
-  Number of Contours     Number of contours or closed boundaries from a black and white thresholded image.
-  Edges                  Number of edges or localized pixels that meet a contrast gradient requirement in a binary image using the Canny edge detection algorithm.
-  $\sigma$ of Edges      Standard deviation or spread in image edge locations.
-  Contour Area           Area of the largest contour of a binary image in pixels.
-  Contrast               Standard deviation of the image pixel values.
-  Circularity            $4*\pi*area/(perimeter^2)$.
-  Solidity               Area of a convex hull surrounding the largest contour divided by the largest contour area.
-  Complexity             How intricate the particle is. See [@Schmitt2010] for the mathematical representation.
-  Equivalent Diameter    Diameter of a circle with the same area as the largest contour.
-  Convex Perimeter       Perimeter of the convex hull of the largest contour.
-  Hull Area              Area of a convex hull surrounding the largest contour.
-  Perimeter              Arc-length of the largest contour.
-  Aspect Ratio           Aspect ratio calculated from a rectangle always $\le$ 1.
-  Cutoff                 Percentage of pixels that intersect the border or perimeter of the image.
-  Extreme Points         How separated the outer most points are on the largest contour using the minimum and maximum x and y extent. The standard deviation in these points represents the spread of the particle.
-  Area Ratio             The area of the largest contour divided by the area of an encompassing circle - useful for spheres that have reflection spots that are not captured by the largest contour and leave a horseshoe pattern
-  Roundness              Similar to circularity but divided by the convex perimeter that surrounds the largest contour squared instead of the actual convoluted perimeter.
-  Perimeter-Area Ratio   Perimeter divided by the area of the largest contour.
+| Predictor            | Description                                                                                                                                                                                              |
+|----------------------|------------------------------------------
+|                      |                                                                                                                                                                                                          |
+| Height               | Height of the image in pixels.                                                                                                                                                                           |
+| Width                | Width of the image in pixels.                                                                                                                                                                            |
+| Laplacian            | The variance (standard deviation squared) of a convolved matrix across a single channel image. Lower values are "blurry".                                                                                |
+| Number of Contours   | Number of contours or closed boundaries from a black and white thresholded image.                                                                                                                        |
+| Edges                | Number of edges or localized pixels that meet a contrast gradient requirement in a binary image using the Canny edge detection algorithm.                                                                |
+| standard dev. of edges    | Standard deviation or spread in image edge locations.                                                                                                                                                    |
+| Contour Area         | Area of the largest contour of a binary image in pixels.                                                                                                                                                 |
+| Contrast             | Standard deviation of the image pixel values.                                                                                                                                                            |
+| Circularity          | 4*pi*area/perimeter^2                                                                                                                                                                              |
+| Solidity             | Area of a convex hull surrounding the largest contour divided by the largest contour area.                                                                                                               |
+| Complexity           | How intricate the particle is. See [@Schmitt2010] for the mathematical representation.                                                                                                                   |
+| Equivalent Diameter  | Diameter of a circle with the same area as the largest contour.                                                                                                                                          |
+| Convex Perimeter     | Perimeter of the convex hull of the largest contour.                                                                                                                                                     |
+| Hull Area            | Area of a convex hull surrounding the largest contour.                                                                                                                                                   |
+| Perimeter            | Arc-length of the largest contour.                                                                                                                                                                       |
+| Aspect Ratio         | Aspect ratio calculated from a rectangle always $\le$ 1.                                                                                                                                                 |
+| Cutoff               | Percentage of pixels that intersect the border or perimeter of the image.                                                                                                                                |
+| Extreme Points       | How separated the outer most points are on the largest contour using the minimum and maximum x and y extent. The standard deviation in these points represents the spread of the particle.               |
+| Area Ratio           | The area of the largest contour divided by the area of an encompassing circle - useful for spheres that have reflection spots that are not captured by the largest contour and leave a horseshoe pattern |
+| Roundness            | Similar to circularity but divided by the convex perimeter that surrounds the largest contour squared instead of the actual convoluted perimeter.                                                        |
+| Perimeter-Area Ratio | Perimeter divided by the area of the largest contour.                                                                                                                                                    |
 
 ## Supported campaigns
 
-**Campaign**       **Location**                       **Date**            **Aircraft**             **\# of images**
-  ------------------ ---------------------------------- ------------------- ------------------------ ------------------
-  **AIRS-II**        Ottawa, Canada                     Nov 2003-Feb 2004   NSF C-130                504,675
-  **ARM IOP**        Western U.S.                       Mar 2000            UND Citation             448,266
-  **ATTREX**         Western Pacific                    Feb--Mar 2014       Global Hawk              129,232
-  **CRYSTAL-FACE**   Southern Florida                   Jul 2002            NASA's WB-57             225,439
-  **CRYSTAL-FACE**   Southern Florida                   Jul 2002            UND Citation             2,483,54
-  **Ice-L**          Colorado and Wyoming               Nov-Dec 2007        NSF C-130                1,794,81
-  **IPHEX**          Southern Appalachian Mountains     May-June 2014       UND Citation             1,593,537
-  **MACPEX**         Central North America (SGP site)   Mar-Apr 2011        WB-57 & Learjet          80,677
-  **MC3E**           Central Oklahoma                   April-June 2011     UND Citation             1,614,03
-  **MidCix**         Western U.S.                       Apr-May 2004        NASA's WB-57 & Learjet   515,895
-  **MPACE**          Alaska                             Sept-Oct 2004       UND Citation             1,177,74
-  **OLYMPEX**        Olympic Mountains                  Nov 2015-May 2016   UND Citation             1,308,02
-  **POSIDON**        Western Pacific                    Oct 2016            NASA's WB-57             210,497
+  |**Campaign**       |**Location**                       |**Date**            |**Aircraft**            | **\# of images**
+  ------------------ |---------------------------------- |------------------- |------------------------ |------------------
+  **AIRS-II**        |Ottawa, Canada                     |Nov 2003-Feb 2004   |NSF C-130                |504,675
+  **ARM IOP**        |Western U.S.                       |Mar 2000            |UND Citation             |448,266
+  **ATTREX**         |Western Pacific                    |Feb--Mar 2014       |Global Hawk              |129,232
+  **CRYSTAL-FACE**   |Southern Florida                   |Jul 2002            |NASA's WB-57             |225,439
+  **CRYSTAL-FACE**   |Southern Florida                   |Jul 2002            |UND Citation             |2,483,54
+  **Ice-L**          |Colorado and Wyoming               |Nov-Dec 2007        |NSF C-130                |1,794,81
+  **IPHEX**          |Southern Appalachian Mountains     |May-June 2014       |UND Citation             |1,593,53
+  **MACPEX**         |Central North America (SGP site)   |Mar-Apr 2011        |WB-57 & Learjet          |80,677
+  **MC3E**           |Central Oklahoma                   |April-June 2011     |UND Citation             |1,614,037
+  **MidCix**         |Western U.S.                       |Apr-May 2004        |NASA's WB-57 & Learjet   |515,895
+  **MPACE**          |Alaska                             |Sept-Oct 2004       |UND Citation             |1,177,746
+  **OLYMPEX**        |Olympic Mountains                  |Nov 2015-May 2016   |UND Citation             |1,308,027
+  **POSIDON**        |Western Pacific                    |Oct 2016            |NASA's WB-57             |210,497
 
 **TOTAL IMAGES: 12,086,384**
 
@@ -130,8 +131,9 @@ Category            Description
 
 1. Clone the repo <br>
 	git clone: [git@github.com:vprzybylo/cocpit.git](git@github.com:vprzybylo/cocpit.git)<br/>
-3. docker image on docker hub under: vprzybylo/cocpit:v1.2.0 <br>
-note to run ./__main__.py requires raw image files (multiple GB per campaign) - contact for image request
+3. docker image on dockerhub: vprzybylo/cocpit:v1.2.0 <br>
+	* note to run ./__main__.py requires raw image files (multiple GB per campaign)
+	* [Contact](#contact) for image request
 
 
 ## Prerequisites
