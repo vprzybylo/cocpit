@@ -35,8 +35,6 @@
     <br />
     <a href="https://vprzybylo.github.io/cocpit/"><strong>Explore the docs »</strong></a>
     <br />
-    <br />
-    <a href="filler">View Demo</a>
     ·
     <a href="https://github.com/vprzybylo/cocpit/issues">
     Report Bug</a>
@@ -155,10 +153,10 @@ see requirements.txt
 
 ## Roadmap
 
-* Each image will have time-correlated in situ measurements added to the database of images from each campaign via aircraft probes 
-* The CPI particle timestamp will be used to synchronize with other data systems on board to obtain environmental parameters, that include but are not limited to: location, atmospheric conditions, and other characteristics based on what was measured during the specic field program discussed.
-* There is motivation to use trajectory analysis to track and associate particle characteristics with the environment in which they resided since it cannot be assumed that these particles initiated or grew within the environment at time of capture
 * More campaigns will be processed and final databases will be available upon project completion
+* Each image will have time-correlated in situ measurements added to the database of images from each campaign via aircraft probes 
+* The CPI particle timestamp will be used to synchronize with other data systems on board to obtain environmental parameters, that include but are not limited to: location, atmospheric conditions, and other characteristics based on what was measured during the specic field program discussed
+* There is motivation to use trajectory analysis to track and associate particle characteristics with the environment in which they resided since it cannot be assumed that these particles initiated or grew within the environment at time of capture
 
 ## License
 
