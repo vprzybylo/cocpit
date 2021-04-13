@@ -20,10 +20,22 @@ def process_image(image):
     image = preprocess(image)
     return image
 
-def predict(path, device, model, topk=9):
+def predict_one_at_a_time(path, device, model, topk=9):
     ''' 
     Predict the class (or classes) of an image
     using a trained deep learning model.
+    
+    Params
+    ------
+    - path (str): path directory to the dataset.
+    - device (obj): use cuda if available
+    - model (obj): torch.nn.parallel.data_parallel.DataParallel loaded from saved file
+    - num_workers (int): number of subprocesses to use when loading the dataset.
+
+    Returns
+    -------
+    - top k probabilities in order of highest predicted class to lowest (list)
+    """
     '''
     img = Image.open(path)
     img = img.convert('RGB')
@@ -31,22 +43,21 @@ def predict(path, device, model, topk=9):
 
     # Convert 2D image to 1D vector
     img = np.expand_dims(img, 0)
-
     img = torch.from_numpy(img)
 
     model.eval()
     model.to(device)
     inputs = Variable(img).to(device)
     logits = model.forward(inputs)
-
     ps = F.softmax(logits,dim=1)
-    topk = ps.cpu().topk(topk)
-
+    topk = ps.cpu().topk(topk) # top k predictions
+   
     return (e.data.numpy().squeeze().tolist() for e in topk)
 
-def view_classify(im, prob, crystal_names, savefig=False):
+def view_classification(im, prob, crystal_names, savefig=False):
     ''' 
     Function for viewing an image and it's predicted classes.
+    Horizontal bar chart with image above predictions
     '''
 
     image = Image.open(im)

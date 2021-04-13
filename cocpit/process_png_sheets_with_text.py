@@ -17,7 +17,6 @@ class Image:
     def __init__(self, open_dir, file, save_dir):
         self.open_dir = open_dir
         self.file = file
-        print(open_dir, file)
         self.save_dir = save_dir
         self.files = []
         self.widths = []
@@ -164,7 +163,6 @@ class Image:
         Saves filename, width, height, and cutoff to lists for a df
 
         Parameters:
-            mask (bool): whether to mask the background of the particles
             show_cropped (bool): whether to show the ROI regions
             save_images (bool): whether to save the final images
         """

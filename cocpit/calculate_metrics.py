@@ -50,7 +50,6 @@ def epoch_train_metrics(experiment, running_loss_train, totals_train,\
 
     epoch_loss_train = running_loss_train / totals_train
     epoch_acc_train = running_corrects_train.double() / totals_train
-    scheduler.step(epoch_acc_train) #reduce learning rate if not improving acc
     if log_exp:
         experiment.log_metric('train scheduler', scheduler)
 

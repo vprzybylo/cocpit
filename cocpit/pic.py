@@ -22,9 +22,16 @@ class Image():
             file to be opened in the directory
     """
 
-    def __init__(self, open_dir, filename):
-        self.filename = filename
-        self.image_og = cv2.cvtColor(cv2.imread(open_dir+self.filename,\
+    def __init__(self, open_dir=None, filename=None, path=None):
+        
+        if path is not None:
+            self.path = path
+            self.image_og = cv2.cvtColor(cv2.imread(self.path,\
+                                                cv2.IMREAD_UNCHANGED), cv2.COLOR_BGR2RGB)
+        else:
+            self.open_dir = open_dir
+            self.filename = filename
+            self.image_og = cv2.cvtColor(cv2.imread(self.open_dir+self.filename,\
                                                 cv2.IMREAD_UNCHANGED), cv2.COLOR_BGR2RGB)
         #original image height and width before resizing
         self.height_og, self.width_og, _ = self.image_og.shape

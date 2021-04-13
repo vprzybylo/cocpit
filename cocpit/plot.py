@@ -34,15 +34,7 @@ def plot_batch_size_accuracy(val_csv, save_name, save_fig=False):
         
 def plot_train_val_acc_loss(model_names, num_models, num_epochs, train_accs, colors, new_names,
                             val_accs, train_losses, val_losses, save_name, save_fig):
-    sns.set_style("whitegrid")
-    plt_params = {'axes.labelsize': 'xx-large',
-         'axes.titlesize':'xx-large',
-         'xtick.labelsize':'x-large',
-         'ytick.labelsize':'x-large',
-         'legend.title_fontsize': 12}
-    plt.rcParams["font.family"] = "serif"
-    plt.rcParams.update(plt_params)
-
+    
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(13,8), sharex=True, sharey=True)
 
 
@@ -118,7 +110,7 @@ def plot_train_val_acc_loss(model_names, num_models, num_epochs, train_accs, col
         plt.savefig(save_name, dpi=300, bbox_inches='tight')
         
 def plot_time_samples(time_csv, save_name, convert_names, save_fig=False):
-    sns.set_style("whitegrid")
+    
     df = pd.read_csv(time_csv, names=["Model", "Samples", "Time"])
     df['Model'].astype(str)
     df['Samples'].astype(int)
@@ -137,7 +129,7 @@ def plot_time_samples(time_csv, save_name, convert_names, save_fig=False):
         plt.savefig(save_name, dpi=300, bbox_inches="tight")
 
 def plot_model_timing(time_csv, convert_names, colors, save_name, save_fig=False):
-    sns.set_style("whitegrid")
+    
     df = pd.read_csv(time_csv)
     df.replace(convert_names, inplace=True)
     df['Model'].astype(str)

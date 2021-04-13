@@ -70,7 +70,7 @@ def _build_ML():
 
     params = {'kfold': 0,  # set to 0 to turn off kfold cross validation
               'batch_size': [64],
-              'max_epochs': [50],
+              'max_epochs': [20],
               'class_names': ['aggs','budding','bullets',
                               'columns','compact_irregs',
                               'fragments','plates','rimed','spheres'],
@@ -104,10 +104,10 @@ def _build_ML():
                        str(len(params['model_names'])) + '_no_blank.csv'
                             
 
-    log_exp = False  # log experiment to comet
+    log_exp = True  # log experiment to comet
     save_acc = False
-    save_model = True
-    valid_size = 0.0  # if <0.01, use all data with kfold set to 0 also
+    save_model = False
+    valid_size = 0.2  # if <0.01, use all data with kfold set to 0 also
     num_classes = len(params['class_names'])
 
     cocpit.build_ML_model.main(params, log_exp, acc_savename_train,
@@ -129,7 +129,7 @@ def _ice_classification():
     open_dir = 'cpi_data/campaigns/'+campaign+'/single_imgs_all/'
     
     # load ML model for predictions
-    model=torch.load('/data/data/saved_models/no_mask/e20_bs64_k5_9models_v1.0.0_no_blank_vgg16')
+    model=torch.load('/data/data/saved_models/no_mask/e50_bs64_1models_no_blank_alltraindata_vgg16')
     
     # load df of quality ice particles to make predictions on
     df = pd.read_csv('final_databases/no_mask/df_'+campaign+'.csv')
@@ -138,9 +138,9 @@ def _ice_classification():
                                   model, num_workers)
 
     # write database to file that holds predictions
-    engine = create_engine('sqlite:///final_databases_v3/no_mask/' + campaign+'.db', echo=False)
+    engine = create_engine('sqlite:///final_databases_v2/no_mask/' + campaign+'.db', echo=False)
     df.to_sql(name=campaign, con=engine, index=False, if_exists='replace')
-    df.to_csv('final_databases_v3/no_mask/' + campaign+'.csv', index=False)
+    df.to_csv('final_databases_v2/no_mask/' + campaign+'.csv', index=False)
 
     print('done classifying all images!')
     print('time to classify ice = %.2f seconds' %(time.time() - start_time))
@@ -159,17 +159,17 @@ def main():
 
 if __name__ == "__main__":
     # extract each image from sheet of images
-    preprocess_sheets = True
+    preprocess_sheets = False
 
     # create CNN
     build_ML = False
     
     # run the category classification on quality images of ice particles
-    ice_classification = False
+    ice_classification = True
 
-    campaigns=['MPACE','POSIDON', 'OLYMPEX']
+    campaigns=['MIDCIX', 'MPACE', 'OLYMPEX', 'POSIDON']
     if build_ML == True:
-        campaigns = ['test'] # only run once
+        campaigns = ['N/A'] # only run once
         
     num_cpus = 5  # workers for parallelization
     num_workers = 20  # workers for data loaders

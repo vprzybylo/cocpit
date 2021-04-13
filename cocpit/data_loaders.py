@@ -3,8 +3,11 @@ Retrives data loaders from Pytorch for training and validation data
 '''
 import itertools
 import numpy as np
+import os
 import torch
+from PIL import Image
 from torchvision import datasets, transforms
+from torch.utils.data import Dataset
 import torch.utils.data.sampler as sampler
 
 class ImageFolderWithPaths(datasets.ImageFolder):
@@ -21,7 +24,28 @@ class ImageFolderWithPaths(datasets.ImageFolder):
         # make a new tuple that includes original and the path
         tuple_with_path = (original_tuple + (path,))
         return (tuple_with_path, index)
+    
+    
+class TestDataSet(Dataset):
+    def __init__(self, open_dir, file_list):
+        
+        self.open_dir = open_dir
+        self.file_list = list(file_list)
+        self.transform = transforms.Compose([
+            transforms.Resize((224)),
+            transforms.ToTensor(),
+            transforms.Normalize([0.485, 0.456, 0.406],
+                                 [0.229, 0.224, 0.225])])
+        
+    def __len__(self):
+        return len(self.file_list)
 
+    def __getitem__(self, idx):
+        self.path = os.path.join(self.open_dir, self.file_list[idx])
+        image = Image.open(self.path)
+        tensor_image = self.transform(image)
+        return (tensor_image, self.path)
+    
 def get_data(data_dir):
     '''
     Use the Pytorch ImageFolder class to read in root directory
@@ -32,12 +56,12 @@ def get_data(data_dir):
     data_dir (str): root dir for training data
     Returns
     -------
-    data (tuple): (sample, target) where target is class_index of the target class 
+    data (tuple): (image, label, path)
     '''
     all_transforms = transforms.Compose([transforms.Resize(224),
-                                        transforms.ToTensor(),
-                                        transforms.Normalize([0.485, 0.456, 0.406],
-                                                             [0.229, 0.224, 0.225])])
+                                transforms.ToTensor(),
+                                transforms.Normalize([0.485, 0.456, 0.406],
+                                                     [0.229, 0.224, 0.225])])
 
     data = ImageFolderWithPaths(root=data_dir, transform=all_transforms)
     return data
@@ -61,7 +85,7 @@ def make_weights_for_balanced_classes(train_labels, nclasses):
     class_sample_counts = [0] * nclasses
     for target in train_labels:  
         class_sample_counts[target] += 1
-    #print('counts per class (training): ', class_sample_counts)
+    print('counts per class: ', class_sample_counts)
 
     class_weights = 1./torch.Tensor(class_sample_counts)
     train_samples_weights = [class_weights[class_id] for class_id in train_labels]
@@ -71,9 +95,8 @@ def make_weights_for_balanced_classes(train_labels, nclasses):
 
 def create_dataloaders(data, train_indices, val_indices, batch_size,
                        save_model, val_loader_savename, 
-                       class_names, data_dir, valid_size=0.2, num_workers=20,
-                       shuffle=True):
-
+                       class_names, data_dir, valid_size=0.2,
+                       num_workers=20, shuffle=True):
     '''
     get dataloaders
     Params
@@ -81,11 +104,9 @@ def create_dataloaders(data, train_indices, val_indices, batch_size,
     - data (tuple): (sample, target) where target is class_index of the target class 
     - train_indices (list): training dataset indices
     - val_indices (list): validation dataset indices
-    - batch_size (int): batch size for dataloader
-    - save_model (bool): save validation loader if saving model
-    - val_loader_savename (str): name of path+file to save validation loader to
     - class_names (list): list of strings of classes
     - data_dir (str): directory for training dataset
+    - batch_size (int): batch size for dataloader
     - num_workers (int): # of cpus to be used during data loading
     - shuffle (bool): whether to shuffle the data per epoch
     - valid_size (float): % of data used for validation dataset (0.0-1.0 = 0%-100%)
@@ -134,11 +155,11 @@ def create_dataloaders(data, train_indices, val_indices, batch_size,
         return train_loader, val_loader
 
 
-def get_test_loader(datadir,
-                    batch_size,
-                    num_workers,
-                    shuffle=True,
-                    pin_memory=True):
+def get_test_loader_df(open_dir, file_list,
+                        batch_size=100,
+                        num_workers=20,
+                        shuffle=False,
+                        pin_memory=True):
     """
     Utility function for loading and returning a multi-process test iterator 
     If using CUDA, num_workers should be set to 1 and pin_memory to True.
@@ -152,22 +173,21 @@ def get_test_loader(datadir,
       True if using GPU.
     Returns
     -------
-    - data_loader: test set iterator
+    - data_loader: test set iterator (image, path)
     """
-    # resizing helps memory usage
-    transforms_ = transforms.Compose([transforms.Resize((224,224)), 
-                                      transforms.ToTensor(),
-                                      transforms.Normalize([0.485, 0.456, 0.406],
-                                                           [0.229, 0.224, 0.225])])
+    
 
-    all_data_wpath = ImageFolderWithPaths(datadir, transform=transforms_)
+    test_data = TestDataSet(open_dir, file_list)
 
-    testloader = torch.utils.data.DataLoader(all_data_wpath, pin_memory=True,
-                                             shuffle=shuffle, batch_size=batch_size,
-                                             num_workers=num_workers)
-    return testloader
+    test_loader = torch.utils.data.DataLoader(test_data,
+                                             batch_size=batch_size,
+                                             shuffle=shuffle,
+                                             num_workers=num_workers,
+                                             pin_memory=pin_memory)
+    return test_loader
 
-def get_val_loader_predictions(model, val_data, device, batch_size, shuffle=True, num_workers=20):
+def get_val_loader_predictions(model, val_data, device, batch_size,
+                               shuffle=True, num_workers=20):
     '''
     get a list of hand labels and predictions from a saved dataloader/model
     Params

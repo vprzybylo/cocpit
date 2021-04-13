@@ -12,7 +12,6 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch import nn
 import copy
 import numpy as np
-from operator import add
 import time
 
 def set_dropout(model, drop_rate=0.1):
@@ -36,6 +35,8 @@ def to_device(device, model):
     model = model.to(device)
     return model
 
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 def update_params(model, feature_extract=False):
     '''
@@ -72,7 +73,23 @@ def label_counts(i, labels, num_classes):
     
     return label_cnts
 
+def get_normalization_values(dataloaders_dict, phase):
+    # Iterate over data in batches
+    mean = 0.
+    std = 0.
+    nb_samples = 0.
+    for ((inputs, labels, paths),index) in dataloaders_dict[phase]:
+        batch_samples = inputs.size(0)
+        data = inputs.view(batch_samples, inputs.size(1), -1)
+        mean += data.mean(2).sum(0)
+        std += data.std(2).sum(0)
+        nb_samples += batch_samples
 
+    mean /= nb_samples
+    std /= nb_samples
+    print(mean, std)
+    return mean, std
+    
 def train_model(experiment, log_exp, model, kfold, batch_size, class_names,
                 model_name, model_savename, acc_savename_train, acc_savename_val,
                 save_acc, save_model, dataloaders_dict, epochs,
@@ -83,7 +100,8 @@ def train_model(experiment, log_exp, model, kfold, batch_size, class_names,
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = to_device(device, model)
     update_params(model)
-
+    print('model params: ', count_parameters(model))
+    
     optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, nesterov=True)
 
     scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.5,
@@ -118,6 +136,9 @@ def train_model(experiment, log_exp, model, kfold, batch_size, class_names,
             running_loss_val = 0.0
             running_corrects_train = 0
             running_corrects_val = 0
+            meansq = 0.0
+            mean = 0.0
+            count = 0
             all_preds = []
             all_labels = []
             
@@ -125,17 +146,20 @@ def train_model(experiment, log_exp, model, kfold, batch_size, class_names,
                 model.train() 
             else:
                 model.eval()
+            
+            # get pytorch transform normalization values per channel
+            # iterates over training 
+            #mean, std = get_normalization_values(dataloaders_dict, phase)
 
-            # Iterate over data in batches
             label_cnts_total = [0]*len(range(num_classes))
             for i, ((inputs, labels, paths),index)  in enumerate(dataloaders_dict[phase]):
-               
+                            
                 # uncomment to print cumulative sum of images per class, per batch
                 # ensures weighted sampler is working properly
-                #if phase == 'val':
-                #    label_cnts = label_counts(i, labels, num_classes)
-                #    label_cnts_total = list(map(add, label_cnts, label_cnts_total))
-                #    print(label_cnts_total)
+                #if phase == 'train':
+#                     label_cnts = label_counts(i, labels, num_classes)
+#                     label_cnts_total = list(map(add, label_cnts, label_cnts_total))
+#                     print(label_cnts_total)
 
                 inputs = inputs.to(device)
                 labels = labels.to(device)
@@ -170,6 +194,7 @@ def train_model(experiment, log_exp, model, kfold, batch_size, class_names,
                         metrics.batch_val_metrics(i, loss, inputs, preds, labels,
                                                   running_loss_val, running_corrects_val,
                                                   totals_val, dataloaders_dict, phase)
+            
             # calculate epoch metrics
             if phase == 'train':
                 epoch_loss_train, epoch_acc_train = \

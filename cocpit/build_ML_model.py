@@ -14,6 +14,7 @@ import csv
 from collections import Counter
 import numpy as np
 import time
+from operator import add
 import os
 import pandas as pd
 import random
@@ -124,8 +125,11 @@ def initialize_model(model_name, num_classes,
 def train_val_composition(data, train_indices, val_indices):
     train_y = list(map(data.targets.__getitem__, train_indices))
     test_y = list(map(data.targets.__getitem__, val_indices))
-    print('train counts per class', Counter(train_y))
-    print('val counts per class', Counter(test_y))
+    print(len(train_y), len(test_y), len(train_y)+len(test_y))
+    print('train counts')
+    print(Counter(train_y))
+    print('val counts')
+    print(Counter(test_y))
 
 
 ########## MAIN ###########
@@ -135,7 +139,7 @@ def main(params, log_exp, acc_savename_train,
          metrics_savename, valid_size, num_workers):
     
     num_classes = len(params['class_names'])
-    print('classes: ', params['class_names'])
+    
     if log_exp:
         experiment = Experiment(api_key="6tGmiuOfY08czs2b4SHaHI2hw",
                         project_name="cocpit", workspace="vprzybylo")
@@ -145,6 +149,7 @@ def main(params, log_exp, acc_savename_train,
         experiment = None
     
     data = data_loaders.get_data(params['data_dir'])
+    fold_report = []  # holds classification metric performances per kfold
 
     for batch_size in params['batch_size']:
         print('BATCH SIZE: ', batch_size) 
@@ -155,8 +160,6 @@ def main(params, log_exp, acc_savename_train,
 
                 #K-FOLD 
                 if params['kfold'] != 0:
-                    print('TOTAL FOLDS: ', params['kfold'])
-                    fold_report = []  # holds classification metric performances per kfold
                     # preserve the percentage of samples for each class with stratified
                     skf = StratifiedKFold(n_splits=params['kfold'], shuffle=True, random_state=42)
                     for i, (train_indices, val_indices) in enumerate(skf.split(data.imgs, data.targets)):
@@ -211,10 +214,8 @@ def main(params, log_exp, acc_savename_train,
                         concat_df.to_csv(metrics_savename, mode='a')
                         
                 else:  # no kfold
-                    print('NO FOLDS')
                     i=0  # kfold false for savename
                     total_size = len(data)
-                    
                     # randomly split indices for training and validation indices according to valid_size
                     if valid_size < 0.01:
                         # use all of the data

@@ -77,18 +77,18 @@ def plot_confusion_matrix(all_preds, all_labels, class_names,
         cmn = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
         heat = sns.heatmap(cmn, annot=True, fmt='.2f', xticklabels=class_names,
                            yticklabels=class_names,
-                           cmap="Blues", annot_kws={"size": 14})
+                           cmap="Blues", annot_kws={"size": 16})
         plt.title('Normalized')
     else:
         heat = sns.heatmap(cm, annot=True, fmt='d', xticklabels=class_names,
                            yticklabels=class_names,
-                           cmap="Blues", annot_kws={"size": 16})
+                           cmap="Blues", annot_kws={"size": 18})
         plt.title('Unweighted')
         
-    plt.ylabel('Actual Labels', fontsize=20)
-    plt.xlabel('Predicted Labels', fontsize=20);
-    heat.set_xticklabels(heat.get_xticklabels(), rotation=90, fontsize=18)
-    heat.set_yticklabels(heat.get_xticklabels(), rotation=0, fontsize=18)
+    plt.ylabel('Actual Labels', fontsize=22)
+    plt.xlabel('Predicted Labels', fontsize=22);
+    heat.set_xticklabels(heat.get_xticklabels(), rotation=90, fontsize=20)
+    heat.set_yticklabels(heat.get_xticklabels(), rotation=0, fontsize=20)
     if save_fig:
         plt.savefig(save_name, bbox_inches='tight')
     plt.show()
