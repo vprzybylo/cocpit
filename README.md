@@ -31,10 +31,7 @@
 		    
 
   <p align="center">
-    Classification of Cloud Particle Imagery and Thermodynamics 
-    <br />
-    <a href="https://vprzybylo.github.io/cocpit/"><strong>Explore the docs »</strong></a>
-    <br />
+    Classification of Cloud Particle Imagery and Thermodynamics
     ·
     <a href="https://github.com/vprzybylo/cocpit/issues">
     Report Bug</a>
@@ -140,8 +137,9 @@ see requirements.txt
 * <a href="https://www.python.org/"><a href="https://pytorch.org/docs/stable/torchvision/models.html">Python</a> </a> 
 * <a href="https://pytorch.org/docs/stable/torchvision/models.html">Pytorch</a> 
 * <a href="http://www.specinc.com/sites/default/files/software_and_manuals/CPI_Post Processing Software Manual_rev1.2_20120116.pdf">cpiview</a> 
-  * Desktop-developed software will need to be used to extract ''sheets'' of CPI images from region of interest (ROI) files output from the CPI probe should new data be wished to be processed and classified.
-  * A conceptual diagram follows with corresponding code under cocpit/process_png_sheets_with_text.py
+  * Desktop-developed software are used to extract ''sheets'' of CPI images from region of interest (ROI) files output from the CPI probe
+  * Should image "sheets" be available on campaign archives, the following schematic shows how individual images are extracted
+  * Code for the conceptual diagram is located in cocpit/process_png_sheets_with_text.py
   * <p align='center'><img src="README_graphics/flow_chart_sheets-1.png"/></p>
 
 * <a href="https://www.nvidia.com/en-us/">nvidia</a> 
@@ -155,7 +153,7 @@ see requirements.txt
 
 * More campaigns will be processed and final databases will be available upon project completion
 * Each image will have time-correlated in situ measurements added to the database of images from each campaign via aircraft probes 
-* The CPI particle timestamp will be used to synchronize with other data systems on board to obtain environmental parameters, that include but are not limited to: location, atmospheric conditions, and other characteristics based on what was measured during the specic field program discussed
+* The CPI particle timestamp will be used to synchronize with other data systems on board to obtain environmental parameters, that include but are not limited to: location, atmospheric conditions, and other characteristics based on what was measured during the specic field program
 * There is motivation to use trajectory analysis to track and associate particle characteristics with the environment in which they resided since it cannot be assumed that these particles initiated or grew within the environment at time of capture
 
 ## License
@@ -166,9 +164,7 @@ Distributed under the MIT License.  See `LICENSE` for more information.
 
 Vanessa Przybylo - vprzybylo@albany.edu
 
-
 Project Link: [https://vprzybylo.github.io/cocpit/](https://vprzybylo.github.io/cocpit/)
-
 
 ## Acknowledgements
 * V. Przybylo, K. Sulia, C. Schmitt, and Z. Lebo (collaborators on this project) would like to thank the Department of Energy for support under DOE Grant Number DE-SC0021033.
