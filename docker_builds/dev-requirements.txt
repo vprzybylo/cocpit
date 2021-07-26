@@ -1,6 +1,7 @@
 autoflake
 black
 comet-ml==3.12.0
+python-dotenv
 efficientnet-pytorch==0.7.1
 imutils==0.5.4
 jedi-language-server==0.32.0
