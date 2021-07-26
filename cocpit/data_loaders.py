@@ -1,14 +1,16 @@
-'''
+"""
 Retrives data loaders from Pytorch for training and validation data
-'''
+"""
 import itertools
-import numpy as np
 import os
+
+import numpy as np
 import torch
-from PIL import Image
-from torchvision import datasets, transforms
-from torch.utils.data import Dataset
 import torch.utils.data.sampler as sampler
+from PIL import Image
+from torch.utils.data import Dataset
+from torchvision import datasets, transforms
+
 
 class ImageFolderWithPaths(datasets.ImageFolder):
     """Custom dataset that includes image file paths. Extends
@@ -17,26 +19,28 @@ class ImageFolderWithPaths(datasets.ImageFolder):
 
     # override the __getitem__ method. this is the method that dataloader calls
     def __getitem__(self, index):
-        # this is what ImageFolder normally returns 
+        # this is what ImageFolder normally returns
         original_tuple = super(ImageFolderWithPaths, self).__getitem__(index)
         # the image file path
         path = self.imgs[index][0]
         # make a new tuple that includes original and the path
-        tuple_with_path = (original_tuple + (path,))
+        tuple_with_path = original_tuple + (path,)
         return (tuple_with_path, index)
-    
-    
+
+
 class TestDataSet(Dataset):
     def __init__(self, open_dir, file_list):
-        
+
         self.open_dir = open_dir
         self.file_list = list(file_list)
-        self.transform = transforms.Compose([
-            transforms.Resize((224)),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406],
-                                 [0.229, 0.224, 0.225])])
-        
+        self.transform = transforms.Compose(
+            [
+                transforms.Resize((224)),
+                transforms.ToTensor(),
+                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+            ]
+        )
+
     def __len__(self):
         return len(self.file_list)
 
@@ -45,9 +49,10 @@ class TestDataSet(Dataset):
         image = Image.open(self.path)
         tensor_image = self.transform(image)
         return (tensor_image, self.path)
-    
+
+
 def get_data(data_dir):
-    '''
+    """
     Use the Pytorch ImageFolder class to read in root directory
     that holds subfolders of each class for training data
     Applies transforms
@@ -57,19 +62,22 @@ def get_data(data_dir):
     Returns
     -------
     data (tuple): (image, label, path)
-    '''
-    all_transforms = transforms.Compose([transforms.Resize(224),
-                                transforms.ToTensor(),
-                                transforms.Normalize([0.485, 0.456, 0.406],
-                                                     [0.229, 0.224, 0.225])])
+    """
+    all_transforms = transforms.Compose(
+        [
+            transforms.Resize(224),
+            transforms.ToTensor(),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+        ]
+    )
 
     data = ImageFolderWithPaths(root=data_dir, transform=all_transforms)
     return data
 
 
 def make_weights_for_balanced_classes(train_labels, nclasses):
-    '''
-    creates weights for each class for sampler such that lower count classes 
+    """
+    creates weights for each class for sampler such that lower count classes
     are sampled more frequently and higher count classes are sampled less
     Params
     ------
@@ -79,29 +87,38 @@ def make_weights_for_balanced_classes(train_labels, nclasses):
     -------
     - class_sample_counts (list): # of samples per class
     - train_samples_weights (list): weights for each class for sampling
-    '''
-    # only weight the training dataset 
+    """
+    # only weight the training dataset
 
     class_sample_counts = [0] * nclasses
-    for target in train_labels:  
+    for target in train_labels:
         class_sample_counts[target] += 1
-    print('counts per class: ', class_sample_counts)
+    print("counts per class: ", class_sample_counts)
 
-    class_weights = 1./torch.Tensor(class_sample_counts)
+    class_weights = 1.0 / torch.Tensor(class_sample_counts)
     train_samples_weights = [class_weights[class_id] for class_id in train_labels]
 
     return class_sample_counts, torch.DoubleTensor(train_samples_weights)
 
 
-def create_dataloaders(data, train_indices, val_indices, batch_size,
-                       save_model, val_loader_savename, 
-                       class_names, data_dir, valid_size=0.2,
-                       num_workers=20, shuffle=True):
-    '''
+def create_dataloaders(
+    data,
+    train_indices,
+    val_indices,
+    batch_size,
+    save_model,
+    val_loader_savename,
+    class_names,
+    data_dir,
+    valid_size=0.2,
+    num_workers=20,
+    shuffle=True,
+):
+    """
     get dataloaders
     Params
     -----
-    - data (tuple): (sample, target) where target is class_index of the target class 
+    - data (tuple): (sample, target) where target is class_index of the target class
     - train_indices (list): training dataset indices
     - val_indices (list): validation dataset indices
     - class_names (list): list of strings of classes
@@ -114,7 +131,7 @@ def create_dataloaders(data, train_indices, val_indices, batch_size,
     -------
     - train_loader (obj): dataloader iterable for training dataset
     - val_loader (obj): dataloader iterable for validation dataset
-    '''
+    """
 
     # Get a list of labels according to train_indices to obtain weighting for sampling
     train_labels = list(map(data.targets.__getitem__, train_indices))
@@ -123,45 +140,48 @@ def create_dataloaders(data, train_indices, val_indices, batch_size,
     train_data = torch.utils.data.Subset(data, train_indices)
     val_data = torch.utils.data.Subset(data, val_indices)
 
-    # For an unbalanced dataset create a weighted sampler 
-    class_counts, train_samples_weights = make_weights_for_balanced_classes(train_labels,
-                                                                            len(class_names))
+    # For an unbalanced dataset create a weighted sampler
+    class_counts, train_samples_weights = make_weights_for_balanced_classes(
+        train_labels, len(class_names)
+    )
     # Make a sampler to undersample classes with the highest counts
-    train_sampler = sampler.WeightedRandomSampler(train_samples_weights,
-                                                  len(train_samples_weights),
-                                                  replacement=True)
-    
+    train_sampler = sampler.WeightedRandomSampler(
+        train_samples_weights, len(train_samples_weights), replacement=True
+    )
+
     # Make an iterable of batches across the training dataset
-    train_loader = torch.utils.data.DataLoader(train_data,
-                                               batch_size=batch_size,        
-                                               sampler=train_sampler,
-                                               num_workers=num_workers,
-                                               pin_memory=True)
-    
+    train_loader = torch.utils.data.DataLoader(
+        train_data,
+        batch_size=batch_size,
+        sampler=train_sampler,
+        num_workers=num_workers,
+        pin_memory=True,
+    )
+
     if valid_size < 0.01:
         # use all data for training - no val loader
         return train_loader, None
     else:
 
         # Make an iterable of batches across the validation dataset
-        val_loader = torch.utils.data.DataLoader(val_data,
-                                                 batch_size=batch_size,
-                                                 shuffle=shuffle,
-                                                 num_workers=num_workers,
-                                                 pin_memory=True)
+        val_loader = torch.utils.data.DataLoader(
+            val_data,
+            batch_size=batch_size,
+            shuffle=shuffle,
+            num_workers=num_workers,
+            pin_memory=True,
+        )
         if save_model:
             torch.save(val_data, val_loader_savename)
 
         return train_loader, val_loader
 
 
-def get_test_loader_df(open_dir, file_list,
-                        batch_size=100,
-                        num_workers=20,
-                        shuffle=False,
-                        pin_memory=True):
+def get_test_loader_df(
+    open_dir, file_list, batch_size=100, num_workers=20, shuffle=False, pin_memory=True
+):
     """
-    Utility function for loading and returning a multi-process test iterator 
+    Utility function for loading and returning a multi-process test iterator
     If using CUDA, num_workers should be set to 1 and pin_memory to True.
     Params
     ------
@@ -175,20 +195,23 @@ def get_test_loader_df(open_dir, file_list,
     -------
     - data_loader: test set iterator (image, path)
     """
-    
 
     test_data = TestDataSet(open_dir, file_list)
 
-    test_loader = torch.utils.data.DataLoader(test_data,
-                                             batch_size=batch_size,
-                                             shuffle=shuffle,
-                                             num_workers=num_workers,
-                                             pin_memory=pin_memory)
+    test_loader = torch.utils.data.DataLoader(
+        test_data,
+        batch_size=batch_size,
+        shuffle=shuffle,
+        num_workers=num_workers,
+        pin_memory=pin_memory,
+    )
     return test_loader
 
-def get_val_loader_predictions(model, val_data, device, batch_size,
-                               shuffle=True, num_workers=20):
-    '''
+
+def get_val_loader_predictions(
+    model, val_data, device, batch_size, shuffle=True, num_workers=20
+):
+    """
     get a list of hand labels and predictions from a saved dataloader/model
     Params
     ------
@@ -198,19 +221,21 @@ def get_val_loader_predictions(model, val_data, device, batch_size,
     - batch_size (int): how many samples per batch to load
     - shuffle (bool): whether to shuffle the dataset after every epoch.
     - num_workers (int): number of subprocesses to use when loading the dataset
-    
+
     Returns
     -------
     - all_preds (list): predictions from a model
-    - all_labels (list): correct/hand labels 
-    '''
-    #transforms already applied in get_data() before saving
-    val_loader = torch.utils.data.DataLoader(val_data,
-                                             batch_size=batch_size,
-                                             shuffle=shuffle,
-                                             num_workers=num_workers,
-                                             pin_memory=True)
-    all_preds= []
+    - all_labels (list): correct/hand labels
+    """
+    # transforms already applied in get_data() before saving
+    val_loader = torch.utils.data.DataLoader(
+        val_data,
+        batch_size=batch_size,
+        shuffle=shuffle,
+        num_workers=num_workers,
+        pin_memory=True,
+    )
+    all_preds = []
     all_labels = []
     with torch.no_grad():
 
@@ -224,9 +249,8 @@ def get_val_loader_predictions(model, val_data, device, batch_size,
 
             all_preds.append(pred.cpu().numpy())
             all_labels.append(labels.cpu().numpy())
-    
+
     all_preds = np.asarray(list(itertools.chain(*all_preds)))
     all_labels = np.asarray(list(itertools.chain(*all_labels)))
-    
-    return all_preds, all_labels
 
+    return all_preds, all_labels

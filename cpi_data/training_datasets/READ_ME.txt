@@ -1,7 +1,7 @@
 3/24/21
 hand_labeled_resized_multcampaigns_clean = 13 classes
 aggs  blank  blurry  budding  bullets  columns  compact_irregs  fragments  needles  plates  rimed_aggs  rimed_columns  spheres
-git version 1.0.0 
+git version 1.0.0
 commit Add hand_labeled_resized_multcampaigns_clean
 
 3/24/21
