@@ -28,3 +28,4 @@ configs
 git-sizer
 __pycache__
 cocpit.img
+.vscode
