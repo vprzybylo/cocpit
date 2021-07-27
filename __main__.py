@@ -216,10 +216,10 @@ if __name__ == "__main__":
     preprocess_sheets = False
 
     # create CNN
-    build_ML = False
+    build_ML = True
 
     # run the category classification on quality images of ice particles
-    ice_classification = True
+    ice_classification = False
 
     cutoff = 10  # percent of image that can intersect the border
     num_cpus = 5  # workers for parallelization
