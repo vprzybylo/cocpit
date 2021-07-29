@@ -3,6 +3,7 @@
 .DS_store
 .virtual_documents
 cpi_data
+initial_databases
 nohup*
 dist
 IPAS_verification

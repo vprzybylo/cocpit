@@ -1,7 +1,7 @@
 """
 Particle Image Classifier (PIC)
 
-Opens image, calculates parameters using opencv
+Opens image and calculates geormetric parameters using opencv
 """
 
 import os
@@ -104,22 +104,6 @@ class Image:
     #         plt.imshow(self.im)
     #         plt.show()
 
-    def cutoff(self):
-        """
-        Determines the % of pixels that intersect
-        the border or perimeter of the image
-        """
-        # checking the percentage of the contour that touches the edge/border
-        locations = np.where(self.thresh != 0)
-        count = 0  # pixels touching border
-        for xl, yl in zip(locations[0], locations[1]):
-            if xl == 5 or yl == 5 or xl == self.height - 5 or yl == self.width - 5:
-                # cv2.circle(self.im, (yl, xl), 1, (255,0,0), 4)
-                # cv2.circle(self.thresh, (yl, xl), 1, (255,0,0), 4)
-                count += 1
-        cutoff_perc = (count / (2 * self.height + 2 * self.width)) * 100
-        return cutoff_perc
-
     def contrast(self):
         """
         Returns the standard deviation of the image pixel values -
@@ -160,21 +144,6 @@ class Image:
 
     def calculate_perim(self):
         self.perim = cv2.arcLength(self.largest_contour, False)
-
-    def cutoff_perim(self):
-        """
-        calcualates the percentage of the contour
-        that touches the edge/border
-        """
-        locations = np.where(self.thresh != 0)
-        count = 0  # pixels touching border
-
-        for xl, yl in zip(locations[0], locations[1]):
-            if xl == 5 or yl == 5 or xl == self.height - 5 or yl == self.width - 5:
-                count += 1
-
-        cutoff_perc = (count / self.perim) * 100
-        return cutoff_perc
 
     def phi(self):
         """

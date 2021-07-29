@@ -2,6 +2,7 @@
 classifies unseen images:
 transforms, makes predictions, and appends classification to dataframe
 """
+import os
 from collections import defaultdict
 
 import cv2
@@ -66,7 +67,7 @@ def send_message():
     register for an account and then:
     add ACCOUNT_SID, AUTH_TOKEN, and PHONE_NUMBER to a .env file
     '''
-
+    load_dotenv()
     account_sid = os.getenv('ACCOUNT_SID')
     auth_token = os.getenv('AUTH_TOKEN')
     client = Client(account_sid, auth_token)

@@ -4,8 +4,12 @@ from functools import partial
 from multiprocessing import Pool
 
 import cv2
+import imutils
 import numpy as np
 import pandas as pd
+from dotenv import load_dotenv
+from imutils import contours, perspective
+from scipy.spatial import distance as dist
 from twilio.rest import Client
 
 
@@ -24,11 +28,13 @@ class Image:
         self.files = []
         self.widths = []
         self.heights = []
+        self.particle_heights = []
+        self.particle_widths = []
         self.cutoffs = []
 
     def read_image(self, show_original):
         """
-        Reads sheet into mem
+        Reads sheet into memory
 
         Parameters:
             show_original (bool): whether to show the original sheet in an opencv window
@@ -36,39 +42,20 @@ class Image:
 
         self.image = cv2.imread(self.open_dir + self.file)
         # make a copy so that image can be altered and processed
-        # image_og holds the original sheet to extract contours from
-        self.image_og = copy.deepcopy(self.image)
-        # crop for header (consistent at 25 pixels from top)
         height, width, channels = self.image.shape
-        # sheet without header
+        # crop for header (consistent at 25 pixels from top)
         self.image = self.image[25:height, 0:width]
         # make an unchanged copy
-        self.image_og = self.image_og[25:height, 0:width]
-        # uncomment below to better fit image window to screen (shrinks)
-        # self.image = cv2.resize(self.image, (0,0), fx=0.8, fy=0.8)
+        self.image_og = copy.deepcopy(self.image)
 
         if show_original:
             cv2.imshow("original", self.image_og)
             cv2.waitKey(0)
 
-    def erode(self, show_erode):
-        kernel = np.ones((5, 5), np.uint8)
-        self.image = cv2.erode(self.image, kernel, iterations=1)
-        if show_erode:
-            cv2.imshow("Image", self.image)
-            cv2.waitKey(0)
-
     def dilate(self, show_dilate):
-        kernel = np.ones((5, 5), np.uint8)
+        kernel = np.ones((3, 3), np.uint8)
         self.image = cv2.dilate(self.image, kernel, iterations=1)
         if show_dilate:
-            cv2.imshow("Image", self.image)
-            cv2.waitKey(0)
-
-    def morphology(self, show_morph):
-        kernel = np.ones((5, 5), np.uint8)
-        self.image = cv2.morphologyEx(self.image, cv2.MORPH_OPEN, kernel)
-        if show_morph:
             cv2.imshow("Image", self.image)
             cv2.waitKey(0)
 
@@ -80,7 +67,7 @@ class Image:
         # first find all contours on sheet, convert to b/w
         gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
         # threshold the binary image
-        # contours dependent on hardcoded threshold - some thin white boundaries are 253 si 252 picks these up
+        # contours dependent on hardcoded threshold - some thin white boundaries are 253 so 252 picks these up
         self.thresh = cv2.threshold(gray, 252, 255, cv2.THRESH_BINARY_INV)[1]
         (cnts, _) = cv2.findContours(
             self.thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE
@@ -94,47 +81,6 @@ class Image:
                     self.thresh, [c], 0, (255, 255, 255), -1
                 )  # -1 fills contour
 
-    def connected_component_label(self, show_threshold, show_rois):
-        """
-        Finds all connected components by traversing the sheet matrix
-        after removing text and header.
-        The resulting connected components are particles (rectangular ROIs) to extract
-        Labels each individual component in a different color for visual aid
-
-        Parameters:
-            show_threshold (bool): whether to show the thresholded black and white sheet
-            show_rois (bool): whether to show each particle (rectangular ROI) in a different color
-        """
-        # if masking text on self.image, redefine self.thresh here
-        # gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
-        # self.thresh = cv2.threshold(gray, 252, 255, cv2.THRESH_BINARY_INV)[1]
-
-        if show_threshold:
-            cv2.imshow("thresh", self.thresh)
-            cv2.waitKey(0)
-
-        # Applying cv2.connectedComponents()
-        num_labels, labels = cv2.connectedComponents(self.thresh)
-
-        # Map component labels to hue val
-        label_hue = np.uint8(252 * labels / np.max(labels))
-        blank_ch = 255 * np.ones_like(label_hue)
-        self.labeled_img = cv2.merge([label_hue, blank_ch, blank_ch])
-
-        # Converting cvt to BGR
-        self.labeled_img = cv2.cvtColor(self.labeled_img, cv2.COLOR_HSV2BGR)
-        # cv2.imshow('labeled img', self.labeled_img)
-        # cv2.waitKey(0)
-
-        # set background label to white
-        self.labeled_img[label_hue == 0] = 255
-
-        # Show image after component labeling
-        if show_rois:
-            self.labeled = cv2.cvtColor(self.labeled_img, cv2.COLOR_BGR2RGB)
-            cv2.imshow("rois", self.labeled)
-            cv2.waitKey(0)
-
     def largest_contour(self, cnts):
         """
         Find largest contour out of list of contours on image
@@ -144,28 +90,43 @@ class Image:
         """
         self.largest_cnt = sorted(cnts, key=cv2.contourArea, reverse=True)[0]
 
+    def particle_dimensions(self):
+        """
+        Calculate the length and width of particles in microns
+        from a rectangular bounding box
+        CPI probe: 1 px = 2.3 microns
+        """
+        rect = cv2.minAreaRect(self.largest_cnt)
+        (x, y), (width, height), angle = rect
+        return width * 2.3, height * 2.3
+
     def cutoff(self):
         """
         Determines the % of pixels that intersect
         the border or perimeter of the image
         """
-        # checking the percentage of the contour that touches the edge/border
         locations = np.where(self.thresh != 0)
         count = 0  # pixels touching border
         for xl, yl in zip(locations[0], locations[1]):
             if xl == 5 or yl == 5 or xl == self.height - 5 or yl == self.width - 5:
-                # cv2.circle(self.im, (yl, xl), 1, (255,0,0), 4)
-                # cv2.circle(self.thresh, (yl, xl), 1, (255,0,0), 4)
                 count += 1
         cutoff_perc = (count / (2 * self.height + 2 * self.width)) * 100
         return cutoff_perc
 
-    def extract_contours(self, cutoff, show_cropped, save_images):
+    def save_image(self, cropped):
+        if not os.path.exists(self.save_dir):
+            print("making dir ", self.save_dir)
+            os.makedirs(self.save_dir)
+        cv2.imwrite(self.save_dir + self.file_out, cropped)
+
+    def extract_contours(self, cutoff_thresh, show_cropped, save_images):
         """
         Finds, extracts and saves ROIs from sheets
         Saves filename, width, height, and cutoff to lists for a df
 
         Parameters:
+            cutoff_thresh (int): percentage that particle is intersecting
+                          the border w.r.t perimeter
             show_cropped (bool): whether to show the ROI regions
             save_images (bool): whether to save the final images
         """
@@ -178,9 +139,8 @@ class Image:
         # cv2.imshow("Image", draw)
         # cv2.waitKey(0)
         for i, c in enumerate(cnts):
-            # remove small particles that have numbers attached
-            # to largest contour
-            if cv2.contourArea(c) > 1000:
+            # remove small particles that have numbers attached to largest contour
+            if cv2.contourArea(c) > 200:
                 # crop the rectangles/contours from the sheet
                 # save width and height for cutoff calculation
                 rect = cv2.boundingRect(c)
@@ -202,82 +162,99 @@ class Image:
                     self.thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE
                 )
 
-                if (
-                    cnts and self.cutoff() < cutoff
-                ):  # make sure the thresholding picks up a contour in the rectangle
+                # make sure the thresholding picks up a contour in the rectangle
+                # and cutoff criteria is met
+                cutoff = self.cutoff()
+                if cnts and cutoff < cutoff_thresh:
 
-                    # get cutoff of each particle and append to list
-                    self.cutoffs.append(self.cutoff())
+                    # calculate particle length and width
+                    self.largest_contour(cnts)
+                    particle_width, particle_height = self.particle_dimensions()
 
                     # resize the cropped images to be the same size for CNN
                     cropped = cv2.resize(
                         cropped, (1000, 1000), interpolation=cv2.INTER_AREA
                     )
 
+                    # get cutoff of each particle and append to list to append to df
+                    self.cutoffs.append(cutoff)
                     self.file_out = self.file[:-4] + "_" + str(i) + ".png"
-
                     self.files.append(self.file_out)
-                    self.widths.append(self.width)
-                    self.heights.append(self.height)
-
-                    self.largest_contour(cnts)
+                    self.widths.append(self.width)  # of rectangular roi frame
+                    self.heights.append(self.height)  # of rectangular roi frame
+                    self.particle_heights.append(particle_height)
+                    self.particle_widths.append(particle_width)
 
                     if save_images:
-                        if not os.path.exists(self.save_dir):
-                            print("making dir ", self.save_dir)
-                            os.makedirs(self.save_dir)
-                        cv2.imwrite(self.save_dir + self.file_out, cropped)
+                        self.save_image(cropped)
 
-    def run(self, cutoff, show_original, show_dilate, show_cropped, save_images):
-
-        """main method calls"""
+    def run(self, cutoff_thresh, show_original, show_dilate, show_cropped, save_images):
+        """
+        main method calls
+        """
 
         self.read_image(show_original)
-        # self.erode(show_erode)
-        self.dilate(show_dilate)
+        # when this is uncommented, the image frame is underestimated by 4 pixels
+        # self.dilate(show_dilate)
         self.remove_text()
-        # self.connected_component_label(show_threshold, show_rois)
-        self.extract_contours(cutoff, show_cropped, save_images)
-        return self.files, self.widths, self.heights, self.cutoffs
+        self.extract_contours(cutoff_thresh, show_cropped, save_images)
+        return (
+            self.files,
+            self.widths,
+            self.heights,
+            self.particle_widths,
+            self.particle_heights,
+            self.cutoffs,
+        )
 
 
-def make_df(save_df, files, widths, heights, cutoffs):
+def make_df(
+    save_df, files, widths, heights, particle_widths, particle_heights, cutoffs
+):
     """
-    write files, original image widths, heights, and % cutoff
-    to csv file per campaign
+    creates df with original image and particle widths, heights, and % cutoff
+    writes to csv file for each campaign
     """
+
     cutoffs_formatted = ["%.2f" % elem for elem in cutoffs]
     df_dict = {
         "filename": files,
-        "width": widths,
-        "height": heights,
+        "frame width": widths,
+        "frame height": heights,
+        "particle width": particle_widths,
+        "particle height": particle_heights,
         "cutoff": cutoffs_formatted,
     }
     df = pd.DataFrame(df_dict)
-    print(len(df))
 
     #         len_before = len(df)
     #         df.drop_duplicates(subset=['width', 'height','cutoff'], keep='first', inplace=True)
     #         print('removed %d duplicates' %(len_before - len(df)))
 
-    df.to_csv(save_df)
+    df.to_csv(save_df, index=False)
 
 
 def send_message():
-    account_sid = "AC6034e88973d880bf2244f62eec6fe356"
-    auth_token = "f374de1a9245649ef5c8bc3f6e4faa97"
+    """
+    use twilio to receive a text when the processing has finished!
+    register for an account and then:
+    add ACCOUNT_SID, AUTH_TOKEN, and PHONE_NUMBER to a .env file
+    """
+    load_dotenv()
+    account_sid = os.getenv("ACCOUNT_SID")
+    auth_token = os.getenv("AUTH_TOKEN")
     client = Client(account_sid, auth_token)
     message = client.messages.create(
-        body="preprocessing text completed!",
+        body="Processing Complete!",
         from_="+19285175160",  # Provided phone number
-        to="+15187969534",
+        to=os.getenv("PHONE_NUMBER"),
     )  # Your phone number
     message.sid
 
 
 def main(
     open_dir,
-    cutoff,
+    cutoff_thresh,
     save_dir,
     num_cpus,
     save_images,
@@ -292,13 +269,14 @@ def main(
     files = os.listdir(open_dir)
     for file in files:
         img = Image(open_dir, file, save_dir)
+
         # img.main()
         instances.append(img)
 
     results = p.map(
         partial(
             Image.run,
-            cutoff=cutoff,
+            cutoff_thresh=cutoff_thresh,
             show_original=show_original,
             show_dilate=show_dilate,
             show_cropped=show_cropped,
@@ -315,7 +293,9 @@ def main(
     files = np.concatenate(results[:, 0])
     widths = np.concatenate(results[:, 1])
     heights = np.concatenate(results[:, 2])
-    cutoffs = np.concatenate(results[:, 3])
+    particle_widths = np.concatenate(results[:, 3])
+    particle_heights = np.concatenate(results[:, 4])
+    cutoffs = np.concatenate(results[:, 5])
 
-    make_df(save_df, files, widths, heights, cutoffs)
-    send_message()
+    make_df(save_df, files, widths, heights, particle_widths, particle_heights, cutoffs)
+    # send_message()

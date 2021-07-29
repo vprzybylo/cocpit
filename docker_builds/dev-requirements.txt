@@ -19,6 +19,7 @@ jupyterlab-pygments==0.1.2
 jupyterlab-server==2.2.0
 jupyterlab-tabular-data-editor==1.0.0
 jupyterlab-widgets==1.0.0
+natsort
 nbstripout==0.3.9
 nbconvert==5.6.1
 opencv-python==4.5.1.48

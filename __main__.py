@@ -31,22 +31,20 @@ def _preprocess_sheets():
     text can be on the sheet
     """
     start_time = time.time()
+    save_images = True
+
+    print("save images: ", save_images)
+    print("cutoff percentage allowed: ", cutoff)
+
     # change to ROI_PNGS if 'sheets' came from processing rois in IDL
     # sheets came from data archived pngs online
     open_dir = "/data/data/cpi_data/campaigns/" + campaign + "/sheets/"
-    save_images = True
-    print("save images: ", save_images)
-
-    # resize images to desired_size
-
-    print("cutoff percentage allowed: ", cutoff)
-
-    save_dir = "/data/data/cpi_data/campaigns/" + campaign + "/single_imgs_all/"
+    save_dir = "/data/data/cpi_data/campaigns/" + campaign + "/single_imgs_v1.2.0/"
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
+    outdir = "/data/data/final_databases_vgg16/"
     outname = "df_" + campaign + ".csv"
-    outdir = "/data/data/final_databases/no_mask/"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     save_df = os.path.join(outdir, outname)
@@ -58,7 +56,7 @@ def _preprocess_sheets():
         num_cpus,
         save_images,
         save_df=save_df,
-        show_original=False,
+        show_original=False,  # all set to False due to lack of display on server
         show_dilate=False,
         show_cropped=False,
     )
@@ -102,7 +100,7 @@ def _build_ML():
     #               'vgg19', 'densenet169', 'densenet201']}
 
     acc_savename_train = (
-        "/data/data/saved_accuracies/no_mask/"
+        "/data/data/saved_accuracies/"
         + "/save_train_acc_loss_e"
         + str(params["max_epochs"][0])
         + "_bs"
@@ -114,7 +112,7 @@ def _build_ML():
         + "models_no_blank.csv"
     )
     acc_savename_val = (
-        "/data/data/saved_accuracies/no_mask/"
+        "/data/data/saved_accuracies/"
         + "/save_val_acc_loss_e"
         + str(params["max_epochs"][0])
         + "_bs"
@@ -127,7 +125,7 @@ def _build_ML():
     )
     # savename for precision, recall, F1 file
     metrics_savename = (
-        "/data/data/saved_accuracies/no_mask/"
+        "/data/data/saved_accuracies/"
         + "/save_val_metrics_e"
         + str(params["max_epochs"][0])
         + "_bs"
@@ -188,38 +186,48 @@ def _ice_classification():
         "sphere",
     ]
 
-    open_dir = "cpi_data/campaigns/" + campaign + "/single_imgs_all/"
+    open_dir = "cpi_data/campaigns/" + campaign + "/single_imgs_v1.2.0/"
 
     # load ML model for predictions
     model = torch.load(
-        "/data/data/saved_models/no_mask/e20_bs64_k5_9models_v1.0.0_no_blank_vgg19"
+        "/data/data/saved_models/no_mask/e50_bs64_1models_no_blank_alltraindata_vgg16"
     )
 
     # load df of quality ice particles to make predictions on
-    df = pd.read_csv("final_databases/no_mask/df_" + campaign + ".csv")
+    df = pd.read_csv("final_databases_vgg16/df_" + campaign + ".csv")
 
     df = cocpit.run_ML_model.main(df, open_dir, class_names, cutoff, model, num_workers)
 
     # write database to file that holds predictions
     engine = create_engine(
-        "sqlite:///final_databases_vgg19/no_mask/" + campaign + ".db", echo=False
+        "sqlite:///final_databases_vgg16/" + campaign + ".db", echo=False
     )
     df.to_sql(name=campaign, con=engine, index=False, if_exists="replace")
-    df.to_csv("final_databases_vgg19/no_mask/" + campaign + ".csv", index=False)
+    df.to_csv("final_databases_vgg16/" + campaign + ".csv", index=False)
 
     print("done classifying all images!")
     print("time to classify ice = %.2f seconds" % (time.time() - start_time))
 
 
+def _geometric_attributes():
+    '''
+    calculates geometric particle properties and appends to the databases
+    e.g., roundness, aspect ratio, area ratio, etc.
+    see cocpit/geometric_attributes.py which calls pic.py for calculations
+    '''
+
+
 if __name__ == "__main__":
     # extract each image from sheet of images
-    preprocess_sheets = False
+    preprocess_sheets = True
 
     # create CNN
-    build_ML = True
+    build_ML = False
 
     # run the category classification on quality images of ice particles
-    ice_classification = False
+    ice_classification = True
+
+    geometric_attributes = True
 
     cutoff = 10  # percent of image that can intersect the border
     num_cpus = 5  # workers for parallelization
@@ -240,7 +248,7 @@ if __name__ == "__main__":
         "OLYMPEX",
         "POSIDON",
     ]
-    campaigns = ["OLYMPEX"]
+    campaigns = ["test"]
     if build_ML:
         campaigns = ["N/A"]  # only run once
 
@@ -254,3 +262,6 @@ if __name__ == "__main__":
 
         if ice_classification:
             _ice_classification()
+
+        if geometric_attributes:
+            _geometric_attributes()
