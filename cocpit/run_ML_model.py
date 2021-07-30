@@ -94,7 +94,7 @@ def main(df, open_dir, class_names, cutoff, model, num_workers):
         df[column] = d[column]
 
     df["classification"] = top_class
-    print(df, df["classification"])
+
     len_frag, perc_category = percent_category(df, category="fragment")
     print("#/% fragment: ", len_frag, perc_category)
 

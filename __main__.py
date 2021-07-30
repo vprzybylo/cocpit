@@ -234,7 +234,7 @@ if __name__ == "__main__":
     ice_classification = True
 
     # calculates geometric particle properties and appends to databases
-    geometric_attributes = False
+    geometric_attributes = True
 
     cutoff = 10  # percent of image that can intersect the border
     num_cpus = 5  # workers for parallelization
@@ -255,7 +255,7 @@ if __name__ == "__main__":
         "OLYMPEX",
         "POSIDON",
     ]
-    campaigns = ["test"]
+
     if build_ML:
         campaigns = ["N/A"]  # only run once
 
