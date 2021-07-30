@@ -298,4 +298,4 @@ def main(
     cutoffs = np.concatenate(results[:, 5])
 
     make_df(save_df, files, widths, heights, particle_widths, particle_heights, cutoffs)
-    # send_message()
+    send_message()

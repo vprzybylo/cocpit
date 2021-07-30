@@ -54,6 +54,7 @@ import cocpit.build_ML_model
 import cocpit.check_classifications
 import cocpit.classification_metrics
 import cocpit.data_loaders
+import cocpit.geometric_attributes
 import cocpit.pic
 import cocpit.process_png_sheets_with_text
 import cocpit.run_ML_model

@@ -2,14 +2,19 @@
 calculates particle geometric properties
 """
 
+import os
+import time
+
+import numpy as np
 import pandas as pd
+from joblib import Parallel, delayed
 
 import cocpit.pic as pic
 
 
-def get_attributes(open_dir, filename, desired_size):
+def get_attributes(open_dir, filename, desired_size=1000):
 
-    image = cocpit.pic.Image(open_dir, filename)
+    image = pic.Image(open_dir, filename)
     image.resize_stretch(desired_size)
     image.find_contours()
 
@@ -33,8 +38,6 @@ def get_attributes(open_dir, filename, desired_size):
             contours = len(image.contours)
             edges = count_edge_px
             contrast = image.contrast()
-            height = image.height_og
-            width = image.width_og
             cnt_area = image.area
             solidity = image.solidity()
             complexity = image.complexity()
@@ -44,7 +47,6 @@ def get_attributes(open_dir, filename, desired_size):
             perim = image.perim
             phi = image.phi()
             circularity = image.circularity()
-            cutoff = image.cutoff_perim()
             perim_area_ratio = image.perim_area_ratio()
             roundness = image.roundness()
             filled_circular_area_ratio = image.filled_circular_area_ratio()
@@ -54,8 +56,6 @@ def get_attributes(open_dir, filename, desired_size):
             contours = -999
             edges = -999
             contrast = -999
-            height = -999
-            width = -999
             cnt_area = -999
             solidity = -999
             complexity = -999
@@ -65,105 +65,84 @@ def get_attributes(open_dir, filename, desired_size):
             perim = -999
             phi = -999
             circularity = -999
-            cutoff = -999
             perim_area_ratio = -999
             roundness = -999
             filled_circular_area_ratio = -999
             extreme_points = -999
             std = -999
 
-    dicts = {}
+        properties = {}
+        keys = [
+            "blur",
+            "contours",
+            "edges",
+            "std",
+            "cnt_area",
+            "contrast",
+            "circularity",
+            "solidity",
+            "complexity",
+            "equiv_d",
+            "convex_perim",
+            "hull_area",
+            "perim",
+            "phi",
+            "extreme_points",
+            "filled_circular_area_ratio",
+            "roundness",
+            "perim_area_ratio",
+        ]
+        values = [
+            lapl,
+            contours,
+            edges,
+            std,
+            cnt_area,
+            contrast,
+            circularity,
+            solidity,
+            complexity,
+            equiv_d,
+            convex_perim,
+            hull_area,
+            perim,
+            phi,
+            extreme_points,
+            filled_circular_area_ratio,
+            roundness,
+            perim_area_ratio,
+        ]
+        for key, val in zip(keys, values):
+            properties[key] = val
 
-    keys = [
-        'filename',
-        'height',
-        'width',
-        'lapl',
-        'contours',
-        'edges',
-        'std',
-        'cnt_area',
-        'contrast',
-        'circularity',
-        'solidity',
-        'complexity',
-        'equiv_d',
-        'convex_perim',
-        'hull_area',
-        'perim',
-        'phi',
-        'cutoff',
-        'extreme_points',
-        'filled_circular_area_ratio',
-        'roundness',
-        'perim_area_ratio',
-    ]
-    values = [
-        filenames,
-        height,
-        width,
-        lapl,
-        contours,
-        edges,
-        std,
-        cnt_area,
-        contrast,
-        circularity,
-        solidity,
-        complexity,
-        equiv_d,
-        convex_perim,
-        hull_area,
-        perim,
-        phi,
-        cutoff,
-        extreme_points,
-        filled_circular_area_ratio,
-        roundness,
-        perim_area_ratio,
-    ]
-    for key, val in zip(keys, values):
-        dicts[key] = val
-    df = pd.DataFrame(dicts, index=[0])
+        # turn dictionary into dataframe
+        properties = pd.DataFrame(properties, index=[0])
 
-    return df
+        return properties
 
 
-def make_dataframe(open_dir, desired_size, good=True, train=False):
+def main(df, open_dir, num_cores):
     """
-
+    reads in dataframe for a campaign after ice classification and
+    calculates particle geometric properties using the cocpit.pic module
 
     returns
     -------
-        df (pd.DataFrame): dataframe with image attributes from cocpit.pic module
+        df (pd.DataFrame): dataframe with image attributes appended
     """
 
     files = os.listdir(open_dir)
-    num_cores = multiprocessing.cpu_count()
     start = time.time()
-    dfs = Parallel(n_jobs=num_cores - 2)(
-        delayed(get_attributes)(open_dir, filename, desired_size, good, train)
-        for filename in files
+
+    properties = Parallel(n_jobs=num_cores)(
+        delayed(get_attributes)(open_dir, filename) for filename in files
     )
 
-    # Concat dataframes to one dataframe
-    df = pd.concat(dfs, ignore_index=True)
+    # append new properties dictionary to existing dataframe
+    properties = pd.concat(properties, ignore_index=True)
+    df = pd.concat([df, properties], axis=1).round(3)
+
     end = time.time()
-    print('Completed in: %.2f sec' % (end - start))
+    print("Geometric attributes added in: %.2f sec" % (end - start))
 
     return df
-
-
-def main(df, open_dir, num_workers):
-
-    # file_list = df["filename"]
-
-    for open_dir in open_dirs_spheres:
-        if open_dir == open_dirs_spheres[0]:
-            print('training good spheres')
-            dfs.append(make_dataframe(open_dir, desired_size, good=True, train=True))
-        else:
-            print('training bad spheres')
-            dfs.append(make_dataframe(open_dir, desired_size, good=False, train=True))
-    df_spheres = pd.concat([dfs[0], dfs[1]])
-    df_spheres.to_pickle(save_df_spheres)

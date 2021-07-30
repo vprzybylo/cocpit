@@ -43,8 +43,8 @@ def _preprocess_sheets():
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
-    outdir = "/data/data/final_databases_vgg16/"
-    outname = "df_" + campaign + ".csv"
+    outdir = "/data/data/final_databases/vgg16/"
+    outname = campaign + ".csv"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     save_df = os.path.join(outdir, outname)
@@ -194,27 +194,33 @@ def _ice_classification():
     )
 
     # load df of quality ice particles to make predictions on
-    df = pd.read_csv("final_databases_vgg16/df_" + campaign + ".csv")
+    df = pd.read_csv("final_databases/vgg16/" + campaign + ".csv")
 
     df = cocpit.run_ML_model.main(df, open_dir, class_names, cutoff, model, num_workers)
 
     # write database to file that holds predictions
     engine = create_engine(
-        "sqlite:///final_databases_vgg16/" + campaign + ".db", echo=False
+        "sqlite:///final_databases/vgg16/" + campaign + ".db", echo=False
     )
     df.to_sql(name=campaign, con=engine, index=False, if_exists="replace")
-    df.to_csv("final_databases_vgg16/" + campaign + ".csv", index=False)
+    df.to_csv("final_databases/vgg16/" + campaign + ".csv", index=False)
 
     print("done classifying all images!")
     print("time to classify ice = %.2f seconds" % (time.time() - start_time))
 
 
 def _geometric_attributes():
-    '''
+    """
     calculates geometric particle properties and appends to the databases
     e.g., roundness, aspect ratio, area ratio, etc.
-    see cocpit/geometric_attributes.py which calls pic.py for calculations
-    '''
+    see cocpit/geometric_attributes.py, which calls pic.py for calculations
+    """
+
+    # load df of quality ice particles to append particle attributes
+    df = pd.read_csv("final_databases/vgg16/" + campaign + ".csv")
+    open_dir = "cpi_data/campaigns/" + campaign + "/single_imgs_v1.2.0/"
+    df = cocpit.geometric_attributes.main(df, open_dir, num_cpus)
+    df.to_csv("final_databases/vgg16/" + campaign + ".csv", index=False)
 
 
 if __name__ == "__main__":
@@ -227,7 +233,8 @@ if __name__ == "__main__":
     # run the category classification on quality images of ice particles
     ice_classification = True
 
-    geometric_attributes = True
+    # calculates geometric particle properties and appends to databases
+    geometric_attributes = False
 
     cutoff = 10  # percent of image that can intersect the border
     num_cpus = 5  # workers for parallelization
