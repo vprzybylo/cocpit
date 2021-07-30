@@ -1,4 +1,5 @@
 # Ignore Mac system files
+.env
 .DS_store
 .virtual_documents
 cpi_data
