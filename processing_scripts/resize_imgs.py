@@ -20,7 +20,7 @@ for filename in os.listdir(dir_open):
     height, width = im.shape[:2]
     old_size = [width, height]
     ratio = float(desired_size) / max(old_size)
-    new_size = tuple([int(x * ratio) for x in old_size])
+    new_size = tuple(int(x * ratio) for x in old_size)
     im = cv2.resize(im, new_size)
 
     delta_w = desired_size - new_size[0]

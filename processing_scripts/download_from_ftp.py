@@ -13,8 +13,7 @@ def list_of_files(path, extension, recursive=False):
             print(file_path)
     else:
         for root, dirs, files in os.walk(path):
-            for file_path in glob.iglob(root + "/*." + extension):
-                yield file_path
+            yield from glob.iglob(root + "/*." + extension)
 
 
 path = "/pub/download/data/vprzy296853/"

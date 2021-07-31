@@ -270,7 +270,7 @@ def plot_model_timing(time_csv, convert_names, colors, save_name, save_fig=False
     df["Model"].astype(str)
     df["Time"].astype(float)
     df = df.sort_values(by=["Time"])
-    sorted_colors = dict((k, colors[k]) for k in df["Model"])
+    sorted_colors = {k: colors[k] for k in df["Model"]}
 
     fig, ax = plt.subplots(1, 1, figsize=(10, 5))
 

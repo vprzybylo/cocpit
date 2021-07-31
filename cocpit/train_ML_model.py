@@ -49,10 +49,11 @@ def update_params(model, feature_extract=False):
     """
     params_to_update = model.parameters()
     if feature_extract:
-        params_to_update = []
-        for name, param in model.named_parameters():
-            if param.requires_grad:
-                params_to_update.append(param)
+        params_to_update = [
+            param
+            for name, param in model.named_parameters()
+            if param.requires_grad
+        ]
                 # print("\t",name)
 
 
@@ -144,11 +145,7 @@ def train_model(
         print("-" * 20)
 
         # Each epoch has a training and validation phase
-        if valid_size < 0.1:
-            phases = ["train"]
-        else:
-            phases = ["train", "val"]
-
+        phases = ["train"] if valid_size < 0.1 else ["train", "val"]
         for phase in phases:
             print("Phase: {}".format(phase))
             totals_train = 0
@@ -194,14 +191,13 @@ def train_model(
                     loss = criterion(outputs, labels)
                     _, preds = torch.max(outputs, 1)
 
-                    if phase == "val":
-                        all_preds.append(preds.cpu().numpy())
-                        all_labels.append(labels.cpu().numpy())
-
-                    # backward + optimize only if in training phase
                     if phase == "train":
                         loss.backward()  # compute updates for each parameter
                         optimizer.step()  # make the updates for each parameter
+
+                    elif phase == "val":
+                        all_preds.append(preds.cpu().numpy())
+                        all_labels.append(labels.cpu().numpy())
 
                 # calculate batch metrics
                 if phase == "train":
