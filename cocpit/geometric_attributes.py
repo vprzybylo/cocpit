@@ -2,8 +2,10 @@
 calculates particle geometric properties
 """
 
+import multiprocessing
 import os
 import time
+from functools import partial
 
 import numpy as np
 import pandas as pd
@@ -12,10 +14,9 @@ from joblib import Parallel, delayed
 import cocpit.pic as pic
 
 
-def get_attributes(open_dir, filename, desired_size=1000):
-
+def get_attributes(filename, open_dir):
     image = pic.Image(open_dir, filename)
-    image.resize_stretch(desired_size)
+    # image.resize_stretch(desired_size)
     image.find_contours()
 
     if len(image.contours) != 0:
@@ -121,7 +122,7 @@ def get_attributes(open_dir, filename, desired_size=1000):
         return properties
 
 
-def main(df, open_dir, num_cores):
+def main(df, open_dir, num_cpus):
     """
     reads in dataframe for a campaign after ice classification and
     calculates particle geometric properties using the cocpit.pic module
@@ -131,12 +132,16 @@ def main(df, open_dir, num_cores):
         df (pd.DataFrame): dataframe with image attributes appended
     """
 
-    files = os.listdir(open_dir)
+    files = df['filename']
     start = time.time()
 
-    properties = Parallel(n_jobs=num_cores)(
-        delayed(get_attributes)(open_dir, filename) for filename in files
-    )
+    p = multiprocessing.Pool(num_cpus)
+    properties = p.map(partial(get_attributes, open_dir=open_dir), files)
+    p.close()
+
+    #     properties = Parallel(n_jobs=num_cpus)(
+    #         delayed(get_attributes)(open_dir, filename) for filename in files
+    #     )
 
     # append new properties dictionary to existing dataframe
     properties = pd.concat(properties, ignore_index=True)

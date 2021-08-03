@@ -195,7 +195,7 @@ class Image:
 
         self.read_image(show_original)
         # when this is uncommented, the image frame is underestimated by 4 pixels
-        # self.dilate(show_dilate)
+        self.dilate(show_dilate)
         self.remove_text()
         self.extract_contours(cutoff_thresh, show_cropped, save_images)
         return (
@@ -227,9 +227,19 @@ def make_df(
     }
     df = pd.DataFrame(df_dict)
 
-    #         len_before = len(df)
-    #         df.drop_duplicates(subset=['width', 'height','cutoff'], keep='first', inplace=True)
-    #         print('removed %d duplicates' %(len_before - len(df)))
+    len_before = len(df)
+    df.drop_duplicates(
+        subset=[
+            'frame width',
+            'frame height',
+            'particle width',
+            'particle height',
+            'cutoff',
+        ],
+        keep='first',
+        inplace=True,
+    )
+    print('removed %d duplicates' % (len_before - len(df)))
 
     df.to_csv(save_df, index=False)
 

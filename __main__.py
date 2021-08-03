@@ -77,7 +77,7 @@ def _build_ML():
         "batch_size": [64],
         "max_epochs": [20],
         "class_names": [
-            "aggs",
+            "aggregates",
             "budding",
             "bullets",
             "columns",
@@ -237,25 +237,24 @@ if __name__ == "__main__":
     geometric_attributes = True
 
     cutoff = 10  # percent of image that can intersect the border
-    num_cpus = 5  # workers for parallelization
+    num_cpus = 4  # workers for parallelization
     num_workers = 20  # workers for data loaders
 
     campaigns = [
         "MACPEX",
         "ATTREX",
-        "CRYSTAL_FACE_UND",
-        "AIRS_II",
+        # "CRYSTAL_FACE_UND",
+        # "AIRS_II",
         "ARM",
-        "CRYSTAL_FACE_NASA",
-        "ICE_L",
+        # "CRYSTAL_FACE_NASA",
+        # "ICE_L",
         "IPHEX",
-        "MC3E",
-        "MIDCIX",
-        "MPACE",
+        # "MC3E",
+        # "MIDCIX",
+        # "MPACE",
         "OLYMPEX",
-        "POSIDON",
+        # "POSIDON",
     ]
-
     if build_ML:
         campaigns = ["N/A"]  # only run once
 
