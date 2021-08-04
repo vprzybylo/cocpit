@@ -1,0 +1,5 @@
+outs:
+- md5: eb53e3a6be5e002928ee208f8ac4506a.dir
+  size: 6266105314
+  nfiles: 32707
+  path: hand_labeled_resized_v1.3.0_no_blank

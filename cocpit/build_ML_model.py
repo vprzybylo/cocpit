@@ -183,7 +183,7 @@ def main(
                             + str(i)
                             + "_"
                             + str(len(params["model_names"]))
-                            + "models_no_blank"
+                            + "models_no_blank_vgg16_v1.3.0"
                         )
                         val_loader_savename = (
                             "/data/data/saved_val_loaders/no_mask/"
@@ -195,7 +195,7 @@ def main(
                             + str(i)
                             + "_"
                             + str(len(params["model_names"]))
-                            + "models_vgg16_no_blank.pt"
+                            + "models_vgg16_v1.3.0.pt"
                         )
                         # DATALOADERS
                         train_loader, val_loader = data_loaders.create_dataloaders(
@@ -264,7 +264,7 @@ def main(
                         + str(params["batch_size"][0])
                         + "_"
                         + str(len(params["model_names"]))
-                        + "models_no_blank_alltraindata"
+                        + "models_vgg_16_v1.3.0"
                     )
 
                     val_loader_savename = (
@@ -275,7 +275,7 @@ def main(
                         + str(params["batch_size"][0])
                         + "_"
                         + str(len(params["model_names"]))
-                        + "models_v1.0.0_no_blank.pt"
+                        + "models_vgg_16_v1.3.0.pt"
                     )
 
                     # DATALOADERS
