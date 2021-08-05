@@ -33,7 +33,7 @@
   <p align="center">
     Classification of Cloud Particle Imagery and Thermodynamics 
     <br />
-    <a href="https://vprzybylo.github.io/cocpit/"><strong>Explore the docs »</strong></a>
+    <a href="https://vprzybylo.github.io"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="filler">View Demo</a>
