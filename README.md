@@ -36,7 +36,6 @@
     <a href="https://vprzybylo.github.io"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="filler">View Demo</a>
     ·
     <a href="https://github.com/vprzybylo/cocpit/issues">
     Report Bug</a>
