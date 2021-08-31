@@ -58,7 +58,9 @@
 
 ## About
 
-A tool for the characterization of cloud particle images from the (<a href="http://www.specinc.com/cloud-particle-imager">CPI</a>) probe.  Probe images are classified into 9 categories:
+A tool for the characterization of cloud particle images from the (<a href="http://www.specinc.com/cloud-particle-imager">CPI</a>) probe.  Accessibility to a future user interface that correlates ice particle imagery with environmental properties will allow users to instantly evaluate the databases classifications without accompanying image storage or computational hardware needs.
+
+Currently, probe images are classified into 9 categories, but further development may extend these classes:
 
 | Category         | Description                                                                                                                                                                 |
 |-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -74,7 +76,7 @@ A tool for the characterization of cloud particle images from the (<a href="http
 | sphere            | circular water droplets                                                                                                                                                     |
 <p align="center">
 <a>
-<img src="https://github.com/vprzybylo/cocpit/blob/master/README_graphics/example_image_categories.pdf" alt="class_categories" width="1000" height="1000">
+<img src="https://github.com/vprzybylo/cocpit/tree/master/README_graphics/example_image_categories.pdf" alt="class_categories" width="1000" height="1000">
 </a>
 </p>
 ### Additional descriptors that can be processed on the images:
@@ -126,26 +128,13 @@ A tool for the characterization of cloud particle images from the (<a href="http
 
 **TOTAL IMAGES: 12,086,384**
 
-
-# Installation
-
-1. Clone the repo <br>
-	git clone: [git@github.com:vprzybylo/cocpit.git](git@github.com:vprzybylo/cocpit.git)<br/>
-3. docker image on dockerhub: vprzybylo/cocpit:v1.2.0 <br>
-	* note to run ./__main__.py requires raw image files (multiple GB per campaign)
-	* [Contact](#contact) for image request
-
-
-## Prerequisites
-see requirements.txt
-
 ### Built With
 
 * <a href="https://www.python.org/"><a href="https://pytorch.org/docs/stable/torchvision/models.html">Python</a> </a> 
 * <a href="https://pytorch.org/docs/stable/torchvision/models.html">Pytorch</a> 
 * <a href="http://www.specinc.com/sites/default/files/software_and_manuals/CPI_Post Processing Software Manual_rev1.2_20120116.pdf">cpiview</a> 
   * Desktop-developed software will need to be used to extract ''sheets'' of CPI images from region of interest (ROI) files output from the CPI probe should new data be wished to be processed and classified.
-  * ![flowchart](https://github.com/vprzybylo/cocpit/blob/master/README_graphics/flow_chart_sheets.pdf)
+  * ![flowchart](https://github.com/vprzybylo/cocpit/tree/master/README_graphics/flow_chart_sheets.pdf)
 
 * <a href="https://www.nvidia.com/en-us/">nvidia</a> 
   * Resources used: NVIDIA DGX-1 server utilizing Tesla V100 GPUs. This system is housed in the University at Albanys Tier-3 Data Center, and managed/maintained by the xCITE (ExTREME Collaboration, Innovation and TEchnology) laboratory. The base DGX-1 V100 system contains 8 Tesla V100 GPUs with a combined total of 40,960 CUDA (graphics) cores, 5120 Tensor cores, and 256GB of GPU memory, all linked by NVIDIAs 300GB/s NVLINK interconnect. The DGX-1 is optimized for data loading, data transformations, and training, which are all critical to the ML processes required by this project.
