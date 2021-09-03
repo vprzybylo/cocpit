@@ -71,8 +71,7 @@ def get_data(data_dir):
         ]
     )
 
-    data = ImageFolderWithPaths(root=data_dir, transform=all_transforms)
-    return data
+    return ImageFolderWithPaths(root=data_dir, transform=all_transforms)
 
 
 def make_weights_for_balanced_classes(train_labels, nclasses):
@@ -163,20 +162,18 @@ def create_dataloaders(
     if valid_size < 0.01:
         # use all data for training - no val loader
         return train_loader, None
-    else:
+    # Make an iterable of batches across the validation dataset
+    val_loader = torch.utils.data.DataLoader(
+        val_data,
+        batch_size=batch_size,
+        shuffle=shuffle,
+        num_workers=num_workers,
+        pin_memory=True,
+    )
+    if save_model:
+        torch.save(val_data, val_loader_savename)
 
-        # Make an iterable of batches across the validation dataset
-        val_loader = torch.utils.data.DataLoader(
-            val_data,
-            batch_size=batch_size,
-            shuffle=shuffle,
-            num_workers=num_workers,
-            pin_memory=False,
-        )
-        if save_model:
-            torch.save(val_data, val_loader_savename)
-
-        return train_loader, val_loader
+    return train_loader, val_loader
 
 
 def get_test_loader_df(
@@ -200,14 +197,13 @@ def get_test_loader_df(
 
     test_data = TestDataSet(open_dir, file_list)
 
-    test_loader = torch.utils.data.DataLoader(
+    return torch.utils.data.DataLoader(
         test_data,
         batch_size=batch_size,
         shuffle=shuffle,
         num_workers=num_workers,
         pin_memory=pin_memory,
     )
-    return test_loader
 
 
 def get_val_loader_predictions(

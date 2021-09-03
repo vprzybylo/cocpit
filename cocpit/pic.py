@@ -32,7 +32,6 @@ class Image:
             self.im = cv2.cvtColor(
                 cv2.imread(self.path, cv2.IMREAD_UNCHANGED), cv2.COLOR_BGR2RGB
             )
-            self.image_og = cp.deepcopy(self.im)
         else:
             self.open_dir = open_dir
             self.filename = filename
@@ -41,8 +40,7 @@ class Image:
                 cv2.imread(self.open_dir + self.filename, cv2.IMREAD_UNCHANGED),
                 cv2.COLOR_BGR2RGB,
             )
-            self.image_og = cp.deepcopy(self.im)
-
+        self.image_og = cp.deepcopy(self.im)
         # original image height and width before resizing
         self.height_og, self.width_og, _ = self.image_og.shape
 
@@ -136,8 +134,7 @@ class Image:
         """
         min_threshold = 0.66 * np.mean(self.im)
         max_threshold = 1.33 * np.mean(self.im)
-        edges = cv2.Canny(self.im, min_threshold, max_threshold)
-        return edges
+        return cv2.Canny(self.im, min_threshold, max_threshold)
 
     def calculate_largest_contour(self):
         self.largest_contour = sorted(self.contours, key=cv2.contourArea, reverse=True)[
