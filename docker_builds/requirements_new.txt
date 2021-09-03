@@ -81,7 +81,7 @@ patsy==0.5.1
 pexpect==4.8.0
 pickle5==0.0.11
 pickleshare==0.7.5
-Pillow==7.2.0
+Pillow==8.2.0
 pkginfo==1.5.0.1
 prometheus-client==0.8.0
 prompt-toolkit==3.0.7

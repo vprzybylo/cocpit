@@ -23,7 +23,7 @@ natsort
 nbstripout==0.3.9
 nbconvert==5.6.1
 opencv-python==4.5.1.48
-Pillow==8.1.1
+Pillow==8.2.0
 pre-commit==2.13.0
 pylint==2.7.0
 python-dotenv
