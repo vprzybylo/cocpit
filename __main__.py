@@ -268,7 +268,7 @@ if __name__ == "__main__":
         "num cpus for parallelization = {}".format(num_workers)
     )
 
-    campaigns = [
+    campaigns = ["N/A"] if build_model else [
         # "MACPEX",
         # "ATTREX",
         "ISDAC",
@@ -284,9 +284,6 @@ if __name__ == "__main__":
         # "OLYMPEX",
         # "POSIDON",
     ]
-    if build_model:
-        campaigns = ["N/A"]  # only run once
-
     for campaign in campaigns:
         print("campaign: ", campaign)
         if preprocess_sheets:
