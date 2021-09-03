@@ -1,5 +1,6 @@
 import copy
 import os
+import re
 from functools import partial
 from multiprocessing import Pool
 
@@ -8,8 +9,6 @@ import imutils
 import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
-from imutils import contours, perspective
-from scipy.spatial import distance as dist
 from twilio.rest import Client
 
 
@@ -53,28 +52,35 @@ class Image:
             cv2.waitKey(0)
 
     def dilate(self, show_dilate):
-        kernel = np.ones((3, 3), np.uint8)
+        """
+        Increases the object area and useful in joining broken parts of an image.
+        """
+        kernel = np.ones((10, 10), np.uint8)
         self.image = cv2.dilate(self.image, kernel, iterations=1)
         if show_dilate:
             cv2.imshow("Image", self.image)
             cv2.waitKey(0)
 
-    def remove_text(self):
+    def find_sheet_contours(self):
         """
-        Removes text such as date/time stamp by drawing over small contours in white.
-        If the text is on the particle itself and connected to the largest contour, it stays
+        find all contours on sheet and convert to b/w
         """
-        # first find all contours on sheet, convert to b/w
         gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
-        # threshold the binary image
+        # threshold the binary sheet
         # contours dependent on hardcoded threshold - some thin white boundaries are 253 so 252 picks these up
         self.thresh = cv2.threshold(gray, 252, 255, cv2.THRESH_BINARY_INV)[1]
         (cnts, _) = cv2.findContours(
             self.thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE
         )
-        # overlay white contours on white background to cover or mask text
+        return cnts
+
+    def remove_text(self, cnts):
+        """
+        Removes text such as date/time stamp by drawing over small contours in white.
+        If the text is on the particle itself and connected to the largest contour, it stays
+        Should a very small particle be < 200 px^2, it is also masked
+        """
         # only mask contours with small area (aka the text)
-        # should a very small particle be < 200 px^2, it is also masked
         for i, c in enumerate(cnts):
             if cv2.contourArea(c) < 200:
                 cv2.drawContours(
@@ -196,7 +202,8 @@ class Image:
         self.read_image(show_original)
         # when this is uncommented, the image frame is underestimated by 4 pixels
         self.dilate(show_dilate)
-        self.remove_text()
+        cnts = self.find_sheet_contours()
+        self.remove_text(cnts)
         self.extract_contours(cutoff_thresh, show_cropped, save_images)
         return (
             self.files,
@@ -230,16 +237,16 @@ def make_df(
     len_before = len(df)
     df.drop_duplicates(
         subset=[
-            'frame width',
-            'frame height',
-            'particle width',
-            'particle height',
-            'cutoff',
+            "frame width",
+            "frame height",
+            "particle width",
+            "particle height",
+            "cutoff",
         ],
-        keep='first',
+        keep="first",
         inplace=True,
     )
-    print('removed %d duplicates' % (len_before - len(df)))
+    print("removed %d duplicates" % (len_before - len(df)))
 
     df.to_csv(save_df, index=False)
 

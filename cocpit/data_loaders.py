@@ -157,7 +157,7 @@ def create_dataloaders(
         batch_size=batch_size,
         sampler=train_sampler,
         num_workers=num_workers,
-        pin_memory=True,
+        pin_memory=False,
     )
 
     if valid_size < 0.01:
@@ -171,7 +171,7 @@ def create_dataloaders(
             batch_size=batch_size,
             shuffle=shuffle,
             num_workers=num_workers,
-            pin_memory=True,
+            pin_memory=False,
         )
         if save_model:
             torch.save(val_data, val_loader_savename)

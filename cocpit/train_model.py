@@ -3,6 +3,7 @@ train the CNN model(s)
 """
 
 import copy
+import csv
 import itertools
 import time
 
@@ -11,8 +12,8 @@ import torch
 from torch import nn, optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
-import cocpit.calculate_metrics as metrics
 import cocpit.classification_metrics as classification_metrics
+import cocpit.train_metrics as metrics
 
 
 def set_dropout(model, drop_rate=0.1):
@@ -38,14 +39,24 @@ def to_device(device, model):
 
 
 def count_parameters(model):
+    '''
+    number of model parameters to update
+    '''
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
 def update_params(model, feature_extract=False):
     """
-    If finetuning, update all parameters. If using
-    feature extract method, only update the parameter initialized
-    i.e. the parameters with requires_grad is True
+    When feature extracting, we only want to update the parameters
+    of the last layer, or in other words, we only want to update the
+    parameters for the layer(s) we are reshaping. Therefore, we do
+    not need to compute the gradients of the parameters that we are
+    not changing, so for efficiency we set the .requires_grad attribute
+    to False. This is important because by default, this attribute is
+    set to True. Then, when we initialize the new layer and by default
+    the new parameters have .requires_grad=True so only the new layer’s
+    parameters will be updated. When we are finetuning we can leave all
+    of the .required_grad’s set to the default of True.
     """
     params_to_update = model.parameters()
     if feature_extract:
@@ -55,11 +66,7 @@ def update_params(model, feature_extract=False):
                 params_to_update.append(param)
                 # print("\t",name)
 
-
-#     else:
-#         for name,param in model.named_parameters():
-#             if param.requires_grad == True:
-#                 print("\t",name)
+    return params_to_update
 
 
 def label_counts(i, labels, num_classes):
@@ -80,7 +87,10 @@ def label_counts(i, labels, num_classes):
 
 
 def get_normalization_values(dataloaders_dict, phase):
-    # Iterate over data in batches
+    '''
+    Get mean and standard deviation of pixel values
+    across all batches
+    '''
     mean = 0.0
     std = 0.0
     nb_samples = 0.0
@@ -121,10 +131,10 @@ def train_model(
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = to_device(device, model)
-    update_params(model)
+    params_to_update = update_params(model)
     print("model params: ", count_parameters(model))
 
-    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, nesterov=True)
+    optimizer = optim.SGD(params_to_update, lr=0.01, momentum=0.9, nesterov=True)
 
     scheduler = ReduceLROnPlateau(
         optimizer, mode="max", factor=0.5, patience=0, verbose=True, eps=1e-04
@@ -313,8 +323,10 @@ def train_model(
         )
     )
 
-    #     with open('/data/data/saved_models/no_mask/model_timing.csv', 'a', newline='') as file:
-    #         writer = csv.writer(file)
-    #         writer.writerow([model_name, epoch, kfold, time_elapsed])
+    with open(
+        '/data/data/saved_timings/model_timing_only_cpu.csv', 'a', newline=''
+    ) as file:
+        writer = csv.writer(file)
+        writer.writerow([model_name, epoch, kfold, time_elapsed])
 
     return clf_report
