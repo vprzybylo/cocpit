@@ -48,12 +48,9 @@ def metrics_report(all_labels, all_preds, class_names):
     -------
     - clf_report (df): classifcation report from sklearn
     """
-    # sklearn classifcation report outputs metrics in dictionary
-    clf_report = classification_report(
+    return classification_report(
         all_labels, all_preds, digits=3, target_names=class_names, output_dict=True
     )
-
-    return clf_report
 
 
 def plot_confusion_matrix(
