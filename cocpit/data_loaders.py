@@ -156,7 +156,7 @@ def create_dataloaders(
         batch_size=batch_size,
         sampler=train_sampler,
         num_workers=num_workers,
-        pin_memory=True,
+        pin_memory=False,
     )
 
     if valid_size < 0.01:

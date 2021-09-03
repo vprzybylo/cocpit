@@ -1,5 +1,5 @@
 """
-Particle Image Classifier (PIC)
+Particle Iage Classifier (PIC)
 
 Opens image and calculates geormetric parameters using opencv
 """

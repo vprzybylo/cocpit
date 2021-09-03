@@ -1,0 +1,21 @@
+FROM python:3.9-slim-buster
+WORKDIR /data/data
+
+LABEL com.nvidia.volumes.needed="nvidia_driver"
+ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+ENV NVIDIA_VISIBLE_DEVICES=all
+
+# needed for opencv error
+RUN apt-get update && \
+    apt-get install ffmpeg libsm6 libxext6  -y
+
+RUN groupadd -o -g 1001 vanessa \
+        && useradd -o -r -m -u 1001 -g 1001 vanessa
+
+RUN pip3 install --upgrade pip
+COPY requirements_prod.txt /requirements_prod.txt
+RUN pip3 install -r /requirements_prod.txt
+
+CMD ["python", "/data/data/__main__.py"]

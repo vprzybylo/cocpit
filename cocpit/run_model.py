@@ -23,7 +23,7 @@ torch.cuda.empty_cache()
 
 def predict(test_loader, class_names, model):
 
-    """Predict the classes of an image
+    """Predict the classes of images from a test_loader
     using a trained CNN.
     """
 

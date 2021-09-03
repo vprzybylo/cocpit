@@ -1,8 +1,9 @@
 """
 calculation and plotting functions for reporting performance metrics
 """
+import copy
 
-
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -66,29 +67,47 @@ def plot_confusion_matrix(
     - save_name (str): plot filename to save as
     - save_fig (bool): save the conf matrix to file
     """
+
     fig, ax = plt.subplots(figsize=(13, 9))
+    # all_preds[all_preds == 0] = np.nan
+    # all_labels[all_labels == 0] = np.nan
     cm = confusion_matrix(all_preds, all_labels)
 
     if norm:
         cmn = cm.astype("float") / cm.sum(axis=1)[:, np.newaxis]
+        cmn = cmn.astype(float)
+        cmn[cmn < 0.005] = np.nan
+        cmap = copy.copy(mpl.cm.get_cmap("Reds"))
+        cmap.set_bad(color='white')
         heat = sns.heatmap(
             cmn,
             annot=True,
             fmt=".2f",
+            linewidths=1,
+            linecolor='k',
             xticklabels=class_names,
             yticklabels=class_names,
-            cmap="Blues",
+            cmap=cmap,
             annot_kws={"size": 16},
         )
+
         plt.title("Normalized", fontsize=18)
     else:
+        # cm = np.ma.masked_where(cm < 0.01, cm)
+        cm = cm.astype(float)
+        cm[cm < 0.005] = np.nan
+        cmap = copy.copy(mpl.cm.get_cmap("Reds"))
+        cmap.set_bad(color='white')
+
         heat = sns.heatmap(
             cm,
             annot=True,
-            fmt="d",
+            linewidths=1,
+            linecolor='k',
             xticklabels=class_names,
             yticklabels=class_names,
-            cmap="Blues",
+            cmap=cmap,
+            fmt='.0f',
             annot_kws={"size": 18},
         )
         plt.title("Unweighted", fontsize=18)
@@ -187,15 +206,17 @@ def plot_classification_report_classes(clf_report, save_name, save_fig=False):
     fig, ax = plt.subplots(figsize=(9, 7))
 
     clf_report = pd.DataFrame(clf_report).iloc[:-1, :].T
+    print(clf_report)
 
     sns.heatmap(
         clf_report,
         annot=True,
-        cmap="coolwarm",
+        fmt=".1%",
+        cmap="coolwarm_r",
         linecolor="k",
         linewidths=1,
         annot_kws={"fontsize": 14},
-        vmin=0.87,
+        vmin=0.90,
         vmax=1.00,
     )
     if save_fig:
