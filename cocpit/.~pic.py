@@ -136,7 +136,8 @@ class Image:
         """
         min_threshold = 0.66 * np.mean(self.im)
         max_threshold = 1.33 * np.mean(self.im)
-        return cv2.Canny(self.im, min_threshold, max_threshold)
+        edges = cv2.Canny(self.im, min_threshold, max_threshold)
+        return edges
 
     def calculate_largest_contour(self):
         self.largest_contour = sorted(self.contours, key=cv2.contourArea, reverse=True)[

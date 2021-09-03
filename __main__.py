@@ -39,7 +39,7 @@ def _preprocess_sheets():
     # change to ROI_PNGS if 'sheets' came from processing rois in IDL
     # sheets came from data archived pngs online
     open_dir = "/data/data/cpi_data/campaigns/" + campaign + "/sheets/"
-    save_dir = "/data/data/cpi_data/campaigns/" + campaign + "/single_imgs_v1.2.0/"
+    save_dir = "/data/data/cpi_data/campaigns/" + campaign + "/single_imgs_v1.3.0/"
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
@@ -75,9 +75,9 @@ def _build_ML():
     params = {
         "kfold": 0,  # set to 0 to turn off kfold cross validation
         "batch_size": [64],
-        "max_epochs": [20],
+        "max_epochs": [30],
         "class_names": [
-            "aggs",
+            "aggregates",
             "budding",
             "bullets",
             "columns",
@@ -89,7 +89,7 @@ def _build_ML():
         ],
         "model_names": ["vgg16"],
         "data_dir": "/data/data/cpi_data/training_datasets/"
-        + "hand_labeled_resized_multcampaigns_v1.0.0_no_blank/",
+        + "hand_labeled_resized_v1.3.0_no_blank/",
         "log_exp": True,  # log experiment to comet
         "API_KEY": os.getenv("API_KEY"),
         "WORKSPACE": os.getenv("WORKSPACE"),
@@ -109,7 +109,7 @@ def _build_ML():
         + str(params["kfold"])
         + "_"
         + str(len(params["model_names"]))
-        + "models_no_blank.csv"
+        + "models_v1.3.0.csv"
     )
     acc_savename_val = (
         "/data/data/saved_accuracies/"
@@ -121,7 +121,7 @@ def _build_ML():
         + str(params["kfold"])
         + "_"
         + str(len(params["model_names"]))
-        + "models_no_blank.csv"
+        + "models_v1.3.0.csv"
     )
     # savename for precision, recall, F1 file
     metrics_savename = (
@@ -134,7 +134,7 @@ def _build_ML():
         + str(params["kfold"])
         + "_"
         + str(len(params["model_names"]))
-        + "_no_blank.csv"
+        + "_v1.3.0.csv"
     )
 
     if params["log_exp"]:
@@ -144,12 +144,13 @@ def _build_ML():
             workspace=params["WORKSPACE"],
         )
         experiment.log_parameters(params)
-        experiment.add_tag("v1.2.0")
+        experiment.add_tag("v1.3.0")
     else:
         experiment = None
 
     save_acc = True
-    save_model = False
+    save_model = True
+    # model_savename in build_ML_model.py due to looping through kfolds
     valid_size = 0.2  # if <0.01, use all data with kfold set to 0 also
     len(params["class_names"])
 
@@ -186,7 +187,7 @@ def _ice_classification():
         "sphere",
     ]
 
-    open_dir = "cpi_data/campaigns/" + campaign + "/single_imgs_v1.2.0/"
+    open_dir = "cpi_data/campaigns/" + campaign + "/single_imgs_v1.3.0/"
 
     # load ML model for predictions
     model = torch.load(
@@ -218,44 +219,44 @@ def _geometric_attributes():
 
     # load df of quality ice particles to append particle attributes
     df = pd.read_csv("final_databases/vgg16/" + campaign + ".csv")
-    open_dir = "cpi_data/campaigns/" + campaign + "/single_imgs_v1.2.0/"
+    open_dir = "cpi_data/campaigns/" + campaign + "/single_imgs_v1.3.0/"
     df = cocpit.geometric_attributes.main(df, open_dir, num_cpus)
     df.to_csv("final_databases/vgg16/" + campaign + ".csv", index=False)
 
 
 if __name__ == "__main__":
     # extract each image from sheet of images
-    preprocess_sheets = True
+    preprocess_sheets = False
 
     # create CNN
-    build_ML = False
+    build_ML = True
 
     # run the category classification on quality images of ice particles
-    ice_classification = True
+    ice_classification = False
 
     # calculates geometric particle properties and appends to databases
-    geometric_attributes = True
+    geometric_attributes = False
 
     cutoff = 10  # percent of image that can intersect the border
-    num_cpus = 5  # workers for parallelization
+    num_cpus = 4  # workers for parallelization
     num_workers = 20  # workers for data loaders
 
     campaigns = [
         "MACPEX",
         "ATTREX",
-        "CRYSTAL_FACE_UND",
-        "AIRS_II",
+        "ISDAC",
+        # "CRYSTAL_FACE_UND",
+        # "AIRS_II",
         "ARM",
-        "CRYSTAL_FACE_NASA",
-        "ICE_L",
+        # "CRYSTAL_FACE_NASA",
+        # "ICE_L",
         "IPHEX",
-        "MC3E",
-        "MIDCIX",
-        "MPACE",
+        # "MC3E",
+        # "MIDCIX",
+        # "MPACE",
         "OLYMPEX",
-        "POSIDON",
+        # "POSIDON",
     ]
-
     if build_ML:
         campaigns = ["N/A"]  # only run once
 

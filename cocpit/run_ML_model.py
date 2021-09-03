@@ -18,6 +18,8 @@ from twilio.rest import Client
 
 import cocpit.data_loaders as data_loaders
 
+torch.cuda.empty_cache()
+
 
 def predict(test_loader, class_names, model):
 

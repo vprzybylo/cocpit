@@ -120,12 +120,14 @@ def create_dataloaders(
     - data (tuple): (sample, target) where target is class_index of the target class
     - train_indices (list): training dataset indices
     - val_indices (list): validation dataset indices
+    - batch_size (int): batch size for dataloader
+    - save_model (bool): whether to save the model or not
+    - val_loader_savename (str): name of the validation loader to save
     - class_names (list): list of strings of classes
     - data_dir (str): directory for training dataset
-    - batch_size (int): batch size for dataloader
+    - valid_size (float): % of data used for validation dataset (0.0-1.0 = 0%-100%)
     - num_workers (int): # of cpus to be used during data loading
     - shuffle (bool): whether to shuffle the data per epoch
-    - valid_size (float): % of data used for validation dataset (0.0-1.0 = 0%-100%)
     Returns
     -------
     - train_loader (obj): dataloader iterable for training dataset
