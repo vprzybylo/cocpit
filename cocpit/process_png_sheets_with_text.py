@@ -106,12 +106,12 @@ class Image:
         the border or perimeter of the image
         """
         locations = np.where(self.thresh != 0)
-        count = 0  # pixels touching border
-        for xl, yl in zip(locations[0], locations[1]):
-            if xl == 5 or yl == 5 or xl == self.height - 5 or yl == self.width - 5:
-                count += 1
-        cutoff_perc = (count / (2 * self.height + 2 * self.width)) * 100
-        return cutoff_perc
+        count = sum(
+            xl == 5 or yl == 5 or xl == self.height - 5 or yl == self.width - 5
+            for xl, yl in zip(locations[0], locations[1])
+        )
+
+        return (count / (2 * self.height + 2 * self.width)) * 100
 
     def save_image(self, cropped):
         if not os.path.exists(self.save_dir):

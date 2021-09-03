@@ -31,10 +31,7 @@ def get_attributes(filename, open_dir):
             # image.mask_background()
 
             count_edge_px = np.count_nonzero(image.edges())
-            if count_edge_px > 0:
-                std = np.std(np.nonzero(image.edges()))
-            else:
-                std = 0
+            std = np.std(np.nonzero(image.edges())) if count_edge_px > 0 else 0
             lapl = image.laplacian()
             contours = len(image.contours)
             edges = count_edge_px
@@ -72,7 +69,6 @@ def get_attributes(filename, open_dir):
             extreme_points = -999
             std = -999
 
-        properties = {}
         keys = [
             "blur",
             "contours",
@@ -113,9 +109,7 @@ def get_attributes(filename, open_dir):
             roundness,
             perim_area_ratio,
         ]
-        for key, val in zip(keys, values):
-            properties[key] = val
-
+        properties = {key: val for key, val in zip(keys, values)}
         # turn dictionary into dataframe
         properties = pd.DataFrame(properties, index=[0])
 
