@@ -113,7 +113,7 @@ pathspec==0.8.1
 pexpect==4.8.0
 phonenumbers==8.12.31
 pickleshare==0.7.5
-Pillow==8.2.0
+Pillow==8.3.2
 platformdirs==2.2.0
 plotly==5.2.2
 pluggy==1.0.0
