@@ -30,9 +30,15 @@ aggs  blank  bullets  columns  compact_irregs  fragments  plates  rimed_aggs  sp
 cleaned and removed wrong predictions from hand_labeled_resized_multcampaigns_v1.0.0_combined
 commit hand_labeled_resized_multcampaigns_v1.0.0_removed
 
+4/5/21
+hand_labeled_resized_multcampaigns_v1.0.0_no_blank
+aggs  budding  bullets  columns  compact_irregs  fragments  plates  rimed_aggs  spheres
+removed blank and separated budding and bullets
+commit hand_labeled_resized_multcampaigns_v1.0.0_no_blank
+
+
 8/4/21
 hand_labeled_resized_v1.3.0_no_blank
 aggs  budding  bullets  columns  compact_irregs  fragments  plates  rimed_aggs  spheres
-included 100 images from ARM, AIRS_II, ATTREX, CRYSTAL_FACE_UND, CRYSTAL_FACE_NASA , ISDAC, MC3E
-MPACE, POSIDON, ICE_L, MACPEX, MIDCIX, OLYMPEX
+included 100 images from ARM, AIRS_II, ATTREX, CRYSTAL_FACE_UND, CRYSTAL_FACE_NASA, ISDAC, MC3E, MPACE, POSIDON, ICE_L, MACPEX, MIDCIX, OLYMPEX
 reinforcement of unseen training particles from newer campaigns

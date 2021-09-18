@@ -112,6 +112,7 @@ def create_dataloaders(
     valid_size=0.2,
     num_workers=20,
     shuffle=True,
+    balance_weights=True,
 ):
     """
     get dataloaders
@@ -128,6 +129,7 @@ def create_dataloaders(
     - valid_size (float): % of data used for validation dataset (0.0-1.0 = 0%-100%)
     - num_workers (int): # of cpus to be used during data loading
     - shuffle (bool): whether to shuffle the data per epoch
+    - balance_weights (bool): True creates a weighted sampler for class imbalance
     Returns
     -------
     - train_loader (obj): dataloader iterable for training dataset
@@ -141,23 +143,34 @@ def create_dataloaders(
     train_data = torch.utils.data.Subset(data, train_indices)
     val_data = torch.utils.data.Subset(data, val_indices)
 
-    # For an unbalanced dataset create a weighted sampler
-    class_counts, train_samples_weights = make_weights_for_balanced_classes(
-        train_labels, len(class_names)
-    )
-    # Make a sampler to undersample classes with the highest counts
-    train_sampler = sampler.WeightedRandomSampler(
-        train_samples_weights, len(train_samples_weights), replacement=True
-    )
+    if balance_weights:
+        # For an unbalanced dataset create a weighted sampler
+        class_counts, train_samples_weights = make_weights_for_balanced_classes(
+            train_labels, len(class_names)
+        )
 
-    # Make an iterable of batches across the training dataset
-    train_loader = torch.utils.data.DataLoader(
-        train_data,
-        batch_size=batch_size,
-        sampler=train_sampler,
-        num_workers=num_workers,
-        pin_memory=False,
-    )
+        # Make a sampler to undersample classes with the highest counts
+        train_sampler = sampler.WeightedRandomSampler(
+            train_samples_weights, len(train_samples_weights), replacement=True
+        )
+
+        # Make an iterable of batches across the training dataset
+        train_loader = torch.utils.data.DataLoader(
+            train_data,
+            batch_size=batch_size,
+            sampler=train_sampler,
+            num_workers=num_workers,
+            pin_memory=True,
+        )
+    else:
+        # Make an iterable of batches across the training dataset
+        train_loader = torch.utils.data.DataLoader(
+            train_data,
+            batch_size=batch_size,
+            shuffle=shuffle,
+            num_workers=num_workers,
+            pin_memory=True,
+        )
 
     if valid_size < 0.01:
         # use all data for training - no val loader

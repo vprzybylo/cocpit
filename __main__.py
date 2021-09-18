@@ -76,7 +76,7 @@ def _build_model():
     params = {
         "kfold": 0,  # set to 0 to turn off kfold cross validation
         "batch_size": [64],
-        "max_epochs": [1],
+        "max_epochs": [20],
         "class_names": [
             "agg",
             "budding",
@@ -90,18 +90,18 @@ def _build_model():
         ],
         "model_names": [
             # "efficient",
-            "resnet18",
-            "resnet34",
-            "resnet152",
-            "alexnet",
+            # "resnet18",
+            # "resnet34",
+            # "resnet152",
+            # "alexnet",
             "vgg16",
-            "vgg19",
-            "densenet169",
-            "densenet201",
+            # "vgg19",
+            # "densenet169",
+            # "densenet201",
         ],
         "data_dir": "/data/data/cpi_data/training_datasets/"
-        + "hand_labeled_resized_v1.3.0_no_blank/",
-        "log_exp": False,  # log experiment to comet
+        + "hand_labeled_resized_multcampaigns_v1.0.0_no_blank/",
+        "log_exp": True,  # log experiment to comet
         "API_KEY": os.getenv("API_KEY"),
         "WORKSPACE": os.getenv("WORKSPACE"),
         "PROJECT_NAME": os.getenv("PROJECT_NAME"),
@@ -120,7 +120,7 @@ def _build_model():
         + str(params["kfold"])
         + "_"
         + str(len(params["model_names"]))
-        + "models_v1.3.0.csv"
+        + "models_unbalanced_v1.3.0.csv"
     )
     acc_savename_val = (
         "/data/data/saved_accuracies/"
@@ -132,7 +132,7 @@ def _build_model():
         + str(params["kfold"])
         + "_"
         + str(len(params["model_names"]))
-        + "models_v1.3.0.csv"
+        + "models_unbalanced_v1.3.0.csv"
     )
     # savename for precision, recall, F1 file
     metrics_savename = (
@@ -145,7 +145,7 @@ def _build_model():
         + str(params["kfold"])
         + "_"
         + str(len(params["model_names"]))
-        + "_v1.3.0.csv"
+        + "_unbalanced_v1.3.0.csv"
     )
 
     if params["log_exp"]:
@@ -159,11 +159,10 @@ def _build_model():
     else:
         experiment = None
 
-    save_acc = False
-    save_model = False
+    save_acc = True
+    save_model = True
     # model_savename in build_model.py due to looping through kfolds
-    valid_size = 0.0  # if <0.01, use all data with kfold set to 0 also
-    len(params["class_names"])
+    valid_size = 0.2  # if <0.01, use all data with kfold set to 0 also
 
     cocpit.build_model.main(
         params,
@@ -261,29 +260,33 @@ if __name__ == "__main__":
 
     cutoff = 10  # percent of image that can intersect the border
     num_cpus = 10  # workers for parallelization
-    num_workers = 10  # workers for data loaders
+    num_workers = 5  # workers for data loaders
     print(
         "num workers in loader = {}".format(num_workers)
     ) if ice_classification or build_model else print(
         "num cpus for parallelization = {}".format(num_workers)
     )
 
-    campaigns = ["N/A"] if build_model else [
-        # "MACPEX",
-        # "ATTREX",
-        "ISDAC",
-        # "CRYSTAL_FACE_UND",
-        # "AIRS_II",
-        # "ARM",
-        # "CRYSTAL_FACE_NASA",
-        # "ICE_L",
-        # "IPHEX",
-        # "MC3E",
-        # "MIDCIX",
-        # "MPACE",
-        # "OLYMPEX",
-        # "POSIDON",
-    ]
+    campaigns = (
+        ["N/A"]
+        if build_model
+        else [
+            # "MACPEX",
+            # "ATTREX",
+            "ISDAC",
+            # "CRYSTAL_FACE_UND",
+            # "AIRS_II",
+            # "ARM",
+            # "CRYSTAL_FACE_NASA",
+            # "ICE_L",
+            # "IPHEX",
+            # "MC3E",
+            # "MIDCIX",
+            # "MPACE",
+            # "OLYMPEX",
+            # "POSIDON",
+        ]
+    )
     for campaign in campaigns:
         print("campaign: ", campaign)
         if preprocess_sheets:

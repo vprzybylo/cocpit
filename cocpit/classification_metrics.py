@@ -204,21 +204,21 @@ def plot_classification_report_classes(clf_report, save_name, save_fig=False):
     - save_fig (bool): save the figure to file
     """
     fig, ax = plt.subplots(figsize=(9, 7))
-
-    clf_report = pd.DataFrame(clf_report).iloc[:-1, :].T
-    print(clf_report)
+    # .iloc[:-1, :] to exclude support
+    clf_report = pd.DataFrame(clf_report).iloc[:-1, :]
 
     sns.heatmap(
         clf_report,
         annot=True,
         fmt=".1%",
-        cmap="coolwarm_r",
+        cmap="coolwarm",
         linecolor="k",
         linewidths=1,
         annot_kws={"fontsize": 14},
         vmin=0.90,
         vmax=1.00,
     )
+    ax.set_title('Weighted')
     if save_fig:
         plt.savefig(save_name, dpi=300, bbox_inches="tight")
     plt.show()

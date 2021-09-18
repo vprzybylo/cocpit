@@ -5,6 +5,7 @@ train the CNN model(s)
 import copy
 import csv
 import itertools
+import operator
 import time
 
 import numpy as np
@@ -81,7 +82,7 @@ def label_counts(i, labels, num_classes):
     for n in range(len(range(num_classes))):
         # print("batch index {}, {} counts: {}".format(
         i, n, (labels == n).sum()
-    # print('LABEL COUNT = ', label_cnts)
+    print('LABEL COUNT = ', label_cnts)
 
     return label_cnts
 
@@ -169,6 +170,7 @@ def train_model(
             running_corrects_val = 0
             all_preds = []
             all_labels = []
+            # label_cnts_total = np.zeros(len(class_names))
 
             if phase == "train":
                 model.train()
@@ -187,9 +189,9 @@ def train_model(
                 # uncomment to print cumulative sum of images per class, per batch
                 # ensures weighted sampler is working properly
                 # if phase == 'train':
-                #                     label_cnts = label_counts(i, labels, num_classes)
-                #                     label_cnts_total = list(map(add, label_cnts, label_cnts_total))
-                #                     print(label_cnts_total)
+                # label_cnts = label_counts(i, labels, num_classes)
+                # label_cnts_total = list(map(operator.add, label_cnts, label_cnts_total))
+                # print(label_cnts_total)
 
                 inputs = inputs.to(device)
                 labels = labels.to(device)

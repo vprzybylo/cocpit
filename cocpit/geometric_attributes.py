@@ -3,7 +3,6 @@ calculates particle geometric properties
 """
 
 import multiprocessing
-import os
 import time
 from functools import partial
 
