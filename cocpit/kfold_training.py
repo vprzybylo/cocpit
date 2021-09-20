@@ -4,6 +4,7 @@ called in build_model.py
 """
 
 import pandas as pd
+from sklearn.model_selection import StratifiedKFold, train_test_split
 
 import cocpit
 
@@ -23,6 +24,9 @@ def train_val_composition(data, train_indices, val_indices):
 
 def main(
     data,
+    batch_size,
+    model_name,
+    epochs,
     params,
     experiment,
     acc_savename_train,
@@ -32,7 +36,6 @@ def main(
     save_model,
     valid_size,
     num_workers,
-    num_classes,
 ):
     """
     split dataset into folds
@@ -54,12 +57,12 @@ def main(
         model_savename = (
             f"{params['model_save_dir']}e{max(params['max_epochs'])}_"
             f"bs{max(params['batch_size'])}_k{i}_"
-            f"{len(params['model_names'])}model(s)_{tag}.pt"
+            f"{len(params['model_names'])}model(s)_{params['tag']}.pt"
         )
         val_loader_savename = (
             f"{['paramsval_loader_save_dir']}e{max(params['max_epochs'])}_"
             f"bs{max(params['batch_size'])}_k{i}_"
-            f"{len(params['model_names'])}model(s)_{tag}.pt"
+            f"{len(params['model_names'])}model(s)_{params['tag']}.pt"
         )
 
         # DATALOADERS based on split from StratifiedKFold
@@ -79,6 +82,7 @@ def main(
         dataloaders_dict = {"train": train_loader, "val": val_loader}
 
         # INITIALIZE MODEL
+        num_classes = len(params['model_names'])
         model = cocpit.models.initialize_model(model_name, num_classes)
 
         # TRAIN MODEL
@@ -97,7 +101,6 @@ def main(
             save_model,
             dataloaders_dict,
             epochs,
-            num_classes,
             valid_size=valid_size,
         )
         fold_report.append(clf_report)
@@ -106,20 +109,3 @@ def main(
     concat_df = pd.concat(fold_report)
     if save_acc:
         concat_df.to_csv(metrics_savename, mode="a")
-
-
-if __name__ == "__main__":
-
-    main(
-        data,
-        params,
-        experiment,
-        acc_savename_train,
-        acc_savename_val,
-        metrics_savename,
-        save_acc,
-        save_model,
-        valid_size,
-        num_workers,
-        num_classes,
-    )

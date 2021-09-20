@@ -14,7 +14,6 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.backends.cudnn as cudnn
-from sklearn.model_selection import StratifiedKFold, train_test_split
 from torch import nn
 
 import cocpit
@@ -32,7 +31,6 @@ def main(
     save_model,
     valid_size,
     num_workers,
-    num_classes,
 ):
 
     data = cocpit.data_loaders.get_data(params["data_dir"])
@@ -49,6 +47,9 @@ def main(
                 if params["kfold"] != 0:
                     cocpit.kfold_training.main(
                         data,
+                        batch_size,
+                        model_name,
+                        epochs,
                         params,
                         experiment,
                         acc_savename_train,
@@ -58,11 +59,13 @@ def main(
                         save_model,
                         valid_size,
                         num_workers,
-                        num_classes,
                     )
                 else:  # no kfold
                     cocpit.no_fold_training.main(
                         data,
+                        batch_size,
+                        model_name,
+                        epochs,
                         params,
                         experiment,
                         acc_savename_train,
@@ -72,7 +75,6 @@ def main(
                         save_model,
                         valid_size,
                         num_workers,
-                        num_classes,
                     )
 
 
@@ -88,5 +90,4 @@ if __name__ == "__main__":
         save_model,
         valid_size,
         num_workers,
-        num_classes,
     )

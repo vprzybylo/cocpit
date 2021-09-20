@@ -74,6 +74,7 @@ def _build_model():
     load_dotenv()  # loading sensitive keys from .env file
 
     params = {
+        "tag": 'v1.4.0',
         "kfold": 0,  # set to 0 to turn off kfold cross validation
         "batch_size": [64],  # filename saves using the largest batch size
         "max_epochs": [20],
@@ -118,21 +119,21 @@ def _build_model():
     acc_savename_train = (
         f"{save_dir}train_acc_loss_e{max(params['max_epochs'])}_"
         f"bs{max(params['batch_size'])}_k{params['kfold']}_"
-        f"{len(params['model_names'])}model(s)_{tag}.csv"
+        f"{len(params['model_names'])}model(s)_{params['tag']}.csv"
     )
 
     #  output filename for validation accuracy and loss
     acc_savename_val = (
         f"{save_dir}val_acc_loss_e{max(params['max_epochs'])}_"
         f"bs{max(params['batch_size'])}_k{params['kfold']}_"
-        f"{len(params['model_names'])}model(s)_{tag}.csv"
+        f"{len(params['model_names'])}model(s)_{params['tag']}.csv"
     )
 
     # output filename for precision, recall, F1 file
     metrics_savename = (
         f"{save_dir}val_metrics_e{max(params['max_epochs'])}_"
         f"bs{max(params['batch_size'])}_k{params['kfold']}_"
-        f"{len(params['model_names'])}model(s)_{tag}.csv"
+        f"{len(params['model_names'])}model(s)_{params['tag']}.csv"
     )
 
     if params["log_exp"]:
@@ -145,7 +146,7 @@ def _build_model():
             workspace=WORKSPACE,
         )
         experiment.log_parameters(params)
-        experiment.add_tag(tag)
+        experiment.add_tag(params['tag'])
     else:
         experiment = None
 
@@ -159,9 +160,9 @@ def _build_model():
         experiment,
         acc_savename_train,
         acc_savename_val,
+        metrics_savename,
         save_acc,
         save_model,
-        metrics_savename,
         valid_size,
         num_workers,
     )

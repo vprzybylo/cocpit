@@ -123,7 +123,6 @@ def train_model(
     save_model,
     dataloaders_dict,
     epochs,
-    num_classes,
     valid_size=0.2,
     clf_report=None,
 ):
@@ -181,11 +180,9 @@ def train_model(
             # iterates over training
             # mean, std = get_normalization_values(dataloaders_dict, phase)
 
-            [0] * len(range(num_classes))
             for i, ((inputs, labels, paths), index) in enumerate(
                 dataloaders_dict[phase]
             ):
-
                 # uncomment to print cumulative sum of images per class, per batch
                 # ensures weighted sampler is working properly
                 # if phase == 'train':

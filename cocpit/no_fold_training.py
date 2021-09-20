@@ -4,12 +4,16 @@ called in build_model.py
 """
 
 import pandas as pd
+from sklearn.model_selection import StratifiedKFold, train_test_split
 
 import cocpit
 
 
 def main(
     data,
+    batch_size,
+    model_name,
+    epochs,
     params,
     experiment,
     acc_savename_train,
@@ -19,13 +23,12 @@ def main(
     save_model,
     valid_size,
     num_workers,
-    num_classes,
 ):
     """
     create dataloaders
     initialize and train model
     """
-
+    i = 0  # kfold false for savename
     total_size = len(data)
     # randomly split indices for training and validation indices according to valid_size
     if valid_size < 0.01:
@@ -41,12 +44,12 @@ def main(
     model_savename = (
         f"{params['model_save_dir']}e{max(params['max_epochs'])}_"
         f"bs{max(params['batch_size'])}"
-        f"{len(params['model_names'])}model(s)_{tag}.pt"
+        f"{len(params['model_names'])}model(s)_{params['tag']}.pt"
     )
     val_loader_savename = (
         f"{params['val_loader_save_dir']}e{max(params['max_epochs'])}_"
         f"bs{max(params['batch_size'])}"
-        f"{len(params['model_names'])}model(s)_{tag}.pt"
+        f"{len(params['model_names'])}model(s)_{params['tag']}.pt"
     )
 
     # DATALOADERS
@@ -66,6 +69,7 @@ def main(
     dataloaders_dict = {"train": train_loader, "val": val_loader}
 
     # INITIALIZE MODEL
+    num_classes = len(params['model_names'])
     model = cocpit.models.initialize_model(model_name, num_classes)
 
     # TRAIN MODEL
@@ -84,28 +88,8 @@ def main(
         save_model,
         dataloaders_dict,
         epochs,
-        num_classes,
         valid_size=valid_size,
     )
 
     if save_acc:
         clf_report.to_csv(metrics_savename, mode="a")
-
-
-if __name__ == "__main__":
-
-    main(
-        data,
-        params,
-        experiment,
-        acc_savename_train,
-        acc_savename_val,
-        metrics_savename,
-        save_acc,
-        save_model,
-        valid_size,
-        num_workers,
-        num_classes,
-        model_save_dir,
-        val_loader_save_dir,
-    )
