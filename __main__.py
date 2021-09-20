@@ -19,7 +19,7 @@ import warnings
 
 import pandas as pd
 import torch
-from comet_ml import Experiment
+from comet_ml import Experiment  # NOQA: E402
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
@@ -75,14 +75,17 @@ def _build_model():
 
     params = {
         "kfold": 0,  # set to 0 to turn off kfold cross validation
-        "batch_size": [64],
+        "batch_size": [64],  # filename saves using the largest batch size
         "max_epochs": [20],
         "class_names": [
             "agg",
             "budding",
             "bullet",
+            "capped column",
             "column",
             "compact irregular",
+            "complex sideplane",
+            "dendrite",
             "fragment",
             "plate",
             "rimed",
@@ -100,67 +103,54 @@ def _build_model():
             # "densenet201",
         ],
         "data_dir": "/data/data/cpi_data/training_datasets/"
-        + "hand_labeled_resized_multcampaigns_v1.0.0_no_blank/",
-        "log_exp": True,  # log experiment to comet
-        "API_KEY": os.getenv("API_KEY"),
-        "WORKSPACE": os.getenv("WORKSPACE"),
-        "PROJECT_NAME": os.getenv("PROJECT_NAME"),
+        + "hand_labeled_resized_v1.3.0_sideplanes/",
+        "model_save_dir": "/data/data/saved_models/no_mask/",
+        "val_loader_save_dir": "/data/data/saved_val_loaders/no_mask/",
+        "log_exp": False,  # log experiment to comet
     }
     # 'model_names': ['efficient', 'resnet18', 'resnet34',
     #               'resnet152', 'alexnet', 'vgg16',
     #               'vgg19', 'densenet169', 'densenet201']}
 
+    save_dir = "/data/data/saved_accuracies/"
+
+    #  output filename for training accuracy and loss
     acc_savename_train = (
-        "/data/data/saved_accuracies/"
-        + "/save_train_acc_loss_e"
-        + str(params["max_epochs"][0])
-        + "_bs"
-        + str(params["batch_size"][0])
-        + "_k"
-        + str(params["kfold"])
-        + "_"
-        + str(len(params["model_names"]))
-        + "models_unbalanced_v1.3.0.csv"
+        f"{save_dir}train_acc_loss_e{max(params['max_epochs'])}_"
+        f"bs{max(params['batch_size'])}_k{params['kfold']}_"
+        f"{len(params['model_names'])}model(s)_{tag}.csv"
     )
+
+    #  output filename for validation accuracy and loss
     acc_savename_val = (
-        "/data/data/saved_accuracies/"
-        + "/save_val_acc_loss_e"
-        + str(params["max_epochs"][0])
-        + "_bs"
-        + str(params["batch_size"][0])
-        + "_k"
-        + str(params["kfold"])
-        + "_"
-        + str(len(params["model_names"]))
-        + "models_unbalanced_v1.3.0.csv"
+        f"{save_dir}val_acc_loss_e{max(params['max_epochs'])}_"
+        f"bs{max(params['batch_size'])}_k{params['kfold']}_"
+        f"{len(params['model_names'])}model(s)_{tag}.csv"
     )
-    # savename for precision, recall, F1 file
+
+    # output filename for precision, recall, F1 file
     metrics_savename = (
-        "/data/data/saved_accuracies/"
-        + "/save_val_metrics_e"
-        + str(params["max_epochs"][0])
-        + "_bs"
-        + str(params["batch_size"][0])
-        + "_k"
-        + str(params["kfold"])
-        + "_"
-        + str(len(params["model_names"]))
-        + "_unbalanced_v1.3.0.csv"
+        f"{save_dir}val_metrics_e{max(params['max_epochs'])}_"
+        f"bs{max(params['batch_size'])}_k{params['kfold']}_"
+        f"{len(params['model_names'])}model(s)_{tag}.csv"
     )
 
     if params["log_exp"]:
+        API_KEY = (os.getenv("API_KEY"),)
+        WORKSPACE = (os.getenv("WORKSPACE"),)
+        PROJECT_NAME = os.getenv("PROJECT_NAME")
         experiment = Experiment(
-            api_key=params["API_KEY"],
-            project_name=params["PROJECT_NAME"],
-            workspace=params["WORKSPACE"],
+            api_key=API_KEY,
+            project_name=PROJECT_NAME,
+            workspace=WORKSPACE,
         )
         experiment.log_parameters(params)
-        experiment.add_tag("v1.3.0")
+        experiment.add_tag(tag)
     else:
         experiment = None
 
-    save_acc = True
-    save_model = True
+    save_acc = False
+    save_model = False
     # model_savename in build_model.py due to looping through kfolds
     valid_size = 0.2  # if <0.01, use all data with kfold set to 0 also
 
@@ -243,6 +233,9 @@ def _add_date():
 
 
 if __name__ == "__main__":
+    # version for docker and git
+    tag = "v1.4.0"
+
     # extract each image from sheet of images
     preprocess_sheets = False
 

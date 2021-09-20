@@ -50,6 +50,9 @@ plot:
 
 add_date:
     - add a column for the date from the filename
+
+kfold_training:
+    - train model with k folds
 """
 
 # import cocpit.add_date
