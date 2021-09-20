@@ -113,27 +113,27 @@ def _build_model():
     #               'resnet152', 'alexnet', 'vgg16',
     #               'vgg19', 'densenet169', 'densenet201']}
 
-    save_dir = "/data/data/saved_accuracies/"
+    save_dir = f"/data/data/saved_accuracies/{params['tag']}/"
 
     #  output filename for training accuracy and loss
     acc_savename_train = (
         f"{save_dir}train_acc_loss_e{max(params['max_epochs'])}_"
         f"bs{max(params['batch_size'])}_k{params['kfold']}_"
-        f"{len(params['model_names'])}model(s)_{params['tag']}.csv"
+        f"{len(params['model_names'])}model(s).csv"
     )
 
     #  output filename for validation accuracy and loss
     acc_savename_val = (
         f"{save_dir}val_acc_loss_e{max(params['max_epochs'])}_"
         f"bs{max(params['batch_size'])}_k{params['kfold']}_"
-        f"{len(params['model_names'])}model(s)_{params['tag']}.csv"
+        f"{len(params['model_names'])}model(s).csv"
     )
 
     # output filename for precision, recall, F1 file
     metrics_savename = (
         f"{save_dir}val_metrics_e{max(params['max_epochs'])}_"
         f"bs{max(params['batch_size'])}_k{params['kfold']}_"
-        f"{len(params['model_names'])}model(s)_{params['tag']}.csv"
+        f"{len(params['model_names'])}model(s).csv"
     )
 
     if params["log_exp"]:
@@ -152,7 +152,6 @@ def _build_model():
 
     save_acc = False
     save_model = False
-    # model_savename in build_model.py due to looping through kfolds
     valid_size = 0.2  # if <0.01, use all data with kfold set to 0 also
 
     cocpit.build_model.main(

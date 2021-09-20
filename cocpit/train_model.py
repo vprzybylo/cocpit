@@ -273,7 +273,7 @@ def train_model(
                 ):
                     best_acc_train = epoch_acc_train
                     # save/load best model weights
-                    torch.save(model, model_savename + "_" + model_name)
+                    torch.save(model, model_savename)
 
             else:
                 epoch_loss_val, epoch_acc_val = metrics.epoch_val_metrics(
@@ -295,7 +295,7 @@ def train_model(
                 if epoch_acc_val > best_acc_val and save_model:
                     best_acc_val = epoch_acc_val
                     # save/load best model weights
-                    torch.save(model, model_savename + "_" + model_name)
+                    torch.save(model, model_savename)
 
                 if epoch == epochs - 1:
                     # flatten from appending in batches

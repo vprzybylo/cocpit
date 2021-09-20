@@ -43,12 +43,12 @@ def main(
     # train_val_composition(data, train_indices, val_indices)
     model_savename = (
         f"{params['model_save_dir']}e{max(params['max_epochs'])}_"
-        f"bs{max(params['batch_size'])}"
+        f"bs{max(params['batch_size'])}_"
         f"{len(params['model_names'])}model(s)_{params['tag']}.pt"
     )
     val_loader_savename = (
         f"{params['val_loader_save_dir']}e{max(params['max_epochs'])}_"
-        f"bs{max(params['batch_size'])}"
+        f"bs{max(params['batch_size'])}_"
         f"{len(params['model_names'])}model(s)_{params['tag']}.pt"
     )
 
