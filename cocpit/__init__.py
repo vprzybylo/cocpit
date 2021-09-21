@@ -41,7 +41,7 @@ data_loaders:
 train_metrics:
     - outputs batch and epoch accuracy and losses to .csv's
 
-classification_metrics:
+classification_report:
     - calculation and plotting functions for reporting performance metrics from sklearn
     - precision, recall, f1, etc
 
