@@ -55,6 +55,9 @@ def train_model(
         for phase in phases:
             print("Phase: {}".format(phase))
 
+            train_metrics.reset_totals()
+            val_metrics.reset_totals()
+
             # label_cnts_total = np.zeros(len(class_names))
 
             if phase == "train":

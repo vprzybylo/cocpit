@@ -19,7 +19,6 @@ import warnings
 
 import pandas as pd
 import torch
-from dotenv import load_dotenv
 
 import cocpit
 import cocpit.config as config
@@ -58,6 +57,8 @@ def _build_model():
     """
     train ML models
     """
+
+    data = cocpit.data_loaders.get_data()
 
     # loop through batch sizes, models, epochs, and/or folds
     for batch_size in config.BATCH_SIZE:

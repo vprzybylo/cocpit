@@ -6,6 +6,10 @@ Classification of Cloud Particle Imagery and Thermodynamics
 modules:
 -------
 
+config:
+    - holds all user-defined variables
+    - treated as global and used across modules
+
 preprocess_sheets_with_text:
     - Extracts single images from the muliple images per frame or sheet
     - Saves single images to a directory for later creation of the database
@@ -13,13 +17,6 @@ preprocess_sheets_with_text:
 pic: 'particle image classification'
     - Holds the main Image class for image manipulation using opencv
     and calculates particle geometrical attributes
-
-build_model:
-    - Loads the prebuilt pytorch models
-    see: https://pytorch.org/docs/stable/torchvision/models.html
-    - Sets up the pytorch dataloaders based on cross fold validation or not
-    - Takes into account all hyperparameters from __main__.py
-    - Includes gpu support
 
 run_model:
     -classifies good ice images through a convolutional neural network that
@@ -49,7 +46,7 @@ plot:
     - plotting scripts for publication
 
 add_date:
-    - add a column for the date from the filename
+    - add a column to the dataframes for the date from the filename
 
 kfold_training:
     - train model with k folds
@@ -70,6 +67,8 @@ kfold_training:
 
 import glob
 from os.path import basename, dirname, isfile, join
+
+import cocpit.config
 
 modules = glob.glob(join(dirname(__file__), "*.py"))
 __all__ = [
