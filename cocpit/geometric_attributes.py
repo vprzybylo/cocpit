@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
 
+import cocpit.config as config
 import cocpit.pic as pic
 
 
@@ -115,7 +116,7 @@ def get_attributes(filename, open_dir):
         return properties
 
 
-def main(df, open_dir, num_cpus):
+def main(df, open_dir):
     """
     reads in dataframe for a campaign after ice classification and
     calculates particle geometric properties using the cocpit.pic module
@@ -128,7 +129,7 @@ def main(df, open_dir, num_cpus):
     files = df['filename']
     start = time.time()
 
-    p = multiprocessing.Pool(num_cpus)
+    p = multiprocessing.Pool(config.NUM_CPUS)
     properties = p.map(partial(get_attributes, open_dir=open_dir), files)
     p.close()
 

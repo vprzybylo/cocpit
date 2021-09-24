@@ -8,61 +8,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import confusion_matrix
+
+import cocpit.config as config
 
 
-def add_model_fold_to_clf_report(clf_report, fold, model_name):
-    """
-    add model name and fold iteration to clf_report
-    Params
-    ------
-    - clf_report: classification report from sklearn
-    - fold (int): kfold iteration
-    - model_name (str): name of model being trained
-
-    Return
-    ------
-    clf_report (df): tranposed and appened df for model and kfolds
-    """
-
-    # transpose classes as columns and convert to df
-    clf_report = pd.DataFrame(clf_report).iloc[:-1, :].T
-
-    # add fold iteration and model name
-    clf_report["fold"] = fold
-    clf_report["model"] = model_name
-
-    return clf_report
-
-
-def metrics_report(all_labels, all_preds, class_names):
-    """
-    Build a text report showing the main classification metrics.
-    Params
-    -----
-    - all_labels (list):
-    - all_preds (list):
-    - class_names (list): list of strings of classes
-
-    Returns
-    -------
-    - clf_report (df): classifcation report from sklearn
-    """
-    return classification_report(
-        all_labels, all_preds, digits=3, target_names=class_names, output_dict=True
-    )
-
-
-def plot_confusion_matrix(
-    all_preds, all_labels, class_names, norm, save_name, save_fig=False
-):
+def plot_confusion_matrix(all_preds, all_labels, norm, save_name, save_fig=False):
     """
     Plot and save a confusion matrix from a saved validation dataloader
     Params
     ------
     - all_preds (list): list of predictions from the model for all batches
     - all_labels (list): actual labels (correctly hand labeled)
-    - class_names (list): list of strings of classes
     - norm (bool): whether or not to normalize the conf matrix (for unbalanced classes)
     - save_name (str): plot filename to save as
     - save_fig (bool): save the conf matrix to file
@@ -85,8 +42,8 @@ def plot_confusion_matrix(
             fmt=".2f",
             linewidths=1,
             linecolor='k',
-            xticklabels=class_names,
-            yticklabels=class_names,
+            xticklabels=config.CLASS_NAMES,
+            yticklabels=config.CLASS_NAMES,
             cmap=cmap,
             annot_kws={"size": 16},
         )
@@ -104,8 +61,8 @@ def plot_confusion_matrix(
             annot=True,
             linewidths=1,
             linecolor='k',
-            xticklabels=class_names,
-            yticklabels=class_names,
+            xticklabels=config.CLASS_NAMES,
+            yticklabels=config.CLASS_NAMES,
             cmap=cmap,
             fmt='.0f',
             annot_kws={"size": 18},

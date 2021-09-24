@@ -11,9 +11,12 @@ from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import datasets, transforms
 
+import cocpit.config as config
+
 
 class ImageFolderWithPaths(datasets.ImageFolder):
-    """Custom dataset that includes image file paths. Extends
+    """
+    Custom dataset that includes image file paths. Extends
     torchvision.datasets.ImageFolder
     """
 
@@ -29,6 +32,10 @@ class ImageFolderWithPaths(datasets.ImageFolder):
 
 
 class TestDataSet(Dataset):
+    """
+    dataloader for new unseen data
+    """
+
     def __init__(self, open_dir, file_list):
 
         self.open_dir = open_dir
@@ -51,7 +58,7 @@ class TestDataSet(Dataset):
         return (tensor_image, self.path)
 
 
-def get_data(data_dir):
+def get_data():
     """
     Use the Pytorch ImageFolder class to read in root directory
     that holds subfolders of each class for training data
@@ -71,10 +78,10 @@ def get_data(data_dir):
         ]
     )
 
-    return ImageFolderWithPaths(root=data_dir, transform=all_transforms)
+    return ImageFolderWithPaths(root=config.DATA_DIR, transform=all_transforms)
 
 
-def make_weights_for_balanced_classes(train_labels, nclasses):
+def make_weights_for_balanced_classes(train_labels):
     """
     creates weights for each class for sampler such that lower count classes
     are sampled more frequently and higher count classes are sampled less
@@ -87,9 +94,9 @@ def make_weights_for_balanced_classes(train_labels, nclasses):
     - class_sample_counts (list): # of samples per class
     - train_samples_weights (list): weights for each class for sampling
     """
-    # only weight the training dataset
 
-    class_sample_counts = [0] * nclasses
+    # only weight the training dataset
+    class_sample_counts = [0] * len(config.CLASS_NAMES)
     for target in train_labels:
         class_sample_counts[target] += 1
     print("counts per class: ", class_sample_counts)
@@ -105,29 +112,19 @@ def create_dataloaders(
     train_indices,
     val_indices,
     batch_size,
-    save_model,
-    val_loader_savename,
-    class_names,
-    data_dir,
-    valid_size=0.2,
-    num_workers=20,
     shuffle=True,
     balance_weights=True,
 ):
+
     """
     get dataloaders
     Params
     -----
-    - data (tuple): (sample, target) where target is class_index of the target class
+    - data (tuple): (sample, target) where target
+        is class_index of the target class
     - train_indices (list): training dataset indices
     - val_indices (list): validation dataset indices
     - batch_size (int): batch size for dataloader
-    - save_model (bool): whether to save the model or not
-    - val_loader_savename (str): name of the validation loader to save
-    - class_names (list): list of strings of classes
-    - data_dir (str): directory for training dataset
-    - valid_size (float): % of data used for validation dataset (0.0-1.0 = 0%-100%)
-    - num_workers (int): # of cpus to be used during data loading
     - shuffle (bool): whether to shuffle the data per epoch
     - balance_weights (bool): True creates a weighted sampler for class imbalance
     Returns
@@ -146,7 +143,7 @@ def create_dataloaders(
     if balance_weights:
         # For an unbalanced dataset create a weighted sampler
         class_counts, train_samples_weights = make_weights_for_balanced_classes(
-            train_labels, len(class_names)
+            train_labels
         )
 
         # Make a sampler to undersample classes with the highest counts
@@ -159,7 +156,7 @@ def create_dataloaders(
             train_data,
             batch_size=batch_size,
             sampler=train_sampler,
-            num_workers=num_workers,
+            num_workers=config.NUM_WORKERS,
             pin_memory=True,
         )
     else:
@@ -168,11 +165,11 @@ def create_dataloaders(
             train_data,
             batch_size=batch_size,
             shuffle=shuffle,
-            num_workers=num_workers,
+            num_workers=config.NUM_WORKERS,
             pin_memory=True,
         )
 
-    if valid_size < 0.01:
+    if config.VALID_SIZE < 0.01:
         # use all data for training - no val loader
         return train_loader, None
     # Make an iterable of batches across the validation dataset
@@ -180,17 +177,17 @@ def create_dataloaders(
         val_data,
         batch_size=batch_size,
         shuffle=shuffle,
-        num_workers=num_workers,
+        num_workers=config.NUM_WORKERS,
         pin_memory=True,
     )
-    if save_model:
-        torch.save(val_data, val_loader_savename)
+    if config.SAVE_MODEL:
+        torch.save(val_data, config.VAL_LOADER_SAVENAME)
 
     return train_loader, val_loader
 
 
 def get_test_loader_df(
-    open_dir, file_list, batch_size=100, num_workers=20, shuffle=False, pin_memory=True
+    open_dir, file_list, batch_size=100, shuffle=False, pin_memory=True
 ):
     """
     Utility function for loading and returning a multi-process test iterator
@@ -214,14 +211,12 @@ def get_test_loader_df(
         test_data,
         batch_size=batch_size,
         shuffle=shuffle,
-        num_workers=num_workers,
+        num_workers=config.NUM_WORKERS,
         pin_memory=pin_memory,
     )
 
 
-def get_val_loader_predictions(
-    model, val_data, device, batch_size, shuffle=True, num_workers=20
-):
+def get_val_loader_predictions(model, val_data, batch_size, shuffle=True):
     """
     get a list of hand labels and predictions from a saved dataloader/model
     Params
@@ -252,8 +247,8 @@ def get_val_loader_predictions(
 
         for batch_idx, ((imgs, labels, img_paths), index) in enumerate(val_loader):
             # get the inputs
-            inputs = imgs.to(device)
-            labels = labels.to(device)
+            inputs = imgs.to(config.DEVICE)
+            labels = labels.to(config.DEVICE)
 
             output = model(inputs)
             pred = torch.argmax(output, 1)

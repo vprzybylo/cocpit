@@ -11,6 +11,8 @@ import pandas as pd
 from dotenv import load_dotenv
 from twilio.rest import Client
 
+import cocpit.config as config
+
 
 class Image:
     """
@@ -125,16 +127,13 @@ class Image:
             os.makedirs(self.save_dir)
         cv2.imwrite(self.save_dir + self.file_out, cropped)
 
-    def extract_contours(self, cutoff_thresh, show_cropped, save_images):
+    def extract_contours(self, show_cropped):
         """
         Finds, extracts and saves ROIs from sheets
         Saves filename, width, height, and cutoff to lists for a df
 
         Parameters:
-            cutoff_thresh (int): percentage that particle is intersecting
-                          the border w.r.t perimeter
             show_cropped (bool): whether to show the ROI regions
-            save_images (bool): whether to save the final images
         """
 
         (cnts, _) = cv2.findContours(
@@ -171,7 +170,7 @@ class Image:
                 # make sure the thresholding picks up a contour in the rectangle
                 # and cutoff criteria is met
                 cutoff = self.cutoff()
-                if cnts and cutoff < cutoff_thresh:
+                if cnts and cutoff < config.CUTOFF:
 
                     # calculate particle length and width
                     self.largest_contour(cnts)
@@ -191,10 +190,10 @@ class Image:
                     self.particle_heights.append(particle_height)
                     self.particle_widths.append(particle_width)
 
-                    if save_images:
+                    if config.SAVE_IMAGES:
                         self.save_image(cropped)
 
-    def run(self, cutoff_thresh, show_original, show_dilate, show_cropped, save_images):
+    def run(self, show_original, show_dilate, show_cropped):
         """
         main method calls
         """
@@ -204,7 +203,7 @@ class Image:
         self.dilate(show_dilate)
         cnts = self.find_sheet_contours()
         self.remove_text(cnts)
-        self.extract_contours(cutoff_thresh, show_cropped, save_images)
+        self.extract_contours(show_cropped)
         return (
             self.files,
             self.widths,
@@ -271,17 +270,14 @@ def send_message():
 
 def main(
     open_dir,
-    cutoff_thresh,
     save_dir,
-    num_cpus,
-    save_images,
     save_df,
     show_original,
     show_dilate,
     show_cropped,
 ):
 
-    p = Pool(num_cpus)
+    p = Pool(config.NUM_CPUS)
     instances = []
     files = os.listdir(open_dir)
     for file in files:
@@ -293,11 +289,9 @@ def main(
     results = p.map(
         partial(
             Image.run,
-            cutoff_thresh=cutoff_thresh,
             show_original=show_original,
             show_dilate=show_dilate,
             show_cropped=show_cropped,
-            save_images=save_images,
         ),
         instances,
     )

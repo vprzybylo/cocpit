@@ -16,12 +16,13 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 from twilio.rest import Client
 
+import cocpit.config as config
 import cocpit.data_loaders as data_loaders
 
 torch.cuda.empty_cache()
 
 
-def predict(test_loader, class_names, model):
+def predict(test_loader, model):
 
     """Predict the classes of images from a test_loader
     using a trained CNN.
@@ -44,9 +45,9 @@ def predict(test_loader, class_names, model):
             all_outputs.append(outputs)
 
             for pred in outputs:  # batch
-                for c in range(len(class_names)):  # class
-                    d[class_names[c]].append(pred[c])
-                top_class.append(class_names[np.argmax(pred)])
+                for c in range(len(config.CLASS_NAMES)):  # class
+                    d[config.CLASS_NAMES[c]].append(pred[c])
+                top_class.append(config.CLASS_NAMES[np.argmax(pred)])
 
     return d, top_class
 
@@ -81,16 +82,14 @@ def send_message():
     message.sid
 
 
-def main(df, open_dir, class_names, cutoff, model, num_workers):
+def main(df, open_dir, model):
 
     pd.options.mode.chained_assignment = None  # default='warn'
 
     file_list = df["filename"]
-    test_loader = data_loaders.get_test_loader_df(
-        open_dir, file_list, num_workers=num_workers
-    )
+    test_loader = data_loaders.get_test_loader_df(open_dir, file_list)
 
-    d, top_class = predict(test_loader, class_names, model)
+    d, top_class = predict(test_loader, model)
 
     for column in sorted(d.keys()):
         df[column] = d[column]

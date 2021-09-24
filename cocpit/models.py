@@ -8,6 +8,8 @@ from efficientnet_pytorch import EfficientNet
 from torch import nn
 from torchvision import models
 
+import cocpit.config as config
+
 
 def set_parameter_requires_grad(model, feature_extract):
     """
@@ -20,17 +22,21 @@ def set_parameter_requires_grad(model, feature_extract):
             param.requires_grad = False
 
 
-def initialize_model(
-    model_name, num_classes, feature_extract=False, use_pretrained=False
-):
+def initialize_model(model_name, feature_extract=False, use_pretrained=False):
+
     '''
     params:
     -------
+    model_name: name of the model to train
+    num_classes: number of classes
     feature_extract: default = False; start with a pretrained model and only
                     update the final layer weights from which we derive predictions
     use_pretrained: default = False; update all of the model’s
                     parameters for our new task (retrain)
     '''
+
+    num_classes = len(config.CLASS_NAMES)
+
     # all input size of 224
     if model_name == "resnet18":
         model_ft = models.resnet18(pretrained=use_pretrained)

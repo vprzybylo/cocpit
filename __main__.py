@@ -19,11 +19,10 @@ import warnings
 
 import pandas as pd
 import torch
-from comet_ml import Experiment  # NOQA: E402
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
 
 import cocpit
+import cocpit.config as config
 
 
 def _preprocess_sheets():
@@ -32,31 +31,21 @@ def _preprocess_sheets():
     text can be on the sheet
     """
     start_time = time.time()
-    save_images = False
 
-    print("save images: ", save_images)
-    print("cutoff percentage allowed: ", cutoff)
+    print("save images: ", config.SAVE_IMAGES)
+    print("cutoff percentage allowed: ", config.CUTOFF)
 
-    # change to ROI_PNGS if 'sheets' came from processing rois in IDL
-    # sheets came from data archived pngs online
-    open_dir = "/data/data/cpi_data/campaigns/" + campaign + "/sheets/"
-    save_dir = "/data/data/cpi_data/campaigns/" + campaign + "/single_imgs_v1.3.0/"
+    # where the sheets of images for each campaign live
+    # if sheets were processed using rois in IDL, change 'sheets' to 'ROI_PNGS'
+    sheet_dir = f"/data/data/cpi_data/campaigns/{campaign}/sheets/"
+    save_dir = f"/data/data/cpi_data/campaigns/{campaign}/single_imgs_{config.TAG}/"
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
-    outdir = "/data/data/final_databases/vgg16/v1.3.0/"
-    outname = campaign + ".csv"
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
-    save_df = os.path.join(outdir, outname)
-
     cocpit.process_png_sheets_with_text.main(
-        open_dir,
-        cutoff,
+        sheet_dir,
         save_dir,
-        num_cpus,
-        save_images,
-        save_df=save_df,
+        save_df=df_path,
         show_original=False,  # all set to False due to lack of display on server
         show_dilate=False,
         show_cropped=False,
@@ -69,102 +58,30 @@ def _build_model():
     """
     train ML models
     """
-    print("training...")
 
-    load_dotenv()  # loading sensitive keys from .env file
+    # loop through batch sizes, models, epochs, and/or folds
+    for batch_size in config.BATCH_SIZE:
+        print("BATCH SIZE: ", batch_size)
+        for model_name in config.MODEL_NAMES:
+            print("MODEL: ", model_name)
+            for epochs in config.MAX_EPOCHS:
+                print("MAX EPOCH: ", epochs)
 
-    params = {
-        "tag": 'v1.4.0',
-        "kfold": 0,  # set to 0 to turn off kfold cross validation
-        "batch_size": [64],  # filename saves using the largest batch size
-        "max_epochs": [20],
-        "class_names": [
-            "agg",
-            "budding",
-            "bullet",
-            "capped column",
-            "column",
-            "compact irregular",
-            "complex sideplane",
-            "dendrite",
-            "fragment",
-            "plate",
-            "rimed",
-            "sphere",
-        ],
-        "model_names": [
-            # "efficient",
-            # "resnet18",
-            # "resnet34",
-            # "resnet152",
-            # "alexnet",
-            "vgg16",
-            # "vgg19",
-            # "densenet169",
-            # "densenet201",
-        ],
-        "data_dir": "/data/data/cpi_data/training_datasets/"
-        + "hand_labeled_resized_v1.3.0_sideplanes/",
-        "model_save_dir": "/data/data/saved_models/no_mask/",
-        "val_loader_save_dir": "/data/data/saved_val_loaders/no_mask/",
-        "log_exp": False,  # log experiment to comet
-    }
-    # 'model_names': ['efficient', 'resnet18', 'resnet34',
-    #               'resnet152', 'alexnet', 'vgg16',
-    #               'vgg19', 'densenet169', 'densenet201']}
-
-    save_dir = f"/data/data/saved_accuracies/{params['tag']}/"
-
-    #  output filename for training accuracy and loss
-    acc_savename_train = (
-        f"{save_dir}train_acc_loss_e{max(params['max_epochs'])}_"
-        f"bs{max(params['batch_size'])}_k{params['kfold']}_"
-        f"{len(params['model_names'])}model(s).csv"
-    )
-
-    #  output filename for validation accuracy and loss
-    acc_savename_val = (
-        f"{save_dir}val_acc_loss_e{max(params['max_epochs'])}_"
-        f"bs{max(params['batch_size'])}_k{params['kfold']}_"
-        f"{len(params['model_names'])}model(s).csv"
-    )
-
-    # output filename for precision, recall, F1 file
-    metrics_savename = (
-        f"{save_dir}val_metrics_e{max(params['max_epochs'])}_"
-        f"bs{max(params['batch_size'])}_k{params['kfold']}_"
-        f"{len(params['model_names'])}model(s).csv"
-    )
-
-    if params["log_exp"]:
-        API_KEY = (os.getenv("API_KEY"),)
-        WORKSPACE = (os.getenv("WORKSPACE"),)
-        PROJECT_NAME = os.getenv("PROJECT_NAME")
-        experiment = Experiment(
-            api_key=API_KEY,
-            project_name=PROJECT_NAME,
-            workspace=WORKSPACE,
-        )
-        experiment.log_parameters(params)
-        experiment.add_tag(params['tag'])
-    else:
-        experiment = None
-
-    save_acc = False
-    save_model = False
-    valid_size = 0.2  # if <0.01, use all data with kfold set to 0 also
-
-    cocpit.build_model.main(
-        params,
-        experiment,
-        acc_savename_train,
-        acc_savename_val,
-        metrics_savename,
-        save_acc,
-        save_model,
-        valid_size,
-        num_workers,
-    )
+                # K-FOLD
+                if config.KFOLD != 0:
+                    cocpit.kfold_training.main(
+                        data,
+                        batch_size,
+                        model_name,
+                        epochs,
+                    )
+                else:  # no kfold
+                    cocpit.no_fold_training.main(
+                        data,
+                        batch_size,
+                        model_name,
+                        epochs,
+                    )
 
 
 def _ice_classification():
@@ -175,30 +92,13 @@ def _ice_classification():
 
     start_time = time.time()
 
-    class_names = [
-        "agg",
-        "budding",
-        "bullet",
-        "column",
-        "compact irregular",
-        "fragment",
-        "plate",
-        "rimed",
-        "sphere",
-    ]
-
-    open_dir = "cpi_data/campaigns/" + campaign + "/single_imgs_v1.3.0/"
-
     # load ML model for predictions
-    model = torch.load(
-        "/data/data/saved_models/no_mask/e20_bs64_1models_vgg_16_v1.3.0_vgg16"
-    )
+    model = torch.load(config.MODEL_PATH)
 
     # load df of quality ice particles to make predictions on
-    df = pd.read_csv("final_databases/vgg16/v1.3.0/" + campaign + ".csv")
-
-    df = cocpit.run_model.main(df, open_dir, class_names, cutoff, model, num_workers)
-    df.to_csv("final_databases/vgg16/v1.3.0/" + campaign + ".csv", index=False)
+    df = pd.read_csv(df_path)
+    df = cocpit.run_model.main(df, open_dir, model)
+    df.to_csv(df_path, index=False)
 
     print("done classifying all images!")
     print("time to classify ice = %.2f seconds" % (time.time() - start_time))
@@ -212,29 +112,21 @@ def _geometric_attributes():
     """
 
     # load df of quality ice particles to append particle attributes
-    df = pd.read_csv("final_databases/vgg16/" + campaign + ".csv")
-    open_dir = "cpi_data/campaigns/" + campaign + "/single_imgs_v1.3.0/"
-    df = cocpit.geometric_attributes.main(df, open_dir, num_cpus)
-    df.to_csv("final_databases/vgg16/v1.3.0/" + campaign + ".csv", index=False)
+    df = pd.read_csv(df_path)
+    df = cocpit.geometric_attributes.main(df, open_dir)
+    df.to_csv(df_path, index=False)
 
 
 def _add_date():
     """
     add a column for the date from the filename
     """
-    df = pd.read_csv("/data/data/final_databases/vgg16/v1.3.0/" + campaign + ".csv")
+    df = pd.read_csv(df_path)
     df = cocpit.add_date.main(df)
-    df.to_csv("final_databases/vgg16/v1.3.0/" + campaign + ".csv", index=False)
-    # write database to file that holds predictions
-    engine = create_engine(
-        "sqlite:///final_databases/vgg16/v1.3.0/" + campaign + ".db", echo=False
-    )
-    df.to_sql(name=campaign, con=engine, index=False, if_exists="replace")
+    df.to_csv(df_path, index=False)
 
 
 if __name__ == "__main__":
-    # version for docker and git
-    tag = "v1.4.0"
 
     # extract each image from sheet of images
     preprocess_sheets = False
@@ -251,13 +143,10 @@ if __name__ == "__main__":
     # adds a column for the date from the filename
     add_date = False
 
-    cutoff = 10  # percent of image that can intersect the border
-    num_cpus = 10  # workers for parallelization
-    num_workers = 5  # workers for data loaders
     print(
-        "num workers in loader = {}".format(num_workers)
+        "num workers in loader = {}".format(config.NUM_WORKERS)
     ) if ice_classification or build_model else print(
-        "num cpus for parallelization = {}".format(num_workers)
+        "num cpus for parallelization = {}".format(config.NUM_WORKERS)
     )
 
     campaigns = (
@@ -282,6 +171,15 @@ if __name__ == "__main__":
     )
     for campaign in campaigns:
         print("campaign: ", campaign)
+        # directory where the individual images live for each campaign
+        open_dir = f"cpi_data/campaigns/{campaign}/single_imgs_v1.3.0/"
+
+        # create dir for final databases
+        outname = campaign + ".csv"
+        if not os.path.exists(config.FINAL_DIR):
+            os.makedirs(config.FINAL_DIR)
+        df_path = os.path.join(config.FINAL_DIR, outname)
+
         if preprocess_sheets:
             _preprocess_sheets()
 
