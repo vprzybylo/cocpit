@@ -82,6 +82,7 @@ def log_metrics(
     epoch,
     epochs,
     scheduler,
+    phase,
     acc_savename,
 ):
     """
@@ -115,7 +116,7 @@ def log_metrics(
             file.close()
 
     # print output
-    metric_instance.print_epoch_metrics(epoch, epochs, phase='val')
+    metric_instance.print_epoch_metrics(epoch, epochs, phase)
 
 
 def sklearn_report(metric_instance, fold, model_name):

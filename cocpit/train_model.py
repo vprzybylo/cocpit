@@ -123,6 +123,7 @@ def train_model(
                     epoch,
                     epochs,
                     scheduler,
+                    phase,
                     acc_savename=config.ACC_SAVENAME_TRAIN,
                 )
 
@@ -148,6 +149,7 @@ def train_model(
                     epoch,
                     epochs,
                     scheduler,
+                    phase,
                     acc_savename=config.ACC_SAVENAME_VAL,
                 )
 
