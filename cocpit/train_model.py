@@ -26,7 +26,7 @@ def train_model(
 ):
 
     ## model configurations ##
-    cocpit.model_config.set_dropout(model, drop_rate=0.0)
+    cocpit.model_config.set_dropout(model, drop_rate=0.5)
     model = cocpit.model_config.to_device(model)
     params_to_update = cocpit.model_config.update_params(model)
     optimizer = optim.SGD(params_to_update, lr=0.01, momentum=0.9, nesterov=True)

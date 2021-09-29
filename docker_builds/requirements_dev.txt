@@ -138,6 +138,7 @@ pylint==2.7.0
 pyparsing==2.4.7
 pyrsistent==0.18.0
 pytesseract==0.3.8
+pytest==6.2.5
 python-benedict==0.24.2
 python-dateutil==2.8.2
 python-dotenv==0.19.0

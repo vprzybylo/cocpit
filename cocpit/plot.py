@@ -10,7 +10,7 @@ import seaborn as sns
 from matplotlib.colors import Normalize
 
 
-def plot_batch_size_accuracy_bar(val_csv, save_name, save_fig=False):
+def batch_size_accuracy_bar(val_csv, save_name, save_fig=False):
     """
     plot batch size vs max accuracy (20 epochs)
     val_csv (str): filename holding validation accuracies
@@ -55,7 +55,7 @@ def plot_batch_size_accuracy_bar(val_csv, save_name, save_fig=False):
         plt.savefig(save_name, dpi=300, bbox_inches="tight")
 
 
-def plot_train_val_acc_loss(
+def train_val_acc_loss(
     model_names,
     num_models,
     num_epochs,
@@ -66,7 +66,7 @@ def plot_train_val_acc_loss(
     train_losses,
     val_losses,
     save_name,
-    save_fig,
+    save_fig=False,
 ):
 
     """
@@ -173,7 +173,7 @@ def plot_train_val_acc_loss(
         plt.savefig(save_name, dpi=300, bbox_inches="tight")
 
 
-def plot_time_samples(time_csv, save_name, convert_names, save_fig=False):
+def time_samples(time_csv, save_name, convert_names, save_fig=False):
     """
     model vs time it takes to process 100, 1,000, and 10,000 samples
     """
@@ -216,7 +216,7 @@ def plot_time_samples(time_csv, save_name, convert_names, save_fig=False):
         plt.savefig(save_name, dpi=300, bbox_inches="tight")
 
 
-def plot_efficiency_samples(time_csv, save_name, convert_names, save_fig=False):
+def efficiency_samples(time_csv, save_name, convert_names, save_fig=False):
     """
     model vs efficiency per sample
     """
@@ -261,7 +261,7 @@ def plot_efficiency_samples(time_csv, save_name, convert_names, save_fig=False):
         plt.savefig(save_name, dpi=300, bbox_inches="tight")
 
 
-def plot_model_timing(time_csv, convert_names, colors, save_name, save_fig=False):
+def model_timing(time_csv, convert_names, colors, save_name, save_fig=False):
     """
     model vs time it took to train
     """

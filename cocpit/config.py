@@ -4,15 +4,15 @@
 - used in each module through 'import cocpit.config as config'
 - call using config.VARIABLE_NAME
 
-isort:skip
-otherwise comet moves below torch and errors
+- flags for what module of cocpit to run is found in the main directory in __main__.py (e.g., preprocess_sheets, build_model, ice_classification, geometric_attributes, add_date..)
 '''
 
 import os
 
-import torch
 from comet_ml import Experiment
 from dotenv import load_dotenv
+
+import torch  # isort: split  # otherwise comet moves below torch and errors
 
 # cocpit version used in docker and git
 TAG = 'v1.4.0'
@@ -96,16 +96,16 @@ VAL_LOADER_SAVE_DIR = f"/data/data/saved_val_loaders/no_mask/{TAG}/"
 MODEL_SAVENAME = (
     f"{MODEL_SAVE_DIR}e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_"
-    f"{len(MODEL_NAMES)}model(s).pt"
+    f"{len(MODEL_NAMES)}model(s)_dropout0.5.pt"
 )
 VAL_LOADER_SAVENAME = (
     f"{VAL_LOADER_SAVE_DIR}e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_"
-    f"{len(MODEL_NAMES)}model(s).pt"
+    f"{len(MODEL_NAMES)}model(s)_dropout0.5.pt"
 )
 
 # write training loss and accuracy to csv
-SAVE_ACC = True
+SAVE_ACC = False
 
 # directory for saving training accuracy and loss csv's
 ACC_SAVE_DIR = f"/data/data/saved_accuracies/{TAG}/"
@@ -134,7 +134,7 @@ FINAL_DIR = f"/data/data/final_databases/vgg16/{TAG}/"
 
 
 # log experiment to comet for tracking?
-LOG_EXP = False
+LOG_EXP = True
 
 load_dotenv()  # loading sensitive keys from .env file
 if LOG_EXP:

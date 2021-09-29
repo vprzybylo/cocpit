@@ -223,10 +223,8 @@ def get_val_loader_predictions(model, val_data, batch_size, shuffle=True):
     ------
     - model (obj): torch.nn.parallel.data_parallel.DataParallel loaded from saved file
     - val_data (obj): Loads an object saved with torch.save() from a file
-    - device (obj): use cuda if available
     - batch_size (int): how many samples per batch to load
     - shuffle (bool): whether to shuffle the dataset after every epoch.
-    - num_workers (int): number of subprocesses to use when loading the dataset
 
     Returns
     -------
@@ -238,9 +236,10 @@ def get_val_loader_predictions(model, val_data, batch_size, shuffle=True):
         val_data,
         batch_size=batch_size,
         shuffle=shuffle,
-        num_workers=num_workers,
+        num_workers=config.NUM_WORKERS,
         pin_memory=True,
     )
+
     all_preds = []
     all_labels = []
     with torch.no_grad():
