@@ -1,6 +1,6 @@
 """
 train model without folds for cross validation
-called in build_model.py
+called in __main__.py under build_model
 """
 
 from sklearn.model_selection import StratifiedKFold, train_test_split

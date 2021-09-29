@@ -1,3 +1,13 @@
+'''
+model configurations for:
+    - dropout
+    - device settings
+    - parameters to update
+    - checking label counts within a batch
+    - normalization values for transformations
+'''
+
+
 import copy
 
 import torch
@@ -82,7 +92,7 @@ def label_counts(i, labels):
     return label_cnts
 
 
-def get_normalization_values(dataloaders_dict, phase):
+def normalization_values(dataloaders_dict, phase):
     """
     Get mean and standard deviation of pixel values
     across all batches

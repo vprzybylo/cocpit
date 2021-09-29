@@ -1,3 +1,12 @@
+'''
+- holds epoch and batch metrics for both the training and validation datasets
+- called in train_model.py
+- updates and resets totals within training loop
+- logs metrics to console and/or comet-ml interface (see config.py to turn on)
+- writes metrics to csv's defined in config.py
+- creates a sklearn classification report using the metrics
+'''
+
 import csv
 import itertools
 

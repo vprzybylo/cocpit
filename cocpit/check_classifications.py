@@ -1,6 +1,6 @@
 """
-Check predictions from a saved CNN
-called in check_classifications.ipynb for bar chart plot returns
+- check predictions from a saved CNN
+- called in check_classifications.ipynb for bar chart plot
 """
 
 import matplotlib.pyplot as plt

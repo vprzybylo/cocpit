@@ -5,14 +5,15 @@
 - call using config.VARIABLE_NAME
 
 - flags for what module of cocpit to run is found in the main directory in __main__.py (e.g., preprocess_sheets, build_model, ice_classification, geometric_attributes, add_date..)
+
+isort:skip_file
 '''
+from comet_ml import Experiment  # isort:skip
 
 import os
-
-from comet_ml import Experiment
 from dotenv import load_dotenv
 
-import torch  # isort: split  # otherwise comet moves below torch and errors
+import torch  # isort:skip
 
 # cocpit version used in docker and git
 TAG = 'v1.4.0'

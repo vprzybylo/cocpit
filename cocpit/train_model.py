@@ -67,7 +67,7 @@ def train_model(
 
             # get pytorch transform normalization values per channel
             # iterates over training
-            # mean, std = cocpit.model_config.get_normalization_values(dataloaders_dict, phase)
+            # mean, std = cocpit.model_config.normalization_values(dataloaders_dict, phase)
 
             for batch, ((inputs, labels, paths), index) in enumerate(
                 dataloaders_dict[phase]

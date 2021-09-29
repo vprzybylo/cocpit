@@ -6,17 +6,71 @@ Classification of Cloud Particle Imagery and Thermodynamics
 modules:
 -------
 
+add_date:
+    - add a column to the dataframes for the date from the filename
+
+check_classifications:
+    - check predictions from a saved CNN
+    - called in check_classifications.ipynb for bar chart plot
+
 config:
     - holds all user-defined variables
     - treated as global and used across modules
 
-preprocess_sheets_with_text:
-    - Extracts single images from the muliple images per frame or sheet
-    - Saves single images to a directory for later creation of the database
+data_loaders:
+    - retrives data loaders from Pytorch for training and validation data
+    - includes weighted and unweighted sampling
+    - modified to append path to image (including class folder)
+
+geometric_attributes:
+    - calculates particle geometric properties from pic.py
+    - e.g., area ratio, roundness, aspect ratio
+    - length and width of particle calculated in process_sheets.py before resizing
+
+image_stats:
+    - find the #/% of cutoff particles after removing blurry, fragmented, and spherical drops
+    - used as a separate script (external - not being called in __main__.py)
+
+kfold_training:
+    - train model with k folds for cross validation across samples
+    - called in __main__.py under build_model
+
+metrics:
+    - holds epoch and batch metrics for both the training and validation datasets
+    - called in train_model.py
+    - updates and resets loss and acc totals within training loop
+    - logs metrics to console and/or comet-ml interface (see config.py to turn on)
+    - writes metrics to csv's defined in config.py
+    - creates a sklearn classification report using the metrics
+
+model_config:
+    - model configurations for:
+        - dropout
+        - device settings
+        - parameters to update
+        - checking label counts within a batch
+        - normalization values for transformations
+
+models:
+    - defines torchvision models
+
+no_fold_training:
+    - train model without folds for cross validation
 
 pic: 'particle image classification'
-    - Holds the main Image class for image manipulation using opencv
-    and calculates particle geometrical attributes
+    - holds the main Image class for image manipulation using opencv
+    - calculates particle geometrical attributes
+
+plot_metrics:
+    - calculation and plotting functions for reporting performance metrics
+    - confusion matrices
+
+plot:
+    - plotting scripts for publication
+
+process_sheets:
+    - extracts single images from the muliple images per frame or sheet
+    - saves single images to a directory for later creation of the database
 
 run_model:
     -classifies good ice images through a convolutional neural network that
@@ -24,46 +78,13 @@ run_model:
     -transforms, makes predictions, and appends classification to dataframe
 
 train_model:
-    - Houses the execution of training the model for all epochs and batches
-    - Iterates through training and validation phases for specified CNN
-    - Called in run_ML model
-    - Writes accuracy and loss logs for each dataset (training and validation)
-    - Returns classification report
+    - houses the execution of training the model for all epochs and batches
+    - iterates through training and validation phases for specified CNN
+    - called in run_ML model
+    - writes accuracy and loss logs for each dataset (training and validation)
+    - returns classification report
 
-data_loaders:
-    - Retrives data loaders from Pytorch for training and validation data
-    - Appends path
-    - Called in run_ML_model
-
-train_metrics:
-    - outputs batch and epoch accuracy and losses to .csv's
-
-classification_report:
-    - calculation and plotting functions for reporting performance metrics from sklearn
-    - precision, recall, f1, etc
-
-plot:
-    - plotting scripts for publication
-
-add_date:
-    - add a column to the dataframes for the date from the filename
-
-kfold_training:
-    - train model with k folds
 """
-
-# import cocpit.add_date
-# import cocpit.build_model
-# import cocpit.check_classifications
-# import cocpit.train_metrics
-# import cocpit.classification_metrics
-# import cocpit.data_loaders
-# import cocpit.geometric_attributes
-# import cocpit.models
-# import cocpit.pic
-# import cocpit.process_png_sheets_with_text
-# import cocpit.run_model
-# import cocpit.train_model
 
 import glob
 from os.path import basename, dirname, isfile, join

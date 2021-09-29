@@ -41,7 +41,7 @@ def _preprocess_sheets():
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
-    cocpit.process_png_sheets_with_text.main(
+    cocpit.process_sheets.main(
         sheet_dir,
         save_dir,
         save_df=df_path,
