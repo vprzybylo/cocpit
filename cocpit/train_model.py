@@ -1,9 +1,6 @@
 """
 train the CNN model(s)
 """
-import cocpit  # isort:skip
-import cocpit.config as config  # isort:skip
-
 import csv
 import operator
 import time
@@ -12,6 +9,9 @@ import numpy as np
 import torch
 from torch import nn, optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+
+import cocpit
+import cocpit.config as config  # isort:split
 
 
 def train_model(

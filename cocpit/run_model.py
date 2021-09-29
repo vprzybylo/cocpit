@@ -2,9 +2,6 @@
 classifies unseen images:
 transforms, makes predictions, and appends classification to dataframe
 """
-import cocpit.config as config  # isort:skip
-import cocpit.data_loaders as data_loaders  # isort:skip
-
 import os
 from collections import defaultdict
 
@@ -18,6 +15,9 @@ from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
 from twilio.rest import Client
+
+import cocpit.config as config
+import cocpit.data_loaders as data_loaders  # isort:split
 
 torch.cuda.empty_cache()
 

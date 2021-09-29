@@ -6,7 +6,8 @@ isort:skip_file
 """
 
 import cocpit.config as config
-import cocpit
+import cocpit  # isort: split
+
 from sklearn.model_selection import StratifiedKFold, train_test_split
 
 

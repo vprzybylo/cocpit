@@ -1,5 +1,3 @@
-import cocpit.config as config  # isort:skip
-
 import copy
 import os
 import re
@@ -12,6 +10,8 @@ import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
 from twilio.rest import Client
+
+import cocpit.config as config  # isort:split
 
 
 class Image:

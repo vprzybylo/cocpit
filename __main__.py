@@ -13,15 +13,16 @@ Contact:
 More information is available at:
 - https://vprzybylo.github.io/COCPIT/
 """
+import cocpit
+
+import cocpit.config as config  # isort: split
+
 import os
 import time
 import warnings
 
 import pandas as pd
 import torch
-
-import cocpit  # isort:skip
-import cocpit.config as config  # isort:skip
 
 
 def _preprocess_sheets():

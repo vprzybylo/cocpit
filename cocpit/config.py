@@ -9,7 +9,7 @@
 isort:skip_file
 '''
 
-from comet_ml import Experiment  # isort:skip
+from comet_ml import Experiment  # isort:split
 
 import os
 from dotenv import load_dotenv

@@ -10,7 +10,7 @@ import pandas as pd
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 
-import cocpit.config as config
+import cocpit.config as config  # isort:split
 
 
 def conf_matrix(all_preds, all_labels, norm, save_name, save_fig=False):

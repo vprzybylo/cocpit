@@ -1,6 +1,9 @@
 """
 Retrives data loaders from Pytorch for training and validation data
 """
+
+import cocpit.config as config  # isort: split
+
 import itertools
 import os
 
@@ -10,8 +13,6 @@ import torch.utils.data.sampler as sampler
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import datasets, transforms
-
-import cocpit.config as config
 
 
 class ImageFolderWithPaths(datasets.ImageFolder):
