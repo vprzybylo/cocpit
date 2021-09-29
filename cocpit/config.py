@@ -8,12 +8,12 @@
 
 isort:skip_file
 '''
+
 from comet_ml import Experiment  # isort:skip
 
 import os
 from dotenv import load_dotenv
-
-import torch  # isort:skip
+import torch
 
 # cocpit version used in docker and git
 TAG = 'v1.4.0'

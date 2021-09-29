@@ -7,6 +7,8 @@
 - creates a sklearn classification report using the metrics
 '''
 
+import cocpit.config as config  # isort:skip
+
 import csv
 import itertools
 
@@ -14,8 +16,6 @@ import numpy as np
 import pandas as pd
 import torch
 from sklearn.metrics import classification_report
-
-import cocpit.config as config
 
 
 class Metrics:

@@ -85,11 +85,8 @@ train_model:
     - returns classification report
 
 """
-
 import glob
 from os.path import basename, dirname, isfile, join
-
-import cocpit.config
 
 modules = glob.glob(join(dirname(__file__), "*.py"))
 __all__ = [

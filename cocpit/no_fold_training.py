@@ -1,12 +1,13 @@
 """
 train model without folds for cross validation
 called in __main__.py under build_model
+
+isort:skip_file
 """
 
-from sklearn.model_selection import StratifiedKFold, train_test_split
-
-import cocpit
 import cocpit.config as config
+import cocpit
+from sklearn.model_selection import StratifiedKFold, train_test_split
 
 
 def main(data, batch_size, model_name, epochs, kfold=0):

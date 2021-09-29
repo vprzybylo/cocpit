@@ -20,8 +20,8 @@ import warnings
 import pandas as pd
 import torch
 
-import cocpit
-import cocpit.config as config
+import cocpit  # isort:skip
+import cocpit.config as config  # isort:skip
 
 
 def _preprocess_sheets():

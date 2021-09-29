@@ -7,14 +7,13 @@ model configurations for:
     - normalization values for transformations
 '''
 
+import cocpit.config as config  # isort:skip
+import cocpit.metrics as metrics  # isort:skip
 
 import copy
 
 import torch
 from torch import nn
-
-import cocpit.config as config
-import cocpit.metrics as metrics
 
 
 def set_dropout(model, drop_rate=0.1):
