@@ -6,6 +6,7 @@ import cocpit.config as config  # isort: split
 
 import itertools
 import os
+from collections import Counter
 
 import numpy as np
 import torch
@@ -88,8 +89,7 @@ def make_weights_for_balanced_classes(train_labels):
     are sampled more frequently and higher count classes are sampled less
     Params
     ------
-    - train_target (): labels of training dataset
-    - nclasses (int): number of classes
+    - train_labels (list): labels of training dataset
     Returns
     -------
     - class_sample_counts (list): # of samples per class
@@ -100,7 +100,7 @@ def make_weights_for_balanced_classes(train_labels):
     class_sample_counts = [0] * len(config.CLASS_NAMES)
     for target in train_labels:
         class_sample_counts[target] += 1
-    print("counts per class: ", class_sample_counts)
+    print("counts per class in training data: ", class_sample_counts)
 
     class_weights = 1.0 / torch.Tensor(class_sample_counts)
     train_samples_weights = [class_weights[class_id] for class_id in train_labels]

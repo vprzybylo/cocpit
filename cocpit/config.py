@@ -54,11 +54,9 @@ CLASS_NAMES = [
     "agg",
     "budding",
     "bullet",
-    "capped column",
     "column",
     "compact irregular",
-    "complex sideplane",
-    "dendrite",
+    "faceted",
     "fragment",
     "plate",
     "rimed",
@@ -97,12 +95,12 @@ VAL_LOADER_SAVE_DIR = f"/data/data/saved_val_loaders/no_mask/{TAG}/"
 MODEL_SAVENAME = (
     f"{MODEL_SAVE_DIR}e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_"
-    f"{len(MODEL_NAMES)}model(s)_dropout0.5.pt"
+    f"{len(MODEL_NAMES)}model(s).pt"
 )
 VAL_LOADER_SAVENAME = (
     f"{VAL_LOADER_SAVE_DIR}e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_"
-    f"{len(MODEL_NAMES)}model(s)_dropout0.5.pt"
+    f"{len(MODEL_NAMES)}model(s).pt"
 )
 
 # write training loss and accuracy to csv
@@ -135,7 +133,7 @@ FINAL_DIR = f"/data/data/final_databases/vgg16/{TAG}/"
 
 
 # log experiment to comet for tracking?
-LOG_EXP = True
+LOG_EXP = False
 
 load_dotenv()  # loading sensitive keys from .env file
 if LOG_EXP:
