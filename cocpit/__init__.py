@@ -27,6 +27,10 @@ geometric_attributes:
     - e.g., area ratio, roundness, aspect ratio
     - length and width of particle calculated in process_sheets.py before resizing
 
+gui:
+    - class for ipywidget buttons to label incorrect predictions from a dataloader
+    - called in notebooks/move_wrong_predictions.ipynb
+
 image_stats:
     - find the #/% of cutoff particles after removing blurry, fragmented, and spherical drops
     - used as a separate script (external - not being called in __main__.py)
