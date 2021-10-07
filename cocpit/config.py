@@ -21,7 +21,7 @@ TAG = 'v1.4.0'
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # model to load
-MODEL_PATH = f"/data/data/saved_models/no_mask/e20_bs64_1models_vgg_16_{TAG}"
+MODEL_PATH = f"/data/data/saved_models/no_mask/{TAG}/e15_bs64_1model(s).pt"
 
 # workers for parallelization
 NUM_CPUS = 5
@@ -47,7 +47,7 @@ VALID_SIZE = 0.20
 BATCH_SIZE = [64]
 
 # number of epochs to train model
-MAX_EPOCHS = [20]
+MAX_EPOCHS = [15]
 
 # names of each ice crystal class
 CLASS_NAMES = [
@@ -55,10 +55,9 @@ CLASS_NAMES = [
     "budding",
     "bullet",
     "column",
-    "compact irregular",
-    "faceted",
+    "compact_irreg",
     "fragment",
-    "plate",
+    "planar_polycrsytal",
     "rimed",
     "sphere",
 ]
@@ -129,7 +128,7 @@ METRICS_SAVENAME = (
 )
 
 # where to save final databases to
-FINAL_DIR = f"/data/data/final_databases/vgg16/{TAG}/"
+FINAL_DIR = "/data/data/final_databases/vgg16/"
 
 
 # log experiment to comet for tracking?

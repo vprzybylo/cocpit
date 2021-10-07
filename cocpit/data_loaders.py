@@ -11,9 +11,11 @@ from collections import Counter
 import numpy as np
 import torch
 import torch.utils.data.sampler as sampler
-from PIL import Image
+from PIL import Image, ImageFile
 from torch.utils.data import Dataset
 from torchvision import datasets, transforms
+
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 class ImageFolderWithPaths(datasets.ImageFolder):
@@ -173,6 +175,7 @@ def create_dataloaders(
     if config.VALID_SIZE < 0.01:
         # use all data for training - no val loader
         return train_loader, None
+
     # Make an iterable of batches across the validation dataset
     val_loader = torch.utils.data.DataLoader(
         val_data,

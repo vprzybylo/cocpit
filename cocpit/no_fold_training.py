@@ -4,9 +4,9 @@ called in __main__.py under build_model
 
 isort:skip_file
 """
+import cocpit  # isort: split
 
 import cocpit.config as config
-import cocpit  # isort: split
 
 from sklearn.model_selection import StratifiedKFold, train_test_split
 
