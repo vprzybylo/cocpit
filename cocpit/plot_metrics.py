@@ -25,7 +25,7 @@ def conf_matrix(all_preds, all_labels, norm, save_name, save_fig=False):
     - save_fig (bool): save the conf matrix to file
     """
 
-    fig, ax = plt.subplots(figsize=(13, 9))
+    fig, ax = plt.subplots(figsize=(10, 7))
     # all_preds[all_preds == 0] = np.nan
     # all_labels[all_labels == 0] = np.nan
     cm = confusion_matrix(all_preds, all_labels)

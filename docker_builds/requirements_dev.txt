@@ -61,6 +61,7 @@ imutils==0.5.4
 ipykernel==6.2.0
 ipython==7.26.0
 ipython-genutils==0.2.0
+ipywidgets==7.6.5
 isort==5.9.3
 itsdangerous==2.0.1
 jedi==0.18.0

@@ -44,12 +44,16 @@ class GUI:
                 "spheres",
             ],
             description="Category:",
+            value="agg",
         )
         self.menu.observe(self.on_change)
 
         # create button that progresses through incorrect predictions
         self.forward = Button(description="Next")
         self.forward.on_click(self.on_button_next)
+
+        if self.index == 0:
+            self.bar_chart()
 
     def on_change(self, change):
         self.save_image()
