@@ -18,9 +18,20 @@ import cocpit.config as config
 
 
 class GUI:
+    '''
+    creates buttons in notebooks/move_wrong_predictions.ipynb
+    to label wrong predictions from validation dataloader
+    '''
+
     def __init__(
         self, all_labels, all_paths, all_topk_probs, all_topk_classes, all_max_preds
     ):
+        '''
+        requires human labels, image absolute paths, the top k probabilities output
+        by the model for a bar chart of predictions, the top k class names that
+        correspond to the top k probabilities, and the class index with
+        the highest probability
+        '''
         self.index = 0
         self.all_labels = all_labels
         self.all_paths = all_paths
@@ -29,6 +40,10 @@ class GUI:
         self.all_max_preds = all_max_preds
 
     def make_buttons(self):
+        '''
+        use ipywidgets to create a box for the image, bar chart, dropdown,
+        and next button
+        '''
         self.center = ipywidgets.Output()  # center image with predictions
 
         self.menu = ipywidgets.Dropdown(
@@ -56,14 +71,29 @@ class GUI:
             self.bar_chart()
 
     def on_change(self, change):
+        '''
+        when a class in the dropdown is selected, move the image and save
+        it to the specified class
+        '''
         self.save_image()
 
     def on_button_next(self, b):
+        '''
+        when the next button is clicked, make a new image and bar chart appear
+        by updating the index within the wrong predictions by 1
+        '''
         self.bar_chart()
+        # keep the default dropdown value to agg
+        # don't want it to change based on previous selection
+        self.menu.value = "agg"
         self.index += 1
 
     def bar_chart(self):
-
+        '''
+        use the human and model labels and classes to
+        create a bar chart with the top k predictions
+        from the image at the current index
+        '''
         self.label = self.all_labels[self.index]
         self.path = self.all_paths[self.index]
         self.topk_probs = self.all_topk_probs[self.index]
@@ -78,7 +108,10 @@ class GUI:
             self.view_classifications(crystal_names)
 
     def view_classifications(self, crystal_names):
-
+        '''
+        bar chart code
+        outputs top k predictions for a given image
+        '''
         clear_output()  # so that the next fig doesnt display below
         fig, (ax1, ax2) = plt.subplots(
             constrained_layout=True, figsize=(5, 7), ncols=1, nrows=2
@@ -107,6 +140,9 @@ class GUI:
             pass
 
     def save_image(self):
+        '''
+        move the image based on dropdown selection
+        '''
         filename = self.path.split("/")[-1]
         # print(f'move {path} to {config.DATA_DIR}{crystal_names[0]}/{filename}')
 
@@ -116,5 +152,5 @@ class GUI:
 
             shutil.move(self.path, f"{config.DATA_DIR}{self.menu.value}/{filename}")
         except FileNotFoundError:
-            print("file not found")
+            print("File Not Found. Not moving.")
             pass
