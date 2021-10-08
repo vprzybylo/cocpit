@@ -1,7 +1,6 @@
 """
 train the CNN model(s)
 """
-
 import csv
 import operator
 import time
@@ -12,7 +11,7 @@ from torch import nn, optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 import cocpit
-import cocpit.config as config
+import cocpit.config as config  # isort:split
 
 
 def train_model(
@@ -55,6 +54,9 @@ def train_model(
         for phase in phases:
             print("Phase: {}".format(phase))
 
+            train_metrics.reset_totals()
+            val_metrics.reset_totals()
+
             # label_cnts_total = np.zeros(len(class_names))
 
             if phase == "train":
@@ -64,7 +66,7 @@ def train_model(
 
             # get pytorch transform normalization values per channel
             # iterates over training
-            # mean, std = cocpit.model_config.get_normalization_values(dataloaders_dict, phase)
+            # mean, std = cocpit.model_config.normalization_values(dataloaders_dict, phase)
 
             for batch, ((inputs, labels, paths), index) in enumerate(
                 dataloaders_dict[phase]
@@ -123,6 +125,7 @@ def train_model(
                     epoch,
                     epochs,
                     scheduler,
+                    phase,
                     acc_savename=config.ACC_SAVENAME_TRAIN,
                 )
 
@@ -148,6 +151,7 @@ def train_model(
                     epoch,
                     epochs,
                     scheduler,
+                    phase,
                     acc_savename=config.ACC_SAVENAME_VAL,
                 )
 

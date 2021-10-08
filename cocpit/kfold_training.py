@@ -3,11 +3,12 @@ train model with k folds for cross validation across samples
 called in __main__.py
 """
 
+import cocpit
+
+import cocpit.config as config  # isort: split
+
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold, train_test_split
-
-import cocpit
-import cocpit.config as config
 
 
 def train_val_composition(data, train_indices, val_indices):

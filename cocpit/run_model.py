@@ -17,7 +17,7 @@ from torchvision import transforms
 from twilio.rest import Client
 
 import cocpit.config as config
-import cocpit.data_loaders as data_loaders
+import cocpit.data_loaders as data_loaders  # isort:split
 
 torch.cuda.empty_cache()
 

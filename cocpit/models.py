@@ -3,12 +3,11 @@ torchvision models
 all pretrained on the 1000-class Imagenet dataset
 we update all weights but use this model architecture
 '''
-
 from efficientnet_pytorch import EfficientNet
 from torch import nn
 from torchvision import models
 
-import cocpit.config as config
+import cocpit.config as config  # isort:split
 
 
 def set_parameter_requires_grad(model, feature_extract):

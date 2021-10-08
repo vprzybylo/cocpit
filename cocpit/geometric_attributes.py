@@ -2,6 +2,10 @@
 calculates particle geometric properties
 """
 
+import cocpit.config as config
+
+import cocpit.pic as pic  # isort: split
+
 import multiprocessing
 import time
 from functools import partial
@@ -9,9 +13,6 @@ from functools import partial
 import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
-
-import cocpit.config as config
-import cocpit.pic as pic
 
 
 def get_attributes(filename, open_dir):

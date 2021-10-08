@@ -1,10 +1,19 @@
+'''
+model configurations for:
+    - dropout
+    - device settings
+    - parameters to update
+    - checking label counts within a batch
+    - normalization values for transformations
+'''
+
 import copy
 
 import torch
 from torch import nn
 
 import cocpit.config as config
-import cocpit.metrics as metrics
+import cocpit.metrics as metrics  # isort:split
 
 
 def set_dropout(model, drop_rate=0.1):
@@ -82,7 +91,7 @@ def label_counts(i, labels):
     return label_cnts
 
 
-def get_normalization_values(dataloaders_dict, phase):
+def normalization_values(dataloaders_dict, phase):
     """
     Get mean and standard deviation of pixel values
     across all batches

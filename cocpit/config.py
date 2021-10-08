@@ -3,13 +3,17 @@
 - treated as global variables that do not change in any module
 - used in each module through 'import cocpit.config as config'
 - call using config.VARIABLE_NAME
+
+- flags for what module of cocpit to run is found in the main directory in __main__.py (e.g., preprocess_sheets, build_model, ice_classification, geometric_attributes, add_date..)
+
+isort:skip_file
 '''
 
-import os
+from comet_ml import Experiment  # isort:split
 
-import torch
-from comet_ml import Experiment
+import os
 from dotenv import load_dotenv
+import torch
 
 # cocpit version used in docker and git
 TAG = 'v1.4.0'
@@ -17,47 +21,46 @@ TAG = 'v1.4.0'
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # model to load
-MODEL_PATH = f"/data/data/saved_models/no_mask/e20_bs64_1models_vgg_16_{TAG}"
+MODEL_PATH = f"/data/data/saved_models/no_mask/{TAG}/e15_bs64_1model(s).pt"
 
 # workers for parallelization
-NUM_CPUS = 10
+NUM_CPUS = 5
 
 # number of cpus used to load data in pytorch dataloaders
 NUM_WORKERS = 20
 
 # whether to save the individual extracted images
+# used in process_png_sheets_with_text.py
 SAVE_IMAGES = False
 
 # percent of image that can intersect the border
 CUTOFF = 10
 
 # how many folds used in training (cross-validation)
+# kold = 0 turns this off and splits the data according to valid_size
 KFOLD = 0
+
+# percent of the training dataset to use as validation
+VALID_SIZE = 0.20
 
 # images read into memory at a time during training
 BATCH_SIZE = [64]
 
 # number of epochs to train model
-MAX_EPOCHS = [20]
+MAX_EPOCHS = [15]
 
 # names of each ice crystal class
 CLASS_NAMES = [
     "agg",
     "budding",
     "bullet",
-    "capped column",
     "column",
-    "compact irregular",
-    "complex sideplane",
-    "dendrite",
+    "compact_irreg",
     "fragment",
-    "plate",
+    "planar_polycrsytal",
     "rimed",
     "sphere",
 ]
-
-# percent of the training dataset to use as validation
-VALID_SIZE = 0.20
 
 # models to train
 MODEL_NAMES = [
@@ -81,7 +84,9 @@ DATA_DIR = (
 # whether to save the model
 SAVE_MODEL = True
 # directory to save the trained model to
+
 MODEL_SAVE_DIR = f"/data/data/saved_models/no_mask/{TAG}/"
+
 # directory to save validation data to
 # for later inspection of predictions
 VAL_LOADER_SAVE_DIR = f"/data/data/saved_val_loaders/no_mask/{TAG}/"
@@ -97,12 +102,12 @@ VAL_LOADER_SAVENAME = (
     f"{len(MODEL_NAMES)}model(s).pt"
 )
 
-
 # write training loss and accuracy to csv
-SAVE_ACC = True
+SAVE_ACC = False
 
 # directory for saving training accuracy and loss csv's
 ACC_SAVE_DIR = f"/data/data/saved_accuracies/{TAG}/"
+
 #  filename for saving training accuracy and loss
 ACC_SAVENAME_TRAIN = (
     f"{ACC_SAVE_DIR}train_acc_loss_e{max(MAX_EPOCHS)}_"
@@ -123,11 +128,11 @@ METRICS_SAVENAME = (
 )
 
 # where to save final databases to
-FINAL_DIR = f"/data/data/final_databases/vgg16/{TAG}/"
+FINAL_DIR = "/data/data/final_databases/vgg16/"
 
 
 # log experiment to comet for tracking?
-LOG_EXP = True
+LOG_EXP = False
 
 load_dotenv()  # loading sensitive keys from .env file
 if LOG_EXP:

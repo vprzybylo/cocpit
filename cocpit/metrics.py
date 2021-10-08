@@ -1,3 +1,12 @@
+'''
+- holds epoch and batch metrics for both the training and validation datasets
+- called in train_model.py
+- updates and resets totals within training loop
+- logs metrics to console and/or comet-ml interface (see config.py to turn on)
+- writes metrics to csv's defined in config.py
+- creates a sklearn classification report using the metrics
+'''
+
 import csv
 import itertools
 
@@ -6,7 +15,7 @@ import pandas as pd
 import torch
 from sklearn.metrics import classification_report
 
-import cocpit.config as config
+import cocpit.config as config  # isort:split
 
 
 class Metrics:
@@ -69,6 +78,16 @@ class Metrics:
             Accuracy: {self.epoch_acc:.3f}"
         )
 
+    def reset_totals(self):
+        """
+        clear out cumulative loss, accuracy, predictions, and labels for new epoch/phase
+        """
+        self.totals = 0.0
+        self.running_loss = 0.0  # across batches
+        self.running_corrects = 0.0
+        self.all_preds = []
+        self.all_labels = []
+
 
 ##############
 
@@ -82,6 +101,7 @@ def log_metrics(
     epoch,
     epochs,
     scheduler,
+    phase,
     acc_savename,
 ):
     """
@@ -95,8 +115,10 @@ def log_metrics(
 
     # log to comet
     if config.LOG_EXP:
-        config.experiment.log_metric("epoch_acc_val", metric_instance.epoch_acc * 100)
-        config.experiment.log_metric("epoch_loss_val", metric_instance.epoch_loss)
+        config.experiment.log_metric(
+            f"epoch_acc_{phase}", metric_instance.epoch_acc * 100
+        )
+        config.experiment.log_metric(f"epoch_loss_{phase}", metric_instance.epoch_loss)
 
     # write acc and loss to file within epoch iteration
     if config.SAVE_ACC:
@@ -115,7 +137,7 @@ def log_metrics(
             file.close()
 
     # print output
-    metric_instance.print_epoch_metrics(epoch, epochs, phase='val')
+    metric_instance.print_epoch_metrics(epoch, epochs, phase)
 
 
 def sklearn_report(metric_instance, fold, model_name):

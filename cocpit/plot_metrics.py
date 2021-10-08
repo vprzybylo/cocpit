@@ -10,10 +10,10 @@ import pandas as pd
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 
-import cocpit.config as config
+import cocpit.config as config  # isort:split
 
 
-def plot_confusion_matrix(all_preds, all_labels, norm, save_name, save_fig=False):
+def conf_matrix(all_preds, all_labels, norm, save_name, save_fig=False):
     """
     Plot and save a confusion matrix from a saved validation dataloader
     Params
@@ -25,7 +25,7 @@ def plot_confusion_matrix(all_preds, all_labels, norm, save_name, save_fig=False
     - save_fig (bool): save the conf matrix to file
     """
 
-    fig, ax = plt.subplots(figsize=(13, 9))
+    fig, ax = plt.subplots(figsize=(10, 7))
     # all_preds[all_preds == 0] = np.nan
     # all_labels[all_labels == 0] = np.nan
     cm = confusion_matrix(all_preds, all_labels)
@@ -80,7 +80,7 @@ def plot_confusion_matrix(all_preds, all_labels, norm, save_name, save_fig=False
     plt.show()
 
 
-def plot_model_metric_folds(
+def model_metric_folds(
     metric_filename, convert_names, save_name, avg="folds", save_fig=False
 ):
     """
@@ -147,7 +147,7 @@ def plot_model_metric_folds(
     plt.show()
 
 
-def plot_classification_report_classes(clf_report, save_name, save_fig=False):
+def classification_report_classes(clf_report, save_name, save_fig=False):
     """
     plot precision, recall, and f1-score for each class from 1 model
     average across folds

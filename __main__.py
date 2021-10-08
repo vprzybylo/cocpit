@@ -13,16 +13,16 @@ Contact:
 More information is available at:
 - https://vprzybylo.github.io/COCPIT/
 """
+import cocpit
+
+import cocpit.config as config  # isort: split
+
 import os
 import time
 import warnings
 
 import pandas as pd
 import torch
-from dotenv import load_dotenv
-
-import cocpit
-import cocpit.config as config
 
 
 def _preprocess_sheets():
@@ -42,7 +42,7 @@ def _preprocess_sheets():
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
-    cocpit.process_png_sheets_with_text.main(
+    cocpit.process_sheets.main(
         sheet_dir,
         save_dir,
         save_df=df_path,
@@ -58,6 +58,8 @@ def _build_model():
     """
     train ML models
     """
+
+    data = cocpit.data_loaders.get_data()
 
     # loop through batch sizes, models, epochs, and/or folds
     for batch_size in config.BATCH_SIZE:

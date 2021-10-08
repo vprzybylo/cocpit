@@ -1,17 +1,21 @@
 """
 Retrives data loaders from Pytorch for training and validation data
 """
+
+import cocpit.config as config  # isort: split
+
 import itertools
 import os
+from collections import Counter
 
 import numpy as np
 import torch
 import torch.utils.data.sampler as sampler
-from PIL import Image
+from PIL import Image, ImageFile
 from torch.utils.data import Dataset
 from torchvision import datasets, transforms
 
-import cocpit.config as config
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 class ImageFolderWithPaths(datasets.ImageFolder):
@@ -87,8 +91,7 @@ def make_weights_for_balanced_classes(train_labels):
     are sampled more frequently and higher count classes are sampled less
     Params
     ------
-    - train_target (): labels of training dataset
-    - nclasses (int): number of classes
+    - train_labels (list): labels of training dataset
     Returns
     -------
     - class_sample_counts (list): # of samples per class
@@ -99,7 +102,7 @@ def make_weights_for_balanced_classes(train_labels):
     class_sample_counts = [0] * len(config.CLASS_NAMES)
     for target in train_labels:
         class_sample_counts[target] += 1
-    print("counts per class: ", class_sample_counts)
+    print("counts per class in training data: ", class_sample_counts)
 
     class_weights = 1.0 / torch.Tensor(class_sample_counts)
     train_samples_weights = [class_weights[class_id] for class_id in train_labels]
@@ -172,6 +175,7 @@ def create_dataloaders(
     if config.VALID_SIZE < 0.01:
         # use all data for training - no val loader
         return train_loader, None
+
     # Make an iterable of batches across the validation dataset
     val_loader = torch.utils.data.DataLoader(
         val_data,
@@ -223,10 +227,8 @@ def get_val_loader_predictions(model, val_data, batch_size, shuffle=True):
     ------
     - model (obj): torch.nn.parallel.data_parallel.DataParallel loaded from saved file
     - val_data (obj): Loads an object saved with torch.save() from a file
-    - device (obj): use cuda if available
     - batch_size (int): how many samples per batch to load
     - shuffle (bool): whether to shuffle the dataset after every epoch.
-    - num_workers (int): number of subprocesses to use when loading the dataset
 
     Returns
     -------
@@ -238,9 +240,10 @@ def get_val_loader_predictions(model, val_data, batch_size, shuffle=True):
         val_data,
         batch_size=batch_size,
         shuffle=shuffle,
-        num_workers=num_workers,
+        num_workers=config.NUM_WORKERS,
         pin_memory=True,
     )
+
     all_preds = []
     all_labels = []
     with torch.no_grad():

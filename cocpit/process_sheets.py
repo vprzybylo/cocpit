@@ -11,7 +11,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from twilio.rest import Client
 
-import cocpit.config as config
+import cocpit.config as config  # isort:split
 
 
 class Image:
