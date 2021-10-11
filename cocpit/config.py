@@ -41,7 +41,7 @@ CUTOFF = 10
 KFOLD = 0
 
 # percent of the training dataset to use as validation
-VALID_SIZE = 0.20
+VALID_SIZE = 0.0
 
 # images read into memory at a time during training
 BATCH_SIZE = [64]
@@ -53,13 +53,13 @@ MAX_EPOCHS = [15]
 CLASS_NAMES = [
     "agg",
     "budding",
-    "bullet",
-    "column",
-    "compact_irreg",
-    "fragment",
-    "planar_polycrsytal",
+    "bullets",
+    "columns",
+    "compact_irregs",
+    "fragments",
+    "planar_polycrystals",
     "rimed",
-    "sphere",
+    "spheres",
 ]
 
 # models to train
