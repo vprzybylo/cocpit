@@ -32,7 +32,7 @@ class GUI:
         correspond to the top k probabilities, and the class index with
         the highest probability
         '''
-        self.index = 90
+        self.index = 0
         self.count = 0  # number of moved images
         self.all_labels = all_labels
         self.all_paths = all_paths
@@ -47,6 +47,7 @@ class GUI:
         '''
         self.center = ipywidgets.Output()  # center image with predictions
 
+        self.label = self.all_labels[self.index]
         self.menu = ipywidgets.Dropdown(
             options=[
                 "agg",
@@ -151,5 +152,6 @@ class GUI:
             shutil.move(self.path, f"{config.DATA_DIR}{change.new}/{filename}")
 
         except FileNotFoundError:
+            print(self.path)
             print("File Not Found. Not moving.")
             pass
