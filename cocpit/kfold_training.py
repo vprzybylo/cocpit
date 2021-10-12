@@ -42,6 +42,18 @@ def main(data, batch_size, model_name, epochs):
         print("KFOLD iteration: ", kfold)
         # train_val_composition(data, train_indices, val_indices)
 
+        config.VAL_LOADER_SAVENAME = (
+            f"{config.MODEL_SAVE_DIR}e{config.MAX_EPOCHS}"
+            f"_val_loader20_bs{config.BATCH_SIZE}"
+            f"_k{str(kfold)}_vgg16.pt"
+        )
+
+        config.MODEL_SAVENAME = (
+            f"{config.MODEL_SAVE_DIR}e{config.MAX_EPOCHS}"
+            f"_bs{config.BATCH_SIZE}"
+            f"_k{str(kfold)}_vgg16.pt"
+        )
+
         # DATALOADERS based on split from StratifiedKFold
         (train_loader, val_loader,) = cocpit.data_loaders.create_dataloaders(
             data,

@@ -147,9 +147,9 @@ class GUI:
         move the image based on dropdown selection
         '''
         filename = self.path.split("/")[-1]
-
+        data_dir = '/data/data/cpi_data/training_datasets/hand_labeled_resized_{TAG}_sideplanes'
         try:
-            shutil.move(self.path, f"{config.DATA_DIR}{change.new}/{filename}")
+            shutil.move(self.path, f"{data_dir}{change.new}/{filename}")
 
         except FileNotFoundError:
             print(self.path)
