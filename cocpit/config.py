@@ -38,7 +38,7 @@ CUTOFF = 10
 
 # how many folds used in training (cross-validation)
 # kold = 0 turns this off and splits the data according to valid_size
-KFOLD = 0
+KFOLD = 5
 
 # percent of the training dataset to use as validation
 VALID_SIZE = 0.20
@@ -64,15 +64,15 @@ CLASS_NAMES = [
 
 # models to train
 MODEL_NAMES = [
-    "efficient",
-    "resnet18",
-    "resnet34",
-    "resnet152",
-    "alexnet",
+    #     "efficient",
+    #     "resnet18",
+    #     "resnet34",
+    #     "resnet152",
+    #     "alexnet",
     "vgg16",
-    "vgg19",
-    "densenet169",
-    "densenet201",
+    #     "vgg19",
+    #     "densenet169",
+    #     "densenet201",
 ]
 
 
@@ -130,7 +130,6 @@ METRICS_SAVENAME = (
 
 # where to save final databases to
 FINAL_DIR = "/data/data/final_databases/vgg16/"
-
 
 # log experiment to comet for tracking?
 LOG_EXP = False
