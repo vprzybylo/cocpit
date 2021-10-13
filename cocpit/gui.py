@@ -49,17 +49,7 @@ class GUI:
 
         self.label = self.all_labels[self.index]
         self.menu = ipywidgets.Dropdown(
-            options=[
-                "agg",
-                "budding",
-                "bullets",
-                "columns",
-                "compact_irregs",
-                "fragments",
-                "planar_polycrystals",
-                "rimed",
-                "spheres",
-            ],
+            options=config.CLASS_NAMES,
             description="Category:",
             value=config.CLASS_NAMES[self.label],
         )
@@ -77,8 +67,6 @@ class GUI:
         it to the specified class
         '''
         self.save_image(change)
-        self.count += 1
-        print(f'moved {self.count} images')
 
     def on_button_next(self, b):
         '''
@@ -148,8 +136,16 @@ class GUI:
         '''
         filename = self.path.split("/")[-1]
 
+        data_dir = f'/data/data/cpi_data/training_datasets/hand_labeled_resized_{config.TAG}_sideplanes_copy/'
+        # print(f"{data_dir}{config.CLASS_NAMES[self.label]}/{filename}")
+        # print(f"{data_dir}{change.new}/{filename}")
         try:
-            shutil.move(self.path, f"{config.DATA_DIR}{change.new}/{filename}")
+            shutil.move(
+                f"{data_dir}{config.CLASS_NAMES[self.label]}/{filename}",
+                f"{data_dir}{change.new}/{filename}",
+            )
+            self.count += 1
+            print(f'moved {self.count} images')
 
         except FileNotFoundError:
             print(self.path)

@@ -38,10 +38,10 @@ CUTOFF = 10
 
 # how many folds used in training (cross-validation)
 # kold = 0 turns this off and splits the data according to valid_size
-KFOLD = 0
+KFOLD = 5
 
 # percent of the training dataset to use as validation
-VALID_SIZE = 0.0
+VALID_SIZE = 0.20
 
 # images read into memory at a time during training
 BATCH_SIZE = [64]
@@ -64,25 +64,25 @@ CLASS_NAMES = [
 
 # models to train
 MODEL_NAMES = [
-    # "efficient",
-    # "resnet18",
-    # "resnet34",
-    # "resnet152",
-    # "alexnet",
+    #     "efficient",
+    #     "resnet18",
+    #     "resnet34",
+    #     "resnet152",
+    #     "alexnet",
     "vgg16",
-    # "vgg19",
-    # "densenet169",
-    # "densenet201",
+    #     "vgg19",
+    #     "densenet169",
+    #     "densenet201",
 ]
 
 
 # directory that holds the training data
 DATA_DIR = (
-    f"/data/data/cpi_data/training_datasets/hand_labeled_resized_{TAG}_sideplanes/"
+    f"/data/data/cpi_data/training_datasets/hand_labeled_resized_{TAG}_sideplanes_copy/"
 )
 
 # whether to save the model
-SAVE_MODEL = True
+SAVE_MODEL = False
 # directory to save the trained model to
 
 MODEL_SAVE_DIR = f"/data/data/saved_models/no_mask/{TAG}/"
@@ -96,6 +96,7 @@ MODEL_SAVENAME = (
     f"bs{max(BATCH_SIZE)}_"
     f"{len(MODEL_NAMES)}model(s).pt"
 )
+
 VAL_LOADER_SAVENAME = (
     f"{VAL_LOADER_SAVE_DIR}e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_"
@@ -129,7 +130,6 @@ METRICS_SAVENAME = (
 
 # where to save final databases to
 FINAL_DIR = "/data/data/final_databases/vgg16/"
-
 
 # log experiment to comet for tracking?
 LOG_EXP = False
