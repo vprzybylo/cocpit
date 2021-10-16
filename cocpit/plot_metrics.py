@@ -28,14 +28,13 @@ def conf_matrix(all_preds, all_labels, norm, save_name, save_fig=False):
     fig, ax = plt.subplots(figsize=(10, 7))
     # all_preds[all_preds == 0] = np.nan
     # all_labels[all_labels == 0] = np.nan
-    cm = confusion_matrix(all_preds, all_labels)
+    cm = confusion_matrix(all_labels, all_preds)
 
     cmap = copy.copy(mpl.cm.get_cmap("Reds"))
     cmap.set_bad(color='white')
 
     if norm:
-        cmn = cm.astype("float") / cm.sum(axis=1)[:, np.newaxis]
-        cmn = cmn.astype(float)
+        cmn = confusion_matrix(all_labels, all_preds, normalize='true')
         cmn[cmn < 0.005] = np.nan
 
         heat = sns.heatmap(
@@ -71,8 +70,8 @@ def conf_matrix(all_preds, all_labels, norm, save_name, save_fig=False):
 
     cbar = heat.collections[0].colorbar
     cbar.ax.tick_params(labelsize=20)
-    plt.ylabel("Predicted Labels", fontsize=22)
-    plt.xlabel("Actual Labels", fontsize=22)
+    plt.xlabel("Predicted Labels", fontsize=22)
+    plt.ylabel("Actual Labels", fontsize=22)
     heat.set_xticklabels(heat.get_xticklabels(), rotation=90, fontsize=20)
     heat.set_yticklabels(heat.get_xticklabels(), rotation=0, fontsize=20)
     if save_fig:

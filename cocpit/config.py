@@ -3,7 +3,6 @@
 - treated as global variables that do not change in any module
 - used in each module through 'import cocpit.config as config'
 - call using config.VARIABLE_NAME
-
 - flags for what module of cocpit to run is found in the main directory in __main__.py (e.g., preprocess_sheets, build_model, ice_classification, geometric_attributes, add_date..)
 
 isort:skip_file
@@ -47,7 +46,7 @@ VALID_SIZE = 0.20
 BATCH_SIZE = [64]
 
 # number of epochs to train model
-MAX_EPOCHS = [15]
+MAX_EPOCHS = [20]
 
 # names of each ice crystal class
 CLASS_NAMES = [
@@ -78,11 +77,11 @@ MODEL_NAMES = [
 
 # directory that holds the training data
 DATA_DIR = (
-    f"/data/data/cpi_data/training_datasets/hand_labeled_resized_{TAG}_sideplanes_copy/"
+    f"/data/data/cpi_data/training_datasets/hand_labeled_resized_{TAG}_sideplanes/"
 )
 
 # whether to save the model
-SAVE_MODEL = False
+SAVE_MODEL = True
 # directory to save the trained model to
 
 MODEL_SAVE_DIR = f"/data/data/saved_models/no_mask/{TAG}/"
