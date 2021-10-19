@@ -13,14 +13,17 @@ from sklearn.metrics import confusion_matrix
 import cocpit.config as config  # isort:split
 
 
-def conf_matrix(all_preds, all_labels, norm, save_name, save_fig=False):
+def conf_matrix(all_preds, all_labels, save_name, norm='true', save_fig=False):
     """
     Plot and save a confusion matrix from a saved validation dataloader
     Params
     ------
     - all_preds (list): list of predictions from the model for all batches
     - all_labels (list): actual labels (correctly hand labeled)
-    - norm (bool): whether or not to normalize the conf matrix (for unbalanced classes)
+    - norm (str): 'true', 'pred', or None.
+                Normalizes confusion matrix over the true (rows),
+                predicted (columns) conditions or all the population.
+                If None, confusion matrix will not be normalized.
     - save_name (str): plot filename to save as
     - save_fig (bool): save the conf matrix to file
     """
@@ -33,8 +36,8 @@ def conf_matrix(all_preds, all_labels, norm, save_name, save_fig=False):
     cmap = copy.copy(mpl.cm.get_cmap("Reds"))
     cmap.set_bad(color='white')
 
-    if norm:
-        cmn = confusion_matrix(all_labels, all_preds, normalize='true')
+    if norm is not None:
+        cmn = confusion_matrix(all_labels, all_preds, normalize='pred')
         cmn[cmn < 0.005] = np.nan
 
         heat = sns.heatmap(

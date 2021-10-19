@@ -161,12 +161,19 @@ def train_model(
                     torch.save(model, config.MODEL_SAVENAME)
 
                 # create classification report
+
+                # flatten from appending in batches
+                all_preds = np.asarray(list(itertools.chain(*val_metrics.all_preds)))
+                all_labels = np.asarray(list(itertools.chain(*val_metrics.all_labels)))
                 if epoch == epochs - 1:
                     cocpit.metrics.sklearn_report(
-                        val_metrics,
+                        all_preds,
+                        all_labels,
                         kfold,
                         model_name,
                     )
+                    cocpit.metrics.log_confusion_matrix(all_preds, all_labels)
+
                 # reduce learning rate upon plateau in epoch validation accuracy
                 scheduler.step(val_metrics.epoch_acc)
 

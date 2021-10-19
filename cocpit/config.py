@@ -13,6 +13,7 @@ from comet_ml import Experiment  # isort:split
 import os
 from dotenv import load_dotenv
 import torch
+import sys
 
 # cocpit version used in docker and git
 TAG = 'v1.4.0'
@@ -81,7 +82,7 @@ DATA_DIR = (
 )
 
 # whether to save the model
-SAVE_MODEL = True
+SAVE_MODEL = False
 # directory to save the trained model to
 
 MODEL_SAVE_DIR = f"/data/data/saved_models/no_mask/{TAG}/"
@@ -127,14 +128,21 @@ METRICS_SAVENAME = (
     f"{len(MODEL_NAMES)}model(s).csv"
 )
 
+CONF_MATRIX_SAVENAME = "/data/data/plots/conf_matrix.png"
+
 # where to save final databases to
 FINAL_DIR = "/data/data/final_databases/vgg16/"
 
 # log experiment to comet for tracking?
-LOG_EXP = False
+LOG_EXP = True
+if os.path.basename(sys.argv[0]) == "__main__.py":
+    NOTEBOOK = False
+else:
+    NOTEBOOK = True
 
 load_dotenv()  # loading sensitive keys from .env file
-if LOG_EXP:
+if LOG_EXP and NOTEBOOK is False:
+    print('logging to comet ml...')
     API_KEY = os.getenv("API_KEY")
     WORKSPACE = os.getenv("WORKSPACE")
     PROJECT_NAME = os.getenv("PROJECT_NAME")

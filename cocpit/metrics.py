@@ -147,14 +147,13 @@ def sklearn_report(metric_instance, fold, model_name):
 
     Params
     ------
-    - metric_instance (obj): Metric() class obj created in train_model.py as val_metrics
+    - all_preds (list): concatenated list of model predictions from each batch
+                        created in train_model.py from val_metrics
+    - all_labels (list): concatenated list of human labels from each batch
+                        created in train_model.py
     - fold (int): kfold iteration
     - model_name (str): name of model being trained (e.g., VGG-16)
     """
-
-    # flatten from appending in batches
-    all_preds = np.asarray(list(itertools.chain(*metric_instance.all_preds)))
-    all_labels = np.asarray(list(itertools.chain(*metric_instance.all_labels)))
 
     clf_report = classification_report(
         all_labels,
@@ -173,3 +172,30 @@ def sklearn_report(metric_instance, fold, model_name):
 
     if config.SAVE_ACC:
         clf_report.to_csv(config.METRICS_SAVENAME, mode="a")
+
+
+def log_confusion_matrix(all_preds, all_labels):
+    '''
+    log a confusion matrix to comet ml after the last epoch
+    found under the graphics tab
+    if using kfold, it will concatenate all validation dataloaders
+    if not using kfold, it will only plot the validation dataset (e.g, 20%)
+
+    Params
+    ------
+    - all_preds (list): concatenated list of model predictions from each batch
+                        created in train_model.py from val_metrics
+    - all_labels (list): concatenated list of human labels from each batch
+                        created in train_model.py
+    '''
+    cocpit.plot_metrics.conf_matrix(
+        all_preds,
+        all_labels,
+        norm=False,
+        save_name=config.CONF_MATRIX_SAVENAME,
+        save_fig=True,
+    )
+
+    config.log_image(
+        config.CONF_MATRIX_SAVENAME, name="confusion matrix", image_format="png"
+    )

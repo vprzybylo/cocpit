@@ -31,9 +31,6 @@ def main(data, batch_size, model_name, epochs):
     initialize and train model
     save classification report
     """
-
-    fold_report = []  # holds classification metric performances per kfold
-
     # preserve the percentage of samples for each class with stratified
     skf = StratifiedKFold(n_splits=config.KFOLD, shuffle=True, random_state=42)
     for kfold, (train_indices, val_indices) in enumerate(
@@ -68,7 +65,7 @@ def main(data, batch_size, model_name, epochs):
         model = cocpit.models.initialize_model(model_name)
 
         # TRAIN MODEL
-        clf_report = cocpit.train_model.train_model(
+        cocpit.train_model.train_model(
             kfold,
             model,
             batch_size,
@@ -76,9 +73,3 @@ def main(data, batch_size, model_name, epochs):
             epochs,
             dataloaders_dict,
         )
-        fold_report.append(clf_report)
-
-    # concatenate all metric reports from each fold and model and write
-    concat_df = pd.concat(fold_report)
-    if config.SAVE_ACC:
-        concat_df.to_csv(config.METRICS_SAVENAME, mode="a")
