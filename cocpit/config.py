@@ -18,10 +18,25 @@ import sys
 # cocpit version used in docker and git
 TAG = 'v1.4.0'
 
+# extract each image from sheet of images
+PREPROCESS_SHEETS = False
+
+# create and save CNN
+BUILD_MODEL = False
+
+# run the category classification on quality images of ice particles
+ICE_CLASSIFICATION = True
+
+# calculates geometric particle properties and appends to databases
+GEOMETRIC_ATTRIBUTES = False
+
+# adds a column for the date from the filename
+ADD_DATE = False
+
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # model to load
-MODEL_PATH = f"/data/data/saved_models/no_mask/{TAG}/e15_bs64_1model(s).pt"
+MODEL_PATH = f"/data/data/saved_models/no_mask/{TAG}/e[15]_bs[64]_k0_vgg16.pt"
 
 # workers for parallelization
 NUM_CPUS = 5
@@ -47,7 +62,7 @@ VALID_SIZE = 0.20
 BATCH_SIZE = [64]
 
 # number of epochs to train model
-MAX_EPOCHS = [20]
+MAX_EPOCHS = [15]
 
 # names of each ice crystal class
 CLASS_NAMES = [
@@ -82,7 +97,7 @@ DATA_DIR = (
 )
 
 # whether to save the model
-SAVE_MODEL = False
+SAVE_MODEL = True
 # directory to save the trained model to
 
 MODEL_SAVE_DIR = f"/data/data/saved_models/no_mask/{TAG}/"
@@ -104,7 +119,7 @@ VAL_LOADER_SAVENAME = (
 )
 
 # write training loss and accuracy to csv
-SAVE_ACC = False
+SAVE_ACC = True
 
 # directory for saving training accuracy and loss csv's
 ACC_SAVE_DIR = f"/data/data/saved_accuracies/{TAG}/"
@@ -131,7 +146,7 @@ METRICS_SAVENAME = (
 CONF_MATRIX_SAVENAME = "/data/data/plots/conf_matrix.png"
 
 # where to save final databases to
-FINAL_DIR = "/data/data/final_databases/vgg16/"
+FINAL_DIR = f"/data/data/final_databases/vgg16/{TAG}/"
 
 # log experiment to comet for tracking?
 LOG_EXP = True
@@ -141,7 +156,7 @@ else:
     NOTEBOOK = True
 
 load_dotenv()  # loading sensitive keys from .env file
-if LOG_EXP and NOTEBOOK is False:
+if LOG_EXP and NOTEBOOK is False and config.BUILD_MODEL:
     print('logging to comet ml...')
     API_KEY = os.getenv("API_KEY")
     WORKSPACE = os.getenv("WORKSPACE")

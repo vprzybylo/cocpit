@@ -10,16 +10,26 @@ import pandas as pd
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 
-import cocpit.config as config  # isort:split
+import cocpit.config as config  # isort: split
+
+plt_params = {
+    "axes.labelsize": "xx-large",
+    "axes.titlesize": "xx-large",
+    "xtick.labelsize": "xx-large",
+    "ytick.labelsize": "xx-large",
+    "legend.title_fontsize": 12,
+}
+plt.rcParams["font.family"] = "serif"
+plt.rcParams.update(plt_params)
 
 
-def conf_matrix(all_preds, all_labels, save_name, norm='true', save_fig=False):
+def conf_matrix(all_labels, all_preds, save_name, norm='true', save_fig=False):
     """
     Plot and save a confusion matrix from a saved validation dataloader
     Params
     ------
-    - all_preds (list): list of predictions from the model for all batches
     - all_labels (list): actual labels (correctly hand labeled)
+    - all_preds (list): list of predictions from the model for all batches
     - norm (str): 'true', 'pred', or None.
                 Normalizes confusion matrix over the true (rows),
                 predicted (columns) conditions or all the population.
@@ -37,7 +47,7 @@ def conf_matrix(all_preds, all_labels, save_name, norm='true', save_fig=False):
     cmap.set_bad(color='white')
 
     if norm is not None:
-        cmn = confusion_matrix(all_labels, all_preds, normalize='pred')
+        cmn = confusion_matrix(all_labels, all_preds, normalize=norm)
         cmn[cmn < 0.005] = np.nan
 
         heat = sns.heatmap(

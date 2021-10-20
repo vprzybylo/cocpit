@@ -1,20 +1,20 @@
-'''
+"""
 - holds epoch and batch metrics for both the training and validation datasets
 - called in train_model.py
 - updates and resets totals within training loop
 - logs metrics to console and/or comet-ml interface (see config.py to turn on)
 - writes metrics to csv's defined in config.py
 - creates a sklearn classification report using the metrics
-'''
+"""
 
 import csv
-import itertools
 
 import numpy as np
 import pandas as pd
 import torch
 from sklearn.metrics import classification_report
 
+import cocpit
 import cocpit.config as config  # isort:split
 
 
@@ -140,17 +140,17 @@ def log_metrics(
     metric_instance.print_epoch_metrics(epoch, epochs, phase)
 
 
-def sklearn_report(metric_instance, fold, model_name):
+def sklearn_report(all_labels, all_preds, fold, model_name):
     """
     create classification report from sklearn
     add model name and fold iteration to the report
 
     Params
     ------
-    - all_preds (list): concatenated list of model predictions from each batch
-                        created in train_model.py from val_metrics
     - all_labels (list): concatenated list of human labels from each batch
                         created in train_model.py
+    - all_preds (list): concatenated list of model predictions from each batch
+                        created in train_model.py from val_metrics
     - fold (int): kfold iteration
     - model_name (str): name of model being trained (e.g., VGG-16)
     """
@@ -174,8 +174,8 @@ def sklearn_report(metric_instance, fold, model_name):
         clf_report.to_csv(config.METRICS_SAVENAME, mode="a")
 
 
-def log_confusion_matrix(all_preds, all_labels):
-    '''
+def log_confusion_matrix(all_labels, all_preds):
+    """
     log a confusion matrix to comet ml after the last epoch
     found under the graphics tab
     if using kfold, it will concatenate all validation dataloaders
@@ -183,19 +183,31 @@ def log_confusion_matrix(all_preds, all_labels):
 
     Params
     ------
-    - all_preds (list): concatenated list of model predictions from each batch
-                        created in train_model.py from val_metrics
     - all_labels (list): concatenated list of human labels from each batch
                         created in train_model.py
-    '''
+    - all_preds (list): concatenated list of model predictions from each batch
+                        created in train_model.py from val_metrics
+    """
     cocpit.plot_metrics.conf_matrix(
-        all_preds,
         all_labels,
-        norm=False,
+        all_preds,
         save_name=config.CONF_MATRIX_SAVENAME,
         save_fig=True,
     )
 
-    config.log_image(
-        config.CONF_MATRIX_SAVENAME, name="confusion matrix", image_format="png"
+    config.experiment.log_image(
+        config.CONF_MATRIX_SAVENAME, name="confusion matrix", image_format="pdf"
+    )
+
+    # unnormalized matrix
+    cocpit.plot_metrics.conf_matrix(
+        all_labels,
+        all_preds,
+        norm=None,
+        save_name=config.CONF_MATRIX_SAVENAME,
+        save_fig=True,
+    )
+
+    config.experiment.log_image(
+        config.CONF_MATRIX_SAVENAME, name="confusion matrix", image_format="pdf"
     )

@@ -130,34 +130,19 @@ def _add_date():
 
 if __name__ == "__main__":
 
-    # extract each image from sheet of images
-    preprocess_sheets = False
-
-    # create CNN
-    build_model = True
-
-    # run the category classification on quality images of ice particles
-    ice_classification = False
-
-    # calculates geometric particle properties and appends to databases
-    geometric_attributes = False
-
-    # adds a column for the date from the filename
-    add_date = False
-
     print(
         "num workers in loader = {}".format(config.NUM_WORKERS)
-    ) if ice_classification or build_model else print(
+    ) if config.ICE_CLASSIFICATION or config.BUILD_MODEL else print(
         "num cpus for parallelization = {}".format(config.NUM_WORKERS)
     )
 
     campaigns = (
         ["N/A"]
-        if build_model
+        if config.BUILD_MODEL
         else [
             # "MACPEX",
             # "ATTREX",
-            "ISDAC",
+            # "ISDAC",
             # "CRYSTAL_FACE_UND",
             # "AIRS_II",
             # "ARM",
@@ -167,7 +152,7 @@ if __name__ == "__main__":
             # "MC3E",
             # "MIDCIX",
             # "MPACE",
-            # "OLYMPEX",
+            "OLYMPEX",
             # "POSIDON",
         ]
     )
@@ -182,17 +167,17 @@ if __name__ == "__main__":
             os.makedirs(config.FINAL_DIR)
         df_path = os.path.join(config.FINAL_DIR, outname)
 
-        if preprocess_sheets:
+        if config.PREPROCESS_SHEETS:
             _preprocess_sheets()
 
-        if build_model:
+        if config.BUILD_MODEL:
             _build_model()
 
-        if ice_classification:
+        if config.ICE_CLASSIFICATION:
             _ice_classification()
 
-        if geometric_attributes:
+        if config.GEOMETRIC_ATTRIBUTES:
             _geometric_attributes()
 
-        if add_date:
+        if config.ADD_DATE:
             _add_date()

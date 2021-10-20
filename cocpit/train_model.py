@@ -2,6 +2,7 @@
 train the CNN model(s)
 """
 import csv
+import itertools
 import operator
 import time
 
@@ -37,6 +38,8 @@ def train_model(
 
     train_metrics = cocpit.metrics.Metrics()
     val_metrics = cocpit.metrics.Metrics()
+    all_preds = []
+    all_labels = []
 
     since_total = time.time()
 
@@ -163,16 +166,20 @@ def train_model(
                 # create classification report
 
                 # flatten from appending in batches
-                all_preds = np.asarray(list(itertools.chain(*val_metrics.all_preds)))
-                all_labels = np.asarray(list(itertools.chain(*val_metrics.all_labels)))
-                if epoch == epochs - 1:
+                all_labels.append(
+                    np.asarray(list(itertools.chain(*val_metrics.all_labels)))
+                )
+                all_preds.append(
+                    np.asarray(list(itertools.chain(*val_metrics.all_preds)))
+                )
+                if epoch == epochs - 1 and kfold == config.KFOLD - 1:
                     cocpit.metrics.sklearn_report(
-                        all_preds,
                         all_labels,
+                        all_preds,
                         kfold,
                         model_name,
                     )
-                    cocpit.metrics.log_confusion_matrix(all_preds, all_labels)
+                    cocpit.metrics.log_confusion_matrix(all_labels, all_preds)
 
                 # reduce learning rate upon plateau in epoch validation accuracy
                 scheduler.step(val_metrics.epoch_acc)
