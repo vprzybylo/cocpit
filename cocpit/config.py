@@ -22,10 +22,10 @@ TAG = 'v1.4.0'
 PREPROCESS_SHEETS = False
 
 # create and save CNN
-BUILD_MODEL = False
+BUILD_MODEL = True
 
 # run the category classification on quality images of ice particles
-ICE_CLASSIFICATION = True
+ICE_CLASSIFICATION = False
 
 # calculates geometric particle properties and appends to databases
 GEOMETRIC_ATTRIBUTES = False
@@ -156,7 +156,7 @@ else:
     NOTEBOOK = True
 
 load_dotenv()  # loading sensitive keys from .env file
-if LOG_EXP and NOTEBOOK is False and config.BUILD_MODEL:
+if LOG_EXP and NOTEBOOK is False and BUILD_MODEL:
     print('logging to comet ml...')
     API_KEY = os.getenv("API_KEY")
     WORKSPACE = os.getenv("WORKSPACE")

@@ -8,6 +8,7 @@
 """
 
 import csv
+import itertools
 
 import numpy as np
 import pandas as pd
@@ -31,6 +32,7 @@ class Metrics:
         self.totals = 0.0
         self.running_loss = 0.0
         self.running_corrects = 0.0
+        # validation preds and labels only
         self.all_preds = []
         self.all_labels = []
 
@@ -140,20 +142,17 @@ def log_metrics(
     metric_instance.print_epoch_metrics(epoch, epochs, phase)
 
 
-def sklearn_report(all_labels, all_preds, fold, model_name):
+def sklearn_report(val_metrics, fold, model_name):
     """
     create classification report from sklearn
     add model name and fold iteration to the report
 
     Params
-    ------
-    - all_labels (list): concatenated list of human labels from each batch
-                        created in train_model.py
-    - all_preds (list): concatenated list of model predictions from each batch
-                        created in train_model.py from val_metrics
     - fold (int): kfold iteration
     - model_name (str): name of model being trained (e.g., VGG-16)
     """
+    all_labels = np.asarray(list(itertools.chain(*val_metrics.all_labels)))
+    all_preds = np.asarray(list(itertools.chain(*val_metrics.all_preds)))
 
     clf_report = classification_report(
         all_labels,
@@ -174,20 +173,16 @@ def sklearn_report(all_labels, all_preds, fold, model_name):
         clf_report.to_csv(config.METRICS_SAVENAME, mode="a")
 
 
-def log_confusion_matrix(all_labels, all_preds):
+def log_confusion_matrix(val_metrics):
     """
     log a confusion matrix to comet ml after the last epoch
     found under the graphics tab
     if using kfold, it will concatenate all validation dataloaders
     if not using kfold, it will only plot the validation dataset (e.g, 20%)
-
-    Params
-    ------
-    - all_labels (list): concatenated list of human labels from each batch
-                        created in train_model.py
-    - all_preds (list): concatenated list of model predictions from each batch
-                        created in train_model.py from val_metrics
     """
+    all_labels = np.asarray(list(itertools.chain(*val_metrics.all_labels)))
+    all_preds = np.asarray(list(itertools.chain(*val_metrics.all_preds)))
+
     cocpit.plot_metrics.conf_matrix(
         all_labels,
         all_preds,

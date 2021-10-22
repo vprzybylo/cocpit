@@ -2,7 +2,6 @@
 train the CNN model(s)
 """
 import csv
-import itertools
 import operator
 import time
 
@@ -38,8 +37,6 @@ def train_model(
 
     train_metrics = cocpit.metrics.Metrics()
     val_metrics = cocpit.metrics.Metrics()
-    all_preds = []
-    all_labels = []
 
     since_total = time.time()
 
@@ -57,6 +54,7 @@ def train_model(
         for phase in phases:
             print("Phase: {}".format(phase))
 
+            # reset totals for each epoch and each phase
             train_metrics.reset_totals()
             val_metrics.reset_totals()
 
@@ -93,29 +91,27 @@ def train_model(
                     loss = criterion(outputs, labels)
                     _, preds = torch.max(outputs, 1)
 
-                    if phase == "val":
-                        val_metrics.all_preds.append(preds.cpu().numpy())
-                        val_metrics.all_labels.append(labels.cpu().numpy())
-
                     # backward + optimize only if in training phase
                     if phase == "train":
                         loss.backward()  # compute updates for each parameter
                         optimizer.step()  # make the updates for each parameter
 
-                # CALCULATE BATCH METRICS
-                if phase == "train":
-                    train_metrics.update_batch_metrics(loss, inputs, preds, labels)
-                    if (batch + 1) % 5 == 0:
-                        train_metrics.print_batch_metrics(
-                            labels, batch, phase, dataloaders_dict
-                        )
+                        # CALCULATE BATCH METRICS
+                        train_metrics.update_batch_metrics(loss, inputs, preds, labels)
+                        if (batch + 1) % 5 == 0:
+                            train_metrics.print_batch_metrics(
+                                labels, batch, phase, dataloaders_dict
+                            )
 
-                else:
+                if phase == 'val':
                     val_metrics.update_batch_metrics(loss, inputs, preds, labels)
                     if (batch + 1) % 5 == 0:
                         val_metrics.print_batch_metrics(
                             labels, batch, phase, dataloaders_dict
                         )
+                    # append batch prediction and labels for plots
+                    val_metrics.all_preds.append(preds.cpu().numpy())
+                    val_metrics.all_labels.append(labels.cpu().numpy())
 
             # CALCULATE EPOCH METRICS
             if phase == "train":
@@ -163,23 +159,19 @@ def train_model(
                     # save/load best model weights
                     torch.save(model, config.MODEL_SAVENAME)
 
-                # create classification report
-
-                # flatten from appending in batches
-                all_labels.append(
-                    np.asarray(list(itertools.chain(*val_metrics.all_labels)))
-                )
-                all_preds.append(
-                    np.asarray(list(itertools.chain(*val_metrics.all_preds)))
-                )
-                if epoch == epochs - 1 and kfold == config.KFOLD - 1:
+                if (
+                    epoch == epochs - 1
+                    and (config.KFOLD != 0 and kfold == config.KFOLD - 1)
+                    or (config.KFOLD == 0)
+                ):
+                    cocpit.metrics.log_confusion_matrix(val_metrics)
+                if epoch == epochs - 1:
+                    # save classification report
                     cocpit.metrics.sklearn_report(
-                        all_labels,
-                        all_preds,
+                        val_metrics,
                         kfold,
                         model_name,
                     )
-                    cocpit.metrics.log_confusion_matrix(all_labels, all_preds)
 
                 # reduce learning rate upon plateau in epoch validation accuracy
                 scheduler.step(val_metrics.epoch_acc)

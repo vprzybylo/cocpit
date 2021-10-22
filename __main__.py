@@ -136,8 +136,10 @@ if __name__ == "__main__":
         "num cpus for parallelization = {}".format(config.NUM_WORKERS)
     )
 
+    # only run once in loop if building model
+    # arbitrary
     campaigns = (
-        ["N/A"]
+        ["OLYMPEX"]
         if config.BUILD_MODEL
         else [
             # "MACPEX",
