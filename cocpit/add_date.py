@@ -8,7 +8,9 @@ import pandas as pd
 def main(df):
     date_list = df['filename'].str.split(".").str[0].str.split("_")
     # create a date column from filename column
+    print(date_list)
     df['date'] = date_list.str[:-2].str.join("_")
+    # print(date_list.str[:-1].str.join("_"))
     # convert to datetime format
     df['date'] = pd.to_datetime(df['date'], format="%Y_%m%d_%H%M%S", errors='raise')
 

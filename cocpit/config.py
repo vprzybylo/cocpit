@@ -19,7 +19,7 @@ import sys
 TAG = 'v1.4.0'
 
 # extract each image from sheet of images
-PREPROCESS_SHEETS = False
+PREPROCESS_SHEETS = True
 
 # create and save CNN
 BUILD_MODEL = False
@@ -28,32 +28,29 @@ BUILD_MODEL = False
 ICE_CLASSIFICATION = True
 
 # calculates geometric particle properties and appends to databases
-GEOMETRIC_ATTRIBUTES = False
+GEOMETRIC_ATTRIBUTES = True
 
 # adds a column for the date from the filename
-ADD_DATE = False
+ADD_DATE = True
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# model to load
-MODEL_PATH = f"/data/data/saved_models/no_mask/{TAG}/e[15]_bs[64]_k0_vgg16.pt"
-
 # workers for parallelization
-NUM_CPUS = 5
+NUM_CPUS = 10
 
 # number of cpus used to load data in pytorch dataloaders
 NUM_WORKERS = 20
 
 # whether to save the individual extracted images
 # used in process_png_sheets_with_text.py
-SAVE_IMAGES = False
+SAVE_IMAGES = True
 
 # percent of image that can intersect the border
 CUTOFF = 10
 
 # how many folds used in training (cross-validation)
 # kold = 0 turns this off and splits the data according to valid_size
-KFOLD = 5
+KFOLD = 0
 
 # percent of the training dataset to use as validation
 VALID_SIZE = 0.20
@@ -68,13 +65,13 @@ MAX_EPOCHS = [15]
 CLASS_NAMES = [
     "agg",
     "budding",
-    "bullets",
-    "columns",
-    "compact_irregs",
-    "fragments",
-    "planar_polycrystals",
+    "bullet",
+    "column",
+    "compact_irreg",
+    "fragment",
+    "planar_polycrystal",
     "rimed",
-    "spheres",
+    "sphere",
 ]
 
 # models to train
@@ -85,11 +82,13 @@ MODEL_NAMES = [
     #     "resnet152",
     #     "alexnet",
     "vgg16",
-    #     "vgg19",
+    #      "vgg19",
     #     "densenet169",
     #     "densenet201",
 ]
 
+# model to load
+MODEL_PATH = f"/data/data/saved_models/no_mask/{TAG}/e[15]_bs[64]_k1_vgg16.pt"
 
 # directory that holds the training data
 DATA_DIR = (
@@ -156,7 +155,7 @@ else:
     NOTEBOOK = True
 
 load_dotenv()  # loading sensitive keys from .env file
-if LOG_EXP and NOTEBOOK is False and config.BUILD_MODEL:
+if LOG_EXP and NOTEBOOK is False and BUILD_MODEL:
     print('logging to comet ml...')
     API_KEY = os.getenv("API_KEY")
     WORKSPACE = os.getenv("WORKSPACE")

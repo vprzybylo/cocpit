@@ -16,11 +16,11 @@ More information is available at:
 import cocpit
 
 import cocpit.config as config  # isort: split
-
 import os
 import time
 import warnings
 
+import feather
 import pandas as pd
 import torch
 
@@ -136,30 +136,32 @@ if __name__ == "__main__":
         "num cpus for parallelization = {}".format(config.NUM_WORKERS)
     )
 
+    # only run once in loop if building model
+    # arbitrary
     campaigns = (
-        ["N/A"]
+        ["OLYMPEX"]
         if config.BUILD_MODEL
         else [
-            # "MACPEX",
-            # "ATTREX",
-            # "ISDAC",
-            # "CRYSTAL_FACE_UND",
-            # "AIRS_II",
-            # "ARM",
-            # "CRYSTAL_FACE_NASA",
-            # "ICE_L",
-            # "IPHEX",
-            # "MC3E",
-            # "MIDCIX",
-            # "MPACE",
-            "OLYMPEX",
-            # "POSIDON",
+            #             "MACPEX",
+            #             "ATTREX",
+            #             "ISDAC",
+            #             "CRYSTAL_FACE_UND",
+            #             "AIRS_II",
+            #            "ARM",
+            #            "CRYSTAL_FACE_NASA",
+            "ICE_L",
+            #            "IPHEX",
+            #             "MC3E",
+            #             "MIDCIX",
+            #             "MPACE",
+            #             "OLYMPEX",
+            #            "POSIDON",
         ]
     )
     for campaign in campaigns:
         print("campaign: ", campaign)
         # directory where the individual images live for each campaign
-        open_dir = f"cpi_data/campaigns/{campaign}/single_imgs_v1.3.0/"
+        open_dir = f"cpi_data/campaigns/{campaign}/single_imgs_v1.4.0/"
 
         # create dir for final databases
         outname = campaign + ".csv"

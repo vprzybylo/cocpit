@@ -130,8 +130,8 @@ def main(df, open_dir):
     files = df['filename']
     start = time.time()
 
-    p = multiprocessing.Pool(config.NUM_CPUS)
-    properties = p.map(partial(get_attributes, open_dir=open_dir), files)
+    with multiprocessing.Pool(config.NUM_CPUS) as p:
+        properties = p.map(partial(get_attributes, open_dir=open_dir), files)
     p.close()
 
     #     properties = Parallel(n_jobs=num_cpus)(
