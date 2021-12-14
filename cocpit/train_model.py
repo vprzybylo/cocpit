@@ -159,8 +159,9 @@ def train_model(
                     # save/load best model weights
                     torch.save(model, config.MODEL_SAVENAME)
 
-                if epoch == epochs - 1 and (
-                    (config.KFOLD != 0 and kfold == config.KFOLD - 1)
+                if (
+                    epoch == epochs - 1
+                    and (config.KFOLD != 0 and kfold == config.KFOLD - 1)
                     or (config.KFOLD == 0)
                 ):
                     cocpit.metrics.log_confusion_matrix(val_metrics)
