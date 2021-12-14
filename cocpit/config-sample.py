@@ -1,4 +1,6 @@
 '''
+- THIS FILE SHOUlD BE ALTERED AND RENAMED config.py FOR EACH USER
+- config.py in .gitignore to avoid version changes upon specifications
 - holds all user-defined variables
 - treated as global variables that do not change in any module
 - used in each module through 'import cocpit.config as config'
