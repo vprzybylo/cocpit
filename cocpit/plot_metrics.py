@@ -12,16 +12,6 @@ from sklearn.metrics import confusion_matrix
 
 import cocpit.config as config  # isort: split
 
-plt_params = {
-    "axes.labelsize": "xx-large",
-    "axes.titlesize": "xx-large",
-    "xtick.labelsize": "xx-large",
-    "ytick.labelsize": "xx-large",
-    "legend.title_fontsize": 12,
-}
-plt.rcParams["font.family"] = "serif"
-plt.rcParams.update(plt_params)
-
 
 def conf_matrix(all_labels, all_preds, save_name, norm='true', save_fig=False):
     """

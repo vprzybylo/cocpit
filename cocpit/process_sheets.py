@@ -40,7 +40,7 @@ class Image:
         Parameters:
             show_original (bool): whether to show the original sheet in an opencv window
         """
-
+        print(self.open_dir + self.file)
         self.image = cv2.imread(self.open_dir + self.file)
         # make a copy so that image can be altered and processed
         height, width, channels = self.image.shape
@@ -277,11 +277,11 @@ def main(
     show_cropped,
 ):
 
-    p = Pool(config.NUM_CPUS)
+    p = Pool(1)
     instances = []
-    files = os.listdir(open_dir)
+    files = ['/Users/vprzybylo/Desktop/CPI/cocpit/cpi_data/2002_0707_194848_345.png']
     for file in files:
-        img = Image(open_dir, file, save_dir)
+        img = Image('/Users/vprzybylo/Desktop/CPI/cocpit/cpi_data/', '2002_0707_194848_345.png', save_dir)
 
         # img.main()
         instances.append(img)

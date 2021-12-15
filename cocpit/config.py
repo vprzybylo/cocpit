@@ -19,10 +19,10 @@ import sys
 TAG = 'v1.4.0'
 
 # extract each image from sheet of images
-PREPROCESS_SHEETS = False
+PREPROCESS_SHEETS = True
 
 # create and save CNN
-BUILD_MODEL = True
+BUILD_MODEL = False
 
 # run the category classification on quality images of ice particles
 ICE_CLASSIFICATION = False
@@ -39,7 +39,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 MODEL_PATH = f"/data/data/saved_models/no_mask/{TAG}/e[15]_bs[64]_k0_vgg16.pt"
 
 # workers for parallelization
-NUM_CPUS = 5
+NUM_CPUS = 1
 
 # number of cpus used to load data in pytorch dataloaders
 NUM_WORKERS = 20
@@ -149,7 +149,7 @@ CONF_MATRIX_SAVENAME = "/data/data/plots/conf_matrix.png"
 FINAL_DIR = f"/data/data/final_databases/vgg16/{TAG}/"
 
 # log experiment to comet for tracking?
-LOG_EXP = True
+LOG_EXP = False
 if os.path.basename(sys.argv[0]) == "__main__.py":
     NOTEBOOK = False
 else:

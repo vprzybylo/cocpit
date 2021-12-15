@@ -37,8 +37,8 @@ def _preprocess_sheets():
 
     # where the sheets of images for each campaign live
     # if sheets were processed using rois in IDL, change 'sheets' to 'ROI_PNGS'
-    sheet_dir = f"/data/data/cpi_data/campaigns/{campaign}/sheets/"
-    save_dir = f"/data/data/cpi_data/campaigns/{campaign}/single_imgs_{config.TAG}/"
+    sheet_dir = f"/Users/vprzybylo/Desktop/CPI/cocpit/cpi_data/"
+    save_dir = f"/Users/vprzybylo/Desktop/CPI/cocpit/cpi_data/single_imgs_{config.TAG}/"
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
@@ -46,9 +46,9 @@ def _preprocess_sheets():
         sheet_dir,
         save_dir,
         save_df=df_path,
-        show_original=False,  # all set to False due to lack of display on server
-        show_dilate=False,
-        show_cropped=False,
+        show_original=True,  # all set to False due to lack of display on server
+        show_dilate=True,
+        show_cropped=True,
     )
 
     print("time to preprocess sheets: %.2f" % (time.time() - start_time))
@@ -165,8 +165,7 @@ if __name__ == "__main__":
 
         # create dir for final databases
         outname = campaign + ".csv"
-        if not os.path.exists(config.FINAL_DIR):
-            os.makedirs(config.FINAL_DIR)
+
         df_path = os.path.join(config.FINAL_DIR, outname)
 
         if config.PREPROCESS_SHEETS:
