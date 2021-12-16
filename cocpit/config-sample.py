@@ -1,4 +1,6 @@
 '''
+- THIS FILE SHOUlD BE ALTERED AND RENAMED config.py FOR EACH USER
+- config.py in .gitignore to avoid version changes upon specifications
 - holds all user-defined variables
 - treated as global variables that do not change in any module
 - used in each module through 'import cocpit.config as config'
@@ -25,35 +27,32 @@ PREPROCESS_SHEETS = True
 BUILD_MODEL = False
 
 # run the category classification on quality images of ice particles
-ICE_CLASSIFICATION = False
+ICE_CLASSIFICATION = True
 
 # calculates geometric particle properties and appends to databases
-GEOMETRIC_ATTRIBUTES = False
+GEOMETRIC_ATTRIBUTES = True
 
 # adds a column for the date from the filename
-ADD_DATE = False
+ADD_DATE = True
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# model to load
-MODEL_PATH = f"/data/data/saved_models/no_mask/{TAG}/e[15]_bs[64]_k0_vgg16.pt"
-
 # workers for parallelization
-NUM_CPUS = 1
+NUM_CPUS = 4
 
 # number of cpus used to load data in pytorch dataloaders
-NUM_WORKERS = 20
+NUM_WORKERS = 10
 
 # whether to save the individual extracted images
 # used in process_png_sheets_with_text.py
-SAVE_IMAGES = False
+SAVE_IMAGES = True
 
 # percent of image that can intersect the border
 CUTOFF = 10
 
 # how many folds used in training (cross-validation)
 # kold = 0 turns this off and splits the data according to valid_size
-KFOLD = 5
+KFOLD = 0
 
 # percent of the training dataset to use as validation
 VALID_SIZE = 0.20
@@ -68,13 +67,13 @@ MAX_EPOCHS = [15]
 CLASS_NAMES = [
     "agg",
     "budding",
-    "bullets",
-    "columns",
-    "compact_irregs",
-    "fragments",
-    "planar_polycrystals",
+    "bullet",
+    "column",
+    "compact_irreg",
+    "fragment",
+    "planar_polycrystal",
     "rimed",
-    "spheres",
+    "sphere",
 ]
 
 # models to train
@@ -85,11 +84,13 @@ MODEL_NAMES = [
     #     "resnet152",
     #     "alexnet",
     "vgg16",
-    #     "vgg19",
+    #      "vgg19",
     #     "densenet169",
     #     "densenet201",
 ]
 
+# model to load
+MODEL_PATH = f"/data/data/saved_models/no_mask/{TAG}/e[15]_bs[64]_k1_vgg16.pt"
 
 # directory that holds the training data
 DATA_DIR = (

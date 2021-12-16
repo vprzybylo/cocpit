@@ -1,10 +1,12 @@
 import copy
+import multiprocessing
 import os
 import re
 from functools import partial
 from multiprocessing import Pool
 
 import cv2
+import feather
 import imutils
 import numpy as np
 import pandas as pd
@@ -14,6 +16,18 @@ from twilio.rest import Client
 import cocpit.config as config  # isort:split
 
 
+def auto_str(cls):
+    def __str__(self):
+        return '%s(%s)' % (
+            type(self).__name__,
+            ', '.join('%s=%s' % item for item in vars(self).items()),
+        )
+
+    cls.__str__ = __str__
+    return cls
+
+
+@auto_str
 class Image:
     """
     Reads, extracts, and performs morphological processing on png sheets of CPI images
@@ -170,7 +184,12 @@ class Image:
                 # make sure the thresholding picks up a contour in the rectangle
                 # and cutoff criteria is met
                 cutoff = self.cutoff()
-                if cnts and cutoff < config.CUTOFF:
+                if (
+                    cnts
+                    and cutoff < config.CUTOFF
+                    and self.width > 50
+                    and self.height > 50
+                ):
 
                     # calculate particle length and width
                     self.largest_contour(cnts)
@@ -193,25 +212,30 @@ class Image:
                     if config.SAVE_IMAGES:
                         self.save_image(cropped)
 
-    def run(self, show_original, show_dilate, show_cropped):
-        """
-        main method calls
-        """
 
-        self.read_image(show_original)
-        # when this is uncommented, the image frame is underestimated by 4 pixels
-        self.dilate(show_dilate)
-        cnts = self.find_sheet_contours()
-        self.remove_text(cnts)
-        self.extract_contours(show_cropped)
-        return (
-            self.files,
-            self.widths,
-            self.heights,
-            self.particle_widths,
-            self.particle_heights,
-            self.cutoffs,
-        )
+def run(
+    file, open_dir, save_dir, show_original=False, show_dilate=False, show_cropped=False
+):
+    """
+    main method calls
+    """
+
+    img = Image(open_dir, file, save_dir)
+    img.read_image(show_original)
+    # when this is uncommented, the image frame is underestimated by 4 pixels
+    img.dilate(show_dilate)
+    cnts = img.find_sheet_contours()
+    img.remove_text(cnts)
+    img.extract_contours(show_cropped)
+
+    return (
+        img.files,
+        img.widths,
+        img.heights,
+        img.particle_widths,
+        img.particle_heights,
+        img.cutoffs,
+    )
 
 
 def make_df(
@@ -233,19 +257,20 @@ def make_df(
     }
     df = pd.DataFrame(df_dict)
 
-    len_before = len(df)
-    df.drop_duplicates(
-        subset=[
-            "frame width",
-            "frame height",
-            "particle width",
-            "particle height",
-            "cutoff",
-        ],
-        keep="first",
-        inplace=True,
-    )
-    print("removed %d duplicates" % (len_before - len(df)))
+    #    len_before = len(df)
+    #     df.drop_duplicates(
+    #         subset=[
+    #             "frame width",
+    #             "frame height",
+    #             "particle width",
+    #             "particle height",
+    #             "cutoff",
+    #         ],
+    #         keep="first",
+    #         inplace=True,
+    #     )
+    #     print(len(df))
+    #     print("removed %d duplicates" % (len_before - len(df)))
 
     df.to_csv(save_df, index=False)
 
@@ -277,23 +302,11 @@ def main(
     show_cropped,
 ):
 
-    p = Pool(1)
-    instances = []
-    files = ['/Users/vprzybylo/Desktop/CPI/cocpit/cpi_data/2002_0707_194848_345.png']
-    for file in files:
-        img = Image('/Users/vprzybylo/Desktop/CPI/cocpit/cpi_data/', '2002_0707_194848_345.png', save_dir)
-
-        # img.main()
-        instances.append(img)
-
+    files = os.listdir(open_dir)
+    p = Pool(processes=config.NUM_CPUS)
     results = p.map(
-        partial(
-            Image.run,
-            show_original=show_original,
-            show_dilate=show_dilate,
-            show_cropped=show_cropped,
-        ),
-        instances,
+        partial(run, open_dir=open_dir, save_dir=save_dir),
+        files,
     )
 
     p.close()
@@ -309,4 +322,8 @@ def main(
     cutoffs = np.concatenate(results[:, 5])
 
     make_df(save_df, files, widths, heights, particle_widths, particle_heights, cutoffs)
-    send_message()
+    # send_message()
+
+
+if __name__ == "__main__":
+    main()
