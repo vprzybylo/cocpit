@@ -20,7 +20,6 @@ import os
 import time
 import warnings
 
-import feather
 import pandas as pd
 import torch
 
@@ -35,20 +34,13 @@ def _preprocess_sheets():
     print("save images: ", config.SAVE_IMAGES)
     print("cutoff percentage allowed: ", config.CUTOFF)
 
-    # where the sheets of images for each campaign live
-    # if sheets were processed using rois in IDL, change 'sheets' to 'ROI_PNGS'
-    sheet_dir = f"/data/data/cpi_data/campaigns/{campaign}/sheets/"
-    save_dir = f"/data/data/cpi_data/campaigns/{campaign}/single_imgs_{config.TAG}/"
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
-
     cocpit.process_sheets.main(
-        sheet_dir,
-        save_dir,
+        sheet_dir=config.BASE_DIR,
+        save_dir=config.SINGLE_IMG_DIR,
         save_df=df_path,
-        show_original=False,  # all set to False due to lack of display on server
-        show_dilate=False,
-        show_cropped=False,
+        show_original=True,  # all set to False due to lack of display on server
+        show_dilate=True,
+        show_cropped=True,
     )
 
     print("time to preprocess sheets: %.2f" % (time.time() - start_time))
@@ -69,21 +61,12 @@ def _build_model():
             for epochs in config.MAX_EPOCHS:
                 print("MAX EPOCH: ", epochs)
 
-                # K-FOLD
-                if config.KFOLD != 0:
-                    cocpit.kfold_training.main(
-                        data,
-                        batch_size,
-                        model_name,
-                        epochs,
-                    )
-                else:  # no kfold
-                    cocpit.no_fold_training.main(
-                        data,
-                        batch_size,
-                        model_name,
-                        epochs,
-                    )
+                cocpit.setup_training.main(
+                    data,
+                    batch_size,
+                    model_name,
+                    epochs,
+                )
 
 
 def _ice_classification():
@@ -165,8 +148,7 @@ if __name__ == "__main__":
 
         # create dir for final databases
         outname = campaign + ".csv"
-        if not os.path.exists(config.FINAL_DIR):
-            os.makedirs(config.FINAL_DIR)
+
         df_path = os.path.join(config.FINAL_DIR, outname)
 
         if config.PREPROCESS_SHEETS:

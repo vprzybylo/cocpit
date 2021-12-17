@@ -138,6 +138,8 @@ def train_model(
                     ):
                         train_metrics.best_acc = train_metrics.epoch_acc
                         # save/load best model weights
+                        if not os.path.exists(config.MODEL_SAVE_DIR):
+                            os.makedirs(config.MODEL_SAVE_DIR)
                         torch.save(model, config.MODEL_SAVENAME)
 
             else:

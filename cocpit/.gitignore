@@ -14,7 +14,6 @@ resnet.pt
 guild-env
 guild-start
 logs
-config.py
 notebooks
 saved_models
 saved_val_loaders
