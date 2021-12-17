@@ -2,7 +2,7 @@
 Retrives data loaders from Pytorch for training and validation data
 """
 
-from cocpit.kfold_training import Runner
+from cocpit.setup_training import Runner
 import cocpit.config as config  # isort: split
 from cocpit.auto_str import auto_str
 import os

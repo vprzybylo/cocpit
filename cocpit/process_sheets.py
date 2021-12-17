@@ -1,30 +1,16 @@
 import copy
-import multiprocessing
 import os
-import re
 from functools import partial
 from multiprocessing import Pool
 
 import cv2
-import feather
-import imutils
 import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
 from twilio.rest import Client
+from cocpit.auto_str import auto_str
 
 import cocpit.config as config  # isort:split
-
-
-def auto_str(cls):
-    def __str__(self):
-        return '%s(%s)' % (
-            type(self).__name__,
-            ', '.join('%s=%s' % item for item in vars(self).items()),
-        )
-
-    cls.__str__ = __str__
-    return cls
 
 
 @auto_str
@@ -294,7 +280,7 @@ def send_message():
 
 
 def main(
-    open_dir,
+    sheet_dir,
     save_dir,
     save_df,
     show_original,
@@ -302,10 +288,10 @@ def main(
     show_cropped,
 ):
 
-    files = os.listdir(open_dir)
+    files = os.listdir(sheet_dir)
     p = Pool(processes=config.NUM_CPUS)
     results = p.map(
-        partial(run, open_dir=open_dir, save_dir=save_dir),
+        partial(run, open_dir=sheet_dir, save_dir=save_dir),
         files,
     )
 

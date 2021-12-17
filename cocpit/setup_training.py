@@ -6,7 +6,8 @@ called in __main__.py
 import torch
 import cocpit
 import cocpit.data_loaders as data_loaders
-
+import random
+import numpy as np
 # import cocpit.auto_str as auto_str
 import cocpit.config as config  # isort: split
 from cocpit.auto_str import auto_str
@@ -92,14 +93,11 @@ class Runner:
         )
 
 
-def main(data, batch_size, model_name, epochs, composition=False):
-    """
-    split dataset into folds
-    create dataloaders
-    initialize and train model
-    save classification report
-    """
-    # preserve the percentage of samples for each class with stratified
+def execute_kfold_training(data, batch_size, model_name, epochs, composition: bool=False):
+    '''
+    preserve the percentage of samples for each class with stratified
+    composition (bool): whether to print the length of train and test data based on validation %
+    '''
     skf = StratifiedKFold(n_splits=config.KFOLD, shuffle=True, random_state=42)
     for kfold, (train_indices, val_indices) in enumerate(
         skf.split(data.imgs, data.targets)
@@ -115,3 +113,51 @@ def main(data, batch_size, model_name, epochs, composition=False):
         execute.update_save_names()
         dataloaders_dict = execute.create_dataloaders()
         execute.train_model(dataloaders_dict)
+
+def nofold_indices(data):
+    '''if not applying cross-fold validation, split training dataset
+    based on config.VALID_SIZE
+
+    shuffle first and then split dataset'''
+    total_size = len(data)
+
+    # randomly split indices for training and validation indices according to valid_size
+    if config.VALID_SIZE < 0.01:
+        # use all of the data
+        train_indices = np.arange(0, total_size)
+        random.shuffle(train_indices)
+        val_indices = None
+    else:
+        train_indices, val_indices = train_test_split(
+            list(range(total_size)), test_size=config.VALID_SIZE
+            )
+    return train_indices, val_indices
+
+def execute_nofold_training(data, batch_size, model_name, epochs, kfold=0, composition: bool=False):
+    '''
+    execute training once through - no folds
+    composition (bool): whether to print the length of train and test data based on validation %
+    '''
+    train_indices, val_indices = nofold_indices(data)
+    execute = Runner(
+                model_name, epochs, kfold, data, train_indices, val_indices, batch_size
+            )
+    if composition:
+        execute.train_val_composition()
+    execute.initialize_model()
+    execute.update_save_names()
+    dataloaders_dict = execute.create_dataloaders()
+    execute.train_model(dataloaders_dict)
+
+def main(data, batch_size, model_name, epochs):
+    """
+    split dataset into folds
+    create dataloaders
+    initialize and train model
+    save classification report
+    """
+
+    if config.KFOLD != 0:
+        execute_kfold_training(data, batch_size, model_name, epochs)
+    else:
+        execute_nofold_training(data, batch_size, model_name, epochs)
