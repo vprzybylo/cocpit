@@ -35,22 +35,17 @@ class GUI:
     to label wrong predictions from validation dataloader
     '''
 
-    def __init__(
-        self, all_labels, all_paths, all_topk_probs, all_topk_classes, all_max_preds
-    ):
+    def __init__(self, all_labels, all_paths):
         '''
         requires human labels, image absolute paths, the top k probabilities output
         by the model for a bar chart of predictions, the top k class names that
         correspond to the top k probabilities, and the class index with
         the highest probability
         '''
-        self.index = 0
+        self.index = 41
         self.count = 0  # number of moved images
         self.all_labels = all_labels
         self.all_paths = all_paths
-        self.all_topk_probs = all_topk_probs
-        self.all_topk_classes = all_topk_classes
-        self.all_max_preds = all_max_preds
 
     def make_buttons(self):
         '''
@@ -100,42 +95,25 @@ class GUI:
         '''
         self.label = self.all_labels[self.index]
         self.path = self.all_paths[self.index]
-        self.topk_probs = self.all_topk_probs[self.index]
-        self.topk_classes = self.all_topk_classes[self.index]
-        self.max_pred = self.all_max_preds[self.index]
-
-        # puts class names in order based on probabilty of prediction
-        crystal_names = [config.CLASS_NAMES[e] for e in self.topk_classes]
 
         # add chart to ipywidgets.Output()
         with self.center:
-            self.view_classifications(crystal_names)
+            self.view_classifications()
 
-    def view_classifications(self, crystal_names):
+    def view_classifications(self):
         '''
         bar chart code
         outputs top k predictions for a given image
         '''
         clear_output()  # so that the next fig doesnt display below
         try:
-            fig, (ax1, ax2) = plt.subplots(
-                constrained_layout=True, figsize=(5, 7), ncols=1, nrows=2
+            fig, ax1 = plt.subplots(
+                constrained_layout=True, figsize=(5, 7), ncols=1, nrows=1
             )
             image = Image.open(self.path)
             ax1.imshow(image)
-            ax1.set_title(
-                f"Human Labeled as: {config.CLASS_NAMES[self.label]}\n"
-                f"Model Labeled as: {crystal_names[0]}"
-            )
+            ax1.set_title(f"Human Labeled as: {config.CLASS_NAMES[self.label]}\n")
             ax1.axis("off")
-
-            y_pos = np.arange(len(self.topk_probs))
-            ax2.barh(y_pos, self.topk_probs, align="center")
-            ax2.set_yticks(y_pos)
-            ax2.set_yticklabels(crystal_names)
-            ax2.tick_params(axis="y", rotation=45)
-            ax2.invert_yaxis()  # labels read top-to-bottom
-            ax2.set_title("Class Probability")
             plt.show()
 
         except FileNotFoundError:
@@ -149,9 +127,11 @@ class GUI:
         filename = self.path.split("/")[-1]
 
         data_dir = f'/data/data/cpi_data/training_datasets/hand_labeled_resized_{config.TAG}_sideplanes_copy/'
-        # print(f"{data_dir}{config.CLASS_NAMES[self.label]}/{filename}")
-        # print(f"{data_dir}{change.new}/{filename}")
+
         try:
+            print(f"{data_dir}{config.CLASS_NAMES[self.label]}/{filename}")
+            print(f"{data_dir}{change.new}/{filename}")
+
             shutil.move(
                 f"{data_dir}{config.CLASS_NAMES[self.label]}/{filename}",
                 f"{data_dir}{change.new}/{filename}",

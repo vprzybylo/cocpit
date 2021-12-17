@@ -57,6 +57,7 @@ class ImageFolderWithPaths(datasets.ImageFolder):
         return (tuple_with_path, index)
 
 
+@auto_str
 class TestDataSet(Dataset):
     """
     dataloader for new unseen data
