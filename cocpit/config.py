@@ -19,10 +19,10 @@ import sys
 TAG = 'v1.4.0'
 
 # extract each image from sheet of images
-PREPROCESS_SHEETS = True
+PREPROCESS_SHEETS = False
 
 # create and save CNN
-BUILD_MODEL = False
+BUILD_MODEL = True
 
 # run the category classification on quality images of ice particles
 ICE_CLASSIFICATION = False
@@ -35,14 +35,17 @@ ADD_DATE = False
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+# Absolute path to to folder where the data and models live
+BASE_DIR = '/Volumes/TOSHIBA EXT/raid/data/cpi_data'
+
 # model to load
-MODEL_PATH = f"/data/data/saved_models/no_mask/{TAG}/e[15]_bs[64]_k0_vgg16.pt"
+MODEL_PATH = f"{BASE_DIR}/saved_models/no_mask/{TAG}/e[15]_bs[64]_k0_vgg16.pt"
 
 # workers for parallelization
-NUM_CPUS = 1
+NUM_CPUS = 5
 
 # number of cpus used to load data in pytorch dataloaders
-NUM_WORKERS = 20
+NUM_WORKERS = 5
 
 # whether to save the individual extracted images
 # used in process_png_sheets_with_text.py
@@ -59,7 +62,7 @@ KFOLD = 5
 VALID_SIZE = 0.20
 
 # images read into memory at a time during training
-BATCH_SIZE = [64]
+BATCH_SIZE = [28]
 
 # number of epochs to train model
 MAX_EPOCHS = [15]
@@ -93,18 +96,18 @@ MODEL_NAMES = [
 
 # directory that holds the training data
 DATA_DIR = (
-    f"/data/data/cpi_data/training_datasets/hand_labeled_resized_{TAG}_sideplanes/"
+    f"{BASE_DIR}/training_datasets/hand_labeled_resized_{TAG}_sideplanes/"
 )
 
 # whether to save the model
 SAVE_MODEL = True
 # directory to save the trained model to
 
-MODEL_SAVE_DIR = f"/data/data/saved_models/no_mask/{TAG}/"
+MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/no_mask/{TAG}/"
 
 # directory to save validation data to
 # for later inspection of predictions
-VAL_LOADER_SAVE_DIR = f"/data/data/saved_val_loaders/no_mask/{TAG}/"
+VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/no_mask/{TAG}/"
 
 MODEL_SAVENAME = (
     f"{MODEL_SAVE_DIR}e{max(MAX_EPOCHS)}_"
@@ -122,7 +125,7 @@ VAL_LOADER_SAVENAME = (
 SAVE_ACC = True
 
 # directory for saving training accuracy and loss csv's
-ACC_SAVE_DIR = f"/data/data/saved_accuracies/{TAG}/"
+ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"
 
 #  filename for saving training accuracy and loss
 ACC_SAVENAME_TRAIN = (
@@ -143,10 +146,10 @@ METRICS_SAVENAME = (
     f"{len(MODEL_NAMES)}model(s).csv"
 )
 
-CONF_MATRIX_SAVENAME = "/data/data/plots/conf_matrix.png"
+CONF_MATRIX_SAVENAME = "{BASE_DIR}/plots/conf_matrix.png"
 
 # where to save final databases to
-FINAL_DIR = f"/data/data/final_databases/vgg16/{TAG}/"
+FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
 
 # log experiment to comet for tracking?
 LOG_EXP = False
