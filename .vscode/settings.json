@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "/usr/bin/python3",
+    "python.pythonPath": "terminal",
     "python.linting.enabled": false,
     "python.linting.pylintEnabled": true,
     "C_Cpp.errorSquiggles": "Disabled",

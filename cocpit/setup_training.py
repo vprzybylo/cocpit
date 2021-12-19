@@ -2,7 +2,6 @@
 train model with k folds for cross validation across samples
 called in __main__.py
 """
-
 import torch
 import cocpit
 import cocpit.data_loaders as data_loaders
@@ -30,6 +29,9 @@ class Runner:
         self.train_indices = train_indices
         self.val_indices = val_indices
         self.batch_size = batch_size
+        self.train_labels = list(map(self.data.targets.__getitem__, self.train_indices))
+        self.train_data = torch.utils.data.Subset(self.data, self.train_indices)
+        self.val_data = torch.utils.data.Subset(self.data, self.val_indices)
 
     def train_val_composition(self):
         """
@@ -59,29 +61,24 @@ class Runner:
     def initialize_model(self):
         self.model = cocpit.models.initialize_model(self.model_name)
 
-    def create_dataloaders(self, balance_weights: bool =True) -> dict[str, torch.utils.data.dataloader.DataLoader]:
+    def create_dataloaders(self, balance_weights: bool =True):
         '''create dataloaders based on split from StratifiedKFold'''
-        loaders = data_loaders.Loader(
-            self.data,
-            self.train_indices,
-            self.val_indices,
-            self.batch_size,
-        )
-        train_sampler = loaders.balance_weights() if balance_weights else None
-        train_loader = loaders.create_trainloader(train_sampler)
+        loaders = data_loaders.Loader(self.train_labels)
+        sampler = loaders.balanced_sampler() if balance_weights else None
+        train_loader = loaders.create_loader(self.train_data, self.batch_size, sampler)
 
         if config.VALID_SIZE < 0.01:
             # use all data for training - no val loader
             val_loader = None
         else:
-            val_loader = loaders.create_valloader()
+            val_loader = loaders.create_loader(self.val_data, self.batch_size, sampler=None)
             if config.SAVE_MODEL:
-                loaders.save_valloader()
+                loaders.save_valloader(self.val_data)
 
         dataloaders_dict = {"train": train_loader, "val": val_loader}
         return dataloaders_dict
 
-    def train_model(self, dataloaders_dict: dict) -> None:
+    def train_model(self, dataloaders_dict):
         '''train model'''
         cocpit.train_model.train_model(
             self.kfold,
@@ -93,7 +90,7 @@ class Runner:
         )
 
 
-def execute_kfold_training(data, batch_size, model_name, epochs, composition: bool=False):
+def kfold_training(data, batch_size, model_name, epochs, composition: bool=False):
     '''
     preserve the percentage of samples for each class with stratified
     composition (bool): whether to print the length of train and test data based on validation %
@@ -114,6 +111,7 @@ def execute_kfold_training(data, batch_size, model_name, epochs, composition: bo
         dataloaders_dict = execute.create_dataloaders()
         execute.train_model(dataloaders_dict)
 
+
 def nofold_indices(data):
     '''if not applying cross-fold validation, split training dataset
     based on config.VALID_SIZE
@@ -133,7 +131,7 @@ def nofold_indices(data):
             )
     return train_indices, val_indices
 
-def execute_nofold_training(data, batch_size, model_name, epochs, kfold=0, composition: bool=False):
+def nofold_training(data, batch_size, model_name, epochs, kfold=0, composition: bool=False):
     '''
     execute training once through - no folds
     composition (bool): whether to print the length of train and test data based on validation %
@@ -158,6 +156,6 @@ def main(data, batch_size, model_name, epochs):
     """
 
     if config.KFOLD != 0:
-        execute_kfold_training(data, batch_size, model_name, epochs)
+        kfold_training(data, batch_size, model_name, epochs)
     else:
-        execute_nofold_training(data, batch_size, model_name, epochs)
+        nofold_training(data, batch_size, model_name, epochs)

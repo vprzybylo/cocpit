@@ -2,7 +2,6 @@
 Retrives data loaders from Pytorch for training and validation data
 """
 
-from cocpit.setup_training import Runner
 import cocpit.config as config  # isort: split
 from cocpit.auto_str import auto_str
 import os
@@ -10,8 +9,7 @@ import os
 import numpy as np
 import torch
 import torch.utils.data.sampler as sampler
-from PIL import Image, ImageFile
-from torch.utils.data import Dataset
+from PIL import ImageFile
 from torchvision import datasets, transforms
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -58,53 +56,17 @@ class ImageFolderWithPaths(datasets.ImageFolder):
 
 
 @auto_str
-class TestDataSet(Dataset):
-    """
-    dataloader for new unseen data
-    """
-
-    def __init__(self, open_dir, file_list):
-
-        self.open_dir = open_dir
-        self.file_list = list(file_list)
-        self.transform = transforms.Compose(
-            [
-                transforms.Resize((224)),
-                transforms.ToTensor(),
-                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-            ]
-        )
-
-    def __len__(self):
-        return len(self.file_list)
-
-    def __getitem__(self, idx):
-        self.path = os.path.join(self.open_dir, self.file_list[idx])
-        image = Image.open(self.path)
-        tensor_image = self.transform(image)
-        return (tensor_image, self.path)
-
-
-@auto_str
-class Loader(Runner):
+class Loader():
     """
     creates training and validation Pytorch dataloaders
     option to weight based on class count
     """
     def __init__(
         self,
-        data,
-        train_indices,
-        val_indices,
-        batch_size,
-        shuffle=True,
+        train_labels
     ):
-        self.data=data
-        self.batch_size = batch_size
-        self.shuffle = shuffle
-        self.train_labels = list(map(self.data.targets.__getitem__, train_indices))
-        self.train_data = torch.utils.data.Subset(self.data, train_indices)
-        self.val_data = torch.utils.data.Subset(self.data, val_indices)
+        self.train_labels= train_labels
+
 
     def make_weights_for_balanced_classes(self):
         """
@@ -129,43 +91,31 @@ class Loader(Runner):
 
         return class_sample_counts, torch.DoubleTensor(train_samples_weights)
 
-    def balance_weights(self):
+    def balanced_sampler(self):
         '''create a training dataloader for unbalanced class counts'''
 
         # For an unbalanced dataset create a weighted sampler
         class_counts, train_samples_weights = self.make_weights_for_balanced_classes()
 
         # Make a sampler to undersample classes with the highest counts
-        train_sampler = sampler.WeightedRandomSampler(
+        return sampler.WeightedRandomSampler(
             train_samples_weights, len(train_samples_weights), replacement=True
         )
-        return train_sampler
 
-    def create_trainloader(self, train_sampler):
-        '''Make an iterable of batches across the training dataset'''
-        train_loader = torch.utils.data.DataLoader(
-            self.train_data,
-            batch_size=self.batch_size,
-            sampler=train_sampler,
+    def create_loader(self, data, batch_size, sampler, pin_memory=True):
+        '''Make an iterable of batches across either
+         the training or validation dataset'''
+        return torch.utils.data.DataLoader(
+            data,
+            batch_size=batch_size,
+            sampler=sampler,
             num_workers=config.NUM_WORKERS,
-            pin_memory=True,
+            pin_memory=pin_memory,
         )
-        return train_loader
 
-    def create_valloader(self):
-        '''Make an iterable of batches across the validation dataset'''
-        val_loader = torch.utils.data.DataLoader(
-            self.val_data,
-            batch_size=self.batch_size,
-            shuffle=self.shuffle,
-            num_workers=config.NUM_WORKERS,
-            pin_memory=True,
-        )
-        return val_loader
-
-    def save_valloader(self):
+    def save_valloader(self, val_data):
         '''save validation dataloader based on paths in config.py'''
         if not os.path.exists(config.VAL_LOADER_SAVE_DIR):
             os.makedirs(config.VAL_LOADER_SAVE_DIR)
-        torch.save(self.val_data, config.VAL_LOADER_SAVENAME)
+        torch.save(val_data, config.VAL_LOADER_SAVENAME)
 

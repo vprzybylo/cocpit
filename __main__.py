@@ -23,7 +23,6 @@ import warnings
 import pandas as pd
 import torch
 
-
 def _preprocess_sheets():
     """
     separate individual images from sheets of images to be saved
@@ -34,13 +33,21 @@ def _preprocess_sheets():
     print("save images: ", config.SAVE_IMAGES)
     print("cutoff percentage allowed: ", config.CUTOFF)
 
+    # where the sheets of images for each campaign live
+    # if sheets were processed using rois in IDL, change 'sheets' to 'ROI_PNGS'
+    # sheet_dir and save_dir can't go in config since using campaign var
+    sheet_dir = f"{config.BASE_DIR}/campaigns/{campaign}/sheets/"
+    save_dir = f"{config.BASE_DIR}/campaigns/{campaign}/single_imgs_{config.TAG}/"
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
     cocpit.process_sheets.main(
-        sheet_dir=config.BASE_DIR,
-        save_dir=config.SINGLE_IMG_DIR,
+        sheet_dir,
+        save_dir,
         save_df=df_path,
-        show_original=True,  # all set to False due to lack of display on server
-        show_dilate=True,
-        show_cropped=True,
+        show_original=False,  # all set to False due to lack of display on server
+        show_dilate=False,
+        show_cropped=False,
     )
 
     print("time to preprocess sheets: %.2f" % (time.time() - start_time))

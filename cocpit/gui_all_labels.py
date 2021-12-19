@@ -10,23 +10,12 @@ import shutil
 import ipywidgets
 import matplotlib.pyplot as plt
 import numpy as np
-from IPython.display import clear_output, display
-from ipywidgets import AppLayout, Button
+from IPython.display import clear_output
+from ipywidgets import Button
 from PIL import Image
+from cocpit.auto_str import auto_str
 
 import cocpit.config as config
-
-
-def auto_str(cls):
-    def __str__(self):
-        return '%s(%s)' % (
-            type(self).__name__,
-            ', '.join('%s=%s' % item for item in vars(self).items()),
-        )
-
-    cls.__str__ = __str__
-    return cls
-
 
 @auto_str
 class GUI:
@@ -42,7 +31,7 @@ class GUI:
         correspond to the top k probabilities, and the class index with
         the highest probability
         '''
-        self.index = 41
+        self.index = 0
         self.count = 0  # number of moved images
         self.all_labels = all_labels
         self.all_paths = all_paths
@@ -102,8 +91,7 @@ class GUI:
 
     def view_classifications(self):
         '''
-        bar chart code
-        outputs top k predictions for a given image
+        show image
         '''
         clear_output()  # so that the next fig doesnt display below
         try:
@@ -126,7 +114,7 @@ class GUI:
         '''
         filename = self.path.split("/")[-1]
 
-        data_dir = f'/data/data/cpi_data/training_datasets/hand_labeled_resized_{config.TAG}_sideplanes_copy/'
+        data_dir = config.DATA_DIR[:-1]+'_copy/'
 
         try:
             print(f"{data_dir}{config.CLASS_NAMES[self.label]}/{filename}")

@@ -6,6 +6,7 @@ cpi_data
 initial_databases
 nohup*
 dist
+config.py
 IPAS_verification
 ADPAA
 *.swp

@@ -1,5 +1,39 @@
 import torch
 import numpy as np
+import cocpit.config as config
+import itertools
+import os
+from cocpit.auto_str import auto_str
+from torchvision import transforms
+from torch.utils.data import Dataset
+from PIL import Image
+
+@auto_str
+class TestDataSet(Dataset):
+    """
+    dataloader for new unseen data
+    """
+
+    def __init__(self, open_dir, file_list):
+
+        self.open_dir = open_dir
+        self.file_list = list(file_list)
+        self.transform = transforms.Compose(
+            [
+                transforms.Resize((224)),
+                transforms.ToTensor(),
+                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+            ]
+        )
+
+    def __len__(self):
+        return len(self.file_list)
+
+    def __getitem__(self, idx):
+        self.path = os.path.join(self.open_dir, self.file_list[idx])
+        image = Image.open(self.path)
+        tensor_image = self.transform(image)
+        return (tensor_image, self.path)
 
 def get_test_loader_df(
     open_dir, file_list, batch_size=100, shuffle=False, pin_memory=True
