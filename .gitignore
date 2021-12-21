@@ -3,6 +3,7 @@
 .DS_store
 .virtual_documents
 cpi_data
+test_sheets
 initial_databases
 nohup*
 dist

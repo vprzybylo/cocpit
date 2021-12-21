@@ -6,6 +6,7 @@ import torch
 import cocpit
 import cocpit.data_loaders as data_loaders
 import random
+import os
 import numpy as np
 # import cocpit.auto_str as auto_str
 import cocpit.config as config  # isort: split
@@ -13,37 +14,20 @@ from cocpit.auto_str import auto_str
 
 from collections import Counter
 
-import pandas as pd
 from sklearn.model_selection import StratifiedKFold, train_test_split
 
 
 @auto_str
 class Runner:
     def __init__(
-        self, model_name, epochs, kfold, data, train_indices, val_indices, batch_size
+        self, model_name, epochs, kfold, train_data, val_data, batch_size
     ):
         self.model_name = model_name
         self.epochs = epochs
         self.kfold = kfold
-        self.data = data
-        self.train_indices = train_indices
-        self.val_indices = val_indices
+        self.train_data = train_data
+        self.val_data = val_data
         self.batch_size = batch_size
-        self.train_labels = list(map(self.data.targets.__getitem__, self.train_indices))
-        self.train_data = torch.utils.data.Subset(self.data, self.train_indices)
-        self.val_data = torch.utils.data.Subset(self.data, self.val_indices)
-
-    def train_val_composition(self):
-        """
-        prints length of train and test data based on validation %
-        """
-        train_y = list(map(self.data.targets.__getitem__, self.train_indices))
-        test_y = list(map(self.data.targets.__getitem__, self.val_indices))
-        print(len(train_y), len(test_y), len(train_y) + len(test_y))
-        print("train counts")
-        print(Counter(train_y))
-        print("val counts")
-        print(Counter(test_y))
 
     def update_save_names(self):
         '''update save names for model and dataloader so that each fold gets saved'''
@@ -61,17 +45,18 @@ class Runner:
     def initialize_model(self):
         self.model = cocpit.models.initialize_model(self.model_name)
 
-    def create_dataloaders(self, balance_weights: bool =True):
+    def create_dataloaders(self, train_labels, balance_weights: bool =True):
         '''create dataloaders based on split from StratifiedKFold'''
-        loaders = data_loaders.Loader(self.train_labels)
+
+        loaders = data_loaders.Loader(train_labels, self.batch_size)
         sampler = loaders.balanced_sampler() if balance_weights else None
-        train_loader = loaders.create_loader(self.train_data, self.batch_size, sampler)
+        train_loader = loaders.create_loader(self.train_data, sampler)
 
         if config.VALID_SIZE < 0.01:
             # use all data for training - no val loader
             val_loader = None
         else:
-            val_loader = loaders.create_loader(self.val_data, self.batch_size, sampler=None)
+            val_loader = loaders.create_loader(self.val_data, sampler=None)
             if config.SAVE_MODEL:
                 loaders.save_valloader(self.val_data)
 
@@ -89,35 +74,68 @@ class Runner:
             dataloaders_dict,
         )
 
+#############
+def print_composition(train_labels, val_labels):
+    '''prints length of train and test data based on validation %'''
+    print(len(train_labels), len(val_labels), len(train_labels) + len(val_labels))
+    print("train counts")
+    print(Counter(train_labels))
+    print("val counts")
+    print(Counter(val_labels))
 
-def kfold_training(data, batch_size, model_name, epochs, composition: bool=False):
+def data_setup(train_indices, val_indices, composition: bool=True):
+    '''apply different transforms to train and
+     validation datasets from ImageFolder'''
+    data = data_loaders.get_data('train')
+    train_labels = list(map(data.targets.__getitem__, train_indices))
+    train_data = torch.utils.data.Subset(data, train_indices)
+
+    data = data_loaders.get_data('val')
+    val_data = torch.utils.data.Subset(data, val_indices)
+    val_labels = list(map(data.targets.__getitem__, val_indices))
+
+    if composition:
+        print_composition(train_labels, val_labels)
+
+    return train_data, val_data, train_labels
+
+def kfold_training(batch_size, model_name, epochs):
     '''
-    preserve the percentage of samples for each class with stratified
-    composition (bool): whether to print the length of train and test data based on validation %
+    1. split dataset into folds
+        preserve the percentage of samples for each class with stratified
+    2. create dataloaders
+    3. initialize and train model
     '''
     skf = StratifiedKFold(n_splits=config.KFOLD, shuffle=True, random_state=42)
+    # datasets based on phase get called again in data_setup
+    # needed here to initialize for skf.split
+    data = data_loaders.get_data('val')
     for kfold, (train_indices, val_indices) in enumerate(
         skf.split(data.imgs, data.targets)
     ):
         print("KFOLD iteration: ", kfold)
 
+        # apply appropriate transformations for training and validation sets
+        train_data, val_data, train_labels = data_setup(train_indices, val_indices)
+
         execute = Runner(
-            model_name, epochs, kfold, data, train_indices, val_indices, batch_size
+            model_name, epochs, kfold, train_data, val_data, batch_size
         )
-        if composition:
-            execute.train_val_composition()
+
         execute.initialize_model()
         execute.update_save_names()
-        dataloaders_dict = execute.create_dataloaders()
+        dataloaders_dict = execute.create_dataloaders(train_labels)
         execute.train_model(dataloaders_dict)
 
 
-def nofold_indices(data):
-    '''if not applying cross-fold validation, split training dataset
+def nofold_indices():
+    '''
+    if not applying cross-fold validation, split training dataset
     based on config.VALID_SIZE
-
     shuffle first and then split dataset'''
-    total_size = len(data)
+    total_size=0
+    for base, dirs, files in os.walk(config.DATA_DIR):
+        total_size += len(files)
 
     # randomly split indices for training and validation indices according to valid_size
     if config.VALID_SIZE < 0.01:
@@ -131,31 +149,25 @@ def nofold_indices(data):
             )
     return train_indices, val_indices
 
-def nofold_training(data, batch_size, model_name, epochs, kfold=0, composition: bool=False):
+def nofold_training(batch_size, model_name, epochs, kfold=0):
     '''
     execute training once through - no folds
     composition (bool): whether to print the length of train and test data based on validation %
     '''
-    train_indices, val_indices = nofold_indices(data)
+    train_indices, val_indices = nofold_indices()
+    train_data, val_data, train_labels = data_setup(train_indices, val_indices)
+
     execute = Runner(
-                model_name, epochs, kfold, data, train_indices, val_indices, batch_size
+                model_name, epochs, kfold, train_data, val_data, batch_size
             )
-    if composition:
-        execute.train_val_composition()
     execute.initialize_model()
     execute.update_save_names()
-    dataloaders_dict = execute.create_dataloaders()
+    dataloaders_dict = execute.create_dataloaders(train_labels)
     execute.train_model(dataloaders_dict)
 
-def main(data, batch_size, model_name, epochs):
-    """
-    split dataset into folds
-    create dataloaders
-    initialize and train model
-    save classification report
-    """
+def main(batch_size, model_name, epochs):
 
     if config.KFOLD != 0:
-        kfold_training(data, batch_size, model_name, epochs)
+        kfold_training(batch_size, model_name, epochs)
     else:
-        nofold_training(data, batch_size, model_name, epochs)
+        nofold_training(batch_size, model_name, epochs)

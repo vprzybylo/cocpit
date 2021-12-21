@@ -58,7 +58,7 @@ def _build_model():
     train ML models
     """
 
-    data = cocpit.data_loaders.get_data()
+    #data = cocpit.data_loaders.get_data()
 
     # loop through batch sizes, models, epochs, and/or folds
     for batch_size in config.BATCH_SIZE:
@@ -69,7 +69,6 @@ def _build_model():
                 print("MAX EPOCH: ", epochs)
 
                 cocpit.setup_training.main(
-                    data,
                     batch_size,
                     model_name,
                     epochs,

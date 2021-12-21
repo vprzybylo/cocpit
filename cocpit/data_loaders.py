@@ -15,7 +15,7 @@ from torchvision import datasets, transforms
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
-def get_data():
+def get_data(phase):
     """
     Use the Pytorch ImageFolder class to read in root directory
     that holds subfolders of each class for training data
@@ -27,15 +27,24 @@ def get_data():
     -------
     data (tuple): (image, label, path)
     """
-    all_transforms = transforms.Compose(
-        [
-            transforms.Resize(224),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-        ]
-    )
 
-    return ImageFolderWithPaths(root=config.DATA_DIR, transform=all_transforms)
+    transform_dict = {
+        'train': transforms.Compose(
+            [transforms.Resize(224),
+             transforms.RandomHorizontalFlip(),
+             transforms.ToTensor(),
+             transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                  std=[0.229, 0.224, 0.225]),
+             ]),
+        'val': transforms.Compose(
+            [transforms.Resize(224),
+             transforms.ToTensor(),
+             transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                  std=[0.229, 0.224, 0.225]),
+             ])}
+
+
+    return ImageFolderWithPaths(root=config.DATA_DIR, transform=transform_dict[phase])
 
 
 class ImageFolderWithPaths(datasets.ImageFolder):
@@ -63,10 +72,11 @@ class Loader():
     """
     def __init__(
         self,
-        train_labels
+        train_labels,
+        batch_size
     ):
-        self.train_labels= train_labels
-
+        self.train_labels = train_labels
+        self.batch_size = batch_size
 
     def make_weights_for_balanced_classes(self):
         """
@@ -102,12 +112,12 @@ class Loader():
             train_samples_weights, len(train_samples_weights), replacement=True
         )
 
-    def create_loader(self, data, batch_size, sampler, pin_memory=True):
+    def create_loader(self, data, sampler, pin_memory=True):
         '''Make an iterable of batches across either
          the training or validation dataset'''
         return torch.utils.data.DataLoader(
             data,
-            batch_size=batch_size,
+            batch_size=self.batch_size,
             sampler=sampler,
             num_workers=config.NUM_WORKERS,
             pin_memory=pin_memory,
