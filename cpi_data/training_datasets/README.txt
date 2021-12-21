@@ -36,7 +36,6 @@ aggs  budding  bullets  columns  compact_irregs  fragments  plates  rimed_aggs  
 removed blank and separated budding and bullets
 commit hand_labeled_resized_multcampaigns_v1.0.0_no_blank
 
-
 8/4/21
 hand_labeled_resized_v1.3.0_no_blank
 aggs  budding  bullets  columns  compact_irregs  fragments  plates  rimed_aggs  spheres
