@@ -2,26 +2,27 @@
 train model with k folds for cross validation across samples
 called in __main__.py
 """
+import os
+import random
+
+import numpy as np
 import torch
+
 import cocpit
 import cocpit.data_loaders as data_loaders
-import random
-import os
-import numpy as np
+
 # import cocpit.auto_str as auto_str
 import cocpit.config as config  # isort: split
-from cocpit.auto_str import auto_str
-
 from collections import Counter
 
 from sklearn.model_selection import StratifiedKFold, train_test_split
 
+from cocpit.auto_str import auto_str
+
 
 @auto_str
 class Runner:
-    def __init__(
-        self, model_name, epochs, kfold, train_data, val_data, batch_size
-    ):
+    def __init__(self, model_name, epochs, kfold, train_data, val_data, batch_size):
         self.model_name = model_name
         self.epochs = epochs
         self.kfold = kfold
@@ -45,7 +46,7 @@ class Runner:
     def initialize_model(self):
         self.model = cocpit.models.initialize_model(self.model_name)
 
-    def create_dataloaders(self, train_labels, balance_weights: bool =True):
+    def create_dataloaders(self, train_labels, balance_weights: bool = True):
         '''create dataloaders based on split from StratifiedKFold'''
 
         loaders = data_loaders.Loader(train_labels, self.batch_size)
@@ -74,6 +75,7 @@ class Runner:
             dataloaders_dict,
         )
 
+
 #############
 def print_composition(train_labels, val_labels):
     '''prints length of train and test data based on validation %'''
@@ -83,9 +85,10 @@ def print_composition(train_labels, val_labels):
     print("val counts")
     print(Counter(val_labels))
 
-def data_setup(train_indices, val_indices, composition: bool=True):
+
+def data_setup(train_indices, val_indices, composition: bool = False):
     '''apply different transforms to train and
-     validation datasets from ImageFolder'''
+    validation datasets from ImageFolder'''
     data = data_loaders.get_data('train')
     train_labels = list(map(data.targets.__getitem__, train_indices))
     train_data = torch.utils.data.Subset(data, train_indices)
@@ -98,6 +101,7 @@ def data_setup(train_indices, val_indices, composition: bool=True):
         print_composition(train_labels, val_labels)
 
     return train_data, val_data, train_labels
+
 
 def kfold_training(batch_size, model_name, epochs):
     '''
@@ -118,9 +122,7 @@ def kfold_training(batch_size, model_name, epochs):
         # apply appropriate transformations for training and validation sets
         train_data, val_data, train_labels = data_setup(train_indices, val_indices)
 
-        execute = Runner(
-            model_name, epochs, kfold, train_data, val_data, batch_size
-        )
+        execute = Runner(model_name, epochs, kfold, train_data, val_data, batch_size)
 
         execute.initialize_model()
         execute.update_save_names()
@@ -133,7 +135,7 @@ def nofold_indices():
     if not applying cross-fold validation, split training dataset
     based on config.VALID_SIZE
     shuffle first and then split dataset'''
-    total_size=0
+    total_size = -1
     for base, dirs, files in os.walk(config.DATA_DIR):
         total_size += len(files)
 
@@ -146,8 +148,9 @@ def nofold_indices():
     else:
         train_indices, val_indices = train_test_split(
             list(range(total_size)), test_size=config.VALID_SIZE
-            )
+        )
     return train_indices, val_indices
+
 
 def nofold_training(batch_size, model_name, epochs, kfold=0):
     '''
@@ -157,13 +160,12 @@ def nofold_training(batch_size, model_name, epochs, kfold=0):
     train_indices, val_indices = nofold_indices()
     train_data, val_data, train_labels = data_setup(train_indices, val_indices)
 
-    execute = Runner(
-                model_name, epochs, kfold, train_data, val_data, batch_size
-            )
+    execute = Runner(model_name, epochs, kfold, train_data, val_data, batch_size)
     execute.initialize_model()
     execute.update_save_names()
     dataloaders_dict = execute.create_dataloaders(train_labels)
     execute.train_model(dataloaders_dict)
+
 
 def main(batch_size, model_name, epochs):
 

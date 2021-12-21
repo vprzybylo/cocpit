@@ -1,4 +1,4 @@
-# Ignore Mac system files
+nbextension-scratchpad
 .env
 .DS_store
 .virtual_documents

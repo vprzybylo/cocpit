@@ -14,4 +14,3 @@ def auto_str(cls):
 
     cls.__str__ = __str__
     return cls
-

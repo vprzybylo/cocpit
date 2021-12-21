@@ -1,0 +1,4 @@
+[core]
+    remote = hulk
+['remote "hulk"']
+    url = /data/data/cpi_data/training_datasets

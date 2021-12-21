@@ -99,9 +99,7 @@ MODEL_NAMES = [
 MODEL_PATH = f"/data/data/saved_models/no_mask/{TAG}/e[15]_bs[64]_k1_vgg16.pt"
 
 # directory that holds the training data
-DATA_DIR = (
-    f"{BASE_DIR}/training_datasets/hand_labeled_resized_{TAG}_sideplanes/"
-)
+DATA_DIR = f"{BASE_DIR}/training_datasets/hand_labeled_resized_{TAG}_sideplanes/"
 
 # whether to save the model
 SAVE_MODEL = True

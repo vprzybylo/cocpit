@@ -202,9 +202,11 @@ def log_confusion_matrix(val_metrics):
         save_fig=True,
     )
 
-    config.experiment.log_image(
-        config.CONF_MATRIX_SAVENAME, name="confusion matrix", image_format="pdf"
-    )
+    # log to comet
+    if config.LOG_EXP:
+        config.experiment.log_image(
+            config.CONF_MATRIX_SAVENAME, name="confusion matrix", image_format="pdf"
+        )
 
     # unnormalized matrix
     cocpit.plot_metrics.conf_matrix(
@@ -215,6 +217,8 @@ def log_confusion_matrix(val_metrics):
         save_fig=True,
     )
 
-    config.experiment.log_image(
-        config.CONF_MATRIX_SAVENAME, name="confusion matrix", image_format="pdf"
-    )
+    # log to comet
+    if config.LOG_EXP:
+        config.experiment.log_image(
+            config.CONF_MATRIX_SAVENAME, name="confusion matrix", image_format="pdf"
+        )

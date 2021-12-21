@@ -13,9 +13,10 @@ import numpy as np
 from IPython.display import clear_output
 from ipywidgets import Button
 from PIL import Image
-from cocpit.auto_str import auto_str
 
 import cocpit.config as config
+from cocpit.auto_str import auto_str
+
 
 @auto_str
 class GUI:
@@ -114,7 +115,7 @@ class GUI:
         '''
         filename = self.path.split("/")[-1]
 
-        data_dir = config.DATA_DIR[:-1]+'_copy/'
+        data_dir = config.DATA_DIR[:-1] + '_copy/'
 
         try:
             print(f"{data_dir}{config.CLASS_NAMES[self.label]}/{filename}")

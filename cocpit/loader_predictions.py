@@ -1,12 +1,15 @@
-import torch
-import numpy as np
-import cocpit.config as config
 import itertools
 import os
-from cocpit.auto_str import auto_str
-from torchvision import transforms
-from torch.utils.data import Dataset
+
+import numpy as np
+import torch
 from PIL import Image
+from torch.utils.data import Dataset
+from torchvision import transforms
+
+import cocpit.config as config
+from cocpit.auto_str import auto_str
+
 
 @auto_str
 class TestDataSet(Dataset):
@@ -34,6 +37,7 @@ class TestDataSet(Dataset):
         image = Image.open(self.path)
         tensor_image = self.transform(image)
         return (tensor_image, self.path)
+
 
 def get_test_loader_df(
     open_dir, file_list, batch_size=100, shuffle=False, pin_memory=True

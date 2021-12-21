@@ -3,7 +3,6 @@ Retrives data loaders from Pytorch for training and validation data
 """
 
 import cocpit.config as config  # isort: split
-from cocpit.auto_str import auto_str
 import os
 
 import numpy as np
@@ -11,6 +10,8 @@ import torch
 import torch.utils.data.sampler as sampler
 from PIL import ImageFile
 from torchvision import datasets, transforms
+
+from cocpit.auto_str import auto_str
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -30,19 +31,26 @@ def get_data(phase):
 
     transform_dict = {
         'train': transforms.Compose(
-            [transforms.Resize(224),
-             transforms.RandomHorizontalFlip(),
-             transforms.ToTensor(),
-             transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                  std=[0.229, 0.224, 0.225]),
-             ]),
+            [
+                transforms.Resize(224),
+                transforms.RandomHorizontalFlip(),
+                transforms.RandomVerticalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                ),
+            ]
+        ),
         'val': transforms.Compose(
-            [transforms.Resize(224),
-             transforms.ToTensor(),
-             transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                  std=[0.229, 0.224, 0.225]),
-             ])}
-
+            [
+                transforms.Resize(224),
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                ),
+            ]
+        ),
+    }
 
     return ImageFolderWithPaths(root=config.DATA_DIR, transform=transform_dict[phase])
 
@@ -65,16 +73,13 @@ class ImageFolderWithPaths(datasets.ImageFolder):
 
 
 @auto_str
-class Loader():
+class Loader:
     """
     creates training and validation Pytorch dataloaders
     option to weight based on class count
     """
-    def __init__(
-        self,
-        train_labels,
-        batch_size
-    ):
+
+    def __init__(self, train_labels, batch_size):
         self.train_labels = train_labels
         self.batch_size = batch_size
 
@@ -92,7 +97,9 @@ class Loader():
         class_sample_counts = [0] * len(config.CLASS_NAMES)
         for target in self.train_labels:
             class_sample_counts[target] += 1
-        print("counts per class in training data: ", class_sample_counts)
+        print(
+            "counts per class in training data (before sampler): ", class_sample_counts
+        )
 
         class_weights = 1.0 / torch.Tensor(class_sample_counts)
         train_samples_weights = [
@@ -114,7 +121,7 @@ class Loader():
 
     def create_loader(self, data, sampler, pin_memory=True):
         '''Make an iterable of batches across either
-         the training or validation dataset'''
+        the training or validation dataset'''
         return torch.utils.data.DataLoader(
             data,
             batch_size=self.batch_size,
@@ -128,4 +135,3 @@ class Loader():
         if not os.path.exists(config.VAL_LOADER_SAVE_DIR):
             os.makedirs(config.VAL_LOADER_SAVE_DIR)
         torch.save(val_data, config.VAL_LOADER_SAVENAME)
-

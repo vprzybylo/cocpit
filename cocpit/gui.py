@@ -13,9 +13,10 @@ import numpy as np
 from IPython.display import clear_output, display
 from ipywidgets import AppLayout, Button
 from PIL import Image
-from cocpit.auto_str import auto_str
 
 import cocpit.config as config
+from cocpit.auto_str import auto_str
+
 
 @auto_str
 class GUI:
