@@ -62,7 +62,7 @@ def plot_on_axis(image, ax, x, class_, model):
 def plot_saliency(model, class_names, savefig=True):
     """The saliency map will show the strength
     for each pixel contribution to the final output"""
-    fig, ax = plt.subplots(6, 3, figsize=(5, 13))
+    fig, ax = plt.subplots(6, 3, figsize=(5, 12))
     for x, class_ in enumerate(class_names.items()):
 
         open_dir = (
@@ -75,7 +75,7 @@ def plot_saliency(model, class_names, savefig=True):
         plot_on_axis(image, ax, x, class_, model)
 
     if savefig:
-        fig.savefig(f"{config.BASE_DIR}/plots/saliency_maps.png", dpi=300)
+        fig.savefig(f"{config.BASE_DIR}/plots/saliency_maps.png")
 
 
 def preprocess(image, size=224):
