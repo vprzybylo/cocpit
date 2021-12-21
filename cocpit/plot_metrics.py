@@ -79,7 +79,6 @@ def conf_matrix(all_labels, all_preds, save_name, norm='true', save_fig=False):
     heat.set_yticklabels(heat.get_xticklabels(), rotation=0, fontsize=20)
     if save_fig:
         plt.savefig(save_name, bbox_inches="tight")
-    plt.show()
 
 
 def model_metric_folds(
@@ -146,7 +145,6 @@ def model_metric_folds(
     g.set_ylim(0.75, 1.00)
     if save_fig:
         plt.savefig(save_name, dpi=300, bbox_inches="tight")
-    plt.show()
 
 
 def classification_report_classes(clf_report, save_name, save_fig=False):
@@ -180,4 +178,3 @@ def classification_report_classes(clf_report, save_name, save_fig=False):
     ax.set_title('Weighted')
     if save_fig:
         plt.savefig(save_name, dpi=300, bbox_inches="tight")
-    plt.show()

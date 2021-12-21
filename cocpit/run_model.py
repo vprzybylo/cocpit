@@ -17,7 +17,7 @@ from torchvision import transforms
 from twilio.rest import Client
 
 import cocpit.config as config
-import cocpit.data_loaders as data_loaders  # isort:split
+import cocpit.test_data as loader_predictions  # isort:split
 
 torch.cuda.empty_cache()
 
@@ -87,7 +87,7 @@ def main(df, open_dir, model):
     pd.options.mode.chained_assignment = None  # default='warn'
 
     file_list = df["filename"]
-    test_loader = data_loaders.get_test_loader_df(open_dir, file_list)
+    test_loader = test_data.test_loader(open_dir, file_list)
 
     d, top_class = predict(test_loader, model)
 

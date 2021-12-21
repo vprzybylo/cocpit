@@ -1,8 +1,10 @@
+
 nbextension-scratchpad
 .env
 .DS_store
 .virtual_documents
 cpi_data
+!cpi_data/*.dvc
 test_sheets
 initial_databases
 nohup*
