@@ -1,8 +1,0 @@
-{
-    "python.pythonPath": "/opt/homebrew/Caskroom/miniforge/base/envs/pytorch_env/bin/python",
-    "python.linting.enabled": false,
-    "python.linting.pylintEnabled": true,
-    "C_Cpp.errorSquiggles": "Disabled",
-    "workbench.preferredLightColorTheme": "Visual Studio Dark",
-    "python.formatting.provider": "black"
-}
