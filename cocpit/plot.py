@@ -229,10 +229,7 @@ def sorted_colors(colors, accs):
 def val_acc_fold_bar(colors, kfold, num_models, new_names, val_accs_avg_sort, val_accs):
 
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(7, 7), sharex=True, sharey=True)
-    fig.tight_layout(pad=3.0)
     # fig = plt.figure(figsize=(20,20))
-    ax1 = plt.subplot(2, 1, 1)
-
     for i in range(num_models):
         ax1.plot(
             np.arange(1, (kfold + 1)),
@@ -247,11 +244,11 @@ def val_acc_fold_bar(colors, kfold, num_models, new_names, val_accs_avg_sort, va
         # plt.xlim(1,num_epochs)
         # ax1.legend(title='Model type:', loc='best', prop={'size': 12})
         # Shrink current axis by 20%
-        box = ax1.get_position()
-        ax1.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+        #        box = ax1.get_position()
+        #        ax1.set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
         # Put a legend to the right of the current axis
-        ax1.legend(loc="center left", bbox_to_anchor=(1, 0.5), fontsize=14)
+        ax1.legend(fontsize=14)
         ax1.axes.xaxis.set_ticks(np.arange(1, 6, 1))
         ax1.yaxis.set_ticks_position("both")
         ax1.minorticks_on()
@@ -260,7 +257,6 @@ def val_acc_fold_bar(colors, kfold, num_models, new_names, val_accs_avg_sort, va
         ax1.title.set_text("Validation Data Accuracies")
 
         colors = sorted_colors(colors, val_accs_avg_sort)
-        ax2 = plt.subplot(2, 1, 2)
         plt.bar(
             np.arange(1, num_models + 1),
             [i * 100 for i in val_accs_avg_sort.values()],
@@ -271,10 +267,9 @@ def val_acc_fold_bar(colors, kfold, num_models, new_names, val_accs_avg_sort, va
         plt.ylim(85, 100)
         # plt.xlim(1,num_epochs)
         # Shrink current axis by 20%
-        box = ax2.get_position()
-        ax2.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+        # box = ax2.get_position()
+        # ax2.set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
-        # Put a legend to the right of the current axis
         # Set number of ticks for x-axis
         ax2.set_xticks(np.arange(1, 10))
         # Set ticks labels for x-axis
