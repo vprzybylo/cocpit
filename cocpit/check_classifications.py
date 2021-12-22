@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from PIL import Image
 from torch.autograd import Variable
 from torchvision import transforms
-
+from datetime import datetime
 
 def process_image(image):
     preprocess = transforms.Compose(
@@ -81,6 +81,9 @@ def view_classification(im, prob, crystal_names, savefig=False):
     ax2.set_title("Class Probability")
     plt.show()
     plt.close()
+
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
     if savefig:
         fig.savefig(
             "/data/data/plots/" + current_time + ".png",

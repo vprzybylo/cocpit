@@ -12,8 +12,6 @@ from functools import partial
 
 import numpy as np
 import pandas as pd
-from joblib import Parallel, delayed
-
 
 def get_attributes(filename, open_dir):
     image = pic.Image(open_dir, filename)

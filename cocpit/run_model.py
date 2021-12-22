@@ -3,18 +3,13 @@ classifies unseen images:
 transforms, makes predictions, and appends classification to dataframe
 """
 import os
-from collections import defaultdict
 
-import cv2
 import numpy as np
 import pandas as pd
 import torch
 from dotenv import load_dotenv
-from PIL import Image
-from torch.utils.data import Dataset
 from twilio.rest import Client
 
-import cocpit.config as config
 import cocpit.data_loaders as data_loaders
 import cocpit.predictions as predictions
 

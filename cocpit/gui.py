@@ -10,8 +10,8 @@ import shutil
 import ipywidgets
 import matplotlib.pyplot as plt
 import numpy as np
-from IPython.display import clear_output, display
-from ipywidgets import AppLayout, Button
+from IPython.display import clear_output
+from ipywidgets import Button
 from PIL import Image
 
 import cocpit.config as config

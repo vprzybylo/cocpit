@@ -4,8 +4,6 @@ Retrives data loaders from Pytorch for training and validation data
 
 import cocpit.config as config  # isort: split
 import os
-
-import numpy as np
 import torch
 import torch.utils.data.sampler as sampler
 from PIL import Image, ImageFile

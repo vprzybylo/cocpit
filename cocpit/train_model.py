@@ -2,10 +2,8 @@
 train the CNN model(s)
 """
 import csv
-import operator
 import time
 
-import numpy as np
 import torch
 from torch import nn, optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
