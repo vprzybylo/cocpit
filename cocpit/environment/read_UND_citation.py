@@ -4,7 +4,10 @@ import gzip
 import matplotlib.pyplot as plt
 import numpy as np
 
+from cocpit.auto_str import auto_str
 
+
+@auto_str
 class UND:
     """read UND citation aircraft data"""
 

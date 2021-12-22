@@ -55,6 +55,7 @@ def get_data(phase):
     return ImageFolderWithPaths(root=config.DATA_DIR, transform=transform_dict[phase])
 
 
+@auto_str
 class ImageFolderWithPaths(datasets.ImageFolder):
     """
     Custom dataset that includes image file paths. Extends

@@ -67,8 +67,6 @@ def val_loader_predictions(model, val_data, batch_size, shuffle=True):
     """
 
     loaders = data_loaders.Loader(train_labels=None, batch_size=batch_size)
-    # val_sampler = SubsetRandomSampler(val_idx)
-
     val_loader = loaders.create_loader(val_data, sampler=None)
 
     all_preds = []
