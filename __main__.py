@@ -23,6 +23,7 @@ import warnings
 import pandas as pd
 import torch
 
+
 def _preprocess_sheets():
     """
     separate individual images from sheets of images to be saved
@@ -58,7 +59,7 @@ def _build_model():
     train ML models
     """
 
-    #data = cocpit.data_loaders.get_data()
+    # data = cocpit.data_loaders.get_data()
 
     # loop through batch sizes, models, epochs, and/or folds
     for batch_size in config.BATCH_SIZE:
@@ -89,7 +90,7 @@ def _ice_classification():
     # load df of quality ice particles to make predictions on
     df = pd.read_csv(df_path)
     df = cocpit.run_model.main(df, open_dir, model)
-    df.to_csv(df_path, index=False)
+    # df.to_csv(df_path, index=False)
 
     print("done classifying all images!")
     print("time to classify ice = %.2f seconds" % (time.time() - start_time))

@@ -49,17 +49,22 @@ class Runner:
     def create_dataloaders(self, train_labels, balance_weights: bool = True):
         '''create dataloaders based on split from StratifiedKFold'''
 
-        loaders = data_loaders.Loader(train_labels, self.batch_size)
-        sampler = loaders.balanced_sampler() if balance_weights else None
-        train_loader = loaders.create_loader(self.train_data, sampler)
+        sampler = (
+            data_loaders.balanced_sampler(train_labels) if balance_weights else None
+        )
+        train_loader = data_loaders.create_loader(
+            self.train_data, batch_size=self.batch_size, sampler=sampler
+        )
 
         if config.VALID_SIZE < 0.01:
             # use all data for training - no val loader
             val_loader = None
         else:
-            val_loader = loaders.create_loader(self.val_data, sampler=None)
+            val_loader = data_loaders.create_loader(
+                self.val_data, batch_size=100, sampler=None
+            )
             if config.SAVE_MODEL:
-                loaders.save_valloader(self.val_data)
+                data_loaders.save_valloader(self.val_data)
 
         dataloaders_dict = {"train": train_loader, "val": val_loader}
         return dataloaders_dict

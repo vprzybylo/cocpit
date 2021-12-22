@@ -131,7 +131,6 @@ def model_metric_folds(
         var_name="Metric",
     )
     dd.sort_values("model", inplace=True)
-    print(dd)
 
     g = sns.boxplot(x="model", y="value", data=dd, hue="Metric")
     g.set_xticklabels(g.get_xticklabels(), rotation=90)

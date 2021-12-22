@@ -9,59 +9,49 @@ import cv2
 import numpy as np
 import pandas as pd
 import torch
-import torch.nn.functional as F
 from dotenv import load_dotenv
 from PIL import Image
 from torch.utils.data import Dataset
-from torchvision import transforms
 from twilio.rest import Client
 
 import cocpit.config as config
-import cocpit.test_data as loader_predictions  # isort:split
+import cocpit.data_loaders as data_loaders
+import cocpit.predictions as predictions
 
 torch.cuda.empty_cache()
 
 
-def predict(test_loader, model):
-
-    """Predict the classes of images from a test_loader
-    using a trained CNN.
+def test_loader(open_dir, file_list, batch_size=100, pin_memory=True):
+    """
+    Loads and returns a multi-process test iterator
     """
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model.to(device)
-    model.eval()
-
-    d = defaultdict(list)
-    top_class = []
-    all_outputs = []
-    for batch_idx, (inputs, img_paths) in enumerate(test_loader):
-        with torch.no_grad():
-            inputs = inputs.to(device)
-            logits = model.forward(inputs)
-            ps = F.softmax(logits, dim=1)
-            outputs = ps.cpu().numpy() * 100  # (batch size, # classes)
-
-            all_outputs.append(outputs)
-
-            for pred in outputs:  # batch
-                for c in range(len(config.CLASS_NAMES)):  # class
-                    d[config.CLASS_NAMES[c]].append(pred[c])
-                top_class.append(config.CLASS_NAMES[np.argmax(pred)])
-
-    return d, top_class
+    test_data = data_loaders.TestDataSet(open_dir, file_list)
+    return data_loaders.create_loader(test_data, batch_size=batch_size, sampler=None)
 
 
-def percent_category(df, category="fragment"):
+def percent_category(df, category):
     """
-    find # and % of a category
+    find # and % of a class out of all images for a campaign
     """
 
     len_category = len(df[df["classification"] == category])
     perc_category = (len_category / len(df)) * 100
     perc_category = np.round(perc_category, 2)
 
-    return len_category, perc_category
+    print(f"#/% {category}: ", len_category, perc_category)
+
+
+def append_classifications(df, top_class):
+    '''append the top class'''
+
+    df["classification"] = top_class
+
+    percent_category(df, category="fragment")
+    percent_category(df, category="sphere")
+
+    # don't include fragments or sphere classifications in dataframes
+    return df[(df["classification"] != "fragment") & (df["classification"] != "sphere")]
 
 
 def send_message():
@@ -87,22 +77,17 @@ def main(df, open_dir, model):
     pd.options.mode.chained_assignment = None  # default='warn'
 
     file_list = df["filename"]
-    test_loader = test_data.test_loader(open_dir, file_list)
+    loader = test_loader(open_dir, file_list)
 
-    d, top_class = predict(test_loader, model)
+    # make predictions from test_loader
+    p = predictions.Predict(model, loader)
+    d, top_class = p.all_predictions()
 
     for column in sorted(d.keys()):
         df[column] = d[column]
 
-    df["classification"] = top_class
-
-    len_frag, perc_category = percent_category(df, category="fragment")
-    print("#/% fragment: ", len_frag, perc_category)
-
-    len_sphere, perc_category = percent_category(df, category="sphere")
-    print("#/% sphere: ", len_sphere, perc_category)
-
-    df = df[(df["classification"] != "fragment") & (df["classification"] != "sphere")]
+    # append predictions to dataframe for a campaign
+    df = append_classifications(df, top_class)
 
     send_message()
 

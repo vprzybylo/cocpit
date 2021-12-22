@@ -2,6 +2,8 @@
 plotting functions called in /notebooks/make_plots.ipynb
 """
 
+from collections import OrderedDict
+
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
@@ -173,113 +175,108 @@ def train_val_acc_loss(
         plt.savefig(save_name, dpi=300, bbox_inches="tight")
 
 
-def time_samples(time_csv, save_name, convert_names, save_fig=False):
-    """
-    model vs time it takes to process 100, 1,000, and 10,000 samples
-    """
+def balance_diff_accuracy(
+    num_epochs, df_val, df_val_unbalanced, df_train, df_train_unbalanced, save_fig=False
+):
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 3))
 
-    df = pd.read_csv(time_csv, names=["Model", "Samples", "Time"])
-    df["Model"].astype(str)
-    df["Samples"].astype(int)
-    df["Time"].astype(float)
-    df.replace(convert_names, inplace=True)
-    df = df.set_index("Model")
-    df = df.loc[
-        [
-            "ResNet-18",
-            "AlexNet",
-            "ResNet-34",
-            "Efficient-b0",
-            "VGG-16",
-            "DenseNet-169",
-            "VGG-19",
-            "DenseNet-201",
-            "ResNet-152",
-        ]
-    ]
-    df.reset_index(inplace=True)
+    for c, item in enumerate(
+        [df_val['Accuracy'].values * 100, df_val_unbalanced['Accuracy'].values * 100]
+    ):
 
-    # Model Samples vs. Time
-    ax = sns.catplot(
-        data=df,
-        kind="bar",
-        x="Model",
-        y="Time",
-        hue="Samples",
-        legend=True,
-        ci=False,
-        palette="icefire",
-    )
-    ax.set_xticklabels(rotation=90, fontsize=14)
-    ax.set(xlabel="Model", ylabel="Time [s]")
+        color = 'blue' if c == 0 else 'orange'
+        label = 'Unweighted' if c == 1 else 'Weighted'
+
+        ax1.plot(
+            np.arange(1, len(df_train_unbalanced['Loss']) + 1),
+            item,
+            color=color,
+            label=label,
+        )
+
+    for c, item in enumerate([df_val['Loss'].values, df_val_unbalanced['Loss'].values]):
+
+        color = 'blue' if c == 0 else 'orange'
+        label = 'Unweighted' if c == 1 else 'Weighted'
+
+        ax2.plot(
+            np.arange(1, len(df_train_unbalanced['Loss']) + 1),
+            item,
+            color=color,
+            label=label,
+        )
+    ax1.set_ylabel("Accuracy [%]")
+    ax2.set_ylabel("Loss")
+    ax1.set_xlabel("Epoch")
+    ax2.set_xlabel("Epoch")
+    ax1.set_xlim(1, num_epochs)
+    ax2.set_xlim(1, num_epochs)
+    ax1.set_ylim(85, 100)
+    ax1.legend(loc="best", prop={"size": 14})
+    ax2.legend(loc="best", prop={"size": 14})
+
+    ax1.yaxis.set_ticks_position("both")
+    ax1.minorticks_on()
+    plt.tight_layout()
     if save_fig:
-        plt.savefig(save_name, dpi=300, bbox_inches="tight")
+        plt.savefig(save_name)
 
 
-def efficiency_samples(time_csv, save_name, convert_names, save_fig=False):
-    """
-    model vs efficiency per sample
-    """
-
-    df = pd.read_csv(time_csv, names=["Model", "Samples", "Time"])
-    df["Model"].astype(str)
-    df["Samples"].astype(int)
-    df["Time"].astype(float)
-    df["Efficiency"] = df["Samples"] / df["Time"]
-    df.replace(convert_names, inplace=True)
-    df = df.set_index("Model")
-    df = df.loc[
-        [
-            "ResNet-18",
-            "AlexNet",
-            "ResNet-34",
-            "Efficient-b0",
-            "VGG-16",
-            "DenseNet-169",
-            "VGG-19",
-            "DenseNet-201",
-            "ResNet-152",
-        ]
-    ]
-    df.reset_index(inplace=True)
-
-    # Model Efficiency vs. Time
-    ax = sns.catplot(
-        data=df,
-        kind="bar",
-        x="Model",
-        y="Efficiency",
-        hue="Samples",
-        legend=True,
-        ci=False,
-        palette="icefire",
-    )
-    ax.set_xticklabels(rotation=90, fontsize=14)
-    ax.set(xlabel="Model", ylabel="Efficiency [samples/s]")
-
-    if save_fig:
-        plt.savefig(save_name, dpi=300, bbox_inches="tight")
+def sorted_colors(colors, accs):
+    return OrderedDict([(el, colors[el]) for el in accs])
 
 
-def model_timing(time_csv, convert_names, colors, save_name, save_fig=False):
-    """
-    model vs time it took to train
-    """
-    df = pd.read_csv(time_csv)
-    df.replace(convert_names, inplace=True)
-    df["Model"].astype(str)
-    df["Time"].astype(float)
-    df = df.sort_values(by=["Time"])
-    sorted_colors = {k: colors[k] for k in df["Model"]}
+def val_acc_fold_bar(colors, kfold, num_models, new_names, val_accs_avg_sort, val_accs):
 
-    fig, ax = plt.subplots(1, 1, figsize=(10, 5))
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(7, 7), sharex=True, sharey=True)
+    fig.tight_layout(pad=3.0)
+    # fig = plt.figure(figsize=(20,20))
+    ax1 = plt.subplot(2, 1, 1)
 
-    time = df["Time"] / 60
-    # ax = time.plot(kind='bar')
-    g = sns.barplot(x="Model", y=time, data=df, ci=None, palette=sorted_colors.values())
-    g.set_xlabel("Model")
-    g.set_ylabel("Training Time [minutes]")
-    g.set_xticklabels(df["Model"], rotation=90, fontsize=14)
+    for i in range(num_models):
+        ax1.plot(
+            np.arange(1, (kfold + 1)),
+            [i * 100 for i in val_accs[i, :, -1]],
+            c=colors[new_names[i]],
+            marker="o",
+            label=new_names[i],
+        )
+        plt.ylabel("Accuracy [%]")
+        plt.xlabel("Fold")
+        plt.ylim(70, 100)
+        # plt.xlim(1,num_epochs)
+        # ax1.legend(title='Model type:', loc='best', prop={'size': 12})
+        # Shrink current axis by 20%
+        box = ax1.get_position()
+        ax1.set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
-    if save_fig:
-        plt.savefig(save_name, dpi=300, bbox_inches="tight")
+        # Put a legend to the right of the current axis
+        ax1.legend(loc="center left", bbox_to_anchor=(1, 0.5), fontsize=14)
+        ax1.axes.xaxis.set_ticks(np.arange(1, 6, 1))
+        ax1.yaxis.set_ticks_position("both")
+        ax1.minorticks_on()
+        ax1.tick_params(axis="y", which="minor", direction="out")
+        # ax1.xaxis.set_tick_params(which='minor', bottom=False)
+        ax1.title.set_text("Validation Data Accuracies")
+
+        colors = sorted_colors(colors, val_accs_avg_sort)
+        ax2 = plt.subplot(2, 1, 2)
+        plt.bar(
+            np.arange(1, num_models + 1),
+            [i * 100 for i in val_accs_avg_sort.values()],
+            color=colors.values(),
+        )
+        plt.ylabel("Average Accuracy [%]")
+        plt.xlabel("Model Name")
+        plt.ylim(85, 100)
+        # plt.xlim(1,num_epochs)
+        # Shrink current axis by 20%
+        box = ax2.get_position()
+        ax2.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+        # Put a legend to the right of the current axis
+        # Set number of ticks for x-axis
+        ax2.set_xticks(np.arange(1, 10))
+        # Set ticks labels for x-axis
+        ax2.set_xticklabels(colors.keys(), rotation="vertical")
+        ax2.yaxis.set_ticks_position("both")

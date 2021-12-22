@@ -1,90 +1,77 @@
 import itertools
 import os
+from collections import defaultdict
 
 import numpy as np
 import torch
-from PIL import Image
-from torch.utils.data import Dataset
-from torchvision import transforms
+import torch.nn.functional as F
 
 import cocpit.config as config
-import cocpit.data_loaders as data_loaders
 from cocpit.auto_str import auto_str
 
 
 @auto_str
-class TestDataSet(Dataset):
-    """
-    dataloader for new unseen data
-    """
+class Predict:
+    def __init__(self, model, dataloader):
+        self.model = model
+        self.dataloader = dataloader
 
-    def __init__(self, open_dir, file_list):
+        self.model.to(config.DEVICE)
+        self.model.eval()
 
-        self.open_dir = open_dir
-        self.file_list = list(file_list)
-        self.transform = transforms.Compose(
-            [
-                transforms.Resize((224)),
-                transforms.ToTensor(),
-                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-            ]
-        )
+    def predictions_for_confmatrix(self):
+        """
+        get a list of hand labels and predictions from a saved dataloader/model
 
-    def __len__(self):
-        return len(self.file_list)
+        Returns
+        -------
+        - all_preds (list): predictions from a model
+        - all_labels (list): correct/hand labels
+        """
 
-    def __getitem__(self, idx):
-        self.path = os.path.join(self.open_dir, self.file_list[idx])
-        image = Image.open(self.path)
-        tensor_image = self.transform(image)
-        return (tensor_image, self.path)
+        all_preds = []
+        all_labels = []
+        for ((imgs, labels, img_paths), index) in self.dataloader:
+            with torch.no_grad():
+                # get the inputs
+                imgs = imgs.to(config.DEVICE)
+                labels = labels.to(config.DEVICE)
 
+                output = self.model(imgs)
+                pred = torch.argmax(output, 1)
 
-def test_loader(open_dir, file_list, batch_size=100, shuffle=False, pin_memory=True):
-    """
-    Loads and returns a multi-process test iterator
-    """
+                all_preds.append(pred.cpu().numpy())
+                all_labels.append(labels.cpu().numpy())
 
-    test_data = TestDataSet(open_dir, file_list)
-    loaders = data_loaders.Loader(train_labels=None, batch_size=batch_size)
-    return loaders.create_loader(test_data, sampler=None)
+        all_preds = np.asarray(list(itertools.chain(*all_preds)))
+        all_labels = np.asarray(list(itertools.chain(*all_labels)))
 
+        return all_preds, all_labels
 
-def val_loader_predictions(model, val_data, batch_size, shuffle=True):
-    """
-    get a list of hand labels and predictions from a saved dataloader/model
-    Params
-    ------
-    - model (obj): torch.nn.parallel.data_parallel.DataParallel loaded from saved file
-    - val_data (obj): Loads an object saved with torch.save() from a file
-    - batch_size (int): how many samples per batch to load
-    - shuffle (bool): whether to shuffle the dataset after every epoch.
+    def batch_probability(self, imgs):
+        '''make predictions on a batch of images and convert to probabilities'''
 
-    Returns
-    -------
-    - all_preds (list): predictions from a model
-    - all_labels (list): correct/hand labels
-    """
+        logits = self.model.forward(imgs)
+        ps = F.softmax(logits, dim=1)
+        # put predictions back on CPU and turn into % between 0-100
+        return ps.cpu().numpy() * 100  # dimension of (batch size, # classes)
 
-    loaders = data_loaders.Loader(train_labels=None, batch_size=batch_size)
-    val_loader = loaders.create_loader(val_data, sampler=None)
+    def all_predictions(self):
 
-    all_preds = []
-    all_labels = []
-    with torch.no_grad():
+        """Predict the classes of images from a test_loader
+        in batches using a trained CNN.  No labels associated.
+        """
 
-        for batch_idx, ((imgs, labels, img_paths), index) in enumerate(val_loader):
-            # get the inputs
-            inputs = imgs.to(config.DEVICE)
-            labels = labels.to(config.DEVICE)
+        d = defaultdict(list)
+        top_class = []
+        for batch_idx, (imgs, img_paths) in enumerate(self.dataloader):
+            with torch.no_grad():
+                imgs = imgs.to(config.DEVICE)
 
-            output = model(inputs)
-            pred = torch.argmax(output, 1)
+                batch_output = self.batch_probability(imgs)
+                for pred in batch_output:
+                    for c in range(len(config.CLASS_NAMES)):  # class
+                        d[config.CLASS_NAMES[c]].append(pred[c])
+                    top_class.append(config.CLASS_NAMES[np.argmax(pred)])
 
-            all_preds.append(pred.cpu().numpy())
-            all_labels.append(labels.cpu().numpy())
-
-    all_preds = np.asarray(list(itertools.chain(*all_preds)))
-    all_labels = np.asarray(list(itertools.chain(*all_labels)))
-
-    return all_preds, all_labels
+        return d, top_class
