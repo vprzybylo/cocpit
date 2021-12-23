@@ -9,7 +9,7 @@ model configurations for:
 
 import torch
 from torch import nn
-
+import numpy as np
 import cocpit.config as config
 
 
@@ -69,14 +69,13 @@ def update_params(model, feature_extract=False):
     return params_to_update
 
 
-def label_counts(i, labels):
+def label_counts(i, label_cnts, labels):
     """
     Calculate the # of labels per batch to ensure
     weighted random sampler is correct
     """
 
     num_classes = len(config.CLASS_NAMES)
-    label_cnts = [0] * len(range(num_classes))
     for n in range(len(range(num_classes))):
         label_cnts[n] += len(np.where(labels.numpy() == n)[0])
 

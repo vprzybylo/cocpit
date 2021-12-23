@@ -38,8 +38,6 @@ class Metrics:
     """
 
     def __init__(self):
-
-        self.best_acc = 0.0
         self.loss = 0.0
         self.totals = 0.0
         self.running_loss = 0.0
@@ -92,29 +90,16 @@ class Metrics:
             Accuracy: {self.epoch_acc:.3f}"
         )
 
-    def reset_totals(self):
-        """
-        clear out cumulative loss, accuracy, predictions, and labels for new epoch/phase
-        """
-        self.totals = 0.0
-        self.running_loss = 0.0  # across batches
-        self.running_corrects = 0.0
-        self.all_preds = []
-        self.all_labels = []
-
-
 ##############
 
 
 def log_metrics(
     metric_instance,
     kfold,
-    model,
     batch_size,
     model_name,
     epoch,
     epochs,
-    scheduler,
     phase,
     acc_savename,
 ):
