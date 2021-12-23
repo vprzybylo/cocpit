@@ -11,7 +11,6 @@ import torch
 import cocpit
 import cocpit.data_loaders as data_loaders
 
-# import cocpit.auto_str as auto_str
 import cocpit.config as config  # isort: split
 from collections import Counter
 
@@ -71,14 +70,10 @@ class Runner:
 
     def train_model(self, dataloaders_dict):
         '''train model'''
-        cocpit.train_model.train_model(
-            self.kfold,
-            self.model,
-            self.batch_size,
-            self.model_name,
-            self.epochs,
-            dataloaders_dict,
-        )
+        t = cocpit.train_model.Train(self.kfold, self.model, self.batch_size,
+                                 self.model_name, self.epochs, dataloaders_dict)
+        t.model_config()
+        t.train_model()
 
 
 #############

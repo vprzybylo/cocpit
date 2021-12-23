@@ -18,7 +18,6 @@ import cocpit
 import cocpit.config as config  # isort: split
 import os
 import time
-import warnings
 
 import pandas as pd
 import torch
