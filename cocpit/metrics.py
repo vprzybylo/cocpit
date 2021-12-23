@@ -15,8 +15,8 @@ import pandas as pd
 import torch
 from sklearn.metrics import classification_report
 
-import cocpit
 import cocpit.config as config  # isort:split
+import cocpit.plotting_scripts.plot_metrics as plot_metrics
 
 
 def auto_str(cls):
@@ -90,6 +90,7 @@ class Metrics:
             Accuracy: {self.epoch_acc:.3f}"
         )
 
+
 ##############
 
 
@@ -150,7 +151,8 @@ def sklearn_report(val_metrics, fold, model_name):
     """
     all_labels = np.asarray(list(itertools.chain(*val_metrics.all_labels)))
     all_preds = np.asarray(list(itertools.chain(*val_metrics.all_preds)))
-
+    print(all_preds)
+    print(all_labels)
     clf_report = classification_report(
         all_labels,
         all_preds,
@@ -180,7 +182,7 @@ def log_confusion_matrix(val_metrics):
     all_labels = np.asarray(list(itertools.chain(*val_metrics.all_labels)))
     all_preds = np.asarray(list(itertools.chain(*val_metrics.all_preds)))
 
-    cocpit.plotting_scripts.plot_metrics.conf_matrix(
+    plot_metrics.conf_matrix(
         all_labels,
         all_preds,
         save_name=config.CONF_MATRIX_SAVENAME,
@@ -194,7 +196,7 @@ def log_confusion_matrix(val_metrics):
         )
 
     # unnormalized matrix
-    cocpit.plotting_scripts.plot_metrics.conf_matrix(
+    plot_metrics.conf_matrix(
         all_labels,
         all_preds,
         norm=None,

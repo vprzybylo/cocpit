@@ -7,6 +7,7 @@ import random
 
 import numpy as np
 import torch
+import torch.utils.data.sampler as samp
 
 import cocpit
 import cocpit.data_loaders as data_loaders
@@ -59,8 +60,9 @@ class Runner:
             # use all data for training - no val loader
             val_loader = None
         else:
+            val_sampler = samp.RandomSampler(self.val_data)
             val_loader = data_loaders.create_loader(
-                self.val_data, batch_size=100, sampler=None
+                self.val_data, batch_size=100, sampler=val_sampler
             )
             if config.SAVE_MODEL:
                 data_loaders.save_valloader(self.val_data)
@@ -70,8 +72,14 @@ class Runner:
 
     def train_model(self, dataloaders_dict):
         '''train model'''
-        t = cocpit.train_model.Train(self.kfold, self.model, self.batch_size,
-                                 self.model_name, self.epochs, dataloaders_dict)
+        t = cocpit.train_model.Train(
+            self.kfold,
+            self.model,
+            self.batch_size,
+            self.model_name,
+            self.epochs,
+            dataloaders_dict,
+        )
         t.model_config()
         t.train_model()
 

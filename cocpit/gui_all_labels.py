@@ -1,8 +1,6 @@
 """
 Holds the class for ipywidget buttons to
-label incorrect predictions from a dataloader.
-The dataloader, model, and all class variables
-are initialized in notebooks/move_wrong_predictions.ipynb
+label images from a dataloader.
 """
 
 import shutil

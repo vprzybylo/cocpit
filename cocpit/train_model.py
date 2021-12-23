@@ -36,7 +36,7 @@ class Train:
             self.optimizer, mode="max", factor=0.5, patience=0, verbose=True, eps=1e-04
         )
 
-    def phase(self):
+    def determine_phases(self):
         """determine if there is both a training and validation phase"""
         if config.VALID_SIZE < 0.1:
             self.phases = ["train"]
@@ -51,16 +51,8 @@ class Train:
                 index, label_cnts_total, labels
             )
             label_cnts_total = list(map(operator.add, label_cnts, label_cnts_total))
-            print(label_cnts_total)
 
-    def batch_metrics(self, metrics):
-        metrics.update_batch_metrics(self.loss, self.inputs, self.preds, self.labels)
-        if (self.batch + 1) % 5 == 0:
-            metrics.print_batch_metrics(
-                self.labels, self.batch, self.phase, self.dataloaders_dict
-            )
-
-    def epoch_metrics(self, metrics, best_acc, epoch):
+    def log_epoch_metrics(self, metrics, best_acc, epoch):
         """log epoch metrics to comet and write to file
         also saves model if acc improves"""
         cocpit.metrics.log_metrics(
@@ -92,8 +84,34 @@ class Train:
                 self.loss.backward()  # compute updates for each parameter
                 self.optimizer.step()  # make the updates for each parameter
 
-    def train_batch(self, print_label_count=False):
-        """iterate over a batch in a dataloader and train"""
+    def batch_metrics(self):
+        """calculate and log batch metrics"""
+        if self.phase == "train" or config.VALID_SIZE < 0.01:
+
+            self.train_metrics.update_batch_metrics(
+                self.loss, self.inputs, self.preds, self.labels
+            )
+            # print train batch metrics
+            if (self.batch + 1) % 5 == 0:
+                self.train_metrics.print_batch_metrics(
+                    self.labels, self.batch, self.phase, self.dataloaders_dict
+                )
+
+        else:
+            self.val_metrics.update_batch_metrics(
+                self.loss, self.inputs, self.preds, self.labels
+            )
+            # print val batch metrics
+            if (self.batch + 1) % 5 == 0:
+                self.val_metrics.print_batch_metrics(
+                    self.labels, self.batch, self.phase, self.dataloaders_dict
+                )
+                # append batch prediction and labels for plots
+                self.val_metrics.all_preds.append(self.preds.cpu().numpy())
+                self.val_metrics.all_labels.append(self.labels.cpu().numpy())
+
+    def iterate_batches(self, print_label_count=False):
+        """iterate over a batch in a dataloader and train or evaluate"""
 
         label_cnts_total = np.zeros(len(config.CLASS_NAMES))
         for self.batch, ((inputs, labels, paths), index) in enumerate(
@@ -108,6 +126,19 @@ class Train:
             # zero the parameter gradients
             self.optimizer.zero_grad()
             self.forward()
+            self.batch_metrics()
+
+    def epoch_metrics(self, epoch):
+        """call epoch metrics"""
+        if self.phase == "train" or config.VALID_SIZE < 0.01:
+            (
+                self.train_best_acc,
+                self.train_metrics.epoch_acc,
+            ) = self.log_epoch_metrics(self.train_metrics, self.train_best_acc, epoch)
+        else:
+            self.val_best_acc, self.val_metrics.epoch_acc = self.log_epoch_metrics(
+                self.val_metrics, self.val_best_acc, epoch
+            )
 
     def confusion_matrix(self, epoch):
         """log confusion matrix"""
@@ -154,35 +185,12 @@ class Train:
             )
         )
 
-    def call_batch_metrics(self):
-        '''call batch training'''
-        self.train_batch()
-        if self.phase == "train" or config.VALID_SIZE < 0.01:
-            self.batch_metrics(self.train_metrics)
-        else:
-            self.batch_metrics()
-            # append batch prediction and labels for plots
-            self.val_metrics.all_preds.append(self.preds.cpu().numpy())
-            self.val_metrics.all_labels.append(self.labels.cpu().numpy())
-
-    def call_epoch_metrics(self, epoch):
-        '''call epoch metrics'''
-        if self.phase == "train" or config.VALID_SIZE < 0.01:
-            (
-                self.train_best_acc,
-                self.train_metrics.epoch_acc,
-            ) = self.epoch_metrics(self.train_metrics, self.train_best_acc, epoch)
-        else:
-            self.val_best_acc, self.val_metrics.epoch_acc = self.epoch_metrics(
-                self.val_metrics, self.val_best_acc, epoch
-            )
-
     def reduce_lr(self):
         """reduce learning rate upon plateau in epoch validation accuracy"""
         self.scheduler.step(self.val_metrics.epoch_acc)
 
     def train_model(self, norm_values=False):
-        '''calls above methods to train across epochs and batches'''
+        """calls above methods to train across epochs and batches"""
         self.train_best_acc = 0.0
         self.val_best_acc = 0.0
         since_total = time.time()
@@ -191,7 +199,7 @@ class Train:
             since_epoch = time.time()
             print("-" * 20)
 
-            self.phase()
+            self.determine_phases()
             for self.phase in self.phases:
                 print("Phase: {}".format(self.phase))
                 if self.phase == "train":
@@ -209,8 +217,11 @@ class Train:
                         self.dataloaders_dict, phase
                     )
 
-                self.call_batch_metrics()
-                self.call_epoch_metrics(epoch)
+                self.iterate_batches()
+                self.epoch_metrics(epoch)
+                if self.phase == "val":
+                    self.confusion_matrix(epoch)
+                    self.classification_report(epoch)
             self.reduce_lr()
             self.print_time_one_epoch(since_epoch)
         self.print_time_all_epochs(since_total)
