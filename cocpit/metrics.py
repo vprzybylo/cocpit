@@ -195,7 +195,7 @@ def log_confusion_matrix(val_metrics):
     all_labels = np.asarray(list(itertools.chain(*val_metrics.all_labels)))
     all_preds = np.asarray(list(itertools.chain(*val_metrics.all_preds)))
 
-    cocpit.plot_metrics.conf_matrix(
+    cocpit.plotting_scripts.plot_metrics.conf_matrix(
         all_labels,
         all_preds,
         save_name=config.CONF_MATRIX_SAVENAME,
@@ -209,7 +209,7 @@ def log_confusion_matrix(val_metrics):
         )
 
     # unnormalized matrix
-    cocpit.plot_metrics.conf_matrix(
+    cocpit.plotting_scripts.plot_metrics.conf_matrix(
         all_labels,
         all_preds,
         norm=None,
