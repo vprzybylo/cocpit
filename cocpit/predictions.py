@@ -1,3 +1,6 @@
+'''holds methods regarding making model predictions
+for confusion matrices and running the model on new data'''
+
 import itertools
 import os
 from collections import defaultdict

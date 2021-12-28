@@ -1,3 +1,5 @@
+'''plot the efficiency of the model and how long it takes to make predictions from .csv during training'''
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
