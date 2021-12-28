@@ -4,7 +4,8 @@ services:
     build:
         context: .
         dockerfile: Dockerfile_code_server
-    container_name: code-server
+    image: vprzybylo/code_server:v0.0.0
+    container_name: code-server-vanessa
     environment:
       - PORT=8443 code-server
       - PUID=1001
