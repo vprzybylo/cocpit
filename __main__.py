@@ -1,4 +1,4 @@
-#!/opt/conda/bin/python
+#! /usr/bin/python3.9
 """COCPIT package for classifying ice crystal images from the CPI probe
 Usage:
 ------

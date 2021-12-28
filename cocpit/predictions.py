@@ -57,7 +57,6 @@ class Predict:
         return ps.cpu().numpy() * 100  # dimension of (batch size, # classes)
 
     def all_predictions(self):
-
         """Predict the classes of images from a test_loader
         in batches using a trained CNN.  No labels associated.
         """

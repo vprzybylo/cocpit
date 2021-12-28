@@ -20,7 +20,7 @@ RUN pip3 install --upgrade pip
 
 COPY requirements_dev.txt /requirements_dev.txt
 RUN pip3 install -r /requirements_dev.txt
-EXPOSE 8889
+EXPOSE 8890
 
 RUN jupyter lab build -y
-CMD ["sh","-c", "jupyter lab --notebook-dir=/data/data/ --ip=0.0.0.0 --no-browser --allow-root --port=8889 --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.allow_origin='*'"]
+CMD ["sh","-c", "jupyter lab --notebook-dir=/data/data/ --ip=0.0.0.0 --no-browser --allow-root --port=8890 --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.allow_origin='*'"]

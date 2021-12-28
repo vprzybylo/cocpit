@@ -1,0 +1,52 @@
+version: "2.1"
+services:
+  code-server:
+    build:
+        context: .
+        dockerfile: Dockerfile_code_server
+    container_name: code-server
+    environment:
+      - PORT=8443 code-server
+      - PUID=1001
+      - PGID=1001
+      - TZ=America/New_York
+    user: "${UID}"
+    shm_size: '256G'
+    volumes:
+      - /raid/data/:/data/data/
+    deploy:
+        resources:
+           limits:
+                cpus: '10'
+           reservations:
+                devices:
+                    - driver: nvidia
+                      capabilities: [ gpu ]
+                      device_ids: ['5,6']
+    ports:
+      - 8443:8443
+    restart: unless-stopped
+
+  cocpit:
+    image: vprzybylo/cocpit_dev:v1.4.0
+    container_name: jupyter_cocpit_dev
+    user: "${UID}"
+    environment:
+      - PUID=1001
+      - PGID=1001
+    volumes:
+      - /raid/data/:/data/data/
+    ports:
+      - 8889:8889
+    shm_size: '256G'
+    runtime: nvidia
+    deploy:
+        resources:
+            limits:
+                cpus: '10'
+            reservations:
+                devices:
+                    - driver: nvidia
+                      capabilities: [ gpu ]
+                      device_ids: ['5,6']
+    restart: unless-stopped
