@@ -11,6 +11,7 @@ services:
       - PUID=1001
       - PGID=1001
       - TZ=America/New_York
+      - DEFAULT_WORKSPACE=/data/data
     user: "${UID}"
     shm_size: '256G'
     volumes:
