@@ -3,7 +3,7 @@ services:
   code-server:
     build:
         context: .
-        dockerfile: Dockerfile_code_server
+        dockerfile: Dockerfile_codercom
     image: vprzybylo/code_server:v0.0.0
     container_name: code-server-vanessa
     environment:
@@ -11,11 +11,12 @@ services:
       - PUID=1001
       - PGID=1001
       - TZ=America/New_York
-      - DEFAULT_WORKSPACE=/data/data
-    user: "${UID}"
     shm_size: '256G'
+    user: ${UID_GID}
     volumes:
       - /raid/data/:/data/data/
+      - $PWD/.config:/home/coder/.config
+      - $HOME:/home/coder/project
     deploy:
         resources:
            limits:
@@ -32,7 +33,6 @@ services:
   cocpit:
     image: vprzybylo/cocpit_dev:v1.4.0
     container_name: jupyter_cocpit_dev
-    user: "${UID}"
     environment:
       - PUID=1001
       - PGID=1001
@@ -41,6 +41,7 @@ services:
     ports:
       - 8889:8889
     shm_size: '256G'
+    user: ${UID_GID}
     runtime: nvidia
     deploy:
         resources:
