@@ -21,17 +21,19 @@ RUN pip3 install --upgrade pip
 COPY requirements_dev.txt /requirements_dev.txt
 RUN pip3 install -r /requirements_dev.txt
 
-RUN wget https://github.com/cdr/code-server/releases/download/3.2.0/code-server-3.2.0-linux-x86_64.tar.gz && tar -xzvf code-server-3.2.0-linux-x86_64.tar.gz
+RUN wget https://github.com/cdr/code-server/releases/download/v3.12.0/code-server-3.12.0-linux-amd64.tar.gz  && \
+	tar -xzvf code-server-3.12.0-linux-amd64.tar.gz
 
 # auto load vscode extensions following: publisher.extension
-CMD /bin/bash -c "./code-server-3.2.0-linux-x86_64/code-server \
+CMD /bin/bash -c "./code-server-3.12.0-linux-amd64/code-server \
 	--install-extension ms-python.python \
 	--install-extension tabnine.tabnine-vscode \
 	--install-extension coenraads.bracket-pair-colorizer \
 	--install-extension gimly81.fortran \
 	--install-extension eamodio.gitlens \
 	--install-extension grapecity.gc-excelviewer && \
-	./code-server-3.2.0-linux-x86_64/code-server \
+	./code-server-3.12.0-linux-amd64/code-server \
 	--host 0.0.0.0 \
 	--port 8443 \
+	--auth none \
 	/data/data"
