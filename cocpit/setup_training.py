@@ -98,6 +98,7 @@ def data_setup(train_indices, val_indices, composition: bool = False):
     '''apply different transforms to train and
     validation datasets from ImageFolder'''
     data = data_loaders.get_data('train')
+    print(len(data))
     train_labels = list(map(data.targets.__getitem__, train_indices))
     train_data = torch.utils.data.Subset(data, train_indices)
 
@@ -143,19 +144,19 @@ def nofold_indices():
     if not applying cross-fold validation, split training dataset
     based on config.VALID_SIZE
     shuffle first and then split dataset'''
-    total_size = -1
-    for base, dirs, files in os.walk(config.DATA_DIR):
-        total_size += len(files)
+
+    total_files = sum([len(files) for r, d, files in os.walk(config.DATA_DIR)])
+    print(f'len files {total_files}')
 
     # randomly split indices for training and validation indices according to valid_size
     if config.VALID_SIZE < 0.01:
         # use all of the data
-        train_indices = np.arange(0, total_size)
+        train_indices = np.arange(0, total_files)
         random.shuffle(train_indices)
         val_indices = None
     else:
         train_indices, val_indices = train_test_split(
-            list(range(total_size)), test_size=config.VALID_SIZE
+            list(range(total_files)), test_size=config.VALID_SIZE
         )
     return train_indices, val_indices
 

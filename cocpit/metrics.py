@@ -151,8 +151,6 @@ def sklearn_report(val_metrics, fold, model_name):
     """
     all_labels = np.asarray(list(itertools.chain(*val_metrics.all_labels)))
     all_preds = np.asarray(list(itertools.chain(*val_metrics.all_preds)))
-    print(all_preds)
-    print(all_labels)
     clf_report = classification_report(
         all_labels,
         all_preds,

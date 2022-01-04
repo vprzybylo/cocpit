@@ -39,6 +39,8 @@ CMD /bin/bash -c "./code-server-4.0.0-linux-amd64/code-server \
 	--install-extension tabnine.tabnine-vscode \
 	--install-extension coenraads.bracket-pair-colorizer \
 	--install-extension gimly81.fortran \
+	--install-extension njpwerner.autodocstring \
+	--install-extension ms-pyright.pyright \
 	--install-extension eamodio.gitlens \
 	--install-extension grapecity.gc-excelviewer && \
 	./code-server-4.0.0-linux-amd64/code-server \
