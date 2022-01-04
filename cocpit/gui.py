@@ -5,6 +5,7 @@ The dataloader, model, and all class variables
 are initialized in notebooks/move_wrong_predictions.ipynb
 """
 
+import functools
 import itertools
 import shutil
 
@@ -23,6 +24,8 @@ from cocpit.auto_str import auto_str
 
 @auto_str
 class LoaderPredictions(object):
+    '''finds all incorrect predictions from a model and dataloader (across batches)'''
+
     def __init__(self):
         self.all_labels = []
         self.all_paths = []
@@ -82,16 +85,20 @@ class LoaderPredictions(object):
 
         # find indices where human labeled as one thing and model labeled as another
         # according to human_label and model_label above
-        for i in idx_human[0]:
-            if self.all_max_preds[i] == model_label:
-                wrong_trunc.append(i)
+        [
+            self.wrong_trunc.append(i)
+            for i in idx_human[0]
+            if self.all_max_preds[i] == model_label
+        ]
         cat1 = list(label_list.keys())[list(label_list.values()).index(human_label)]
         cat2 = list(label_list.keys())[list(label_list.values()).index(model_label)]
-        print(f"{len(wrong_trunc)} wrong predictions between {cat1} and {cat2}")
+        print(f"{len(self.wrong_trunc)} wrong predictions between {cat1} and {cat2}")
 
 
 @auto_str
 class BatchPredictions(LoaderPredictions):
+    '''finds wrong predictions for a given batch'''
+
     def __init__(
         self,
         lp,  # instance of LoaderPrediction
@@ -104,7 +111,11 @@ class BatchPredictions(LoaderPredictions):
         self.imgs = imgs
         self.labels = labels
         self.paths = paths
-        self.wrong_index = []
+        self.wrong_idx = []
+        self.logits = None
+        self.max_preds = None
+        self.probs = None
+        self.classes = None
 
     def find_wrong_indices(self):
         self.imgs = self.imgs.to(config.DEVICE)
@@ -154,25 +165,35 @@ class GUI(LoaderPredictions):
     to label wrong predictions from validation dataloader
     """
 
-    def __init__(self):
+    def __init__(self, lp):
         super().__init__()
-        """
-        requires human labels, image absolute paths, the top k probabilities output
-        by the model for a bar chart of predictions, the top k class names that
-        correspond to the top k probabilities, and the class index with
-        the highest probability
-        """
+        self.lp = lp  # instance of LoaderPrediction
+
+        # variables at indices based on user input of specific categories to sift through
+        self.all_labels = lp.all_labels[lp.wrong_trunc]
+        self.all_paths = lp.all_paths[lp.wrong_trunc]
+        self.all_topk_probs = lp.all_topk_probs[lp.wrong_trunc]
+        self.all_topk_classes = lp.all_topk_classes[lp.wrong_trunc]
+
+        # variables at a specific index/image within the two categories
         self.index = 0
         self.count = 0  # number of moved images
+        self.label = self.all_labels[self.index]
+
+        self.path = self.all_paths[self.index]
+        self.topk_probs = self.all_topk_probs[self.index]
+        self.topk_classes = self.all_topk_classes[self.index]
+        self.center = None
+        self.menu = None
+        self.forward = None
 
     def make_buttons(self):
         """
         use ipywidgets to create a box for the image, bar chart, dropdown,
         and next button
         """
-        self.center = ipywidgets.Output()  # center image with predictions
-
         self.label = self.all_labels[self.index]
+        self.center = ipywidgets.Output()  # center image with predictions
         self.menu = ipywidgets.Dropdown(
             options=config.CLASS_NAMES,
             description="Category:",
@@ -211,11 +232,12 @@ class GUI(LoaderPredictions):
         create a bar chart with the top k predictions
         from the image at the current index
         """
+
+        # update for new index
         self.label = self.all_labels[self.index]
         self.path = self.all_paths[self.index]
         self.topk_probs = self.all_topk_probs[self.index]
         self.topk_classes = self.all_topk_classes[self.index]
-        self.max_pred = self.all_max_preds[self.index]
 
         # puts class names in order based on probabilty of prediction
         crystal_names = [config.CLASS_NAMES[e] for e in self.topk_classes]
