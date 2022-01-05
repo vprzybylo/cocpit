@@ -24,7 +24,7 @@ from cocpit.auto_str import auto_str
 
 @auto_str
 class LoaderPredictions(object):
-    '''finds all incorrect predictions from a model and dataloader (across batches)'''
+    """finds all incorrect predictions from a model and dataloader (across batches)"""
 
     def __init__(self):
         self.all_labels = []
@@ -97,7 +97,7 @@ class LoaderPredictions(object):
 
 @auto_str
 class BatchPredictions(LoaderPredictions):
-    '''finds wrong predictions for a given batch'''
+    """finds wrong predictions for a given batch"""
 
     def __init__(
         self,
@@ -162,30 +162,38 @@ class BatchPredictions(LoaderPredictions):
 class GUI(LoaderPredictions):
     """
     creates buttons in notebooks/move_wrong_predictions.ipynb
-    to label wrong predictions from validation dataloader
+    and notebooks/gui_check_dataset_one_class.ipynb
+    to label predictions
     """
 
-    def __init__(self, lp):
+    def __init__(self, all_labels=None, all_paths=None, lp=None):
         super().__init__()
-        self.lp = lp  # instance of LoaderPrediction
 
-        # variables at indices based on user input of specific categories to sift through
-        self.all_labels = lp.all_labels[lp.wrong_trunc]
-        self.all_paths = lp.all_paths[lp.wrong_trunc]
-        self.all_topk_probs = lp.all_topk_probs[lp.wrong_trunc]
-        self.all_topk_classes = lp.all_topk_classes[lp.wrong_trunc]
-
-        # variables at a specific index/image within the two categories
         self.index = 0
         self.count = 0  # number of moved images
-        self.label = self.all_labels[self.index]
-
-        self.path = self.all_paths[self.index]
-        self.topk_probs = self.all_topk_probs[self.index]
-        self.topk_classes = self.all_topk_classes[self.index]
         self.center = None
         self.menu = None
         self.forward = None
+        if lp is not None:
+            # variables at wrong indices based on user input of specific categories to sift through
+            # used in gui_move_wrong_prediction.ipynb
+            self.wrong = True
+            self.all_labels = lp.all_labels[lp.wrong_trunc]
+            self.all_paths = lp.all_paths[lp.wrong_trunc]
+            self.all_topk_probs = lp.all_topk_probs[lp.wrong_trunc]
+            self.all_topk_classes = lp.all_topk_classes[lp.wrong_trunc]
+
+        #             # variables at a specific index/image within the two categories
+        #             self.label = self.all_labels[self.index]
+        #             self.path = self.all_paths[self.index]
+        #             self.topk_probs = self.all_topk_probs[self.index]
+        #             self.topk_classes = self.all_topk_classes[self.index]
+        else:
+            # used in gui_check_dataset_one_class.ipynb
+            # all labels and paths of training dataset
+            self.wrong = False
+            self.all_labels = all_labels
+            self.all_paths = all_paths
 
     def make_buttons(self):
         """
@@ -236,17 +244,19 @@ class GUI(LoaderPredictions):
         # update for new index
         self.label = self.all_labels[self.index]
         self.path = self.all_paths[self.index]
-        self.topk_probs = self.all_topk_probs[self.index]
-        self.topk_classes = self.all_topk_classes[self.index]
-
-        # puts class names in order based on probabilty of prediction
-        crystal_names = [config.CLASS_NAMES[e] for e in self.topk_classes]
-
         # add chart to ipywidgets.Output()
         with self.center:
-            self.view_classifications(crystal_names)
+            if self.wrong:
+                self.topk_probs = self.all_topk_probs[self.index]
+                self.topk_classes = self.all_topk_classes[self.index]
 
-    def view_classifications(self, crystal_names):
+                # puts class names in order based on probabilty of prediction
+                crystal_names = [config.CLASS_NAMES[e] for e in self.topk_classes]
+                self.view_classifications_wrong(crystal_names)
+            else:
+                self.view_classifications()
+
+    def view_classifications_wrong(self, crystal_names):
         """
         bar chart code
         outputs top k predictions for a given image
@@ -271,6 +281,25 @@ class GUI(LoaderPredictions):
             ax2.tick_params(axis="y", rotation=45)
             ax2.invert_yaxis()  # labels read top-to-bottom
             ax2.set_title("Class Probability")
+            plt.show()
+
+        except FileNotFoundError:
+            print("This file was already moved and cannot be found. Please hit Next.")
+            pass
+
+    def view_classifications(self):
+        """
+        show image
+        """
+        clear_output()  # so that the next fig doesnt display below
+        try:
+            fig, ax1 = plt.subplots(
+                constrained_layout=True, figsize=(5, 7), ncols=1, nrows=1
+            )
+            image = Image.open(self.path)
+            ax1.imshow(image)
+            ax1.set_title(f"Human Labeled as: {config.CLASS_NAMES[self.label]}\n")
+            ax1.axis("off")
             plt.show()
 
         except FileNotFoundError:
