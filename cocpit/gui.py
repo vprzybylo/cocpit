@@ -183,11 +183,6 @@ class GUI(LoaderPredictions):
             self.all_topk_probs = lp.all_topk_probs[lp.wrong_trunc]
             self.all_topk_classes = lp.all_topk_classes[lp.wrong_trunc]
 
-        #             # variables at a specific index/image within the two categories
-        #             self.label = self.all_labels[self.index]
-        #             self.path = self.all_paths[self.index]
-        #             self.topk_probs = self.all_topk_probs[self.index]
-        #             self.topk_classes = self.all_topk_classes[self.index]
         else:
             # used in gui_check_dataset_one_class.ipynb
             # all labels and paths of training dataset
