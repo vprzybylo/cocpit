@@ -35,13 +35,8 @@ geometric_attributes:
     - e.g., area ratio, roundness, aspect ratio
     - length and width of particle calculated in process_sheets.py before resizing
 
-gui_all_labels:
-    - An ipywidget interface for nested classification that separates images within a class
-    - uses a dataloader to iterate through a labeled class and user executes the separation through a dropdown menu
-    - called in notebooks/gui_check_dataset_one_class.ipynb
-
 gui.py
-    - An ipywidget interface for ensuring training dataset labels are correct 
+    - An ipywidget interface for ensuring training dataset labels are correct
     - incorrect predictions on a validation dataloader is iterated over
     - images are displayed with model predictions and human label
     - if a label is incorrect a user can move the image within the labeled dataset using a dropdown menu
@@ -89,7 +84,7 @@ run_model:
     -classifies good ice images through a convolutional neural network that
     was presaved or built in build_ML_model
     -transforms, makes predictions, and appends classification to dataframe
-    
+
 setup_training:
     - train model with k folds for cross validation across samples called in __main__.py
     - runner class to get dataloaders and set up cross validation
