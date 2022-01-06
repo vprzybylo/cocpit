@@ -24,17 +24,13 @@ class Train:
         self.epochs = epochs
         self.dataloaders_dict = dataloaders_dict
 
-    def model_config(self):
-        """model configurations"""
-        self.model = cocpit.model_config.to_device(self.model)
-        params_to_update = cocpit.model_config.update_params(self.model)
-        self.optimizer = optim.SGD(
-            params_to_update, lr=0.01, momentum=0.9, nesterov=True
-        )
-        self.criterion = nn.CrossEntropyLoss()  # Loss function
-        self.scheduler = ReduceLROnPlateau(
-            self.optimizer, mode="max", factor=0.5, patience=0, verbose=True, eps=1e-04
-        )
+        self.phases = None  # train/val
+        self.phase = None
+        self.loss = None
+        self.preds = None
+        self.batch = None
+        self.kfold = None
+        self.batch_size = None
 
     def determine_phases(self):
         """determine if there is both a training and validation phase"""

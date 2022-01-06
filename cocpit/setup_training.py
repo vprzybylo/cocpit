@@ -30,6 +30,11 @@ class Runner:
         self.val_data = val_data
         self.batch_size = batch_size
 
+        self.model = None
+        self.criterion = None
+        self.scheduler = None
+        self.optimizer = None
+
     def update_save_names(self):
         '''update save names for model and dataloader so that each fold gets saved'''
         config.VAL_LOADER_SAVENAME = (
@@ -41,6 +46,18 @@ class Runner:
             f"{config.MODEL_SAVE_DIR}e{config.MAX_EPOCHS}"
             f"_bs{config.BATCH_SIZE}"
             f"_k{str(self.kfold)}_vgg16.pt"
+        )
+
+    def model_config(self):
+        """model configurations"""
+        self.model = cocpit.model_config.to_device(self.model)
+        params_to_update = cocpit.model_config.update_params(self.model)
+        self.optimizer = optim.SGD(
+            params_to_update, lr=0.01, momentum=0.9, nesterov=True
+        )
+        self.criterion = nn.CrossEntropyLoss()  # Loss function
+        self.scheduler = ReduceLROnPlateau(
+            self.optimizer, mode="max", factor=0.5, patience=0, verbose=True, eps=1e-04
         )
 
     def initialize_model(self):
@@ -80,7 +97,7 @@ class Runner:
             self.epochs,
             dataloaders_dict,
         )
-        t.model_config()
+        self.model_config()
         t.train_model()
 
 

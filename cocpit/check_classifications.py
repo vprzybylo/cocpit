@@ -13,7 +13,10 @@ from PIL import Image
 from torch.autograd import Variable
 from torchvision import transforms
 
+from cocpit.auto_str import auto_str
 
+
+@auto_str
 class Classification:
     def __init__(self):
         """
@@ -117,13 +120,3 @@ class Classification:
         ax2.invert_yaxis()  # labels read top-to-bottom
         ax2.set_title("Class Probability")
         plt.show()
-        plt.close()
-
-        now = datetime.now()
-        current_time = now.strftime("%H:%M:%S")
-        if savefig:
-            fig.savefig(
-                "/data/data/plots/" + current_time + ".png",
-                bbox_inches="tight",
-                pad_inches=0.3,
-            )

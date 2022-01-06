@@ -7,9 +7,10 @@ model configurations for:
     - normalization values for transformations
 '''
 
+import numpy as np
 import torch
 from torch import nn
-import numpy as np
+
 import cocpit.config as config
 
 
@@ -75,11 +76,8 @@ def label_counts(i, label_cnts, labels):
     weighted random sampler is correct
     """
 
-    num_classes = len(config.CLASS_NAMES)
-    for n in range(len(range(num_classes))):
+    for n, _ in enumerate(config.CLASS_NAMES):
         label_cnts[n] += len(np.where(labels.numpy() == n)[0])
-
-    for n in range(len(range(num_classes))):
         # print("batch index {}, {} counts: {}".format(
         i, n, (labels == n).sum()
     print("LABEL COUNT = ", label_cnts)

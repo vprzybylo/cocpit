@@ -16,13 +16,22 @@ import cocpit.predictions as predictions
 torch.cuda.empty_cache()
 
 
-def test_loader(open_dir, file_list, batch_size=100, pin_memory=True):
-    """
-    Loads and returns a multi-process test iterator
-    """
-
-    test_data = data_loaders.TestDataSet(open_dir, file_list)
-    return data_loaders.create_loader(test_data, batch_size=batch_size, sampler=None)
+def campaign_predictions(loader):
+    # make predictions from test_loader
+    #  defaultdict will "default" to an empty list if that key has not been set yet
+    class_probs = defaultdict(list)
+    top_class = []
+    for batch_idx, (imgs, paths) in enumerate(loader):
+        p = cocpit.predictions.TestBatchPredictions(imgs, paths, model)
+        with torch.no_grad():
+            batch_output = p.preds_softmax().cpu().numpy() * 100
+            for pred in batch_output:
+                [
+                    class_probs[config.CLASS_NAMES[c]].append(pred[c])
+                    for c, _ in enumerate(config.CLASS_NAMES)
+                ]
+                top_class.append(config.CLASS_NAMES[np.argmax(pred)])
+    return class_probs, top_class
 
 
 def percent_category(df, category):
@@ -72,13 +81,12 @@ def main(df, open_dir, model):
     pd.options.mode.chained_assignment = None  # default='warn'
 
     file_list = df["filename"]
-    loader = test_loader(open_dir, file_list)
+    test_data = data_loaders.TestDataSet(open_dir, file_list)
+    loader = data_loaders.create_loader(test_data, batch_size=100, sampler=None)
 
-    # make predictions from test_loader
-    p = predictions.Predict(model, loader)
-    d, top_class = p.all_predictions()
+    class_probs, top_class = campaign_predictions(loader)
 
-    for column in sorted(d.keys()):
+    for column in sorted(class_probs.keys()):
         df[column] = d[column]
 
     # append predictions to dataframe for a campaign

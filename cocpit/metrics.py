@@ -17,17 +17,7 @@ from sklearn.metrics import classification_report
 
 import cocpit.config as config  # isort:split
 import cocpit.plotting_scripts.plot_metrics as plot_metrics
-
-
-def auto_str(cls):
-    def __str__(self):
-        return '%s(%s)' % (
-            type(self).__name__,
-            ', '.join('%s=%s' % item for item in vars(self).items()),
-        )
-
-    cls.__str__ = __str__
-    return cls
+from cocpit.auto_str import auto_str
 
 
 @auto_str
@@ -42,6 +32,10 @@ class Metrics:
         self.totals = 0.0
         self.running_loss = 0.0
         self.running_corrects = 0.0
+        self.batch_loss = 0.0
+        self.batch_corrects = 0.0
+        self.epoch_loss = 0.0
+        self.epoch_acc = 0.0
         # validation preds and labels only
         self.all_preds = []
         self.all_labels = []
