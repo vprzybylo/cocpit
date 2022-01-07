@@ -21,8 +21,9 @@ from cocpit.auto_str import auto_str
 
 
 @auto_str
-class Runner:
+class Runner(cocpit.train_model.Train):
     def __init__(self, model_name, epochs, kfold, train_data, val_data, batch_size):
+
         self.model_name = model_name
         self.epochs = epochs
         self.kfold = kfold
@@ -87,19 +88,6 @@ class Runner:
         dataloaders_dict = {"train": train_loader, "val": val_loader}
         return dataloaders_dict
 
-    def train_model(self, dataloaders_dict):
-        '''train model'''
-        t = cocpit.train_model.Train(
-            self.kfold,
-            self.model,
-            self.batch_size,
-            self.model_name,
-            self.epochs,
-            dataloaders_dict,
-        )
-        self.model_config()
-        t.train_model()
-
 
 #############
 def print_composition(train_labels, val_labels):
@@ -153,6 +141,7 @@ def kfold_training(batch_size, model_name, epochs):
         execute.initialize_model()
         execute.update_save_names()
         dataloaders_dict = execute.create_dataloaders(train_labels)
+        execute.model_config()
         execute.train_model(dataloaders_dict)
 
 

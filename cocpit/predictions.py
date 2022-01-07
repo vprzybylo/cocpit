@@ -40,7 +40,6 @@ class LoaderPredictions:
                 self.all_topk_classes,
                 self.all_max_preds,
             ]
-            # print(pred_list)
             (
                 self.all_paths,
                 self.all_topk_probs,
