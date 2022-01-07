@@ -16,21 +16,35 @@ import cocpit.config as config  # isort:split
 
 
 class Train:
-    def __init__(self, kfold, model, batch_size, model_name, epochs, dataloaders_dict):
+    def __init__(self, kfold, batch_size, model_name, model, epochs):
         self.kfold = kfold
-        self.model = model
         self.batch_size = batch_size
         self.model_name = model_name
+        self.model = model
         self.epochs = epochs
-        self.dataloaders_dict = dataloaders_dict
 
+        self.optimizer = None
+        self.criterion = None
+        self.scheduler = None
         self.phases = None  # train/val
         self.phase = None
         self.loss = None
         self.preds = None
+        self.labels = None
+        self.inputs = None
         self.batch = None
-        self.kfold = None
-        self.batch_size = None
+
+    def model_config(self):
+        """model configurations"""
+
+        params_to_update = cocpit.model_config.update_params(self.model)
+        self.optimizer = optim.SGD(
+            params_to_update, lr=0.01, momentum=0.9, nesterov=True
+        )
+        self.criterion = nn.CrossEntropyLoss()  # Loss function
+        self.scheduler = ReduceLROnPlateau(
+            self.optimizer, mode="max", factor=0.5, patience=0, verbose=True, eps=1e-04
+        )
 
     def determine_phases(self):
         """determine if there is both a training and validation phase"""
@@ -80,7 +94,7 @@ class Train:
                 self.loss.backward()  # compute updates for each parameter
                 self.optimizer.step()  # make the updates for each parameter
 
-    def batch_metrics(self):
+    def batch_metrics(self, dataloaders_dict):
         """calculate and log batch metrics"""
         if self.phase == "train" or config.VALID_SIZE < 0.01:
 
@@ -90,7 +104,7 @@ class Train:
             # print train batch metrics
             if (self.batch + 1) % 5 == 0:
                 self.train_metrics.print_batch_metrics(
-                    self.labels, self.batch, self.phase, self.dataloaders_dict
+                    self.labels, self.batch, self.phase, dataloaders_dict
                 )
 
         else:
@@ -100,18 +114,18 @@ class Train:
             # print val batch metrics
             if (self.batch + 1) % 5 == 0:
                 self.val_metrics.print_batch_metrics(
-                    self.labels, self.batch, self.phase, self.dataloaders_dict
+                    self.labels, self.batch, self.phase, dataloaders_dict
                 )
                 # append batch prediction and labels for plots
                 self.val_metrics.all_preds.append(self.preds.cpu().numpy())
                 self.val_metrics.all_labels.append(self.labels.cpu().numpy())
 
-    def iterate_batches(self, print_label_count=False):
+    def iterate_batches(self, dataloaders_dict, print_label_count=False):
         """iterate over a batch in a dataloader and train or evaluate"""
 
         label_cnts_total = np.zeros(len(config.CLASS_NAMES))
         for self.batch, ((inputs, labels, paths), index) in enumerate(
-            self.dataloaders_dict[self.phase]
+            dataloaders_dict[self.phase]
         ):
             if print_label_count:
                 self.print_label_count(label_cnts_total, index, labels)
@@ -122,7 +136,7 @@ class Train:
             # zero the parameter gradients
             self.optimizer.zero_grad()
             self.forward()
-            self.batch_metrics()
+            self.batch_metrics(dataloaders_dict)
 
     def epoch_metrics(self, epoch):
         """call epoch metrics"""
@@ -185,7 +199,7 @@ class Train:
         """reduce learning rate upon plateau in epoch validation accuracy"""
         self.scheduler.step(self.val_metrics.epoch_acc)
 
-    def train_model(self, norm_values=False):
+    def train_model(self, dataloaders_dict, norm_values=False):
         """calls above methods to train across epochs and batches"""
         self.train_best_acc = 0.0
         self.val_best_acc = 0.0
@@ -210,10 +224,10 @@ class Train:
                 # get transformation normalization values per channel
                 if norm_values:
                     mean, std = cocpit.model_config.normalization_values(
-                        self.dataloaders_dict, phase
+                        dataloaders_dict, self.phase
                     )
 
-                self.iterate_batches()
+                self.iterate_batches(dataloaders_dict)
                 self.epoch_metrics(epoch)
                 if self.phase == "val":
                     self.confusion_matrix(epoch)

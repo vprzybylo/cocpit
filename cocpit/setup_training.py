@@ -22,19 +22,12 @@ from cocpit.auto_str import auto_str
 
 @auto_str
 class Runner(cocpit.train_model.Train):
-    def __init__(self, model_name, epochs, kfold, train_data, val_data, batch_size):
-
-        self.model_name = model_name
-        self.epochs = epochs
-        self.kfold = kfold
+    def __init__(
+        self, train_data, val_data, kfold, batch_size, model_name, model, epochs
+    ):
+        super().__init__(kfold, batch_size, model_name, model, epochs)
         self.train_data = train_data
         self.val_data = val_data
-        self.batch_size = batch_size
-
-        self.model = None
-        self.criterion = None
-        self.scheduler = None
-        self.optimizer = None
 
     def update_save_names(self):
         '''update save names for model and dataloader so that each fold gets saved'''
@@ -48,21 +41,6 @@ class Runner(cocpit.train_model.Train):
             f"_bs{config.BATCH_SIZE}"
             f"_k{str(self.kfold)}_vgg16.pt"
         )
-
-    def model_config(self):
-        """model configurations"""
-        self.model = cocpit.model_config.to_device(self.model)
-        params_to_update = cocpit.model_config.update_params(self.model)
-        self.optimizer = optim.SGD(
-            params_to_update, lr=0.01, momentum=0.9, nesterov=True
-        )
-        self.criterion = nn.CrossEntropyLoss()  # Loss function
-        self.scheduler = ReduceLROnPlateau(
-            self.optimizer, mode="max", factor=0.5, patience=0, verbose=True, eps=1e-04
-        )
-
-    def initialize_model(self):
-        self.model = cocpit.models.initialize_model(self.model_name)
 
     def create_dataloaders(self, train_labels, balance_weights: bool = True):
         '''create dataloaders based on split from StratifiedKFold'''
@@ -103,7 +81,6 @@ def data_setup(train_indices, val_indices, composition: bool = False):
     '''apply different transforms to train and
     validation datasets from ImageFolder'''
     data = data_loaders.get_data('train')
-    print(len(data))
     train_labels = list(map(data.targets.__getitem__, train_indices))
     train_data = torch.utils.data.Subset(data, train_indices)
 
@@ -117,7 +94,7 @@ def data_setup(train_indices, val_indices, composition: bool = False):
     return train_data, val_data, train_labels
 
 
-def kfold_training(batch_size, model_name, epochs):
+def kfold_training(batch_size, model_name, model, epochs):
     '''
     1. split dataset into folds
         preserve the percentage of samples for each class with stratified
@@ -135,10 +112,10 @@ def kfold_training(batch_size, model_name, epochs):
 
         # apply appropriate transformations for training and validation sets
         train_data, val_data, train_labels = data_setup(train_indices, val_indices)
-
-        execute = Runner(model_name, epochs, kfold, train_data, val_data, batch_size)
-
-        execute.initialize_model()
+        execute = Runner(
+            train_data, val_data, kfold, batch_size, model_name, model, epochs
+        )
+        execute.model_config()
         execute.update_save_names()
         dataloaders_dict = execute.create_dataloaders(train_labels)
         execute.model_config()
@@ -167,16 +144,15 @@ def nofold_indices():
     return train_indices, val_indices
 
 
-def nofold_training(batch_size, model_name, epochs, kfold=0):
+def nofold_training(batch_size, model_name, model, epochs, kfold=0):
     '''
     execute training once through - no folds
     composition (bool): whether to print the length of train and test data based on validation %
     '''
     train_indices, val_indices = nofold_indices()
     train_data, val_data, train_labels = data_setup(train_indices, val_indices)
-
-    execute = Runner(model_name, epochs, kfold, train_data, val_data, batch_size)
-    execute.initialize_model()
+    execute = Runner(train_data, val_data, kfold, batch_size, model_name, model, epochs)
+    execute.model_config()
     execute.update_save_names()
     dataloaders_dict = execute.create_dataloaders(train_labels)
     execute.train_model(dataloaders_dict)
@@ -184,7 +160,9 @@ def nofold_training(batch_size, model_name, epochs, kfold=0):
 
 def main(batch_size, model_name, epochs):
 
+    model = cocpit.models.initialize_model(model_name)
+    model = cocpit.model_config.to_device(model)
     if config.KFOLD != 0:
-        kfold_training(batch_size, model_name, epochs)
+        kfold_training(batch_size, model_name, model, epochs)
     else:
-        nofold_training(batch_size, model_name, epochs)
+        nofold_training(batch_size, model_name, model, epochs)
