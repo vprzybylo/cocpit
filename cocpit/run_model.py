@@ -5,63 +5,58 @@ transforms, makes predictions, and appends classification to dataframe
 import os
 from collections import defaultdict
 
-import cv2
 import numpy as np
 import pandas as pd
 import torch
-import torch.nn.functional as F
 from dotenv import load_dotenv
-from PIL import Image
-from torch.utils.data import Dataset
-from torchvision import transforms
 from twilio.rest import Client
 
-import cocpit.config as config
-import cocpit.data_loaders as data_loaders  # isort:split
+import cocpit.data_loaders as data_loaders
+import cocpit.predictions as predictions
 
 torch.cuda.empty_cache()
 
 
-def predict(test_loader, model):
-
-    """Predict the classes of images from a test_loader
-    using a trained CNN.
-    """
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model.to(device)
-    model.eval()
-
-    d = defaultdict(list)
+def campaign_predictions(loader, model):
+    '''make predictions from test_loader'''
+    # defaultdict will "default" to an empty list if that key has not been set yet
+    class_probs = defaultdict(list)
     top_class = []
-    all_outputs = []
-    for batch_idx, (inputs, img_paths) in enumerate(test_loader):
+    for batch_idx, (imgs, paths) in enumerate(loader):
+        p = predictions.BatchPredictions(imgs, paths, model)
         with torch.no_grad():
-            inputs = inputs.to(device)
-            logits = model.forward(inputs)
-            ps = F.softmax(logits, dim=1)
-            outputs = ps.cpu().numpy() * 100  # (batch size, # classes)
-
-            all_outputs.append(outputs)
-
-            for pred in outputs:  # batch
-                for c in range(len(config.CLASS_NAMES)):  # class
-                    d[config.CLASS_NAMES[c]].append(pred[c])
+            batch_output = p.preds_softmax().cpu().numpy() * 100
+            for pred in batch_output:
+                [
+                    class_probs[config.CLASS_NAMES[c]].append(pred[c])
+                    for c, _ in enumerate(config.CLASS_NAMES)
+                ]
                 top_class.append(config.CLASS_NAMES[np.argmax(pred)])
+    return class_probs, top_class
 
-    return d, top_class
 
-
-def percent_category(df, category="fragment"):
+def percent_category(df, category):
     """
-    find # and % of a category
+    find # and % of a class out of all images for a campaign
     """
 
     len_category = len(df[df["classification"] == category])
     perc_category = (len_category / len(df)) * 100
     perc_category = np.round(perc_category, 2)
 
-    return len_category, perc_category
+    print(f"#/% {category}: ", len_category, perc_category)
+
+
+def append_classifications(df, top_class):
+    '''append the top class'''
+
+    df["classification"] = top_class
+
+    percent_category(df, category="fragment")
+    percent_category(df, category="sphere")
+
+    # don't include fragments or sphere classifications in dataframes
+    return df[(df["classification"] != "fragment") & (df["classification"] != "sphere")]
 
 
 def send_message():
@@ -87,22 +82,16 @@ def main(df, open_dir, model):
     pd.options.mode.chained_assignment = None  # default='warn'
 
     file_list = df["filename"]
-    test_loader = data_loaders.get_test_loader_df(open_dir, file_list)
+    test_data = data_loaders.TestDataSet(open_dir, file_list)
+    loader = data_loaders.create_loader(test_data, batch_size=100, sampler=None)
 
-    d, top_class = predict(test_loader, model)
+    class_probs, top_class = campaign_predictions(loader, model)
 
-    for column in sorted(d.keys()):
+    for column in sorted(class_probs.keys()):
         df[column] = d[column]
 
-    df["classification"] = top_class
-
-    len_frag, perc_category = percent_category(df, category="fragment")
-    print("#/% fragment: ", len_frag, perc_category)
-
-    len_sphere, perc_category = percent_category(df, category="sphere")
-    print("#/% sphere: ", len_sphere, perc_category)
-
-    df = df[(df["classification"] != "fragment") & (df["classification"] != "sphere")]
+    # append predictions to dataframe for a campaign
+    df = append_classifications(df, top_class)
 
     send_message()
 

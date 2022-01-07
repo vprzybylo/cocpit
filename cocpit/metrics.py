@@ -15,19 +15,9 @@ import pandas as pd
 import torch
 from sklearn.metrics import classification_report
 
-import cocpit
 import cocpit.config as config  # isort:split
-
-
-def auto_str(cls):
-    def __str__(self):
-        return '%s(%s)' % (
-            type(self).__name__,
-            ', '.join('%s=%s' % item for item in vars(self).items()),
-        )
-
-    cls.__str__ = __str__
-    return cls
+import cocpit.plotting_scripts.plot_metrics as plot_metrics
+from cocpit.auto_str import auto_str
 
 
 @auto_str
@@ -38,12 +28,14 @@ class Metrics:
     """
 
     def __init__(self):
-
-        self.best_acc = 0.0
         self.loss = 0.0
         self.totals = 0.0
         self.running_loss = 0.0
         self.running_corrects = 0.0
+        self.batch_loss = 0.0
+        self.batch_corrects = 0.0
+        self.epoch_loss = 0.0
+        self.epoch_acc = 0.0
         # validation preds and labels only
         self.all_preds = []
         self.all_labels = []
@@ -92,16 +84,6 @@ class Metrics:
             Accuracy: {self.epoch_acc:.3f}"
         )
 
-    def reset_totals(self):
-        """
-        clear out cumulative loss, accuracy, predictions, and labels for new epoch/phase
-        """
-        self.totals = 0.0
-        self.running_loss = 0.0  # across batches
-        self.running_corrects = 0.0
-        self.all_preds = []
-        self.all_labels = []
-
 
 ##############
 
@@ -109,12 +91,10 @@ class Metrics:
 def log_metrics(
     metric_instance,
     kfold,
-    model,
     batch_size,
     model_name,
     epoch,
     epochs,
-    scheduler,
     phase,
     acc_savename,
 ):
@@ -165,7 +145,6 @@ def sklearn_report(val_metrics, fold, model_name):
     """
     all_labels = np.asarray(list(itertools.chain(*val_metrics.all_labels)))
     all_preds = np.asarray(list(itertools.chain(*val_metrics.all_preds)))
-
     clf_report = classification_report(
         all_labels,
         all_preds,
@@ -195,19 +174,21 @@ def log_confusion_matrix(val_metrics):
     all_labels = np.asarray(list(itertools.chain(*val_metrics.all_labels)))
     all_preds = np.asarray(list(itertools.chain(*val_metrics.all_preds)))
 
-    cocpit.plot_metrics.conf_matrix(
+    plot_metrics.conf_matrix(
         all_labels,
         all_preds,
         save_name=config.CONF_MATRIX_SAVENAME,
         save_fig=True,
     )
 
-    config.experiment.log_image(
-        config.CONF_MATRIX_SAVENAME, name="confusion matrix", image_format="pdf"
-    )
+    # log to comet
+    if config.LOG_EXP:
+        config.experiment.log_image(
+            config.CONF_MATRIX_SAVENAME, name="confusion matrix", image_format="pdf"
+        )
 
     # unnormalized matrix
-    cocpit.plot_metrics.conf_matrix(
+    plot_metrics.conf_matrix(
         all_labels,
         all_preds,
         norm=None,
@@ -215,6 +196,8 @@ def log_confusion_matrix(val_metrics):
         save_fig=True,
     )
 
-    config.experiment.log_image(
-        config.CONF_MATRIX_SAVENAME, name="confusion matrix", image_format="pdf"
-    )
+    # log to comet
+    if config.LOG_EXP:
+        config.experiment.log_image(
+            config.CONF_MATRIX_SAVENAME, name="confusion matrix", image_format="pdf"
+        )
