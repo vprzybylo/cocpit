@@ -3,7 +3,6 @@ for confusion matrices and running the model on new data"""
 
 import itertools
 import os
-from collections import defaultdict
 
 import numpy as np
 import torch
@@ -34,20 +33,36 @@ class LoaderPredictions:
         """
         flatten arrays from appending in batches
         """
-        pred_list = [
-            self.all_labels,
-            self.all_paths,
-            self.all_topk_probs,
-            self.all_topk_classes,
-            self.all_max_preds,
-        ]
-        (
-            self.all_labels,
-            self.all_paths,
-            self.all_topk_probs,
-            self.all_topk_classes,
-            self.all_max_preds,
-        ) = map(self.concat, pred_list)
+        if self.labels is None:
+            pred_list = [
+                self.all_paths,
+                self.all_topk_probs,
+                self.all_topk_classes,
+                self.all_max_preds,
+            ]
+            # print(pred_list)
+            (
+                self.all_paths,
+                self.all_topk_probs,
+                self.all_topk_classes,
+                self.all_max_preds,
+            ) = map(self.concat, pred_list)
+        else:
+            pred_list = [
+                self.all_labels,
+                self.all_paths,
+                self.all_topk_probs,
+                self.all_topk_classes,
+                self.all_max_preds,
+            ]
+            # print(pred_list)
+            (
+                self.all_labels,
+                self.all_paths,
+                self.all_topk_probs,
+                self.all_topk_classes,
+                self.all_max_preds,
+            ) = map(self.concat, pred_list)
 
     def hone_incorrect_predictions(self, label_list, human_label, model_label):
         """
@@ -75,7 +90,7 @@ class LoaderPredictions:
 
 
 @auto_str
-class TestBatchPredictions(LoaderPredictions):
+class BatchPredictions(LoaderPredictions):
     """finds predictions for a given batch of test data (no label)"""
 
     def __init__(
@@ -121,43 +136,3 @@ class TestBatchPredictions(LoaderPredictions):
         self.all_topk_classes.append(self.classes)
         self.all_max_preds.append(self.max_preds)
         self.all_labels.append(self.labels)
-
-
-# @auto_str
-# class Predict:
-#     def __init__(self, model, dataloader):
-#         self.model = model
-#         self.dataloader = dataloader
-
-#         self.model.to(config.DEVICE)
-#         self.model.eval()
-
-#     def predictions_for_confmatrix(self):
-#         """
-#         get a list of hand labels and predictions from a saved dataloader/model
-
-#         Returns
-#         -------
-#         - all_preds (list): predictions from a model
-#         - all_labels (list): correct/hand labels
-#         """
-
-#         all_preds = []
-#         all_labels = []
-#         for ((imgs, labels, img_paths), index) in self.dataloader:
-# #             with torch.no_grad():
-# #                 # get the inputs
-# #                 imgs = imgs.to(config.DEVICE)
-# #                 labels = labels.to(config.DEVICE)
-
-# #                 output = self.model(imgs)
-# #                 # class with highest probability
-# #                 pred = torch.argmax(output, 1)
-
-# #                 all_preds.append(pred.cpu().numpy())
-# #                 all_labels.append(labels.cpu().numpy())
-
-#         all_preds = np.asarray(list(itertools.chain(*all_preds)))
-#         all_labels = np.asarray(list(itertools.chain(*all_labels)))
-
-#         return all_preds, all_labels

@@ -3,6 +3,7 @@ classifies unseen images:
 transforms, makes predictions, and appends classification to dataframe
 """
 import os
+from collections import defaultdict
 
 import numpy as np
 import pandas as pd
@@ -16,13 +17,13 @@ import cocpit.predictions as predictions
 torch.cuda.empty_cache()
 
 
-def campaign_predictions(loader):
-    # make predictions from test_loader
-    #  defaultdict will "default" to an empty list if that key has not been set yet
+def campaign_predictions(loader, model):
+    '''make predictions from test_loader'''
+    # defaultdict will "default" to an empty list if that key has not been set yet
     class_probs = defaultdict(list)
     top_class = []
     for batch_idx, (imgs, paths) in enumerate(loader):
-        p = cocpit.predictions.TestBatchPredictions(imgs, paths, model)
+        p = predictions.BatchPredictions(imgs, paths, model)
         with torch.no_grad():
             batch_output = p.preds_softmax().cpu().numpy() * 100
             for pred in batch_output:
@@ -84,7 +85,7 @@ def main(df, open_dir, model):
     test_data = data_loaders.TestDataSet(open_dir, file_list)
     loader = data_loaders.create_loader(test_data, batch_size=100, sampler=None)
 
-    class_probs, top_class = campaign_predictions(loader)
+    class_probs, top_class = campaign_predictions(loader, model)
 
     for column in sorted(class_probs.keys()):
         df[column] = d[column]

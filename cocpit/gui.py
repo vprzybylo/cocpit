@@ -68,7 +68,6 @@ class GUI:
         and next button
         """
         self.label = self.all_labels[self.index]
-        print(self.label)
         self.center = ipywidgets.Output()  # center image with predictions
         self.menu = ipywidgets.Dropdown(
             options=config.CLASS_NAMES,
