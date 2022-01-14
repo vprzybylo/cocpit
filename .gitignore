@@ -1,4 +1,5 @@
 !*.dvc
+.nginx
 nbextension-scratchpad
 .env
 .DS_store

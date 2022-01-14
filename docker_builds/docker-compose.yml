@@ -31,7 +31,7 @@ services:
     restart: unless-stopped
 
   cocpit:
-    image: vprzybylo/cocpit_dev:v1.4.0
+    image: vprzybylo/cocpit_dev:v2.0.0
     container_name: jupyter_cocpit_dev
     environment:
       - PUID=1001
