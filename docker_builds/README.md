@@ -28,10 +28,10 @@
   </a>
 
   <h3 align="center">COCPIT</h3>
-		    
+
 
   <p align="center">
-    Classification of Cloud Particle Imagery and Thermodynamics 
+    Classification of Cloud Particle Imagery and Thermodynamics
     <br />
     <a href="https://vprzybylo.gitbook.io/cocpit/"><strong>Explore the docs »</strong></a>
     <br />
@@ -131,13 +131,13 @@ Currently, probe images are classified into 9 categories, but further developmen
 
 ### Built With
 
-* <a href="https://www.python.org/"><a href="https://pytorch.org/docs/stable/torchvision/models.html">Python</a> </a> 
-* <a href="https://pytorch.org/docs/stable/torchvision/models.html">Pytorch</a> 
-* <a href="http://www.specinc.com/sites/default/files/software_and_manuals/CPI_Post Processing Software Manual_rev1.2_20120116.pdf">cpiview</a> 
+* <a href="https://www.python.org/"><a href="https://pytorch.org/docs/stable/torchvision/models.html">Python</a> </a>
+* <a href="https://pytorch.org/docs/stable/torchvision/models.html">Pytorch</a>
+* <a href="http://www.specinc.com/sites/default/files/software_and_manuals/CPI_Post Processing Software Manual_rev1.2_20120116.pdf">cpiview</a>
   * Desktop-developed software will need to be used to extract ''sheets'' of CPI images from region of interest (ROI) files output from the CPI probe should new data be wished to be processed and classified.
   * ![flowchart](https://github.com/vprzybylo/cocpit/blob/master/README_graphics/flow_chart_sheets-1.png)
 
-* <a href="https://www.nvidia.com/en-us/">nvidia</a> 
+* <a href="https://www.nvidia.com/en-us/">nvidia</a>
   * Resources used: NVIDIA DGX-1 server utilizing Tesla V100 GPUs. This system is housed in the University at Albanys Tier-3 Data Center, and managed/maintained by the xCITE (ExTREME Collaboration, Innovation and TEchnology) laboratory. The base DGX-1 V100 system contains 8 Tesla V100 GPUs with a combined total of 40,960 CUDA (graphics) cores, 5120 Tensor cores, and 256GB of GPU memory, all linked by NVIDIAs 300GB/s NVLINK interconnect. The DGX-1 is optimized for data loading, data transformations, and training, which are all critical to the ML processes required by this project.
 
 
@@ -151,7 +151,7 @@ Currently, probe images are classified into 9 categories, but further developmen
 
 Distributed under the MIT License.  See `LICENSE` for more information.
 
-## Contact 
+## Contact
 
 Vanessa Przybylo - vprzybylo@albany.edu
 
@@ -162,5 +162,3 @@ Project Link: [https://vprzybylo.github.io/cocpit/](https://vprzybylo.github.io/
 ## Acknowledgements
 * V. Przybylo, K. Sulia, C. Schmitt, and Z. Lebo (collaborators on this project) would like to thank the Department of Energy for support under DOE Grant Number DE-SC0021033.
 * Development support given by the Atmospheric Sciences Research Center ExTreme Collaboration, Innovation, and TEchnology (xCITE) Laboratory.
-
-
