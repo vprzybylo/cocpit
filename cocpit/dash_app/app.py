@@ -147,6 +147,7 @@ def particle_property_fig(campaign, prop):
     df = read_campaign(campaign)
     df = remove_bad_props(df)
     df = rename(df)
+    df = rename(df)
 
     fig = px.box(
         df,
@@ -164,11 +165,14 @@ def particle_property_fig(campaign, prop):
 @app.callback(
     Output("top-down map", "figure"),
     Input("campaign-dropdown", "value"),
+    Input("map-particle_type", "value"),
 )
-def map_top_down(campaign):
+def map_top_down(campaign, part_type):
     '''aircraft location and particle type overlaid on map'''
     df = read_campaign(campaign)
     df = remove_bad_env(df)
+    df = rename(df)
+
     # Find Lat Long center
     lat_center = df['Latitude'][df['Latitude'] != -999.99].mean()
     lon_center = df['Longitude'][df['Latitude'] != -999.99].mean()
@@ -197,8 +201,9 @@ def map_top_down(campaign):
 @app.callback(
     Output("3d map", "figure"),
     Input("campaign-dropdown", "value"),
+    Input("3dmap-particle_type", "value"),
 )
-def three_d_map(campaign):
+def three_d_map(campaign, part_type):
 
     df = read_campaign(campaign)
     df = remove_bad_env(df)

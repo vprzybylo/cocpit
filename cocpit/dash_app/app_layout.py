@@ -112,12 +112,76 @@ def layout(app):
             dbc.Row(
                 [
                     dbc.Col(
+                        [
+                            dbc.Row(
+                                dbc.Label('Particle Type'),
+                            ),
+                            dbc.Row(
+                                dcc.Checklist(
+                                    id="map-particle_type",
+                                    options=[
+                                        {"label": i, "value": i}
+                                        for i in particle_types_rename
+                                    ],
+                                    inputStyle={'margin-right': "5px"},
+                                    labelStyle={
+                                        'display': 'block',
+                                    },
+                                    style={
+                                        "height": 300,
+                                        "overflow": "auto",
+                                    },
+                                ),
+                            ),
+                        ],
+                        xs=12,
+                        sm=12,
+                        md=12,
+                        lg=2,
+                        xl=2,
+                    ),
+                    dbc.Col(
                         dcc.Graph(id='top-down map', figure={}),
                         xs=12,
                         sm=12,
                         md=12,
                         lg=6,
                         xl=6,
+                    ),
+                ],
+                align="center",
+                justify="center",
+            ),
+            dbc.Row(
+                [
+                    dbc.Col(
+                        [
+                            dbc.Row(
+                                dbc.Label('Particle Type'),
+                            ),
+                            dbc.Row(
+                                dcc.Checklist(
+                                    id="3dmap-particle_type",
+                                    options=[
+                                        {"label": i, "value": i}
+                                        for i in particle_types_rename
+                                    ],
+                                    inputStyle={'margin-right': "5px"},
+                                    labelStyle={
+                                        'display': 'block',
+                                    },
+                                    style={
+                                        "height": 300,
+                                        "overflow": "auto",
+                                    },
+                                ),
+                            ),
+                        ],
+                        xs=12,
+                        sm=12,
+                        md=12,
+                        lg=2,
+                        xl=2,
                     ),
                     dbc.Col(
                         dcc.Graph(id='3d map', figure={}),
