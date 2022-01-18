@@ -172,7 +172,7 @@ def map_top_down(campaign, part_type):
     df = read_campaign(campaign)
     df = remove_bad_env(df)
     df = rename(df)
-
+    df = df[df['Classification'].isin(part_type)]
     # Find Lat Long center
     lat_center = df['Latitude'][df['Latitude'] != -999.99].mean()
     lon_center = df['Longitude'][df['Latitude'] != -999.99].mean()
