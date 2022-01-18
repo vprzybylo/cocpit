@@ -4,6 +4,7 @@ from globals import *
 import dash_bootstrap_components as dbc
 from dash import html
 from dash import dcc
+from datetime import date
 
 
 def layout(app):
@@ -61,12 +62,25 @@ def layout(app):
                         dcc.Dropdown(
                             id='property-dropdown',
                             options=[
-                                {'label': i, 'value': i}
-                                for i in particle_properties_rename
+                                {'label': i, 'value': i} for i in particle_properties
                             ],
                             placeholder="Particle Property",
-                            value='complexity',
+                            value='Complexity',
                         ),
+                        # width={'size': 7, 'offset': 0, 'order': 2},
+                        xs=4,
+                        sm=4,
+                        md=4,
+                        lg=2,
+                        xl=2,
+                    ),
+                    dbc.Col(
+                        dcc.DatePickerRange(
+                            end_date=date(2017, 6, 21),
+                            display_format='MMM Do, YY',
+                            start_date_placeholder_text='MMM Do, YY',
+                        ),
+                        style={"display": "inline-block"},
                         # width={'size': 7, 'offset': 0, 'order': 2},
                         xs=4,
                         sm=4,
@@ -122,25 +136,3 @@ def layout(app):
         style={"padding": "15px"},
     )
     return app
-
-
-def layout_map():
-
-    return dict(
-        autosize=True,
-        height=500,
-        weidth=100,
-        font=dict(color="#191A1A"),
-        titlefont=dict(color="#191A1A", size='14'),
-        margin=dict(l=0, r=0, b=0, t=0),
-        hovermode="closest",
-        plot_bgcolor='#fffcfc',
-        paper_bgcolor='#fffcfc',
-        legend=dict(font=dict(size=10), orientation='h'),
-        mapbox=dict(
-            accesstoken=mapbox_access_token,
-            style="outdoors",
-            center=dict(lon=long_center, lat=lat_center),
-            zoom=2,
-        ),
-    )

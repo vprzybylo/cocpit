@@ -25,32 +25,96 @@ app = dash.Dash(
 )
 
 
-def remove_baddata(df):
-    df = df[df["filled_circular_area_ratio"] != -999.0]
-    df = df[df["complexity"] != 0.0]
-    df = df[df["complexity"] != -0.0]
+def read_campaign(campaign):
+    df_env = pd.read_csv(
+        f"../../final_databases/vgg16/v1.4.0/environment/{campaign}.csv",
+        names=[
+            'filename',
+            'date',
+            'Latitude',
+            'Longitude',
+            'Altitude',
+            'Pressure',
+            'Temperature',
+            'Ice Water Content',
+        ],
+        header=1,
+    )
+    df = pd.read_csv(
+        f"../../final_databases/vgg16/v1.4.0/{campaign}.csv",
+        names=[
+            'filename',
+            'date',
+            'Frame Width',
+            'Frame Height',
+            'Particle Width',
+            'Particle Height',
+            'Cutoff',
+            'Aggregate',
+            'Budding',
+            'Bullet Rosette',
+            'Column',
+            'Compact Irregular',
+            'Fragment',
+            'Planar Polycrystal',
+            'Rimed',
+            'Sphere',
+            'Classification',
+            'Blur',
+            'Contours',
+            'Edges',
+            'Std',
+            'Contour Area',
+            'Contrast',
+            'Circularity',
+            'Solidity',
+            'Complexity',
+            'Equivalent Diameter',
+            'Convex Perimeter',
+            'Hull Area',
+            'Perimeter',
+            'Aspect Ratio',
+            'Extreme Points',
+            'Area Ratio',
+            'Roundness',
+            'Perimeter-Area Ratio',
+        ],
+        header=1,
+    )
+    df = pd.merge(df, df_env, on=['filename', 'date'])
+    return df
+
+
+def remove_bad_props(df):
+    df = df[df["Area Ratio"] != -999.0]
+    df = df[df["Complexity"] != 0.0]
+    df = df[df["Complexity"] != -0.0]
 
     df = df[df.replace([np.inf, -np.inf], np.nan).notnull().all(axis=1)]
     df.dropna(inplace=True)
     return df
 
 
-def read_campaign(campaign):
-    df = pd.read_csv(f"{config.FINAL_DIR}{campaign}.csv")
-    return df
-
-
-def read_env_campaign(campaign):
-    df = pd.read_csv(f"{config.FINAL_DIR}environment/{campaign}.csv")
+def remove_bad_env(df):
+    df = df[
+        (df['Latitude'] != -999.99)
+        & (df['Latitude'] != 0)
+        & (df['Longitude'] != -999.99)
+        & (df['Longitude'] != 0)
+        & (df['Altitude'] != -999.99)
+        & (df['Temperature'] != -999.99)
+        & (df['Temperature'].notna())
+        & (df['Ice Water Content'] != -999.99)
+        & (df['Ice Water Content'].notna())
+        & (df['Ice Water Content'] > 1e-5)
+    ]
     return df
 
 
 def rename(df):
+    '''remove underscores in particle properties in classification column'''
     rename_types = dict(zip(particle_types, particle_types_rename))
-    rename_props = dict(zip(particle_properties, particle_properties_rename))
-    df = df.rename(columns=rename_types)
     df = df.replace(rename_types)
-    df = df.rename(columns=rename_props)
     return df
 
 
@@ -59,13 +123,15 @@ def rename(df):
     Input("campaign-dropdown", "value"),
 )
 def percent_part_type(campaign):
+    '''pie chart for percentage of particle types for a given campaign'''
     df = read_campaign(campaign)
-    values = df['classification'].value_counts().values
+    df = rename(df)
+    values = df['Classification'].value_counts().values
     pie = px.pie(
         df,
         color_discrete_sequence=px.colors.qualitative.Antique,
         values=values,
-        names=df['classification'].unique(),
+        names=df['Classification'].unique(),
     )
     return pie
 
@@ -79,17 +145,17 @@ def percent_part_type(campaign):
 )
 def particle_property_fig(campaign, prop):
     df = read_campaign(campaign)
-    df = remove_baddata(df)
+    df = remove_bad_props(df)
     df = rename(df)
 
     fig = px.box(
         df,
-        x='classification',
+        x='Classification',
         y=prop,
-        color="classification",
+        color="Classification",
         color_discrete_sequence=px.colors.qualitative.Antique,
         labels={
-            "classification": "Particle Type",
+            "Classification": "Particle Type",
         },
     )
     return fig
@@ -100,25 +166,26 @@ def particle_property_fig(campaign, prop):
     Input("campaign-dropdown", "value"),
 )
 def map_top_down(campaign):
-
-    df_env = read_env_campaign(campaign)
-    # Find Lat Long center
-    lat_center = df_env['latitude'][df_env['latitude'] != -999.99].mean()
-    lon_center = df_env['longitude'][df_env['latitude'] != -999.99].mean()
-    print(lat_center, lon_center)
-
+    '''aircraft location and particle type overlaid on map'''
     df = read_campaign(campaign)
+    df = remove_bad_env(df)
+    # Find Lat Long center
+    lat_center = df['Latitude'][df['Latitude'] != -999.99].mean()
+    lon_center = df['Longitude'][df['Latitude'] != -999.99].mean()
+
     fig = px.scatter_mapbox(
-        df_env,
-        lat="latitude",
-        lon="longitude",
-        color=df['classification'],
-        # color_discrete_sequence=px.colors.qualitative.Antique,
+        df,
+        lat="Latitude",
+        lon="Longitude",
+        color='Classification',
+        size=df['Ice Water Content'] * 4,
+        color_discrete_sequence=px.colors.qualitative.Antique,
+        hover_data=['Ice Water Content'],
     )
     # Specify layout information
     fig.update_layout(
         mapbox=dict(
-            style='satellite',
+            style='light',
             accesstoken=os.getenv('MAPBOX_TOKEN'),
             center=dict(lon=lon_center, lat=lat_center),
             zoom=5,
@@ -131,27 +198,29 @@ def map_top_down(campaign):
     Output("3d map", "figure"),
     Input("campaign-dropdown", "value"),
 )
-def map_top_down(campaign):
+def three_d_map(campaign):
 
     df = read_campaign(campaign)
-    df_env = read_env_campaign(campaign)
-
-    classes = df['classification'][
-        (df_env['latitude'] != -999.99)
-        & (df_env['longitude'] != -999.99)
-        & (df_env['altitude'] != -999.99)
-    ]
-
-    df_env = df_env[
-        (df_env['latitude'] != -999.99)
-        & (df_env['longitude'] != -999.99)
-        & (df_env['altitude'] != -999.99)
-    ]
+    df = remove_bad_env(df)
+    if campaign == 'CRYSTAL_FACE_NASA':
+        df = df[df['Latitude'] > 23.0]
 
     fig = px.scatter_3d(
-        df_env, x='latitude', y='longitude', z='altitude', color=classes
+        df,
+        x='Latitude',
+        y='Longitude',
+        z='Altitude',
+        range_x=[min(df['Latitude']), max(df['Latitude'])],
+        range_y=[min(df['Longitude']), max(df['Longitude'])],
+        color='Temperature',
+        color_continuous_scale=px.colors.diverging.balance,
+        color_continuous_midpoint=0.0,
+        range_color=[min(df['Temperature']), max(df['Temperature'])],
+        size=df['Ice Water Content'] * 4,
+        hover_data=['Ice Water Content'],
     )
-
+    fig.update_traces(mode='markers', marker_line_width=0)
+    fig.update_layout(title_text=f"{len(df)} datapoints", title_x=0.5)
     return fig
 
 
