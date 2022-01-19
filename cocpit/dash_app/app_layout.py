@@ -132,7 +132,7 @@ def layout(app):
                                         {"label": i, "value": i}
                                         for i in particle_types_rename
                                     ],
-                                    value=particle_types_rename,
+                                    value=["aggregate"],
                                     inputStyle={'margin-right': "5px"},
                                     labelStyle={
                                         'display': 'block',
@@ -167,15 +167,38 @@ def layout(app):
                     dbc.Col(
                         [
                             dbc.Row(
+                                dbc.Label('Vertical Axis Property:'),
+                            ),
+                            dbc.Row(
+                                dcc.Dropdown(
+                                    id='3d_vertical_prop',
+                                    options=[
+                                        {'label': i, 'value': i} for i in vertical_vars
+                                    ],
+                                    placeholder="Vertical Axis Property",
+                                    value='Temperature',
+                                ),
+                            ),
+                        ],
+                        xs=12,
+                        sm=12,
+                        md=12,
+                        lg=2,
+                        xl=2,
+                    ),
+                    dbc.Col(
+                        [
+                            dbc.Row(
                                 dbc.Label('Particle Type'),
                             ),
                             dbc.Row(
                                 dcc.Checklist(
-                                    id="3dmap-particle_type",
+                                    id="3d_particle_type",
                                     options=[
                                         {"label": i, "value": i}
                                         for i in particle_types_rename
                                     ],
+                                    value=["aggregate"],
                                     inputStyle={'margin-right': "5px"},
                                     labelStyle={
                                         'display': 'block',
@@ -202,7 +225,7 @@ def layout(app):
                         xl=6,
                     ),
                 ],
-                align="center",
+                align="start",
                 justify="center",
             ),
         ],

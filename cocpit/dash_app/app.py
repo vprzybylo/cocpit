@@ -10,6 +10,8 @@ import app_layout
 from globals import *
 import os
 from dotenv import load_dotenv
+import matplotlib
+import matplotlib.pyplot as plt
 
 load_dotenv()
 
@@ -201,31 +203,34 @@ def map_top_down(campaign, part_type):
 @app.callback(
     Output("3d map", "figure"),
     Input("campaign-dropdown", "value"),
-    Input("3dmap-particle_type", "value"),
+    Input("3d_particle_type", "value"),
+    Input("3d_vertical_prop", "value"),
 )
-def three_d_map(campaign, part_type):
+def three_d_map(campaign, part_type, vert_prop):
 
     df = read_campaign(campaign)
     df = remove_bad_env(df)
+    df = rename(df)
     if campaign == 'CRYSTAL_FACE_NASA':
         df = df[df['Latitude'] > 23.0]
+    print(min(df['Temperature']), max(df['Temperature']))
+    df = df[df['Classification'].isin(part_type)]
 
     fig = px.scatter_3d(
         df,
         x='Latitude',
         y='Longitude',
-        z='Altitude',
+        z=vert_prop,
         range_x=[min(df['Latitude']), max(df['Latitude'])],
         range_y=[min(df['Longitude']), max(df['Longitude'])],
-        color='Temperature',
+        color=vert_prop,
         color_continuous_scale=px.colors.diverging.balance,
         color_continuous_midpoint=0.0,
-        range_color=[min(df['Temperature']), max(df['Temperature'])],
         size=df['Ice Water Content'] * 4,
         hover_data=['Ice Water Content'],
     )
     fig.update_traces(mode='markers', marker_line_width=0)
-    fig.update_layout(title_text=f"{len(df)} datapoints", title_x=0.5)
+    fig.update_layout(title_text=f"n={len(df)}", title_x=0.5)
     return fig
 
 

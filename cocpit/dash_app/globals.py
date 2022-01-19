@@ -23,8 +23,6 @@ particle_types = [
     "compact_irreg",
     "planar_polycrystal",
     "rimed",
-    "sphere",
-    "all",
 ]
 
 particle_types_rename = [
@@ -35,8 +33,6 @@ particle_types_rename = [
     "compact irregular",
     "planar polycrystal",
     "rimed",
-    "sphere",
-    "all",
 ]
 
 particle_properties = [
@@ -53,3 +49,5 @@ particle_properties = [
     'Roundness',
     'Perimeter-Area Ratio',
 ]
+
+vertical_vars = ['Ice Water Content', 'Temperature', 'Pressure']
