@@ -240,6 +240,17 @@ def map_top_down(campaign, part_type, min_temp, max_temp, min_pres, max_pres):
         hover_data={'Ice Water Content': True, 'Temperature': True, 'Pressure': True},
         custom_data=['Temperature', 'Pressure', 'Ice Water Content'],
     )
+    fig.update_traces(
+        hovertemplate="<br>".join(
+            [
+                "Latitude: %{lat}",
+                "Longitude: %{lon}",
+                "Temperature: %{customdata[0]}",
+                "Pressure: %{customdata[1]}",
+                "Ice Water Content: %{customdata[2]}",
+            ]
+        ),
+    )
     # Specify layout information
     fig.update_layout(
         title={
@@ -256,19 +267,6 @@ def map_top_down(campaign, part_type, min_temp, max_temp, min_pres, max_pres):
         ),
     )
 
-    fig.update_traces(
-        mode='markers',
-        marker_line_width=0,
-        hovertemplate="<br>".join(
-            [
-                "Latitude: %{x}",
-                "Longitude: %{y}",
-                "Temperature: %{customdata[0]}",
-                "Pressure: %{customdata[1]}",
-                "Ice Water Content: %{customdata[2]}",
-            ]
-        ),
-    )
     return fig
 
 
