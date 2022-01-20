@@ -1,17 +1,15 @@
 import cocpit.config as config
 import dash
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output
 import pandas as pd
 import numpy as np
+from dash.dependencies import Input, Output
 import plotly.express as px
-import plotly.graph_objects as go
 import app_layout
 from globals import *
 import os
 from dotenv import load_dotenv
-import matplotlib
-import matplotlib.pyplot as plt
+from dash import dcc
 
 load_dotenv()
 
@@ -105,11 +103,25 @@ def remove_bad_env(df):
         & (df['Longitude'] != 0)
         & (df['Altitude'] != -999.99)
         & (df['Temperature'] != -999.99)
+        & (df['Pressure'] != 0)
+        & (df['Pressure'] != -999.99)
         & (df['Temperature'].notna())
         & (df['Ice Water Content'] != -999.99)
         & (df['Ice Water Content'].notna())
         & (df['Ice Water Content'] > 1e-5)
     ]
+    return df
+
+
+def check_temp_range(df, min_temp, max_temp):
+    df = df[df['Temperature'] >= int(min_temp)]
+    df = df[df['Temperature'] <= int(max_temp)]
+    return df
+
+
+def check_pres_range(df, min_pres, max_pres):
+    df = df[df['Pressure'] >= int(min_pres)]
+    df = df[df['Pressure'] <= int(max_pres)]
     return df
 
 
@@ -123,19 +135,37 @@ def rename(df):
 @app.callback(
     Output("pie", "figure"),
     Input("campaign-dropdown", "value"),
+    Input("min-temp", "value"),
+    Input("max-temp", "value"),
+    Input("min-pres", "value"),
+    Input("max-pres", "value"),
 )
-def percent_part_type(campaign):
+def percent_part_type(campaign, min_temp, max_temp, min_pres, max_pres):
     '''pie chart for percentage of particle types for a given campaign'''
     df = read_campaign(campaign)
+    df = remove_bad_props(df)
+    df = remove_bad_env(df)
+    # print(df['Pressure'].min(), df['Pressure'].max())
     df = rename(df)
+    df = check_temp_range(df, min_temp, max_temp)
+    df = check_pres_range(df, min_pres[0], max_pres[0])
+
     values = df['Classification'].value_counts().values
-    pie = px.pie(
+    fig = px.pie(
         df,
         color_discrete_sequence=px.colors.qualitative.Antique,
         values=values,
         names=df['Classification'].unique(),
     )
-    return pie
+    fig.update_layout(
+        title={
+            'text': f"n={len(df)}",
+            'x': 0.43,
+            'xanchor': 'center',
+            'yanchor': 'top',
+        }
+    )
+    return fig
 
 
 @app.callback(
@@ -143,13 +173,19 @@ def percent_part_type(campaign):
     [
         Input("campaign-dropdown", "value"),
         Input("property-dropdown", "value"),
+        Input("min-temp", "value"),
+        Input("max-temp", "value"),
+        Input("min-pres", "value"),
+        Input("max-pres", "value"),
     ],
 )
-def particle_property_fig(campaign, prop):
+def particle_property_fig(campaign, prop, min_temp, max_temp, min_pres, max_pres):
     df = read_campaign(campaign)
     df = remove_bad_props(df)
+    df = remove_bad_env(df)
     df = rename(df)
-    df = rename(df)
+    df = check_temp_range(df, min_temp, max_temp)
+    df = check_pres_range(df, min_pres[0], max_pres[0])
 
     fig = px.box(
         df,
@@ -161,6 +197,14 @@ def particle_property_fig(campaign, prop):
             "Classification": "Particle Type",
         },
     )
+    fig.update_layout(
+        title={
+            'text': f"n={len(df)}",
+            'x': 0.43,
+            'xanchor': 'center',
+            'yanchor': 'top',
+        }
+    )
     return fig
 
 
@@ -168,13 +212,20 @@ def particle_property_fig(campaign, prop):
     Output("top-down map", "figure"),
     Input("campaign-dropdown", "value"),
     Input("map-particle_type", "value"),
+    Input("min-temp", "value"),
+    Input("max-temp", "value"),
+    Input("min-pres", "value"),
+    Input("max-pres", "value"),
 )
-def map_top_down(campaign, part_type):
+def map_top_down(campaign, part_type, min_temp, max_temp, min_pres, max_pres):
     '''aircraft location and particle type overlaid on map'''
     df = read_campaign(campaign)
     df = remove_bad_env(df)
     df = rename(df)
     df = df[df['Classification'].isin(part_type)]
+    df = check_temp_range(df, min_temp, max_temp)
+    df = check_pres_range(df, min_pres[0], max_pres[0])
+
     # Find Lat Long center
     lat_center = df['Latitude'][df['Latitude'] != -999.99].mean()
     lon_center = df['Longitude'][df['Latitude'] != -999.99].mean()
@@ -186,16 +237,37 @@ def map_top_down(campaign, part_type):
         color='Classification',
         size=df['Ice Water Content'] * 4,
         color_discrete_sequence=px.colors.qualitative.Antique,
-        hover_data=['Ice Water Content'],
+        hover_data={'Ice Water Content': True, 'Temperature': True, 'Pressure': True},
+        custom_data=['Temperature', 'Pressure', 'Ice Water Content'],
     )
     # Specify layout information
     fig.update_layout(
+        title={
+            'text': f"n={len(df)}",
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+        },
         mapbox=dict(
             style='light',
             accesstoken=os.getenv('MAPBOX_TOKEN'),
             center=dict(lon=lon_center, lat=lat_center),
             zoom=5,
-        )
+        ),
+    )
+
+    fig.update_traces(
+        mode='markers',
+        marker_line_width=0,
+        hovertemplate="<br>".join(
+            [
+                "Latitude: %{x}",
+                "Longitude: %{y}",
+                "Temperature: %{customdata[0]}",
+                "Pressure: %{customdata[1]}",
+                "Ice Water Content: %{customdata[2]}",
+            ]
+        ),
     )
     return fig
 
@@ -203,38 +275,73 @@ def map_top_down(campaign, part_type):
 @app.callback(
     Output("3d map", "figure"),
     Input("campaign-dropdown", "value"),
-    Input("3d_particle_type", "value"),
+    Input("map-particle_type", "value"),
     Input("3d_vertical_prop", "value"),
+    Input("min-temp", "value"),
+    Input("max-temp", "value"),
+    Input("min-pres", "value"),
+    Input("max-pres", "value"),
 )
-def three_d_map(campaign, part_type, vert_prop):
+def three_d_map(campaign, part_type, vert_prop, min_temp, max_temp, min_pres, max_pres):
 
     df = read_campaign(campaign)
     df = remove_bad_env(df)
     df = rename(df)
     if campaign == 'CRYSTAL_FACE_NASA':
         df = df[df['Latitude'] > 23.0]
-    print(min(df['Temperature']), max(df['Temperature']))
     df = df[df['Classification'].isin(part_type)]
+    df = check_temp_range(df, min_temp, max_temp)
+    df = check_pres_range(df, min_pres[0], max_pres[0])
+    if vert_prop == 'Temperature':
+        zrange = [min(df['Temperature']), 10]
+    else:
+        zrange = [min(df[vert_prop], max(df[vert_prop]))]
 
     fig = px.scatter_3d(
         df,
         x='Latitude',
         y='Longitude',
         z=vert_prop,
-        range_x=[min(df['Latitude']), max(df['Latitude'])],
-        range_y=[min(df['Longitude']), max(df['Longitude'])],
+        range_z=zrange,
         color=vert_prop,
-        color_continuous_scale=px.colors.diverging.balance,
-        color_continuous_midpoint=0.0,
-        size=df['Ice Water Content'] * 4,
-        hover_data=['Ice Water Content'],
+        color_continuous_scale=px.colors.sequential.Blues[::-1],
+        hover_data={'Ice Water Content': True, 'Temperature': True, 'Pressure': True},
+        custom_data=['Temperature', 'Pressure', 'Ice Water Content'],
+        size=df['Ice Water Content'] * 5,
     )
-    fig.update_traces(mode='markers', marker_line_width=0)
-    fig.update_layout(title_text=f"n={len(df)}", title_x=0.5)
+    fig.update_traces(
+        mode='markers',
+        marker_line_width=0,
+        hovertemplate="<br>".join(
+            [
+                "Latitude: %{x}",
+                "Longitude: %{y}",
+                "Temperature: %{customdata[0]}",
+                "Pressure: %{customdata[1]}",
+                "Ice Water Content: %{customdata[2]}",
+            ]
+        ),
+    )
+    fig.update_layout(
+        title={
+            'text': f"n={len(df)}",
+            'x': 0.45,
+            'xanchor': 'center',
+            'yanchor': 'top',
+        },
+    )
+    if vert_prop == 'Temperature':
+        fig.update_scenes(zaxis_autorange="reversed")
     return fig
 
 
 # Run local server
 if __name__ == '__main__':
-    app = app_layout.layout(app)
+    sidebar = app_layout.sidebar()
+    content = app_layout.content()
+    app.layout = dbc.Container(
+        [dcc.Location(id="url"), sidebar, content],
+        fluid=True,
+    )
+
     app.run_server(port=8050, debug=True)
