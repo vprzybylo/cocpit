@@ -4,7 +4,6 @@ from globals import *
 import dash_bootstrap_components as dbc
 from dash import html
 from dash import dcc
-from datetime import date
 import dash_loading_spinners as dls
 
 
@@ -74,8 +73,10 @@ def sidebar():
             ),
             dbc.Row(
                 dcc.DatePickerRange(
-                    start_date=date(2017, 6, 21),
-                    end_date=date(2017, 6, 21),
+                    id='date-picker',
+                    start_date=date(2002, 7, 3),
+                    end_date=date(2002, 7, 29),
+                    month_format='MMM Do, YY',
                     display_format='MMM Do, YY',
                 ),
                 style={"padding": padding, "margin-bottom": "12px"},
@@ -276,6 +277,10 @@ def content():
                     justify="center",
                 ),
                 html.Hr(),
+                html.P(
+                    'Copyright All Rights Reserved',
+                    style={"color": '#D3D3D3', 'text-align': 'center'},
+                ),
             ],
             style=CONTENT_STYLE,
         )

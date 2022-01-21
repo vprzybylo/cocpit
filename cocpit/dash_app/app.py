@@ -6,7 +6,7 @@ import numpy as np
 from dash.dependencies import Input, Output
 import plotly.express as px
 import app_layout
-from globals import *
+import globals
 import os
 from dotenv import load_dotenv
 from dash import dcc
@@ -26,66 +26,38 @@ app = dash.Dash(
 
 
 def read_campaign(campaign):
+    '''read particle property df and environmental property df_env
+    merge based on filename and date'''
+
     df_env = pd.read_csv(
         f"../../final_databases/vgg16/v1.4.0/environment/{campaign}.csv",
-        names=[
-            'filename',
-            'date',
-            'Latitude',
-            'Longitude',
-            'Altitude',
-            'Pressure',
-            'Temperature',
-            'Ice Water Content',
-        ],
-        header=1,
+        names=globals.col_names_env,
+        header=0,
     )
     df = pd.read_csv(
         f"../../final_databases/vgg16/v1.4.0/{campaign}.csv",
-        names=[
-            'filename',
-            'date',
-            'Frame Width',
-            'Frame Height',
-            'Particle Width',
-            'Particle Height',
-            'Cutoff',
-            'Aggregate',
-            'Budding',
-            'Bullet Rosette',
-            'Column',
-            'Compact Irregular',
-            'Fragment',
-            'Planar Polycrystal',
-            'Rimed',
-            'Sphere',
-            'Classification',
-            'Blur',
-            'Contours',
-            'Edges',
-            'Std',
-            'Contour Area',
-            'Contrast',
-            'Circularity',
-            'Solidity',
-            'Complexity',
-            'Equivalent Diameter',
-            'Convex Perimeter',
-            'Hull Area',
-            'Perimeter',
-            'Aspect Ratio',
-            'Extreme Points',
-            'Area Ratio',
-            'Roundness',
-            'Perimeter-Area Ratio',
-        ],
-        header=1,
+        names=globals.col_names,
+        header=0,
     )
     df = pd.merge(df, df_env, on=['filename', 'date'])
     return df
 
 
+@app.callback(
+    # dash.dependencies.Output('date-picker', 'start_date'),
+    # dash.dependencies.Output('date-picker', 'end_date'),
+    dash.dependencies.Output('date-picker', 'min_date_allowed'),
+    dash.dependencies.Output('date-picker', 'max_date_allowed'),
+    [dash.dependencies.Input('campaign-dropdown', 'value')],
+)
+def set_date_picker(campaign):
+    '''update date picker based on campaign start and end dates'''
+    print(globals.campaign_start_dates[campaign], globals.campaign_end_dates[campaign])
+    return globals.campaign_start_dates[campaign], globals.campaign_end_dates[campaign]
+
+
 def remove_bad_props(df):
+    '''remove bad data for particle geometric properties (e.g., no particle area)'''
     df = df[df["Area Ratio"] != -999.0]
     df = df[df["Complexity"] != 0.0]
     df = df[df["Complexity"] != -0.0]
@@ -96,6 +68,7 @@ def remove_bad_props(df):
 
 
 def remove_bad_env(df):
+    '''remove missing or bad environmental data'''
     df = df[
         (df['Latitude'] != -999.99)
         & (df['Latitude'] != 0)
@@ -113,13 +86,21 @@ def remove_bad_env(df):
     return df
 
 
+def check_date_range(df, start_date, end_date):
+    df['date'] = df['date'].str.split(' ').str[0]
+    df = df[df['date'].between(start_date, end_date)]
+    return df
+
+
 def check_temp_range(df, min_temp, max_temp):
+    '''find temperature within a user range from input'''
     df = df[df['Temperature'] >= int(min_temp)]
     df = df[df['Temperature'] <= int(max_temp)]
     return df
 
 
 def check_pres_range(df, min_pres, max_pres):
+    '''find pressure within a user range from slider'''
     df = df[df['Pressure'] >= int(min_pres)]
     df = df[df['Pressure'] <= int(max_pres)]
     return df
@@ -127,7 +108,7 @@ def check_pres_range(df, min_pres, max_pres):
 
 def rename(df):
     '''remove underscores in particle properties in classification column'''
-    rename_types = dict(zip(particle_types, particle_types_rename))
+    rename_types = dict(zip(globals.particle_types, globals.particle_types_rename))
     df = df.replace(rename_types)
     return df
 
@@ -139,8 +120,12 @@ def rename(df):
     Input("max-temp", "value"),
     Input("min-pres", "value"),
     Input("max-pres", "value"),
+    Input("date-picker", 'start_date'),
+    Input("date-picker", 'end_date'),
 )
-def percent_part_type(campaign, min_temp, max_temp, min_pres, max_pres):
+def percent_part_type(
+    campaign, min_temp, max_temp, min_pres, max_pres, start_date, end_date
+):
     '''pie chart for percentage of particle types for a given campaign'''
     df = read_campaign(campaign)
     df = remove_bad_props(df)
@@ -149,6 +134,7 @@ def percent_part_type(campaign, min_temp, max_temp, min_pres, max_pres):
     df = rename(df)
     df = check_temp_range(df, min_temp, max_temp)
     df = check_pres_range(df, min_pres[0], max_pres[0])
+    df = check_date_range(df, start_date, end_date)
 
     values = df['Classification'].value_counts().values
     fig = px.pie(
@@ -177,15 +163,20 @@ def percent_part_type(campaign, min_temp, max_temp, min_pres, max_pres):
         Input("max-temp", "value"),
         Input("min-pres", "value"),
         Input("max-pres", "value"),
+        Input("date-picker", 'start_date'),
+        Input("date-picker", 'end_date'),
     ],
 )
-def particle_property_fig(campaign, prop, min_temp, max_temp, min_pres, max_pres):
+def particle_property_fig(
+    campaign, prop, min_temp, max_temp, min_pres, max_pres, start_date, end_date
+):
     df = read_campaign(campaign)
     df = remove_bad_props(df)
     df = remove_bad_env(df)
     df = rename(df)
     df = check_temp_range(df, min_temp, max_temp)
     df = check_pres_range(df, min_pres[0], max_pres[0])
+    df = check_date_range(df, start_date, end_date)
 
     fig = px.box(
         df,
@@ -216,8 +207,12 @@ def particle_property_fig(campaign, prop, min_temp, max_temp, min_pres, max_pres
     Input("max-temp", "value"),
     Input("min-pres", "value"),
     Input("max-pres", "value"),
+    Input("date-picker", 'start_date'),
+    Input("date-picker", 'end_date'),
 )
-def map_top_down(campaign, part_type, min_temp, max_temp, min_pres, max_pres):
+def map_top_down(
+    campaign, part_type, min_temp, max_temp, min_pres, max_pres, start_date, end_date
+):
     '''aircraft location and particle type overlaid on map'''
     df = read_campaign(campaign)
     df = remove_bad_env(df)
@@ -225,6 +220,7 @@ def map_top_down(campaign, part_type, min_temp, max_temp, min_pres, max_pres):
     df = df[df['Classification'].isin(part_type)]
     df = check_temp_range(df, min_temp, max_temp)
     df = check_pres_range(df, min_pres[0], max_pres[0])
+    df = check_date_range(df, start_date, end_date)
 
     # Find Lat Long center
     lat_center = df['Latitude'][df['Latitude'] != -999.99].mean()
@@ -279,8 +275,20 @@ def map_top_down(campaign, part_type, min_temp, max_temp, min_pres, max_pres):
     Input("max-temp", "value"),
     Input("min-pres", "value"),
     Input("max-pres", "value"),
+    Input("date-picker", 'start_date'),
+    Input("date-picker", 'end_date'),
 )
-def three_d_map(campaign, part_type, vert_prop, min_temp, max_temp, min_pres, max_pres):
+def three_d_map(
+    campaign,
+    part_type,
+    vert_prop,
+    min_temp,
+    max_temp,
+    min_pres,
+    max_pres,
+    start_date,
+    end_date,
+):
 
     df = read_campaign(campaign)
     df = remove_bad_env(df)
@@ -290,10 +298,12 @@ def three_d_map(campaign, part_type, vert_prop, min_temp, max_temp, min_pres, ma
     df = df[df['Classification'].isin(part_type)]
     df = check_temp_range(df, min_temp, max_temp)
     df = check_pres_range(df, min_pres[0], max_pres[0])
+    df = check_date_range(df, start_date, end_date)
+
     if vert_prop == 'Temperature':
         zrange = [min(df['Temperature']), 10]
     else:
-        zrange = [min(df[vert_prop], max(df[vert_prop]))]
+        zrange = [df[vert_prop].min(), df[vert_prop].max()]
 
     fig = px.scatter_3d(
         df,
@@ -328,7 +338,7 @@ def three_d_map(campaign, part_type, vert_prop, min_temp, max_temp, min_pres, ma
             'yanchor': 'top',
         },
     )
-    if vert_prop == 'Temperature':
+    if vert_prop == 'Temperature' or vert_prop == 'Pressure':
         fig.update_scenes(zaxis_autorange="reversed")
     return fig
 
