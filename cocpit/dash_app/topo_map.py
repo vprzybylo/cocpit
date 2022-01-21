@@ -14,8 +14,8 @@ from typing import List
 @dataclass
 class TopoMap:
     resolution: float = 0.8
-    lon_area: List[float] = [-180.0, 180.0]
-    lat_area: List[float] = [-90.0, 90.0]
+    lon_area: List = field(default_factory=lambda: [-180.0, 180.0])
+    lat_area: List = field(default_factory=lambda: [-90.0, 90.0])
     lon_range: float = field(init=False)
     lat_range: float = field(init=False)
     spacing: float = field(init=False)
@@ -46,7 +46,7 @@ class TopoMap:
         for i in range(self.lat_num):
             lat_input[i] = self.lat_range[0] + i * self.spacing[1]
 
-        self.lat, self.lon = np.meshgrid(lon_input, lat_input)
+        self.lon, self.lat = np.meshgrid(lon_input, lat_input)
 
     def reshape(self):
         '''Convert 2D array from 1D array for z value'''
@@ -93,7 +93,7 @@ def degree2radians(degree):
     return degree * np.pi / 180
 
 
-def mapping_map_to_sphere(lon, lat, radius=1.00):
+def mapping_map_to_sphere(lon, lat, radius=1):
     '''maps the points of coords (lon, lat)
     to points onto the sphere of radius radius'''
     lon = np.array(lon, dtype=np.float64)
