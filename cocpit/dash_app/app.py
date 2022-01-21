@@ -10,6 +10,7 @@ import globals
 import os
 from dotenv import load_dotenv
 from dash import dcc
+import plot_globe
 
 load_dotenv()
 
@@ -52,7 +53,6 @@ def read_campaign(campaign):
 )
 def set_date_picker(campaign):
     '''update date picker based on campaign start and end dates'''
-    print(globals.campaign_start_dates[campaign], globals.campaign_end_dates[campaign])
     return globals.campaign_start_dates[campaign], globals.campaign_end_dates[campaign]
 
 
@@ -340,6 +340,44 @@ def three_d_map(
     )
     if vert_prop == 'Temperature' or vert_prop == 'Pressure':
         fig.update_scenes(zaxis_autorange="reversed")
+    return fig
+
+
+@app.callback(
+    Output("globe", "figure"),
+    Input("campaign-dropdown", "value"),
+    Input("map-particle_type", "value"),
+    Input("3d_vertical_prop", "value"),
+    Input("min-temp", "value"),
+    Input("max-temp", "value"),
+    Input("min-pres", "value"),
+    Input("max-pres", "value"),
+    Input("date-picker", 'start_date'),
+    Input("date-picker", 'end_date'),
+)
+def globe(
+    campaign,
+    part_type,
+    vert_prop,
+    min_temp,
+    max_temp,
+    min_pres,
+    max_pres,
+    start_date,
+    end_date,
+):
+
+    df = read_campaign(campaign)
+    df = remove_bad_env(df)
+    df = rename(df)
+    if campaign == 'CRYSTAL_FACE_NASA':
+        df = df[df['Latitude'] > 23.0]
+    df = df[df['Classification'].isin(part_type)]
+    df = check_temp_range(df, min_temp, max_temp)
+    df = check_pres_range(df, min_pres[0], max_pres[0])
+    df = check_date_range(df, start_date, end_date)
+
+    fig = plot_globe.main(df)
     return fig
 
 

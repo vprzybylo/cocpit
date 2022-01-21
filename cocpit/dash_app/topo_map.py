@@ -13,7 +13,7 @@ from typing import List
 
 @dataclass
 class TopoMap:
-    resolution: float = 0.8
+    resolution: float = 1.0
     lon_area: List = field(default_factory=lambda: [-180.0, 180.0])
     lat_area: List = field(default_factory=lambda: [-90.0, 90.0])
     lon_range: float = field(init=False)

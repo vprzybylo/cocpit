@@ -277,6 +277,16 @@ def content():
                     justify="center",
                 ),
                 html.Hr(),
+                dbc.Row(
+                    dbc.Col(
+                        dcc.Graph(id='globe', figure={}),
+                        xs=12,
+                        sm=12,
+                        md=12,
+                        lg=12,
+                        xl=5,
+                    ),
+                ),
                 html.P(
                     'Copyright All Rights Reserved',
                     style={"color": '#D3D3D3', 'text-align': 'center'},

@@ -8,8 +8,7 @@ from app import read_campaign as read_campaign
 from topo_map import mapping_map_to_sphere
 import plotly.graph_objs as go
 from plotly.offline import plot
-import numpy as np
-from colorbar import Cscale_EQ
+from scatter import Scatter
 
 
 def create_topo_map():
@@ -23,6 +22,13 @@ def create_topo_map():
     map.convert_2D()
     xs, ys, zs = mapping_map_to_sphere(map.lon, map.lat)
     return map.topo, xs, ys, zs
+
+
+def create_scatter(df):
+    '''create 3d scatter plot on globe'''
+    s = Scatter(df)
+    s.scatter_coords()
+    return s.plot_scatter()
 
 
 def globe_layout(titlecolor='white', bgcolor='white'):
@@ -92,64 +98,25 @@ def plot_globe(topo, xs, ys, zs):
     )
 
 
-def scatter_coords():
-    df = read_campaign('CRYSTAL_FACE_NASA')
-    lon = np.array(df['Longitude'])
-    lat = np.array(df['Latitude'])
-    alt = np.array(df['Altitude'])
-    iwc = np.array(df['Ice Water Content'])
-
-    xs_ev_org, ys_ev_org, zs_ev_org = mapping_map_to_sphere(lon, lat)
-
-    return xs_ev_org, ys_ev_org, zs_ev_org, alt, iwc
-
-
-def create_crystal_scatter(xs_ev_up, ys_ev_up, zs_ev_up, alt, iwc):
-    cmin = 6000
-    cmax = max(alt)
-    cbin = 1000.0
-
-    return go.Scatter3d(
-        x=xs_ev_up,
-        y=ys_ev_up,
-        z=zs_ev_up,
-        mode='markers',
-        marker=dict(
-            cmax=cmax,
-            cmin=cmin,
-            colorbar=dict(
-                title='Altitude',
-                titleside='right',
-                titlefont=dict(size=16, color='black', family='Courier New'),
-                tickmode='array',
-                ticks='outside',
-                ticktext=list(np.arange(cmin, cmax + cbin, cbin)),
-                tickvals=list(np.arange(cmin, cmax + cbin, cbin)),
-                tickcolor='black',
-                tickfont=dict(size=14, color='black', family='Courier New'),
-            ),
-            color=alt,
-            colorscale=Cscale_EQ,
-            showscale=True,
-            opacity=1.0,
-        ),
+def camera():
+    return dict(
+        # up=dict(x=0, y=1, z=1),
+        # center=dict(x=0, y=0, z=0),
+        # eye=dict(x=0.5, y=0.2, z=1),
     )
 
 
-def main():
+def main(df):
     # create interactive topographic globe
     topo, xs, ys, zs = create_topo_map()
     topo_sphere_3d = plot_globe(topo, xs, ys, zs)
 
     # create scatter above globe with ice crystal location
-    xs_ev_up, ys_ev_up, zs_ev_up, alt, iwc = scatter_coords()
-    crystal_scatter = create_crystal_scatter(xs_ev_up, ys_ev_up, zs_ev_up, alt, iwc)
+    crystal_scatter = create_scatter(df)
 
     plot_data = [topo_sphere_3d, crystal_scatter]
     layout = globe_layout()
     fig = go.Figure(data=plot_data, layout=layout)
-    plot(fig, validate=False, filename='SphericalTopography.html', auto_open=True)
-
-
-if __name__ == "__main__":
-    main()
+    fig.update_layout(scene_camera=camera())
+    # plot(fig, validate=False, filename='SphericalTopography.html', auto_open=True)
+    return fig
