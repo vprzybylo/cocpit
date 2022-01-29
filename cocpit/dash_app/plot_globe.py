@@ -4,7 +4,6 @@ and overlaid ice crystals at altitude
 '''
 
 from topo_map import TopoMap as TopoMap
-from app import read_campaign as read_campaign
 from topo_map import mapping_map_to_sphere
 import plotly.graph_objs as go
 from plotly.offline import plot

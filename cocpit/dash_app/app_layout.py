@@ -173,10 +173,10 @@ def content():
         # "padding": "2rem 1rem",
     }
 
-    content = dls.Hash(
-        html.Div(
-            id="page-content",
-            children=[
+    content = html.Div(
+        id="page-content",
+        children=[
+            dls.Hash(
                 dbc.Row(
                     [
                         dbc.Col(
@@ -198,8 +198,10 @@ def content():
                     ],
                     align="center",
                     justify="center",
-                ),
-                html.Hr(),
+                )
+            ),
+            html.Hr(),
+            dls.Hash(
                 dbc.Row(
                     [
                         dbc.Col(
@@ -275,24 +277,40 @@ def content():
                     className="g-0",
                     align="center",
                     justify="center",
-                ),
-                html.Hr(),
+                )
+            ),
+            html.Hr(),
+            # dls.Hash(
+            #     dbc.Row(
+            #         dbc.Col(
+            #             dcc.Graph(id='globe', figure={}),
+            #             xs=12,
+            #             sm=12,
+            #             md=12,
+            #             lg=12,
+            #             xl=5,
+            #         ),
+            #     )
+            # ),
+            html.Hr(),
+            dls.Hash(
                 dbc.Row(
                     dbc.Col(
-                        dcc.Graph(id='globe', figure={}),
+                        dcc.Graph(id='flat-topo', figure={}),
                         xs=12,
                         sm=12,
                         md=12,
                         lg=12,
                         xl=5,
                     ),
-                ),
-                html.P(
-                    'Copyright All Rights Reserved',
-                    style={"color": '#D3D3D3', 'text-align': 'center'},
-                ),
-            ],
-            style=CONTENT_STYLE,
-        )
+                )
+            ),
+            html.P(
+                'Copyright All Rights Reserved',
+                style={"color": '#D3D3D3', 'text-align': 'center'},
+            ),
+        ],
+        style=CONTENT_STYLE,
     )
+
     return content
