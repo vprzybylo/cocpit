@@ -170,7 +170,7 @@ def content():
     CONTENT_STYLE = {
         "margin-left": "18rem",
         "margin-right": "2rem",
-        # "padding": "2rem 1rem",
+        "margin-top": "4rem",
     }
 
     return html.Div(
@@ -210,29 +210,29 @@ def content():
                             lg=12,
                             xl=1,
                         ),
-                        dbc.Col(
-                            [
-                                dbc.Row(
-                                    dbc.Label('Vertical Axis Property:'),
-                                ),
-                                dbc.Row(
-                                    dcc.Dropdown(
-                                        id='3d_vertical_prop',
-                                        options=[
-                                            {'label': i, 'value': i}
-                                            for i in vertical_vars
-                                        ],
-                                        placeholder="Vertical Axis Property",
-                                        value='Temperature',
-                                    ),
-                                ),
-                            ],
-                            xs=12,
-                            sm=12,
-                            md=12,
-                            lg=12,
-                            xl=2,
-                        ),
+                        # dbc.Col(
+                        #     [
+                        #         dbc.Row(
+                        #             dbc.Label('Vertical Axis Property:'),
+                        #         ),
+                        #         dbc.Row(
+                        #             dcc.Dropdown(
+                        #                 id='3d_vertical_prop',
+                        #                 options=[
+                        #                     {'label': i, 'value': i}
+                        #                     for i in vertical_vars
+                        #                 ],
+                        #                 placeholder="Vertical Axis Property",
+                        #                 value='Temperature',
+                        #             ),
+                        #         ),
+                        #     ],
+                        #     xs=12,
+                        #     sm=12,
+                        #     md=12,
+                        #     lg=12,
+                        #     xl=2,
+                        # ),
                         dbc.Col(
                             dcc.Graph(id='flat-topo', figure={}),
                             xs=12,
@@ -245,28 +245,99 @@ def content():
                 )
             ),
             dls.Hash(
-                dbc.Row(
-                    [
-                        dbc.Col(
-                            dcc.Graph(id='pie', figure={}),
-                            xs=12,
-                            sm=12,
-                            md=12,
-                            lg=12,
-                            xl=5,
-                        ),
-                        dbc.Col(
-                            dcc.Graph(id='prop_fig', figure={}),
-                            xs=12,
-                            sm=12,
-                            md=12,
-                            lg=12,
-                            xl=6,
-                        ),
-                    ],
-                    align="center",
-                    justify="center",
-                )
+                [
+                    dbc.Row(
+                        [html.H5('Geographic Attributes')],
+                        align="center",
+                        justify="center",
+                    ),
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                dcc.Graph(id='lon-alt-hist', figure={}),
+                                xs=12,
+                                sm=12,
+                                md=12,
+                                lg=12,
+                                xl=6,
+                            ),
+                            dbc.Col(
+                                dcc.Graph(id='lat-alt-hist', figure={}),
+                                xs=12,
+                                sm=12,
+                                md=12,
+                                lg=12,
+                                xl=6,
+                            ),
+                        ],
+                        align="center",
+                        justify="center",
+                    ),
+                ]
+            ),
+            html.Hr(),
+            dls.Hash(
+                [
+                    dbc.Row(
+                        [html.H5('Environmental Attributes')],
+                        align="center",
+                        justify="center",
+                    ),
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                dcc.Graph(id='type-temp-violin', figure={}),
+                                xs=12,
+                                sm=12,
+                                md=12,
+                                lg=12,
+                                xl=6,
+                            ),
+                            dbc.Col(
+                                dcc.Graph(id='type-iwc-violin', figure={}),
+                                xs=12,
+                                sm=12,
+                                md=12,
+                                lg=12,
+                                xl=6,
+                            ),
+                        ],
+                        align="center",
+                        justify="center",
+                    ),
+                ]
+            ),
+            html.Hr(),
+            dls.Hash(
+                [
+                    dbc.Row(
+                        [html.H5('Geometric Attributes')],
+                        align="center",
+                        justify="center",
+                    ),
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                dcc.Graph(id='pie', figure={}),
+                                xs=12,
+                                sm=12,
+                                md=12,
+                                lg=12,
+                                xl=5,
+                            ),
+                            dbc.Col(
+                                dcc.Graph(id='prop_fig', figure={}),
+                                xs=12,
+                                sm=12,
+                                md=12,
+                                lg=12,
+                                xl=6,
+                            ),
+                        ],
+                        align="center",
+                        justify="center",
+                    ),
+                ]
             ),
             #            html.Hr(),
             #            dls.Hash(

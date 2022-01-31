@@ -17,9 +17,82 @@ import orjson
 import process
 import datetime
 from dash_extensions.enrich import Output, Input, ServersideOutput
+import seaborn as sns
+from joypy import joyplot
 
 
 def register_callbacks(app):
+    @app.callback(
+        Output("flat-topo", "figure"),
+        Input("store-df", "data"),
+        Input("map-particle_type", "value"),
+        # Input("3d_vertical_prop", "value"),
+    )
+    def topo_flat(df, part_type, resolution=0.15):
+        '''particle location overlaid on topographic map'''
+
+        # df = pd.read_json(json_file)
+        df = df[df['Classification'].isin(part_type)]
+
+        Ctopo = [
+            [0, 'rgb(0, 0, 70)'],
+            [0.2, 'rgb(0,90,150)'],
+            [0.4, 'rgb(150,180,230)'],
+            [0.5, 'rgb(210,230,250)'],
+            [0.50001, 'rgb(0,120,0)'],
+            [0.57, 'rgb(220,180,130)'],
+            [0.65, 'rgb(120,100,0)'],
+            [0.75, 'rgb(80,70,0)'],
+            [0.9, 'rgb(200,200,200)'],
+            [1.0, 'rgb(255,255,255)'],
+        ]
+
+        fig = px.scatter_3d(
+            df,
+            x=-df['Latitude'],
+            y='Longitude',
+            z='Altitude',
+            # range_z=zrange,
+            color='Classification',
+            # hover_data={'Ice Water Content': True, 'Temperature': True, 'Pressure': True},
+            # custom_data=['Temperature', 'Pressure', 'Ice Water Content'],
+            size=df['Ice Water Content'],
+        )
+        # don't outline scatter markers
+        fig.update_traces(marker=dict(line=dict(width=0)))
+        # select plot range for Earth [[lon min, lon max], [lat min, lat max]]
+        lon, lat, topo = Etopo(
+            [min(df['Longitude']) - 10, max(df['Longitude']) + 10],
+            [-min(df['Latitude']) - 10, -max(df['Latitude']) + 10],
+            resolution,
+        )
+        fig.add_trace(go.Surface(x=lat, y=lon, z=np.array(topo), colorscale=Ctopo))
+
+        noaxis = dict(
+            showbackground=False,
+            showgrid=False,
+            showline=False,
+            showticklabels=False,
+            ticks='',
+            title='',
+            zeroline=False,
+        )
+        camera = dict(
+            up=dict(x=0, y=0, z=1),
+            eye=dict(x=0.6, y=0.0, z=3),
+        )
+        fig.update_layout(
+            width=1100,
+            height=400,
+            coloraxis_colorbar=dict(x=-0.1),
+            margin=dict(l=0, r=0, b=0, t=0),
+            scene_aspectmode='manual',
+            scene_aspectratio=dict(x=2, y=5, z=0.3),
+            # scene=dict(xaxis=noaxis, yaxis=noaxis, zaxis=noaxis),
+            scene_camera=camera,
+        )
+        return fig
+
     @app.callback(
         ServersideOutput("store-df", "data"),
         Input("campaign-dropdown", "value"),
@@ -108,72 +181,104 @@ def register_callbacks(app):
                 'yanchor': 'top',
             }
         )
+        fig.update_layout(
+            {
+                'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+            }
+        )
+        fig.update_xaxes(showline=True, linewidth=1, linecolor='black')
+        fig.update_yaxes(showline=True, linewidth=1, linecolor='black')
         return fig
 
     @app.callback(
-        Output("flat-topo", "figure"),
+        Output("lon-alt-hist", "figure"),
         Input("store-df", "data"),
-        Input("map-particle_type", "value"),
-        Input("3d_vertical_prop", "value"),
     )
-    def topo_flat(df, part_type, vert_prop):
-        '''particle location overlaid on topographic map'''
-
-        # df = pd.read_json(json_file)
-        df = df[df['Classification'].isin(part_type)]
-
-        Ctopo = [
-            [0, 'rgb(0, 0, 70)'],
-            [0.2, 'rgb(0,90,150)'],
-            [0.4, 'rgb(150,180,230)'],
-            [0.5, 'rgb(210,230,250)'],
-            [0.50001, 'rgb(0,120,0)'],
-            [0.57, 'rgb(220,180,130)'],
-            [0.65, 'rgb(120,100,0)'],
-            [0.75, 'rgb(80,70,0)'],
-            [0.9, 'rgb(200,200,200)'],
-            [1.0, 'rgb(255,255,255)'],
-        ]
-
-        fig = px.scatter_3d(
+    def lon_alt_hist(df):
+        fig = px.density_contour(
             df,
-            x=-df['Latitude'],
-            y='Longitude',
-            z='Altitude',
-            # range_z=zrange,
-            color=vert_prop,
-            # hover_data={'Ice Water Content': True, 'Temperature': True, 'Pressure': True},
-            # custom_data=['Temperature', 'Pressure', 'Ice Water Content'],
-            size=df['Ice Water Content'],
-        )
-        # don't outline scatter markers
-        fig.update_traces(marker=dict(line=dict(width=0)))
-
-        lon, lat, topo = Etopo([-180, 180], [-90, 90], 0.5)
-        fig.add_trace(go.Surface(x=lat, y=lon, z=np.array(topo), colorscale=Ctopo))
-
-        noaxis = dict(
-            showbackground=False,
-            showgrid=False,
-            showline=False,
-            showticklabels=False,
-            ticks='',
-            title='',
-            zeroline=False,
-        )
-        camera = dict(
-            up=dict(x=0, y=0, z=1),
-            eye=dict(x=0.6, y=0.0, z=3),
+            x="Longitude",
+            y="Altitude",
+            color='Classification',
+            marginal_x="violin",
+            marginal_y="violin",
+            color_discrete_sequence=px.colors.qualitative.Antique,
         )
         fig.update_layout(
-            width=1300,
-            height=300,
-            margin=dict(l=0, r=0, b=0, t=0),
-            scene_aspectmode='manual',
-            scene_aspectratio=dict(x=2, y=5, z=0.3),
-            scene=dict(xaxis=noaxis, yaxis=noaxis, zaxis=noaxis),
-            scene_camera=camera,
+            {
+                'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+            }
         )
+        fig.update_xaxes(showline=True, linewidth=1, linecolor='black')
+        fig.update_yaxes(showline=True, linewidth=1, linecolor='black')
+        return fig
+
+    @app.callback(
+        Output("lat-alt-hist", "figure"),
+        Input("store-df", "data"),
+    )
+    def lat_alt_hist(df):
+        fig = px.density_contour(
+            df,
+            x="Latitude",
+            y="Altitude",
+            color='Classification',
+            marginal_x="violin",
+            marginal_y="violin",
+            color_discrete_sequence=px.colors.qualitative.Antique,
+        )
+        fig.update_layout(
+            {
+                'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+            }
+        )
+        fig.update_xaxes(showline=True, linewidth=1, linecolor='black')
+        fig.update_yaxes(showline=True, linewidth=1, linecolor='black')
+        return fig
+
+    @app.callback(
+        Output("type-temp-violin", "figure"),
+        Input("store-df", "data"),
+    )
+    def type_temp_ridge(df):
+
+        fig = px.violin(df, x='Classification', y='Temperature', color='Classification')
+
+        # fig.update_traces(orientation='h', side='positive', width=3, points=False)
+        fig.update_layout(xaxis_showgrid=False, xaxis_zeroline=False)
+        fig.update_layout(
+            {
+                'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+            }
+        )
+        fig.update_xaxes(showline=True, linewidth=1, linecolor='black')
+        fig.update_yaxes(showline=True, linewidth=1, linecolor='black')
+        return fig
+
+    @app.callback(
+        Output("type-iwc-violin", "figure"),
+        Input("store-df", "data"),
+    )
+    def type_temp_ridge(df):
+
+        fig = px.violin(
+            df, x='Classification', y='Ice Water Content', color='Classification'
+        )
+
+        # fig.update_traces(orientation='h', side='positive', width=3, points=False)
+        fig.update_layout(xaxis_showgrid=False, xaxis_zeroline=False)
+        fig.update_layout(
+            {
+                'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+            }
+        )
+        fig.update_xaxes(showline=True, linewidth=1, linecolor='black')
+        fig.update_yaxes(showline=True, linewidth=1, linecolor='black')
         return fig
 
     # @app.callback(
