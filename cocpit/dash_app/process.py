@@ -79,7 +79,7 @@ def rename(df):
     return df
 
 
-def update_violin_layout(fig, df, contour=False):
+def update_layout(fig, df, contour=False):
     fig.update_layout(
         {
             'plot_bgcolor': 'rgba(0, 0, 0, 0)',
@@ -89,7 +89,7 @@ def update_violin_layout(fig, df, contour=False):
         xaxis_zeroline=False,
         title={
             'text': f"n={len(df)}",
-            #'x': 0.43,
+            'x': 0.43,
             'xanchor': 'center',
             'yanchor': 'top',
         },

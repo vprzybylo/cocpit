@@ -19,6 +19,7 @@ import datetime
 from dash_extensions.enrich import Output, Input, ServersideOutput
 import seaborn as sns
 from joypy import joyplot
+from dash import dash_table
 
 
 def register_callbacks(app):
@@ -45,7 +46,7 @@ def register_callbacks(app):
             size=df['Ice Water Content'],
         )
         # don't outline scatter markers
-        fig.update_traces(marker=dict(line=dict(width=0)))
+        # fig.update_traces(marker=dict(line=dict(width=0)))
         # select plot range for Earth [[lon min, lon max], [lat min, lat max]]
         lon, lat, topo = Etopo(
             [min(df['Longitude']) - 10, max(df['Longitude']) + 10],
@@ -79,7 +80,12 @@ def register_callbacks(app):
             scene_aspectratio=dict(x=2, y=5, z=0.3),
             # scene=dict(xaxis=noaxis, yaxis=noaxis, zaxis=noaxis),
             scene_camera=camera,
+            legend=dict(
+                x=1.2,
+                y=1.0,
+            ),
         )
+        fig = process.update_layout(fig, df)
         return fig
 
     @app.callback(
@@ -162,7 +168,7 @@ def register_callbacks(app):
                 "Classification": "Particle Type",
             },
         )
-        fig = process.update_violin_layout(fig, df)
+        fig = process.update_layout(fig, df)
         return fig
 
     @app.callback(
@@ -179,7 +185,7 @@ def register_callbacks(app):
             marginal_y="violin",
             color_discrete_sequence=px.colors.qualitative.Antique,
         )
-        fig = process.update_violin_layout(fig, df, contour=True)
+        fig = process.update_layout(fig, df, contour=True)
         return fig
 
     @app.callback(
@@ -196,14 +202,14 @@ def register_callbacks(app):
             marginal_y="violin",
             color_discrete_sequence=px.colors.qualitative.Antique,
         )
-        fig = process.update_violin_layout(fig, df, contour=True)
+        fig = process.update_layout(fig, df, contour=True)
         return fig
 
     @app.callback(
         Output("type-temp-violin", "figure"),
         Input("store-df", "data"),
     )
-    def type_temp_ridge(df):
+    def type_temp_violin(df):
 
         fig = px.violin(
             df,
@@ -214,14 +220,15 @@ def register_callbacks(app):
             points=False,
         )
 
-        fig = process.update_violin_layout(fig, df)
+        fig = process.update_layout(fig, df)
+        fig.update_yaxes(autorange="reversed")
         return fig
 
     @app.callback(
         Output("type-iwc-violin", "figure"),
         Input("store-df", "data"),
     )
-    def type_temp_ridge(df):
+    def type_iwc_violin(df):
 
         fig = px.violin(
             df,
@@ -230,8 +237,18 @@ def register_callbacks(app):
             color='Classification',
             color_discrete_sequence=px.colors.qualitative.Antique,
         )
-        fig = process.update_violin_layout(fig, df)
+        fig = process.update_layout(fig, df)
+
         return fig
+
+    @app.callback(
+        Output('table', 'data'),
+        Input("store-df", "data"),
+    )
+    def datatable(df):
+        return [
+            dash_table.DataTable(rows=df.to_dict(orient='records'), columns=df.columns)
+        ]
 
     # @app.callback(
     #     Output("top-down-map", "figure"),
