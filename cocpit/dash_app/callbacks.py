@@ -41,12 +41,13 @@ def register_callbacks(app):
             z='Altitude',
             # range_z=zrange,
             color='Classification',
+            color_discrete_sequence=px.colors.qualitative.Antique,
             # hover_data={'Ice Water Content': True, 'Temperature': True, 'Pressure': True},
             # custom_data=['Temperature', 'Pressure', 'Ice Water Content'],
             size=df['Ice Water Content'],
         )
         # don't outline scatter markers
-        # fig.update_traces(marker=dict(line=dict(width=0)))
+        fig.update_traces(marker=dict(line=dict(width=0)))
         # select plot range for Earth [[lon min, lon max], [lat min, lat max]]
         lon, lat, topo = Etopo(
             [min(df['Longitude']) - 10, max(df['Longitude']) + 10],
@@ -85,7 +86,7 @@ def register_callbacks(app):
                 y=1.0,
             ),
         )
-        fig = process.update_layout(fig, df)
+        fig = process.update_layout(fig, df, contour=True)
         return fig
 
     @app.callback(
@@ -247,7 +248,13 @@ def register_callbacks(app):
     )
     def datatable(df):
         return [
-            dash_table.DataTable(rows=df.to_dict(orient='records'), columns=df.columns)
+            dash_table.DataTable(
+                data=df.to_dict(orient='records'),
+                columns=df.columns,
+                export_format="csv",
+                fixed_rows={'headers': True},
+                style_table={'height': '300px', 'overflowY': 'auto'},
+            )
         ]
 
     # @app.callback(
