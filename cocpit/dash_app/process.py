@@ -1,5 +1,4 @@
 '''CPI campaign data processing functions for dataframes'''
-
 import pandas as pd
 import numpy as np
 import globals

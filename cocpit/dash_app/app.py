@@ -1,16 +1,17 @@
 '''main dashboard executable'''
 
-import dash
+# import dash
 import dash_bootstrap_components as dbc
 import app_layout
 from dotenv import load_dotenv
 from dash import dcc
 import callbacks
+from dash_extensions.enrich import Dash
 
 
 def main():
     load_dotenv()
-    return dash.Dash(
+    return Dash(
         __name__,
         external_stylesheets=[dbc.themes.FLATLY],
         meta_tags=[
@@ -28,5 +29,6 @@ if __name__ == '__main__':
         [dcc.Location(id="url"), sidebar, content],
         fluid=True,
     )
+
     callbacks.register_callbacks(app)
     app.run_server(port=8050, debug=True)

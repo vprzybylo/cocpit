@@ -173,9 +173,10 @@ def content():
         # "padding": "2rem 1rem",
     }
 
-    content = html.Div(
+    return html.Div(
         id="page-content",
         children=[
+            dcc.Store(id='store-df'),
             dls.Hash(
                 dbc.Row(
                     [
@@ -235,7 +236,7 @@ def content():
                             xl=1,
                         ),
                         dbc.Col(
-                            dcc.Graph(id='top-down map', figure={}),
+                            dcc.Graph(id='top-down-map', figure={}),
                             xs=12,
                             sm=12,
                             md=12,
@@ -265,14 +266,14 @@ def content():
                             lg=12,
                             xl=1,
                         ),
-                        dbc.Col(
-                            dcc.Graph(id='3d map', figure={}),
-                            xs=12,
-                            sm=12,
-                            md=12,
-                            lg=12,
-                            xl=5,
-                        ),
+                        # dbc.Col(
+                        #     dcc.Graph(id='3d map', figure={}),
+                        #     xs=12,
+                        #     sm=12,
+                        #     md=12,
+                        #     lg=12,
+                        #     xl=5,
+                        # ),
                     ],
                     className="g-0",
                     align="center",
@@ -312,5 +313,3 @@ def content():
         ],
         style=CONTENT_STYLE,
     )
-
-    return content
