@@ -77,3 +77,26 @@ def rename(df):
     rename_types = dict(zip(globals.particle_types, globals.particle_types_rename))
     df = df.replace(rename_types)
     return df
+
+
+def update_violin_layout(fig, df, contour=False):
+    fig.update_layout(
+        {
+            'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+            'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+        },
+        xaxis_showgrid=True,
+        xaxis_zeroline=False,
+        title={
+            'text': f"n={len(df)}",
+            #'x': 0.43,
+            'xanchor': 'center',
+            'yanchor': 'top',
+        },
+    )
+
+    fig.update_xaxes(showline=True, linewidth=1, linecolor='black')
+    if contour:
+        return fig.update_yaxes(showline=True, linewidth=1, linecolor='black')
+    else:
+        return fig.update_traces(width=1, points=False)

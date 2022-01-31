@@ -244,6 +244,7 @@ def content():
                     ],
                 )
             ),
+            html.Hr(),
             dls.Hash(
                 [
                     dbc.Row(
@@ -323,7 +324,7 @@ def content():
                                 sm=12,
                                 md=12,
                                 lg=12,
-                                xl=5,
+                                xl=6,
                             ),
                             dbc.Col(
                                 dcc.Graph(id='prop_fig', figure={}),

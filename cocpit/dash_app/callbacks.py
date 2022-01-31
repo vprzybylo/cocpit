@@ -33,20 +33,6 @@ def register_callbacks(app):
 
         # df = pd.read_json(json_file)
         df = df[df['Classification'].isin(part_type)]
-
-        Ctopo = [
-            [0, 'rgb(0, 0, 70)'],
-            [0.2, 'rgb(0,90,150)'],
-            [0.4, 'rgb(150,180,230)'],
-            [0.5, 'rgb(210,230,250)'],
-            [0.50001, 'rgb(0,120,0)'],
-            [0.57, 'rgb(220,180,130)'],
-            [0.65, 'rgb(120,100,0)'],
-            [0.75, 'rgb(80,70,0)'],
-            [0.9, 'rgb(200,200,200)'],
-            [1.0, 'rgb(255,255,255)'],
-        ]
-
         fig = px.scatter_3d(
             df,
             x=-df['Latitude'],
@@ -66,7 +52,9 @@ def register_callbacks(app):
             [-min(df['Latitude']) - 10, -max(df['Latitude']) + 10],
             resolution,
         )
-        fig.add_trace(go.Surface(x=lat, y=lon, z=np.array(topo), colorscale=Ctopo))
+        fig.add_trace(
+            go.Surface(x=lat, y=lon, z=np.array(topo), colorscale=globals.Ctopo)
+        )
 
         noaxis = dict(
             showbackground=False,
@@ -84,7 +72,8 @@ def register_callbacks(app):
         fig.update_layout(
             width=1100,
             height=400,
-            coloraxis_colorbar=dict(x=-0.1),
+            xaxis_title='Latitude',
+            # coloraxis_colorbar=dict(x=-0.1),
             margin=dict(l=0, r=0, b=0, t=0),
             scene_aspectmode='manual',
             scene_aspectratio=dict(x=2, y=5, z=0.3),
@@ -159,11 +148,11 @@ def register_callbacks(app):
         Input("property-dropdown", "value"),
         Input("store-df", "data"),
     )
-    def percent_part_type(prop, df):
+    def geometric_properties(prop, df):
         '''box plots of geometric attributes of ice crystals
         with respect to particle classification on sidebar menu filters'''
         # df = pd.read_json(json_file)
-        fig = px.box(
+        fig = px.violin(
             df,
             x='Classification',
             y=prop,
@@ -173,22 +162,7 @@ def register_callbacks(app):
                 "Classification": "Particle Type",
             },
         )
-        fig.update_layout(
-            title={
-                'text': f"n={len(df)}",
-                'x': 0.43,
-                'xanchor': 'center',
-                'yanchor': 'top',
-            }
-        )
-        fig.update_layout(
-            {
-                'plot_bgcolor': 'rgba(0, 0, 0, 0)',
-                'paper_bgcolor': 'rgba(0, 0, 0, 0)',
-            }
-        )
-        fig.update_xaxes(showline=True, linewidth=1, linecolor='black')
-        fig.update_yaxes(showline=True, linewidth=1, linecolor='black')
+        fig = process.update_violin_layout(fig, df)
         return fig
 
     @app.callback(
@@ -205,14 +179,7 @@ def register_callbacks(app):
             marginal_y="violin",
             color_discrete_sequence=px.colors.qualitative.Antique,
         )
-        fig.update_layout(
-            {
-                'plot_bgcolor': 'rgba(0, 0, 0, 0)',
-                'paper_bgcolor': 'rgba(0, 0, 0, 0)',
-            }
-        )
-        fig.update_xaxes(showline=True, linewidth=1, linecolor='black')
-        fig.update_yaxes(showline=True, linewidth=1, linecolor='black')
+        fig = process.update_violin_layout(fig, df, contour=True)
         return fig
 
     @app.callback(
@@ -229,14 +196,7 @@ def register_callbacks(app):
             marginal_y="violin",
             color_discrete_sequence=px.colors.qualitative.Antique,
         )
-        fig.update_layout(
-            {
-                'plot_bgcolor': 'rgba(0, 0, 0, 0)',
-                'paper_bgcolor': 'rgba(0, 0, 0, 0)',
-            }
-        )
-        fig.update_xaxes(showline=True, linewidth=1, linecolor='black')
-        fig.update_yaxes(showline=True, linewidth=1, linecolor='black')
+        fig = process.update_violin_layout(fig, df, contour=True)
         return fig
 
     @app.callback(
@@ -245,18 +205,16 @@ def register_callbacks(app):
     )
     def type_temp_ridge(df):
 
-        fig = px.violin(df, x='Classification', y='Temperature', color='Classification')
-
-        # fig.update_traces(orientation='h', side='positive', width=3, points=False)
-        fig.update_layout(xaxis_showgrid=False, xaxis_zeroline=False)
-        fig.update_layout(
-            {
-                'plot_bgcolor': 'rgba(0, 0, 0, 0)',
-                'paper_bgcolor': 'rgba(0, 0, 0, 0)',
-            }
+        fig = px.violin(
+            df,
+            x='Classification',
+            y='Temperature',
+            color='Classification',
+            color_discrete_sequence=px.colors.qualitative.Antique,
+            points=False,
         )
-        fig.update_xaxes(showline=True, linewidth=1, linecolor='black')
-        fig.update_yaxes(showline=True, linewidth=1, linecolor='black')
+
+        fig = process.update_violin_layout(fig, df)
         return fig
 
     @app.callback(
@@ -266,19 +224,13 @@ def register_callbacks(app):
     def type_temp_ridge(df):
 
         fig = px.violin(
-            df, x='Classification', y='Ice Water Content', color='Classification'
+            df,
+            x='Classification',
+            y='Ice Water Content',
+            color='Classification',
+            color_discrete_sequence=px.colors.qualitative.Antique,
         )
-
-        # fig.update_traces(orientation='h', side='positive', width=3, points=False)
-        fig.update_layout(xaxis_showgrid=False, xaxis_zeroline=False)
-        fig.update_layout(
-            {
-                'plot_bgcolor': 'rgba(0, 0, 0, 0)',
-                'paper_bgcolor': 'rgba(0, 0, 0, 0)',
-            }
-        )
-        fig.update_xaxes(showline=True, linewidth=1, linecolor='black')
-        fig.update_yaxes(showline=True, linewidth=1, linecolor='black')
+        fig = process.update_violin_layout(fig, df)
         return fig
 
     # @app.callback(
