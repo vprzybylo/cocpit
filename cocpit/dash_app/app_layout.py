@@ -181,31 +181,6 @@ def content():
                 dbc.Row(
                     [
                         dbc.Col(
-                            dcc.Graph(id='pie', figure={}),
-                            xs=12,
-                            sm=12,
-                            md=12,
-                            lg=12,
-                            xl=5,
-                        ),
-                        dbc.Col(
-                            dcc.Graph(id='prop_fig', figure={}),
-                            xs=12,
-                            sm=12,
-                            md=12,
-                            lg=12,
-                            xl=6,
-                        ),
-                    ],
-                    align="center",
-                    justify="center",
-                )
-            ),
-            html.Hr(),
-            dls.Hash(
-                dbc.Row(
-                    [
-                        dbc.Col(
                             [
                                 dbc.Row(
                                     dbc.Label('Particle Type'),
@@ -236,14 +211,6 @@ def content():
                             xl=1,
                         ),
                         dbc.Col(
-                            dcc.Graph(id='top-down-map', figure={}),
-                            xs=12,
-                            sm=12,
-                            md=12,
-                            lg=12,
-                            xl=5,
-                        ),
-                        dbc.Col(
                             [
                                 dbc.Row(
                                     dbc.Label('Vertical Axis Property:'),
@@ -264,23 +231,123 @@ def content():
                             sm=12,
                             md=12,
                             lg=12,
-                            xl=1,
+                            xl=2,
                         ),
-                        # dbc.Col(
-                        #     dcc.Graph(id='3d map', figure={}),
-                        #     xs=12,
-                        #     sm=12,
-                        #     md=12,
-                        #     lg=12,
-                        #     xl=5,
-                        # ),
+                        dbc.Col(
+                            dcc.Graph(id='flat-topo', figure={}),
+                            xs=12,
+                            sm=12,
+                            md=12,
+                            lg=12,
+                            xl=5,
+                        ),
                     ],
-                    className="g-0",
+                )
+            ),
+            dls.Hash(
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            dcc.Graph(id='pie', figure={}),
+                            xs=12,
+                            sm=12,
+                            md=12,
+                            lg=12,
+                            xl=5,
+                        ),
+                        dbc.Col(
+                            dcc.Graph(id='prop_fig', figure={}),
+                            xs=12,
+                            sm=12,
+                            md=12,
+                            lg=12,
+                            xl=6,
+                        ),
+                    ],
                     align="center",
                     justify="center",
                 )
             ),
-            html.Hr(),
+            #            html.Hr(),
+            #            dls.Hash(
+            # dbc.Row(
+            #     [
+            #         dbc.Col(
+            #             [
+            #                 dbc.Row(
+            #                     dbc.Label('Particle Type'),
+            #                 ),
+            #                 dbc.Row(
+            #                     dcc.Checklist(
+            #                         id="map-particle_type",
+            #                         options=[
+            #                             {"label": i, "value": i}
+            #                             for i in particle_types_rename
+            #                         ],
+            #                         value=["aggregate"],
+            #                         inputStyle={'margin-right': "5px"},
+            #                         labelStyle={
+            #                             'display': 'block',
+            #                         },
+            #                         style={
+            #                             'width': "120px",
+            #                             "overflow": "auto",
+            #                         },
+            #                     ),
+            #                 ),
+            #             ],
+            #             xs=12,
+            #             sm=12,
+            #             md=12,
+            #             lg=12,
+            #             xl=1,
+            #         ),
+            #         dbc.Col(
+            #             dcc.Graph(id='top-down-map', figure={}),
+            #             xs=12,
+            #             sm=12,
+            #             md=12,
+            #             lg=12,
+            #             xl=5,
+            #         ),
+            #         dbc.Col(
+            #             [
+            #                 dbc.Row(
+            #                     dbc.Label('Vertical Axis Property:'),
+            #                 ),
+            #                 dbc.Row(
+            #                     dcc.Dropdown(
+            #                         id='3d_vertical_prop',
+            #                         options=[
+            #                             {'label': i, 'value': i}
+            #                             for i in vertical_vars
+            #                         ],
+            #                         placeholder="Vertical Axis Property",
+            #                         value='Temperature',
+            #                     ),
+            #                 ),
+            #             ],
+            #             xs=12,
+            #             sm=12,
+            #             md=12,
+            #             lg=12,
+            #             xl=1,
+            #         ),
+            #         # dbc.Col(
+            #         #     dcc.Graph(id='3d map', figure={}),
+            #         #     xs=12,
+            #         #     sm=12,
+            #         #     md=12,
+            #         #     lg=12,
+            #         #     xl=5,
+            #         # ),
+            #     ],
+            #     className="g-0",
+            #     align="center",
+            #     justify="center",
+            # )
+            #            ),
+            #            html.Hr(),
             # dls.Hash(
             #     dbc.Row(
             #         dbc.Col(
@@ -294,18 +361,6 @@ def content():
             #     )
             # ),
             html.Hr(),
-            dls.Hash(
-                dbc.Row(
-                    dbc.Col(
-                        dcc.Graph(id='flat-topo', figure={}),
-                        xs=12,
-                        sm=12,
-                        md=12,
-                        lg=12,
-                        xl=5,
-                    ),
-                )
-            ),
             html.P(
                 'Copyright All Rights Reserved',
                 style={"color": '#D3D3D3', 'text-align': 'center'},
