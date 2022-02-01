@@ -2,10 +2,10 @@
 
 # import dash
 import dash_bootstrap_components as dbc
-import app_layout
+from layout import content, sidebar
 from dotenv import load_dotenv
 from dash import dcc
-import callbacks
+from callbacks import environment, geometric, process, topographic
 from dash_extensions.enrich import Dash
 
 
@@ -23,12 +23,13 @@ def main():
 # Run local server
 if __name__ == '__main__':
     app = main()
-    sidebar = app_layout.sidebar()
-    content = app_layout.content()
     app.layout = dbc.Container(
-        [dcc.Location(id="url"), sidebar, content],
+        [dcc.Location(id="url"), content.content(), sidebar.sidebar()],
         fluid=True,
     )
 
-    callbacks.register_callbacks(app)
+    process.register(app)
+    topographic.register(app)
+    environment.register(app)
+    geometric.register(app)
     app.run_server(port=8050, debug=True)

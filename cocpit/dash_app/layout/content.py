@@ -4,8 +4,7 @@ import dash_bootstrap_components as dbc
 from dash import html, dash_table
 from dash import dcc
 import dash_loading_spinners as dls
-
-# import callbacks
+from callbacks import process
 import globals
 
 
@@ -17,8 +16,7 @@ def content():
         "margin-right": "2rem",
         "margin-top": "4rem",
     }
-    # df = callbacks.process.read_campaign('CRYSTAL_FACE_UND')
-
+    # df = process.read_campaign('CRYSTAL_FACE_UND')
     return html.Div(
         id="page-content",
         children=[
@@ -100,6 +98,7 @@ def content():
                             'Geographic Attributes',
                             className='text-center',
                         ),
+                        style={"background-color": "#f8f9fa"},
                     ),
                     dbc.Row(
                         [
@@ -133,6 +132,7 @@ def content():
                             'Environmental Attributes',
                             className='text-center',
                         ),
+                        style={"background-color": "#f8f9fa"},
                     ),
                     dbc.Row(
                         [
@@ -166,6 +166,7 @@ def content():
                             'Geometric Attributes',
                             className='text-center',
                         ),
+                        style={"background-color": "#f8f9fa"},
                     ),
                     dbc.Row(
                         [
@@ -191,118 +192,120 @@ def content():
                     ),
                 ]
             ),
-            dls.Hash(
-                dbc.Col(
-                    dbc.Row(
-                        dash_table.DataTable(
-                            id="table",
-                            # columns=[{"name": i, "id": i} for i in df.columns],
-                            data=[],
-                            # export_format="csv",
-                            # fixed_rows={'headers': True},
-                            # style_table={'height': '300px', 'overflowY': 'auto'},
-                        )
-                    ),
-                    xs=12,
-                    sm=12,
-                    md=12,
-                    lg=12,
-                    xl=12,
-                )
-            ),
-            html.Hr(),
-            dls.Hash(
-                dbc.Row(
-                    [
-                        dbc.Col(
-                            [
-                                dbc.Row(
-                                    dbc.Label('Particle Type'),
-                                ),
-                                dbc.Row(
-                                    dcc.Checklist(
-                                        id="map-particle_type",
-                                        options=[
-                                            {"label": i, "value": i}
-                                            for i in globals.particle_types_rename
-                                        ],
-                                        value=["aggregate"],
-                                        inputStyle={'margin-right': "5px"},
-                                        labelStyle={
-                                            'display': 'block',
-                                        },
-                                        style={
-                                            'width': "120px",
-                                            "overflow": "auto",
-                                        },
-                                    ),
-                                ),
-                            ],
-                            xs=12,
-                            sm=12,
-                            md=12,
-                            lg=12,
-                            xl=1,
-                        ),
-                        dbc.Col(
-                            dcc.Graph(id='top-down-map', figure={}),
-                            xs=12,
-                            sm=12,
-                            md=12,
-                            lg=12,
-                            xl=5,
-                        ),
-                        dbc.Col(
-                            [
-                                dbc.Row(
-                                    dbc.Label('Vertical Axis Property:'),
-                                ),
-                                dbc.Row(
-                                    dcc.Dropdown(
-                                        id='3d_vertical_prop',
-                                        options=[
-                                            {'label': i, 'value': i}
-                                            for i in globals.vertical_vars
-                                        ],
-                                        placeholder="Vertical Axis Property",
-                                        value='Temperature',
-                                    ),
-                                ),
-                            ],
-                            xs=12,
-                            sm=12,
-                            md=12,
-                            lg=12,
-                            xl=1,
-                        ),
-                        dbc.Col(
-                            dcc.Graph(id='3d map', figure={}),
-                            xs=12,
-                            sm=12,
-                            md=12,
-                            lg=12,
-                            xl=5,
-                        ),
-                    ],
-                    className="g-0",
-                    align="center",
-                    justify="center",
-                )
-            ),
-            html.Hr(),
-            dls.Hash(
-                dbc.Row(
-                    dbc.Col(
-                        dcc.Graph(id='globe', figure={}),
-                        xs=12,
-                        sm=12,
-                        md=12,
-                        lg=12,
-                        xl=5,
-                    ),
-                )
-            ),
-            html.Hr(),
+            # dls.Hash(
+            #     dbc.Col(
+            #         dbc.Row(
+            #             dash_table.DataTable(
+            #                 id="table",
+            #                 columns=[{"name": i, "id": i} for i in df.columns],
+            #                 data=df.to_dict("records"),
+            #                 # export_columns='all',
+            #                 export_headers='display',
+            #                 export_format="csv",
+            #                 fixed_rows={'headers': True},
+            #                 style_table={'height': '300px', 'overflowY': 'auto'},
+            #             )
+            #         ),
+            #         xs=12,
+            #         sm=12,
+            #         md=12,
+            #         lg=12,
+            #         xl=12,
+            #     )
+            # ),
+            # html.Hr(),
+            # dls.Hash(
+            #     dbc.Row(
+            #         [
+            #             dbc.Col(
+            #                 [
+            #                     dbc.Row(
+            #                         dbc.Label('Particle Type'),
+            #                     ),
+            #                     dbc.Row(
+            #                         dcc.Checklist(
+            #                             id="map-particle_type",
+            #                             options=[
+            #                                 {"label": i, "value": i}
+            #                                 for i in globals.particle_types_rename
+            #                             ],
+            #                             value=["aggregate"],
+            #                             inputStyle={'margin-right': "5px"},
+            #                             labelStyle={
+            #                                 'display': 'block',
+            #                             },
+            #                             style={
+            #                                 'width': "120px",
+            #                                 "overflow": "auto",
+            #                             },
+            #                         ),
+            #                     ),
+            #                 ],
+            #                 xs=12,
+            #                 sm=12,
+            #                 md=12,
+            #                 lg=12,
+            #                 xl=1,
+            #             ),
+            #             dbc.Col(
+            #                 dcc.Graph(id='top-down-map', figure={}),
+            #                 xs=12,
+            #                 sm=12,
+            #                 md=12,
+            #                 lg=12,
+            #                 xl=5,
+            #             ),
+            #             dbc.Col(
+            #                 [
+            #                     dbc.Row(
+            #                         dbc.Label('Vertical Axis Property:'),
+            #                     ),
+            #                     dbc.Row(
+            #                         dcc.Dropdown(
+            #                             id='3d_vertical_prop',
+            #                             options=[
+            #                                 {'label': i, 'value': i}
+            #                                 for i in globals.vertical_vars
+            #                             ],
+            #                             placeholder="Vertical Axis Property",
+            #                             value='Temperature',
+            #                         ),
+            #                     ),
+            #                 ],
+            #                 xs=12,
+            #                 sm=12,
+            #                 md=12,
+            #                 lg=12,
+            #                 xl=1,
+            #             ),
+            #             dbc.Col(
+            #                 dcc.Graph(id='3d map', figure={}),
+            #                 xs=12,
+            #                 sm=12,
+            #                 md=12,
+            #                 lg=12,
+            #                 xl=5,
+            #             ),
+            #         ],
+            #         className="g-0",
+            #         align="center",
+            #         justify="center",
+            #     )
+            # ),
+            # html.Hr(),
+            # dls.Hash(
+            #     dbc.Row(
+            #         dbc.Col(
+            #             dcc.Graph(id='globe', figure={}),
+            #             xs=12,
+            #             sm=12,
+            #             md=12,
+            #             lg=12,
+            #             xl=5,
+            #         ),
+            #     )
+            # ),
+            # html.Hr(),
             html.P(
                 'Copyright All Rights Reserved',
                 style={"color": '#D3D3D3', 'text-align': 'center'},

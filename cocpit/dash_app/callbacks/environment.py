@@ -47,17 +47,20 @@ def register(app):
 
         return fig
 
-    @app.callback(
-        Output('table', 'data'),
-        Input("store-df", "data"),
-    )
-    def datatable(df):
-        return [
-            dash_table.DataTable(
-                data=df.to_dict(orient='records'),
-                columns=[{"name": i, "id": i} for i in df.columns],
-                export_format="csv",
-                fixed_rows={'headers': True},
-                style_table={'height': '300px', 'overflowY': 'auto'},
-            )
-        ]
+    # @app.callback(
+    #     Output('table', 'style_data_conditional'),
+    #     Input("store-df", "data"),
+    # )
+    # def datatable(df):
+    #     return [
+    #         dash_table.DataTable(
+    #             id='table',
+    #             columns=[{"name": i, "id": i} for i in df.columns],
+    #             data=df.to_dict('records'),
+    #             # export_columns='all',
+    #             export_headers='display',
+    #             export_format="csv",
+    #             fixed_rows={'headers': True},
+    #             style_table={'height': '300px', 'overflowY': 'auto'},
+    #         )
+    #     ]

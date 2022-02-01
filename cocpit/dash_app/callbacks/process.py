@@ -90,7 +90,7 @@ def update_layout(fig, df, contour=False):
         xaxis_zeroline=False,
         title={
             'text': f"n={len(df)}",
-            'x': 0.43,
+            'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top',
         },
