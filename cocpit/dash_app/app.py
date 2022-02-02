@@ -3,6 +3,7 @@ from datetime import date
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import numpy as np
 import pandas as pd
 import plotly.express as px
 from dash.dependencies import Input, Output
@@ -47,14 +48,22 @@ app.layout = html.Div(
     [
         html.Div(
             [
-                html.H1(
-                    'Classification of Cloud Particle Imagery and Thermodynamics (COCPIT)'
+                html.H1('COCPIT'),
+                html.H2('Classification of Cloud Particle Imagery and Thermodynamics'),
+                html.A(
+                    "Images are classified from the Cloud Particle Imager",
+                    href="http://www.specinc.com/cloud-particle-imager",
                 ),
+            ],
+            style={'text-align': 'center'},
+        ),
+        html.Div(
+            [
                 dcc.Dropdown(
                     id='campaign-dropdown',
                     options=[{'label': i, 'value': i} for i in campaigns],
                     placeholder="Campaign",
-                    value='campaign',
+                    value='ATTREX',
                 ),
                 dcc.Dropdown(
                     id='part-type-dropdown',
@@ -70,62 +79,131 @@ app.layout = html.Div(
                     start_date=date(2000, 1, 1),
                     end_date=date(2016, 10, 1),
                 ),
-            ]
+            ],
+            style={"width": "20%"},
         ),
+        # html.Div(
+        #     [
+        #         html.Br(),
+        #         html.Button(id='submit-button-state', n_clicks=0, children='Submit'),
+        #     ]
+        # ),
         html.Div(
             [
-                html.Br(),
-                html.Div(id='output-state'),
-                html.Button(id='submit-button-state', n_clicks=0, children='Submit'),
-            ]
+                html.Div(dcc.Graph(id='pie')),
+                html.Div(dcc.Graph(id='phi')),
+                html.Div(dcc.Graph(id='complexity')),
+            ],
+            # style={
+            #     'display': 'inline-block',
+            #     #'justifyContent': 'center',
+            #     'height': '80%',
+            # },
+            # className="row",
         ),
-        html.Div([html.Div(dcc.Graph(id='pie'))]),
-    ]
+    ],
+    className="container",
 )
 
 
+def remove_baddata(df_CPI):
+    df_CPI = df_CPI[df_CPI["filled_circular_area_ratio"] != -999.0]
+    df_CPI = df_CPI[df_CPI["complexity"] != 0.0]
+    df_CPI = df_CPI[df_CPI["complexity"] != -0.0]
+
+    df_CPI = df_CPI[df_CPI.replace([np.inf, -np.inf], np.nan).notnull().all(axis=1)]
+    df_CPI.dropna(inplace=True)
+    return df_CPI
+
+
 def choose_campaign(campaign):
-    df = pd.read_csv(f"{config.FINAL_DIR}{campaign}.csv")
-    return df[df['campaign'] == campaign]
+    return pd.read_csv(f"{config.FINAL_DIR}{campaign}.csv")
 
 
 def choose_particle_type(part_type):
-    df = pd.read_csv(f"{config.FINAL_DIR}/{part_type}.csv")
+    df = pd.read_csv(f"{config.FINAL_DIR}{part_type}.csv")
     return df[df['classification'] == part_type]
 
 
-# @ app.callback(
-#     #Output(component_id='output', component_property='children'),
-#     Input(component_id='part-type-dropdown', component_property='value')
-# )
 @app.callback(
     Output("pie", "figure"),
     [
         Input("campaign-dropdown", "value"),
-        Input("submit-button-state", "value"),
         Input("date_range", "start_date"),
         Input("date_range", "end_date"),
     ],
 )
-def percent_part_type(campaign, submit, start_date, end_date):
-    if submit is None:
-        raise PreventUpdate
-    else:
-        df = choose_campaign(campaign)
-        values = df['classification'].value_counts().values
-        return px.pie(
-            df, values=values, names='classification', title='Particle Type Percentage'
-        )
+def percent_part_type(campaign, start_date, end_date):
+    df = choose_campaign(campaign)
+    values = df['classification'].value_counts().values
+    pie = px.pie(
+        df,
+        color_discrete_sequence=px.colors.qualitative.Antique,
+        values=values,
+        names=df['classification'].unique(),
+    )
+    pie.update_layout(title_text='Particle Type Percentage', title_x=0.45)
+    return pie
 
 
 @app.callback(
-    Output("output-state", "children"),
-    Input("campaign-dropdown", "value"),
-    Input("part-type-dropdown", "value"),
+    Output("phi", "figure"),
+    [
+        Input("campaign-dropdown", "value"),
+    ],
 )
-def update_output(campaign, part_type):
-    string = f"Campaign chosen: {campaign} Particle type chose: {part_type}"
-    return string
+def phi(campaign):
+    df = choose_campaign(campaign)
+    df = remove_baddata(df)
+    phi_fig = px.box(
+        df,
+        x='classification',
+        y="phi",
+        color="classification",
+        color_discrete_sequence=px.colors.qualitative.Antique,
+        labels={
+            "phi": "Aspect Ratio",
+            "classification": "Particle Type",
+        },
+    )
+    phi_fig.update(layout_yaxis_range=[min(df['phi']), max(df['phi'])])
+    return phi_fig
+
+
+@app.callback(
+    Output("complexity", "figure"),
+    [
+        Input("campaign-dropdown", "value"),
+    ],
+)
+def complexity(campaign):
+    df = choose_campaign(campaign)
+    df = remove_baddata(df)
+    complexity_fig = px.box(
+        df,
+        x='classification',
+        y="complexity",
+        color="classification",
+        color_discrete_sequence=px.colors.qualitative.Antique,
+        labels={
+            "complexity": "Complexity",
+            "classification": "Particle Type",
+        },
+    )
+    complexity_fig.update(
+        layout_yaxis_range=[min(df['complexity']), max(df['complexity'])]
+    )
+    return complexity_fig
+
+
+# @app.callback(
+#     Output("output-state", "children"),
+#     Input("campaign-dropdown", "value"),
+#     Input("part-type-dropdown", "value"),
+# )
+# def update_output(campaign, part_type):
+#     string = f"Campaign chosen: {campaign} Particle type chose: {part_type}"
+#     return string
 
 
 # Run local server

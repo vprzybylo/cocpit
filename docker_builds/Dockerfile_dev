@@ -18,8 +18,8 @@ RUN groupadd -o -g 1001 vanessa \
 
 RUN pip3 install --upgrade pip
 
-COPY requirements_dev.txt /requirements_dev.txt
-RUN pip3 install -r /requirements_dev.txt
+COPY requirements_dev.txt requirements_dev.txt
+RUN pip3 install -r requirements_dev.txt
 
 # install cocpit package for dev
 COPY setup.py setup.py
