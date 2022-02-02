@@ -13,39 +13,31 @@ from dash import dash_table
 def register(app):
     @app.callback(
         Output("type-temp-violin", "figure"),
+        Output("type-iwc-violin", "figure"),
         Input("store-df", "data"),
     )
     def type_temp_violin(df):
 
-        fig = px.violin(
-            df,
-            x='Classification',
-            y='Temperature',
-            color='Classification',
+        temp_fig = px.violin(
+            x=df["Classification"],
+            y=df["Temperature"],
+            color=df["Classification"],
             color_discrete_sequence=px.colors.qualitative.Antique,
             points=False,
         )
 
-        fig = process.update_layout(fig, df)
-        fig.update_yaxes(autorange="reversed")
-        return fig
+        temp_fig = process.update_layout(temp_fig, df)
+        temp_fig.update_yaxes(autorange="reversed")
 
-    @app.callback(
-        Output("type-iwc-violin", "figure"),
-        Input("store-df", "data"),
-    )
-    def type_iwc_violin(df):
-
-        fig = px.violin(
-            df,
-            x='Classification',
-            y='Ice Water Content',
-            color='Classification',
+        iwc_fig = px.violin(
+            x=df["Classification"],
+            y=df["Ice Water Content"],
+            color=df["Classification"],
             color_discrete_sequence=px.colors.qualitative.Antique,
         )
-        fig = process.update_layout(fig, df)
+        iwc_fig = process.update_layout(iwc_fig, df)
 
-        return fig
+        return temp_fig, iwc_fig
 
     # @app.callback(
     #     Output('table', 'style_data_conditional'),

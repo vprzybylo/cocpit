@@ -10,46 +10,42 @@ from callbacks import process
 
 
 def register(app):
-    @app.callback(Output("pie", "figure"), Input("store-df", "data"))
-    def percent_part_type(df):
-        '''pie chart for percentage of particle types for a given campaign'''
-        # df = pd.read_json(json_file)
-
-        values = df['Classification'].value_counts().values
-        fig = px.pie(
-            df,
-            color_discrete_sequence=px.colors.qualitative.Antique,
-            values=values,
-            names=df['Classification'].unique(),
-        )
-        fig.update_layout(
-            title={
-                'text': f"n={len(df)}",
-                'x': 0.43,
-                'xanchor': 'center',
-                'yanchor': 'top',
-            }
-        )
-        return fig
-
     @app.callback(
+        Output("pie", "figure"),
         Output("prop_fig", "figure"),
         Input("property-dropdown", "value"),
         Input("store-df", "data"),
     )
-    def geometric_properties(prop, df):
+    def percent_part_type(prop, df):
+        '''pie chart for percentage of particle types for a given campaign'''
+
+        pie = px.pie(
+            df,
+            color_discrete_sequence=px.colors.qualitative.Antique,
+            values=df["Classification"].value_counts(),
+            names=df["Classification"].unique(),
+        )
+
+        # pie.update_layout(
+        #     title={
+        #         'text': f"n={values}",
+        #         'x': 0.43,
+        #         'xanchor': 'center',
+        #         'yanchor': 'top',
+        #     }
+        # )
+
         '''box plots of geometric attributes of ice crystals
         with respect to particle classification on sidebar menu filters'''
-        # df = pd.read_json(json_file)
-        fig = px.violin(
+        prop_fig = px.violin(
             df,
-            x='Classification',
-            y=prop,
-            color="Classification",
+            x=df['Classification'],
+            y=df[prop],
+            color=df["Classification"],
             color_discrete_sequence=px.colors.qualitative.Antique,
             labels={
                 "Classification": "Particle Type",
             },
         )
-        fig = process.update_layout(fig, df)
-        return fig
+        prop_fig = process.update_layout(prop_fig, df)
+        return pie, prop_fig

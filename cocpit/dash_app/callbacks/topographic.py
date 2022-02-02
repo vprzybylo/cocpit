@@ -4,7 +4,7 @@ scatter plot overlaid where particle images were captured
 includes callbacks
 '''
 
-from dash_extensions.enrich import Output, Input
+from dash_extensions.enrich import Output, Input, ServersideOutput
 import plotly.express as px
 from callbacks import process
 import numpy as np
@@ -33,18 +33,16 @@ def register(app):
         Output("flat-topo", "figure"),
         Input("store-df", "data"),
         Input("topo-map-particle_type", "value"),
-        # Input("3d_vertical_prop", "value"),
     )
     def topo_flat(df, part_type):
         '''particle location overlaid on topographic map'''
-
         df = df[df['Classification'].isin(part_type)]
         fig = px.scatter_3d(
             df,
-            x=-df['Latitude'],
-            y='Longitude',
-            z='Altitude',
-            color='Classification',
+            x=-df["Latitude"],
+            y=df["Longitude"],
+            z=df["Altitude"],
+            color=df["Classification"],
             color_discrete_sequence=px.colors.qualitative.Antique,
             # hover_data={'Ice Water Content': True, 'Temperature': True, 'Pressure': True},
             # custom_data=['Temperature', 'Pressure', 'Ice Water Content'],
@@ -56,8 +54,8 @@ def register(app):
 
         # select plot range for Earth [[lon min, lon max], [lat min, lat max]]
         lon, lat, topo = Etopo(
-            [min(df['Longitude']) - 20, max(df['Longitude']) + 20],
-            [-min(df['Latitude']) - 20, -max(df['Latitude']) + 20],
+            [min(df["Longitude"]) - 20, max(df["Longitude"]) + 20],
+            [-min(df["Latitude"]) - 20, -max(df["Latitude"]) + 20],
             resolution=0.15,
         )
         fig.add_trace(
@@ -80,11 +78,11 @@ def register(app):
         fig.update_layout(
             width=1100,
             height=450,
-            xaxis_title='Latitude',
-            yaxis_title='Longitude',
+            xaxis_title="Latitude",
+            yaxis_title="Longitude",
             # coloraxis_colorbar=dict(x=-0.1),
             margin=dict(l=0, r=0, b=0, t=0),
-            scene_aspectmode='manual',
+            scene_aspectmode="manual",
             scene_aspectratio=dict(x=2, y=5, z=0.3),
             scene=dict(xaxis=noaxis, yaxis=noaxis, zaxis=noaxis),
             scene_camera=camera,
@@ -98,37 +96,30 @@ def register(app):
 
     @app.callback(
         Output("lon-alt-hist", "figure"),
-        Input("store-df", "data"),
-    )
-    def lon_alt_hist(df):
-        fig = px.density_contour(
-            df,
-            x="Longitude",
-            y="Altitude",
-            color='Classification',
-            marginal_x="violin",
-            marginal_y="violin",
-            color_discrete_sequence=px.colors.qualitative.Antique,
-        )
-        fig = process.update_layout(fig, df, contour=True)
-        return fig
-
-    @app.callback(
         Output("lat-alt-hist", "figure"),
         Input("store-df", "data"),
     )
-    def lat_alt_hist(df):
-        fig = px.density_contour(
-            df,
-            x="Latitude",
-            y="Altitude",
-            color='Classification',
+    def lon_alt_hist(df):
+        lon_fig = px.density_contour(
+            x=df["Longitude"],
+            y=df["Altitude"],
+            color=df["Classification"],
             marginal_x="violin",
             marginal_y="violin",
             color_discrete_sequence=px.colors.qualitative.Antique,
         )
-        fig = process.update_layout(fig, df, contour=True)
-        return fig
+        lon_fig = process.update_layout(lon_fig, df, contour=True)
+
+        lat_fig = px.density_contour(
+            x=df["Latitude"],
+            y=df["Altitude"],
+            color=df['Classification'],
+            marginal_x="violin",
+            marginal_y="violin",
+            color_discrete_sequence=px.colors.qualitative.Antique,
+        )
+        lat_fig = process.update_layout(lat_fig, df, contour=True)
+        return lon_fig, lat_fig
 
     # @app.callback(
     #     Output("top-down-map", "figure"),

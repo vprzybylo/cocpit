@@ -3,53 +3,54 @@ import pandas as pd
 import numpy as np
 import globals
 from dash_extensions.enrich import Output, Input, ServersideOutput
+import dask.dataframe as dd
 
 
 def read_campaign(campaign):
     '''read particle property df and environmental property df_env
     merge based on filename and date'''
 
-    df_env = pd.read_csv(
-        f"../../final_databases/vgg16/v1.4.0/environment/{campaign}.csv",
+    # df_env = pd.read_csv(
+    #     f"../../final_databases/vgg16/v1.4.0/environment/{campaign}.csv",
+    #     names=globals.col_names_env,
+    #     header=0,
+    # )
+    # df = pd.read_csv(
+    #     f"../../final_databases/vgg16/v1.4.0/{campaign}.csv",
+    #     names=globals.col_names,
+    #     header=0,
+    # )
+    # df = pd.merge(df, df_env, on=['filename', 'date'])
+
+    # df_env = dd.read_parquet(
+    #     f"../../final_databases/vgg16/v1.4.0/environment/{campaign}.parquet",
+    #     names=globals.col_names_env,
+    #     header=0,
+    # )
+    # df = dd.read_parquet(
+    #     f"../../final_databases/vgg16/v1.4.0/{campaign}.parquet",
+    #     names=globals.col_names,
+    #     header=0,
+    # )
+    # df = dd.merge(df, df_env, on=['filename', 'date'])
+    df = dd.read_parquet(
+        f"../../final_databases/vgg16/v1.4.0/{campaign}.parquet",
         names=globals.col_names_env,
         header=0,
     )
-    df = pd.read_csv(
-        f"../../final_databases/vgg16/v1.4.0/{campaign}.csv",
-        names=globals.col_names,
-        header=0,
-    )
-    df = pd.merge(df, df_env, on=['filename', 'date'])
     return df
 
 
-def remove_bad_props(df):
-    '''remove bad data for particle geometric properties (e.g., no particle area)'''
-    df = df[df["Area Ratio"] != -999.0]
-    df = df[df["Complexity"] != 0.0]
-    df = df[df["Complexity"] != -0.0]
-
-    df = df[df.replace([np.inf, -np.inf], np.nan).notnull().all(axis=1)]
-    df.dropna(inplace=True)
-    return df
-
-
-def remove_bad_env(df):
+def remove_bad_data(df):
     '''remove missing or bad environmental data'''
+    df = df.replace([-999.99, -999.0, np.inf, -np.inf], np.nan).dropna()
     df = df[
-        (df['Latitude'] != -999.99)
-        & (df['Latitude'] != 0)
-        & (df['Longitude'] != -999.99)
+        (df['Latitude'] != 0)
         & (df['Longitude'] != 0)
-        & (df['Altitude'] != -999.99)
-        & (df['Temperature'] != -999.99)
         & (df['Pressure'] != 0)
-        & (df['Pressure'] != -999.99)
-        & (df['Temperature'].notna())
-        & (df['Ice Water Content'] != -999.99)
-        & (df['Ice Water Content'].notna())
         & (df['Ice Water Content'] > 1e-5)
-    ]
+        & (df["Complexity"] != -0.0)
+    ].persist()
     return df
 
 
@@ -89,7 +90,7 @@ def update_layout(fig, df, contour=False):
         xaxis_showgrid=True,
         xaxis_zeroline=False,
         title={
-            'text': f"n={len(df)}",
+            'text': f"n={len(df.to_dask_array(lengths=True))}",
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top',
@@ -119,9 +120,7 @@ def register(app):
         campaign, min_temp, max_temp, min_pres, max_pres, start_date, end_date
     ):
         df = read_campaign(campaign)
-        df = remove_bad_props(df)
-        df = remove_bad_env(df)
-        # print(df['Pressure'].min(), df['Pressure'].max())
+        df = remove_bad_data(df)
         df = rename(df)
         df = check_temp_range(df, min_temp, max_temp)
         df = check_pres_range(df, min_pres[0], max_pres[0])
