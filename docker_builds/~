@@ -1,12 +1,11 @@
 # read the contents of README file
 from os import path
-
 from setuptools import find_packages, setup
 
 with open("README.md") as f:
     readme = f.read()
 
-with open("requirements_dev.txt") as f:
+with open('requirements_dev.txt') as f:
     required = f.read().splitlines()
 
 setup(
@@ -27,7 +26,7 @@ setup(
     python_requires=">=3.7",
     # List of packages to install
     # parse_requirements() returns generator of pip.req.InstallRequirement objects
-    install_reqs=required,
+    install_reqs = required,
     include_package_data=True,
     # https://pypi.org/classifiers/
     classifiers=[

@@ -1,29 +1,17 @@
 '''CPI campaign data processing functions for dataframes'''
-import pandas as pd
-import numpy as np
-import globals
-from dash_extensions.enrich import Output, Input, ServersideOutput
+
 import dask.dataframe as dd
+import globals
+import numpy as np
+from dash_extensions.enrich import FileSystemStore, Input, Output, ServersideOutput
 
 
 def read_campaign(campaign):
     '''read particle property df and environmental property df_env
-    merge based on filename and date'''
-
-    # df_env = pd.read_csv(
-    #     f"../../final_databases/vgg16/v1.4.0/environment/{campaign}.csv",
-    #     names=globals.col_names_env,
-    #     header=0,
-    # )
-    # df = pd.read_csv(
-    #     f"../../final_databases/vgg16/v1.4.0/{campaign}.csv",
-    #     names=globals.col_names,
-    #     header=0,
-    # )
-    # df = pd.merge(df, df_env, on=['filename', 'date'])
+    merged based on filename and date'''
 
     df = dd.read_parquet(
-        f"../../final_databases/vgg16/v1.4.0/{campaign}.parquet",
+        f"../../final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
         names=globals.col_names_env,
         header=0,
     )
@@ -96,14 +84,16 @@ def update_layout(fig, df, contour=False):
 
 def register(app):
     @app.callback(
-        ServersideOutput("store-df", "data"),
-        Input("campaign-dropdown", "value"),
-        Input("min-temp", "value"),
-        Input("max-temp", "value"),
-        Input("min-pres", "value"),
-        Input("max-pres", "value"),
-        Input("date-picker", 'start_date'),
-        Input("date-picker", 'end_date'),
+        ServersideOutput("store-df", "data", backend=FileSystemStore()),
+        [
+            Input("campaign-dropdown", "value"),
+            Input("min-temp", "value"),
+            Input("max-temp", "value"),
+            Input("min-pres", "value"),
+            Input("max-pres", "value"),
+            Input("date-picker", 'start_date'),
+            Input("date-picker", 'end_date'),
+        ],
     )
     def preprocess(
         campaign, min_temp, max_temp, min_pres, max_pres, start_date, end_date
@@ -114,16 +104,20 @@ def register(app):
         df = check_temp_range(df, min_temp, max_temp)
         df = check_pres_range(df, min_pres[0], max_pres[0])
         df = check_date_range(df, start_date, end_date)
+        # print(start_date, end_date)
         # tic = datetime.datetime.now()
-        # orjson.dumps(df.to_dict(orient='records'))
+
+        # # orjson.dumps(df.to_dict(orient='records'))
         # toc = datetime.datetime.now()
         # print(f"TIME TO SERIALIZE = {(toc-tic).total_seconds()}")
         return df
 
     @app.callback(
-        Output('date-picker', 'min_date_allowed'),
-        Output('date-picker', 'max_date_allowed'),
-        [Input('campaign-dropdown', 'value')],
+        [
+            Output('date-picker', 'min_date_allowed'),
+            Output('date-picker', 'max_date_allowed'),
+        ],
+        Input('campaign-dropdown', 'value'),
     )
     def set_date_picker(campaign):
         '''update date picker based on campaign start and end dates'''

@@ -1,11 +1,9 @@
 '''Set up the app layout'''
 
 import dash_bootstrap_components as dbc
-from dash import html, dash_table
-from dash import dcc
 import dash_loading_spinners as dls
-from callbacks import process
 import globals
+from dash import dcc, html
 
 
 def content():
@@ -16,7 +14,6 @@ def content():
         "margin-right": "2rem",
         "margin-top": "4rem",
     }
-    # df = process.read_campaign('CRYSTAL_FACE_UND')
     return html.Div(
         id="page-content",
         children=[
@@ -77,14 +74,14 @@ def content():
                         #     lg=12,
                         #     xl=2,
                         # ),
-                        dbc.Col(
-                            dcc.Graph(id='flat-topo', figure={}),
-                            xs=12,
-                            sm=12,
-                            md=12,
-                            lg=12,
-                            xl=10,
-                        ),
+                        # dbc.Col(
+                        #     dcc.Graph(id='flat-topo', figure={}),
+                        #     xs=12,
+                        #     sm=12,
+                        #     md=12,
+                        #     lg=12,
+                        #     xl=10,
+                        # ),
                     ],
                     align="center",
                     justify="center",

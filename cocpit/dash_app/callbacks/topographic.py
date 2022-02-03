@@ -4,16 +4,16 @@ scatter plot overlaid where particle images were captured
 includes callbacks
 '''
 
-from dash_extensions.enrich import Output, Input, ServersideOutput
-import plotly.express as px
-from callbacks import process
-import numpy as np
-import plotly.graph_objects as go
-from callbacks.topo_map import TopoMap as TopoMap
-from globe import plot_globe
 import os
+
 import globals
-from topo_flat import Etopo
+import numpy as np
+import plotly.express as px
+import plotly.graph_objects as go
+from callbacks import process, topo_flat
+from callbacks.topo_map import TopoMap as TopoMap
+from dash_extensions.enrich import Input, Output, ServersideOutput
+from globe import plot_globe
 
 
 def create_topo_map(lon_area, lat_area):
@@ -34,7 +34,7 @@ def register(app):
         Input("store-df", "data"),
         Input("topo-map-particle_type", "value"),
     )
-    def topo_flat(df, part_type):
+    def topo_flat_fig(df, part_type):
         '''particle location overlaid on topographic map'''
         df = df[df['Classification'].isin(part_type)]
         fig = px.scatter_3d(
@@ -53,7 +53,7 @@ def register(app):
         fig.update_traces(marker=dict(line=dict(width=0)))
 
         # select plot range for Earth [[lon min, lon max], [lat min, lat max]]
-        lon, lat, topo = Etopo(
+        lon, lat, topo = topo_flat.Etopo(
             [min(df["Longitude"]) - 20, max(df["Longitude"]) + 20],
             [-min(df["Latitude"]) - 20, -max(df["Latitude"]) + 20],
             resolution=0.15,

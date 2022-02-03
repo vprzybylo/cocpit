@@ -30,4 +30,8 @@ cocpit/plotting_scripts/__init__.py
 cocpit/plotting_scripts/plot.py
 cocpit/plotting_scripts/plot_metrics.py
 cocpit/plotting_scripts/plot_timing.py
+<<<<<<< HEAD
 cocpit/plotting_scripts/saliency.py
+=======
+cocpit/plotting_scripts/saliency.py
+>>>>>>> a0f2b086cc4d526959f241f32bb4403bebeceb34
