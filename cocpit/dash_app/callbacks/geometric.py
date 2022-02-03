@@ -4,21 +4,21 @@ pie chart for particle percentage and violin plot for particle property for each
 includes callbacks
 '''
 
-from dash_extensions.enrich import Output, Input
+import pandas as pd
 import plotly.express as px
 from callbacks import process
+from dash_extensions.enrich import Input, Output
 
 
 def register(app):
     @app.callback(
-        Output("pie", "figure"),
-        Output("prop_fig", "figure"),
-        Input("property-dropdown", "value"),
-        Input("store-df", "data"),
+        [Output("pie", "figure"), Output("prop_fig", "figure")],
+        [Input("property-dropdown", "value"), Input("store-df", "data")],
     )
     def percent_part_type(prop, df):
         '''pie chart for percentage of particle types for a given campaign'''
 
+        # df = pd.read_json(df['Classification', prop])
         pie = px.pie(
             df,
             color_discrete_sequence=px.colors.qualitative.Antique,

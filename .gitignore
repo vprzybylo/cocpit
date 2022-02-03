@@ -4,6 +4,9 @@ nbextension-scratchpad
 .env
 .DS_store
 .virtual_documents
+ETOPO1*
+file_system_store
+data
 cpi_data
 test_sheets
 initial_databases

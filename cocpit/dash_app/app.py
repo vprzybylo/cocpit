@@ -6,7 +6,6 @@ from callbacks import environment, geometric, process, topographic
 from dash import dcc
 from dash_extensions.enrich import Dash, FileSystemStore
 from dotenv import load_dotenv
-from gevent.pywsgi import WSGIServer
 from layout import content, sidebar
 
 
@@ -32,7 +31,7 @@ if __name__ == '__main__':
     )
 
     process.register(app)
-    topographic.register(app)
+    # topographic.register(app)
     environment.register(app)
     geometric.register(app)
-    app.run_server(port=8050, debug=True)
+    app.run_server(port=8050, host='0.0.0.0', debug=True)

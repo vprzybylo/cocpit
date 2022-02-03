@@ -1,5 +1,6 @@
 '''Create color bar in Matplotlib for 3D globe'''
 import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -15,7 +16,7 @@ def matplotlib_to_plotly(cmap, pl_entries):
 
 
 def MlibCscale_to_Plotly(cbar):
-    cmap = matplotlib.cm.get_cmap(cbar)
+    cmap = plt.cm.get_cmap(cbar)
     rgb = []
     norm = matplotlib.colors.Normalize(vmin=0, vmax=255)
 
