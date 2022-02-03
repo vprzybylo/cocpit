@@ -3,10 +3,10 @@ from os import path
 
 from setuptools import find_packages, setup
 
-with open("/data/data/README.md") as f:
+with open("README.md") as f:
     readme = f.read()
 
-with open("/data/data/requirements_dev.txt") as f:
+with open("requirements_dev.txt") as f:
     required = f.read().splitlines()
 
 setup(

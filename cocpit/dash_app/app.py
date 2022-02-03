@@ -8,7 +8,6 @@ from dash import dcc
 from callbacks import environment, geometric, process, topographic
 from dash_extensions.enrich import Dash
 from dash_extensions.enrich import FileSystemStore
-from gevent.pywsgi import WSGIServer
 
 
 def main():
@@ -36,4 +35,4 @@ if __name__ == '__main__':
     topographic.register(app)
     environment.register(app)
     geometric.register(app)
-    app.run_server(port=8050, debug=True)
+    app.run_server(port=8050, host=0.0.0.0, debug=True)

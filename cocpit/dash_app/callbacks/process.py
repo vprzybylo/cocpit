@@ -22,17 +22,6 @@ def read_campaign(campaign):
     # )
     # df = pd.merge(df, df_env, on=['filename', 'date'])
 
-    # df_env = dd.read_parquet(
-    #     f"../../final_databases/vgg16/v1.4.0/environment/{campaign}.parquet",
-    #     names=globals.col_names_env,
-    #     header=0,
-    # )
-    # df = dd.read_parquet(
-    #     f"../../final_databases/vgg16/v1.4.0/{campaign}.parquet",
-    #     names=globals.col_names,
-    #     header=0,
-    # )
-    # df = dd.merge(df, df_env, on=['filename', 'date'])
     df = dd.read_parquet(
         f"../../final_databases/vgg16/v1.4.0/{campaign}.parquet",
         names=globals.col_names_env,

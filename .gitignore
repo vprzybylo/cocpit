@@ -1,7 +1,16 @@
 !*.dvc
 nbextension-scratchpad
 .env
+docker_builds/cocpit.egg*
+cocpit.egg-info
+setup.py
+ETOP*
+test.ipynb
+file_system_store
+tmp*
+final_databases
 .DS_store
+setup.py
 .virtual_documents
 cpi_data
 test_sheets
