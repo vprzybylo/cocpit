@@ -1,20 +1,24 @@
 '''CPI campaign data processing functions for dataframes'''
 
 import dask.dataframe as dd
+import pandas as pd
 import globals
 import numpy as np
 from dash_extensions.enrich import FileSystemStore, Input, Output, ServersideOutput
+import datetime
 
 
 def read_campaign(campaign):
     '''read particle property df and environmental property df_env
     merged based on filename and date'''
 
-    df = dd.read_parquet(
+    tic = datetime.datetime.now()
+    df = pd.read_parquet(
         f"../../final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
-        names=globals.col_names_env,
-        header=0,
+        engine='fastparquet',
     )
+    toc = datetime.datetime.now()
+    print(f"time to read data = {(toc-tic).total_seconds()}")
     return df
 
 
@@ -27,7 +31,7 @@ def remove_bad_data(df):
         & (df['Pressure'] != 0)
         & (df['Ice Water Content'] > 1e-5)
         & (df["Complexity"] != -0.0)
-    ].persist()
+    ]
     return df
 
 
@@ -67,7 +71,7 @@ def update_layout(fig, df, contour=False):
         xaxis_showgrid=True,
         xaxis_zeroline=False,
         title={
-            'text': f"n={len(df.to_dask_array(lengths=True))}",
+            'text': f"n={len(df)}",
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top',
@@ -84,7 +88,11 @@ def update_layout(fig, df, contour=False):
 
 def register(app):
     @app.callback(
-        ServersideOutput("store-df", "data", backend=FileSystemStore()),
+        [
+            ServersideOutput("pie-values", "data"),
+            ServersideOutput("pie-labels", "data"),
+            ServersideOutput("store-df", "data"),
+        ],
         [
             Input("campaign-dropdown", "value"),
             Input("min-temp", "value"),
@@ -104,13 +112,24 @@ def register(app):
         df = check_temp_range(df, min_temp, max_temp)
         df = check_pres_range(df, min_pres[0], max_pres[0])
         df = check_date_range(df, start_date, end_date)
-        # print(start_date, end_date)
-        # tic = datetime.datetime.now()
 
-        # # orjson.dumps(df.to_dict(orient='records'))
-        # toc = datetime.datetime.now()
-        # print(f"TIME TO SERIALIZE = {(toc-tic).total_seconds()}")
-        return df
+        values = df["Classification"].value_counts()
+        labels = df["Classification"].unique()
+
+        return (
+            values,
+            labels,
+            df[
+                [
+                    'Temperature',
+                    'Classification',
+                    'Ice Water Content',
+                    'Longitude',
+                    'Latitude',
+                    'Altitude',
+                ]
+            ],
+        )
 
     @app.callback(
         [

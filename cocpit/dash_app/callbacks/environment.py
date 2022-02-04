@@ -14,10 +14,11 @@ from dash_extensions.enrich import Input, Output, State
 def register(app):
     @app.callback(
         [Output("type-temp-violin", "figure"), Output("type-iwc-violin", "figure")],
-        Input("store-df", "data"),
+        [
+            Input("store-df", "data"),
+        ],
     )
     def type_temp_violin(df):
-        # df = pd.read_json(df['Classification', 'Temperature', 'Ice Water Content'])
 
         temp_fig = px.violin(
             x=df["Classification"],

@@ -18,6 +18,8 @@ def content():
         id="page-content",
         children=[
             dcc.Store(id='store-df'),
+            dcc.Store(id='pie-values'),
+            dcc.Store(id='pie-labels'),
             dls.Hash(
                 dbc.Row(
                     [
@@ -61,7 +63,7 @@ def content():
                         #                 id='3d_vertical_prop',
                         #                 options=[
                         #                     {'label': i, 'value': i}
-                        #                     for i in vertical_vars
+                        #                     for i in globals.vertical_vars
                         #                 ],
                         #                 placeholder="Vertical Axis Property",
                         #                 value='Temperature',
