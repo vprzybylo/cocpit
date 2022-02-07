@@ -37,22 +37,17 @@ def remove_bad_data(df):
 
 def check_date_range(df, start_date, end_date):
     df['date'] = df['date'].str.split(' ').str[0]
-    df = df[df['date'].between(start_date, end_date)]
-    return df
+    return df[df['date'].between(start_date, end_date)]
 
 
 def check_temp_range(df, min_temp, max_temp):
     '''find temperature within a user range from input'''
-    df = df[df['Temperature'] >= int(min_temp)]
-    df = df[df['Temperature'] <= int(max_temp)]
-    return df
+    return df[df['Temperature'].between(min_temp, max_temp)]
 
 
 def check_pres_range(df, min_pres, max_pres):
     '''find pressure within a user range from slider'''
-    df = df[df['Pressure'] >= int(min_pres)]
-    df = df[df['Pressure'] <= int(max_pres)]
-    return df
+    return df[df['Pressure'].between(min_pres, max_pres)]
 
 
 def rename(df):
@@ -106,9 +101,10 @@ def register(app):
     def preprocess(
         campaign, min_temp, max_temp, min_pres, max_pres, start_date, end_date
     ):
+        print(min_pres, max_pres)
         df = read_campaign(campaign)
+        # df = rename(df)
         df = remove_bad_data(df)
-        df = rename(df)
         df = check_temp_range(df, min_temp, max_temp)
         df = check_pres_range(df, min_pres[0], max_pres[0])
         df = check_date_range(df, start_date, end_date)
@@ -127,6 +123,19 @@ def register(app):
                     'Longitude',
                     'Latitude',
                     'Altitude',
+                    'Contour Area',
+                    'Contrast',
+                    'Circularity',
+                    'Solidity',
+                    'Complexity',
+                    'Equivalent Diameter',
+                    'Convex Perimeter',
+                    'Hull Area',
+                    'Perimeter',
+                    'Aspect Ratio',
+                    'Area Ratio',
+                    'Roundness',
+                    'Perimeter-Area Ratio',
                 ]
             ],
         )

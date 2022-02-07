@@ -19,7 +19,7 @@ def register(app):
         ],
     )
     def type_temp_violin(df):
-
+        print(df)
         temp_fig = px.violin(
             x=df["Classification"],
             y=df["Temperature"],
