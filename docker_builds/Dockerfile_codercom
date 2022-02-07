@@ -35,21 +35,11 @@ COPY README.md README.md
 RUN pip3 install -e .
 
 WORKDIR /code_server
-RUN wget https://github.com/cdr/code-server/releases/download/v4.0.1/code-server-4.0.1-linux-amd64.tar.gz  && \
-	tar -xzvf code-server-4.0.1-linux-amd64.tar.gz
+RUN wget https://github.com/cdr/code-server/releases/download/v4.0.2/code-server-4.0.2-linux-amd64.tar.gz  && \
+	tar -xzvf code-server-4.0.2-linux-amd64.tar.gz
 EXPOSE 8443 8050
 # auto load vscode extensions following: publisher.extension
-CMD /bin/bash -c "./code-server-4.0.1-linux-amd64/code-server \
-	--install-extension ms-vscode.live-server \
-	--install-extension ms-python.python \
-	--install-extension tabnine.tabnine-vscode \
-	--install-extension coenraads.bracket-pair-colorizer \
-	--install-extension gimly81.fortran \
-	--install-extension njpwerner.autodocstring \
-	--install-extension ms-pyright.pyright \
-	--install-extension grapecity.gc-excelviewer && \
-	./code-server-4.0.1-linux-amd64/code-server \
+CMD /bin/bash -c "./code-server-4.0.2-linux-amd64/code-server \
 	--host 0.0.0.0 \
 	--port 8443 \
-	--auth none \
-	/	data/data"
+	data/data"
