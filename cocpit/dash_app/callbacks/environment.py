@@ -8,38 +8,55 @@ import pandas as pd
 import plotly.express as px
 from callbacks import process
 from dash import dash_table
-from dash_extensions.enrich import Input, Output, State
+from dash_extensions.enrich import Input, Output
 
 
 def register(app):
     @app.callback(
-        [Output("type-temp-violin", "figure"), Output("type-iwc-violin", "figure")],
+        Output("type-temp-violin", "figure"),
         [
-            Input("store-df", "data"),
+            Input("df-classification", "data"),
+            Input("df-temp", "data"),
         ],
     )
-    def type_temp_violin(df):
-        print(df)
+    def type_temp_violin(classification, temp):
         temp_fig = px.violin(
-            x=df["Classification"],
-            y=df["Temperature"],
-            color=df["Classification"],
+            x=classification,
+            y=temp,
+            color=classification,
             color_discrete_sequence=px.colors.qualitative.Antique,
             points=False,
+            labels={
+                "x": "Particle Type",
+                "y": 'Temperature',
+            },
         )
 
-        temp_fig = process.update_layout(temp_fig, df)
+        temp_fig = process.update_layout(temp_fig, len(temp))
         temp_fig.update_yaxes(autorange="reversed")
+        return temp_fig
 
+    @app.callback(
+        Output("type-iwc-violin", "figure"),
+        [
+            Input("df-classification", "data"),
+            Input("df-iwc", "data"),
+        ],
+    )
+    def type_temp_violin(classification, iwc):
         iwc_fig = px.violin(
-            x=df["Classification"],
-            y=df["Ice Water Content"],
-            color=df["Classification"],
+            x=classification,
+            y=iwc,
+            color=classification,
             color_discrete_sequence=px.colors.qualitative.Antique,
+            labels={
+                "x": "Particle Type",
+                "y": 'Ice Water Content',
+            },
         )
-        iwc_fig = process.update_layout(iwc_fig, df)
+        iwc_fig = process.update_layout(iwc_fig, len(classification))
 
-        return temp_fig, iwc_fig
+        return iwc_fig
 
     # @app.callback(
     #     Output('table', 'style_data_conditional'),

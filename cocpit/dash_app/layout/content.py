@@ -20,6 +20,14 @@ def content():
             dcc.Store(id='store-df'),
             dcc.Store(id='pie-values'),
             dcc.Store(id='pie-labels'),
+            dcc.Store(id='df-classification'),
+            dcc.Store(id='df-lat'),
+            dcc.Store(id='df-lon'),
+            dcc.Store(id='df-alt'),
+            dcc.Store(id='df-iwc'),
+            dcc.Store(id='df-temp'),
+            dcc.Store(id='df-prop'),
+            dcc.Store(id='len-df'),
             dls.Hash(
                 dbc.Row(
                     [
@@ -76,14 +84,14 @@ def content():
                         #     lg=12,
                         #     xl=2,
                         # ),
-                        # dbc.Col(
-                        #     dcc.Graph(id='flat-topo', figure={}),
-                        #     xs=12,
-                        #     sm=12,
-                        #     md=12,
-                        #     lg=12,
-                        #     xl=10,
-                        # ),
+                        dbc.Col(
+                            dcc.Graph(id='flat-topo', figure={}),
+                            xs=12,
+                            sm=12,
+                            md=12,
+                            lg=12,
+                            xl=10,
+                        ),
                     ],
                     align="center",
                     justify="center",
@@ -128,40 +136,6 @@ def content():
                 [
                     dbc.Row(
                         html.H4(
-                            'Environmental Attributes',
-                            className='text-center',
-                        ),
-                        style={"background-color": "#f8f9fa"},
-                    ),
-                    dbc.Row(
-                        [
-                            dbc.Col(
-                                dcc.Graph(id='type-temp-violin', figure={}),
-                                xs=12,
-                                sm=12,
-                                md=12,
-                                lg=12,
-                                xl=6,
-                            ),
-                            dbc.Col(
-                                dcc.Graph(id='type-iwc-violin', figure={}),
-                                xs=12,
-                                sm=12,
-                                md=12,
-                                lg=12,
-                                xl=6,
-                            ),
-                        ],
-                        align="center",
-                        justify="center",
-                    ),
-                ]
-            ),
-            html.Hr(),
-            dls.Hash(
-                [
-                    dbc.Row(
-                        html.H4(
                             'Geometric Attributes',
                             className='text-center',
                         ),
@@ -179,6 +153,40 @@ def content():
                             ),
                             dbc.Col(
                                 dcc.Graph(id='prop_fig', figure={}),
+                                xs=12,
+                                sm=12,
+                                md=12,
+                                lg=12,
+                                xl=6,
+                            ),
+                        ],
+                        align="center",
+                        justify="center",
+                    ),
+                ]
+            ),
+            html.Hr(),
+            dls.Hash(
+                [
+                    dbc.Row(
+                        html.H4(
+                            'Environmental Attributes',
+                            className='text-center',
+                        ),
+                        style={"background-color": "#f8f9fa"},
+                    ),
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                dcc.Graph(id='type-temp-violin', figure={}),
+                                xs=12,
+                                sm=12,
+                                md=12,
+                                lg=12,
+                                xl=6,
+                            ),
+                            dbc.Col(
+                                dcc.Graph(id='type-iwc-violin', figure={}),
                                 xs=12,
                                 sm=12,
                                 md=12,

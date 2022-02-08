@@ -73,8 +73,8 @@ def sidebar():
             dbc.Row(
                 dcc.DatePickerRange(
                     id='date-picker',
-                    start_date=date(2002, 7, 3),
-                    end_date=date(2002, 7, 29),
+                    start_date=date(2002, 7, 11),
+                    end_date=date(2002, 7, 12),
                     month_format='MMM Do, YY',
                     display_format='MMM Do, YY',
                 ),

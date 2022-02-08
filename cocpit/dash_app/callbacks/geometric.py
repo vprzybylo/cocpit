@@ -16,9 +16,11 @@ def register(app):
         Output("pie", "figure"),
         Input("pie-values", "data"),
         Input("pie-labels", "data"),
+        Input("len-df", "data"),
     )
-    def percent_part_type(values, labels):
+    def pie(values, labels, len_df):
         '''pie chart for percentage of particle types for a given campaign'''
+
         pie = px.pie(
             labels,
             values=values,
@@ -27,7 +29,7 @@ def register(app):
         )
         pie.update_layout(
             title={
-                'text': f"n={len(values)}",
+                'text': f"n={len_df}",
                 'x': 0.43,
                 'xanchor': 'center',
                 'yanchor': 'top',
@@ -38,22 +40,24 @@ def register(app):
     @app.callback(
         Output("prop_fig", "figure"),
         [
+            Input("df-classification", "data"),
+            Input("df-prop", "data"),
             Input("property-dropdown", "value"),
-            Input("store-df", "data"),
         ],
     )
-    def percent_part_type(prop, df):
+    def percent_part_type(classification, prop, prop_name):
         '''box plots of geometric attributes of ice crystals
         with respect to particle classification on sidebar menu filters'''
 
         prop_fig = px.violin(
-            x=df['Classification'],
-            y=df[prop],
-            color=df["Classification"],
+            x=classification,
+            y=prop,
+            color=classification,
             color_discrete_sequence=px.colors.qualitative.Antique,
             labels={
-                "Classification": "Particle Type",
+                "x": "Particle Type",
+                "y": prop_name,
             },
         )
-        prop_fig = process.update_layout(prop_fig, df)
+        prop_fig = process.update_layout(prop_fig, len(classification))
         return prop_fig

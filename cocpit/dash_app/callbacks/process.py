@@ -4,7 +4,13 @@ import dask.dataframe as dd
 import pandas as pd
 import globals
 import numpy as np
-from dash_extensions.enrich import FileSystemStore, Input, Output, ServersideOutput
+from dash_extensions.enrich import (
+    FileSystemStore,
+    Input,
+    Output,
+    ServersideOutput,
+    State,
+)
 import datetime
 
 
@@ -35,21 +41,6 @@ def remove_bad_data(df):
     return df
 
 
-def check_date_range(df, start_date, end_date):
-    df['date'] = df['date'].str.split(' ').str[0]
-    return df[df['date'].between(start_date, end_date)]
-
-
-def check_temp_range(df, min_temp, max_temp):
-    '''find temperature within a user range from input'''
-    return df[df['Temperature'].between(min_temp, max_temp)]
-
-
-def check_pres_range(df, min_pres, max_pres):
-    '''find pressure within a user range from slider'''
-    return df[df['Pressure'].between(min_pres, max_pres)]
-
-
 def rename(df):
     '''remove underscores in particle properties in classification column'''
     rename_types = dict(zip(globals.particle_types, globals.particle_types_rename))
@@ -57,7 +48,7 @@ def rename(df):
     return df
 
 
-def update_layout(fig, df, contour=False):
+def update_layout(fig, len_df, contour=False):
     fig.update_layout(
         {
             'plot_bgcolor': 'rgba(0, 0, 0, 0)',
@@ -66,7 +57,7 @@ def update_layout(fig, df, contour=False):
         xaxis_showgrid=True,
         xaxis_zeroline=False,
         title={
-            'text': f"n={len(df)}",
+            'text': f"n={len_df}",
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top',
@@ -86,7 +77,14 @@ def register(app):
         [
             ServersideOutput("pie-values", "data"),
             ServersideOutput("pie-labels", "data"),
-            ServersideOutput("store-df", "data"),
+            ServersideOutput("df-classification", "data"),
+            ServersideOutput("df-lat", "data"),
+            ServersideOutput("df-lon", "data"),
+            ServersideOutput("df-alt", "data"),
+            ServersideOutput("df-prop", "data"),
+            ServersideOutput("df-iwc", "data"),
+            ServersideOutput("df-temp", "data"),
+            ServersideOutput("len-df", "data"),
         ],
         [
             Input("campaign-dropdown", "value"),
@@ -96,60 +94,53 @@ def register(app):
             Input("max-pres", "value"),
             Input("date-picker", 'start_date'),
             Input("date-picker", 'end_date'),
+            Input("property-dropdown", "value"),
         ],
     )
     def preprocess(
-        campaign, min_temp, max_temp, min_pres, max_pres, start_date, end_date
+        campaign, min_temp, max_temp, min_pres, max_pres, start_date, end_date, prop
     ):
-        print(min_pres, max_pres)
         df = read_campaign(campaign)
         # df = rename(df)
+        tic = datetime.datetime.now()
         df = remove_bad_data(df)
-        df = check_temp_range(df, min_temp, max_temp)
-        df = check_pres_range(df, min_pres[0], max_pres[0])
-        df = check_date_range(df, start_date, end_date)
+        df = df[df['Temperature'].between(min_temp, max_temp)]
+        df = df[df['Pressure'].between(min_pres[0], max_pres[0])]
+        df['date'] = df['date'].str.split(' ').str[0]
+        df = df[df['date'].between(start_date, end_date)]
 
         values = df["Classification"].value_counts()
         labels = df["Classification"].unique()
+        toc = datetime.datetime.now()
+        print(f"time to process data = {(toc-tic).total_seconds()}")
 
         return (
             values,
             labels,
-            df[
-                [
-                    'Temperature',
-                    'Classification',
-                    'Ice Water Content',
-                    'Longitude',
-                    'Latitude',
-                    'Altitude',
-                    'Contour Area',
-                    'Contrast',
-                    'Circularity',
-                    'Solidity',
-                    'Complexity',
-                    'Equivalent Diameter',
-                    'Convex Perimeter',
-                    'Hull Area',
-                    'Perimeter',
-                    'Aspect Ratio',
-                    'Area Ratio',
-                    'Roundness',
-                    'Perimeter-Area Ratio',
-                ]
-            ],
+            df['Classification'],
+            df['Latitude'],
+            df['Longitude'],
+            df['Altitude'],
+            df[prop],
+            df['Ice Water Content'],
+            df['Temperature'],
+            len(df),
         )
 
     @app.callback(
         [
             Output('date-picker', 'min_date_allowed'),
             Output('date-picker', 'max_date_allowed'),
+            Output('date-picker', 'start_date'),
+            Output('date-picker', 'end_date'),
         ],
         Input('campaign-dropdown', 'value'),
     )
     def set_date_picker(campaign):
         '''update date picker based on campaign start and end dates'''
         return (
+            globals.min_dates[campaign],
+            globals.max_dates[campaign],
             globals.campaign_start_dates[campaign],
             globals.campaign_end_dates[campaign],
         )
