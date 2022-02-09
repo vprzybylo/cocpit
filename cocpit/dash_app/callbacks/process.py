@@ -7,6 +7,7 @@ import numpy as np
 from dash_extensions.enrich import (
     Input,
     Output,
+    State,
     ServersideOutput,
 )
 import datetime
@@ -16,13 +17,15 @@ def read_campaign(campaign):
     '''read particle property df and environmental property df_env
     merged based on filename and date'''
 
-    tic = datetime.datetime.now()
+    campaign = 'CRYSTAL_FACE_NASA' if campaign == 'CRYSTAL FACE (NASA)' else campaign
+    campaign = 'CRYSTAL_FACE_UND' if campaign == 'CRYSTAL FACE (UND)' else campaign
+    campaign = 'ICE_L' if campaign == 'ICE L' else campaign
+    campaign = 'AIRS_II' if campaign == 'AIRS II' else campaign
     df = pd.read_parquet(
         f"../../final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
         engine='fastparquet',
     )
-    toc = datetime.datetime.now()
-    print(f"time to read data = {(toc-tic).total_seconds()}")
+
     return df
 
 
@@ -42,6 +45,8 @@ def remove_bad_data(df):
 def rename(df):
     '''remove underscores in particle properties in classification column'''
     rename_types = dict(zip(globals.particle_types, globals.particle_types_rename))
+    df = df.replace(rename_types)
+    rename_types = dict(zip(globals.campaigns, globals.campaigns_rename))
     df = df.replace(rename_types)
     return df
 
@@ -74,8 +79,6 @@ def update_layout(fig, len_df, contour=False):
 def register(app):
     @app.callback(
         [
-            ServersideOutput("pie-values", "data"),
-            ServersideOutput("pie-labels", "data"),
             ServersideOutput("df-classification", "data"),
             ServersideOutput("df-lat", "data"),
             ServersideOutput("df-lon", "data"),
@@ -86,19 +89,28 @@ def register(app):
             ServersideOutput("len-df", "data"),
         ],
         [
-            Input("campaign-dropdown", "value"),
-            Input("min-temp", "value"),
-            Input("max-temp", "value"),
-            Input("min-pres", "value"),
-            Input("max-pres", "value"),
-            Input("date-picker", 'start_date'),
-            Input("date-picker", 'end_date'),
-            Input("property-dropdown", "value"),
+            Input('submit-button', 'n_clicks'),
+            State("campaign-dropdown", "value"),
+            State("min-temp", "value"),
+            State("max-temp", "value"),
+            State("min-pres", "value"),
+            State("max-pres", "value"),
+            State("date-picker", 'start_date'),
+            State("date-picker", 'end_date'),
+            State("property-dropdown", "value"),
         ],
         memoize=True,
     )
     def preprocess(
-        campaign, min_temp, max_temp, min_pres, max_pres, start_date, end_date, prop
+        n_clicks,
+        campaign,
+        min_temp,
+        max_temp,
+        min_pres,
+        max_pres,
+        start_date,
+        end_date,
+        prop,
     ):
         '''read campaign data and process based on user input from menu'''
         df = read_campaign(campaign)
@@ -110,14 +122,10 @@ def register(app):
         df['date'] = df['date'].str.split(' ').str[0]
         df = df[df['date'].between(start_date, end_date)]
 
-        values = df["Classification"].value_counts()
-        labels = df["Classification"].unique()
         toc = datetime.datetime.now()
         print(f"time to process data = {(toc-tic).total_seconds()}")
 
         return (
-            values,
-            labels,
             df['Classification'],
             df['Latitude'],
             df['Longitude'],

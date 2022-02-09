@@ -34,9 +34,6 @@ if __name__ == '__main__':
         [dcc.Location(id="url"), content.content(), sidebar.sidebar()],
         fluid=True,
     )
-    cache = Cache(app.server, config={'CACHE_TYPE': 'simple'})
-
-    cache.clear()
 
     process.register(app)
     topographic.register(app)

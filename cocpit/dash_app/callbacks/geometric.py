@@ -7,19 +7,17 @@ includes callbacks
 import pandas as pd
 import plotly.express as px
 from callbacks import process
-from dash_extensions.enrich import Input, Output
+from dash_extensions.enrich import Input, Output, State
 import plotly.graph_objects as go
 
 
 def register(app):
-    @app.callback(
-        Output("pie", "figure"),
-        Input("pie-values", "data"),
-        Input("pie-labels", "data"),
-        Input("len-df", "data"),
-    )
-    def pie(values, labels, len_df):
+    @app.callback(Output("pie", "figure"), Input("df-classification", "data"))
+    def pie(df):
         '''pie chart for percentage of particle types for a given campaign'''
+
+        values = df.value_counts()
+        labels = df.unique()
 
         pie = px.pie(
             labels,
@@ -29,7 +27,7 @@ def register(app):
         )
         pie.update_layout(
             title={
-                'text': f"n={len_df}",
+                'text': f"n={len(df)}",
                 'x': 0.43,
                 'xanchor': 'center',
                 'yanchor': 'top',

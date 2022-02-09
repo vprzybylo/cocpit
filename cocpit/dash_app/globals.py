@@ -18,6 +18,23 @@ campaigns = [
     "OLYMPEX",
 ]
 
+campaigns_rename = [
+    "AIRS II",
+    "ARM",
+    "ATTREX",
+    "CRYSTAL FACE (UND)",
+    "CRYSTAL FACE (NASA)",
+    "ICE L",
+    "IPHEX",
+    "ISDAC",
+    "MACPEX",
+    "MC3E",
+    "MIDCIX",
+    "MPACE",
+    "POSIDON",
+    "OLYMPEX",
+]
+
 particle_types = [
     "agg",
     "budding",
@@ -56,12 +73,12 @@ particle_properties = [
 vertical_vars = ['Ice Water Content', 'Temperature', 'Pressure']
 
 campaign_start_dates = {
-    "AIRS_II": date(2003, 11, 14),
+    "AIRS II": date(2003, 11, 14),
     "ARM": date(2000, 3, 9),
     "ATTREX": date(2014, 3, 4),
-    "CRYSTAL_FACE_UND": date(2002, 7, 13),
-    "CRYSTAL_FACE_NASA": date(2002, 7, 20),
-    "ICE_L": date(2007, 11, 16),
+    "CRYSTAL FACE (UND)": date(2002, 7, 13),
+    "CRYSTAL FACE (NASA)": date(2002, 7, 20),
+    "ICE L": date(2007, 11, 16),
     "IPHEX": date(2014, 4, 22),
     "ISDAC": date(2008, 4, 1),
     "MACPEX": date(2011, 4, 3),
@@ -73,12 +90,12 @@ campaign_start_dates = {
 }
 
 campaign_end_dates = {
-    "AIRS_II": date(2003, 11, 19),
+    "AIRS II": date(2003, 11, 19),
     "ARM": date(2000, 3, 19),
     "ATTREX": date(2014, 3, 5),
-    "CRYSTAL_FACE_UND": date(2002, 7, 16),
-    "CRYSTAL_FACE_NASA": date(2002, 7, 21),
-    "ICE_L": date(2007, 12, 16),
+    "CRYSTAL FACE (UND)": date(2002, 7, 16),
+    "CRYSTAL FACE (NASA)": date(2002, 7, 21),
+    "ICE L": date(2007, 12, 16),
     "IPHEX": date(2014, 6, 13),
     "ISDAC": date(2008, 4, 29),
     "MACPEX": date(2011, 4, 25),
@@ -90,12 +107,12 @@ campaign_end_dates = {
 }
 
 min_dates = {
-    "AIRS_II": date(2003, 11, 14),
+    "AIRS II": date(2003, 11, 14),
     "ARM": date(2000, 3, 9),
     "ATTREX": date(2014, 3, 4),
-    "CRYSTAL_FACE_UND": date(2002, 7, 3),
-    "CRYSTAL_FACE_NASA": date(2002, 7, 9),
-    "ICE_L": date(2007, 11, 16),
+    "CRYSTAL FACE (UND)": date(2002, 7, 3),
+    "CRYSTAL FACE (NASA)": date(2002, 7, 9),
+    "ICE L": date(2007, 11, 16),
     "IPHEX": date(2014, 4, 22),
     "ISDAC": date(2008, 4, 1),
     "MACPEX": date(2011, 4, 3),
@@ -107,12 +124,12 @@ min_dates = {
 }
 
 max_dates = {
-    "AIRS_II": date(2003, 11, 19),
+    "AIRS II": date(2003, 11, 19),
     "ARM": date(2000, 3, 19),
     "ATTREX": date(2014, 3, 5),
-    "CRYSTAL_FACE_UND": date(2002, 7, 29),
-    "CRYSTAL_FACE_NASA": date(2002, 7, 29),
-    "ICE_L": date(2007, 12, 16),
+    "CRYSTAL FACE (UND)": date(2002, 7, 29),
+    "CRYSTAL FACE (NASA)": date(2002, 7, 29),
+    "ICE L": date(2007, 12, 16),
     "IPHEX": date(2014, 6, 13),
     "ISDAC": date(2008, 4, 29),
     "MACPEX": date(2011, 4, 25),
