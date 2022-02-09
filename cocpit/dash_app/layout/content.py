@@ -17,17 +17,17 @@ def content():
     return html.Div(
         id="page-content",
         children=[
-            dcc.Store(id='store-df'),
-            dcc.Store(id='pie-values'),
-            dcc.Store(id='pie-labels'),
-            dcc.Store(id='df-classification'),
-            dcc.Store(id='df-lat'),
-            dcc.Store(id='df-lon'),
-            dcc.Store(id='df-alt'),
-            dcc.Store(id='df-iwc'),
-            dcc.Store(id='df-temp'),
-            dcc.Store(id='df-prop'),
-            dcc.Store(id='len-df'),
+            dcc.Store(id='store-df', clear_data=True),
+            dcc.Store(id='pie-values', clear_data=True),
+            dcc.Store(id='pie-labels', clear_data=True),
+            dcc.Store(id='df-classification', clear_data=True),
+            dcc.Store(id='df-lat', clear_data=True),
+            dcc.Store(id='df-lon', clear_data=True),
+            dcc.Store(id='df-alt', clear_data=True),
+            dcc.Store(id='df-iwc', clear_data=True),
+            dcc.Store(id='df-temp', clear_data=True),
+            dcc.Store(id='df-prop', clear_data=True),
+            dcc.Store(id='len-df', clear_data=True),
             dls.Hash(
                 dbc.Row(
                     [

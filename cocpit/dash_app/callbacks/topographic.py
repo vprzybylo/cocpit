@@ -41,13 +41,12 @@ def register(app):
     )
     def topo_flat_fig(df_classification, df_lat, df_lon, df_alt, df_iwc, part_type):
         '''particle location overlaid on topographic map'''
-        print(part_type, df_classification)
-        df_classification = df_classification[df_classification.isin(part_type)]
 
-        df_lat = df_lat[df_classification == part_type]
-        df_lon = df_lon[df_classification == part_type]
-        df_alt = df_alt[df_classification == part_type]
-        df_iwc = df_iwc[df_classification == part_type]
+        df_lat = df_lat[df_classification.isin(part_type)]
+        df_lon = df_lon[df_classification.isin(part_type)]
+        df_alt = df_alt[df_classification.isin(part_type)]
+        df_iwc = df_iwc[df_classification.isin(part_type)]
+        df_classification = df_classification[df_classification.isin(part_type)]
 
         fig = px.scatter_3d(
             x=-df_lat,

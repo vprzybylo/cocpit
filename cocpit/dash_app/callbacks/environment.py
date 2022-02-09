@@ -20,6 +20,7 @@ def register(app):
         ],
     )
     def type_temp_violin(classification, temp):
+        '''violin plot of particle type vs temperature'''
         temp_fig = px.violin(
             x=classification,
             y=temp,
@@ -44,6 +45,7 @@ def register(app):
         ],
     )
     def type_temp_violin(classification, iwc):
+        '''violin plot of particle type vs ice water content'''
         iwc_fig = px.violin(
             x=classification,
             y=iwc,

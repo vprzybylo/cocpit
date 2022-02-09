@@ -5,11 +5,9 @@ import pandas as pd
 import globals
 import numpy as np
 from dash_extensions.enrich import (
-    FileSystemStore,
     Input,
     Output,
     ServersideOutput,
-    State,
 )
 import datetime
 
@@ -49,6 +47,7 @@ def rename(df):
 
 
 def update_layout(fig, len_df, contour=False):
+    '''update figures to have white background, and include and center sample size in title'''
     fig.update_layout(
         {
             'plot_bgcolor': 'rgba(0, 0, 0, 0)',
@@ -96,12 +95,14 @@ def register(app):
             Input("date-picker", 'end_date'),
             Input("property-dropdown", "value"),
         ],
+        memoize=True,
     )
     def preprocess(
         campaign, min_temp, max_temp, min_pres, max_pres, start_date, end_date, prop
     ):
+        '''read campaign data and process based on user input from menu'''
         df = read_campaign(campaign)
-        # df = rename(df)
+        df = rename(df)
         tic = datetime.datetime.now()
         df = remove_bad_data(df)
         df = df[df['Temperature'].between(min_temp, max_temp)]

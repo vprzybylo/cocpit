@@ -1,55 +1,6 @@
 from datetime import date
 
 
-col_names_env = [
-    'filename',
-    'date',
-    'Latitude',
-    'Longitude',
-    'Altitude',
-    'Pressure',
-    'Temperature',
-    'Ice Water Content',
-]
-
-col_names = [
-    'filename',
-    'date',
-    'Frame Width',
-    'Frame Height',
-    'Particle Width',
-    'Particle Height',
-    'Cutoff',
-    'Aggregate',
-    'Budding',
-    'Bullet Rosette',
-    'Column',
-    'Compact Irregular',
-    'Fragment',
-    'Planar Polycrystal',
-    'Rimed',
-    'Sphere',
-    'Classification',
-    'Blur',
-    'Contours',
-    'Edges',
-    'Std',
-    'Contour Area',
-    'Contrast',
-    'Circularity',
-    'Solidity',
-    'Complexity',
-    'Equivalent Diameter',
-    'Convex Perimeter',
-    'Hull Area',
-    'Perimeter',
-    'Aspect Ratio',
-    'Extreme Points',
-    'Area Ratio',
-    'Roundness',
-    'Perimeter-Area Ratio',
-]
-
 campaigns = [
     "AIRS_II",
     "ARM",
@@ -79,8 +30,8 @@ particle_types = [
 
 particle_types_rename = [
     "aggregate",
-    "budding",
-    "bullet",
+    "budding rosette",
+    "bullet rosette",
     "column",
     "compact irregular",
     "planar polycrystal",

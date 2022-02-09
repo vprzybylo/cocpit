@@ -9,23 +9,26 @@ from layout import content, sidebar
 from dash_extensions.enrich import Dash, FileSystemStore, Input, Output
 import plotly.express as px
 from flask_caching import Cache
+from dash_extensions.enrich import FileSystemStore
 
 
 def main():
     load_dotenv()
-
+    fss = FileSystemStore(threshold=3)
     return Dash(
         __name__,
         external_stylesheets=[dbc.themes.FLATLY],
         meta_tags=[
-            {'name': 'viewport', 'content': 'width=device-width, initial-scale=1.0'}
+            {'name': 'viewport', 'content': 'width=device-width, initial-scale=1.0'},
         ],
+        suppress_callback_exceptions=True,
     )
 
 
 # Run local server
 if __name__ == '__main__':
     app = main()
+    app.title = 'COCPIT'
 
     app.layout = dbc.Container(
         [dcc.Location(id="url"), content.content(), sidebar.sidebar()],
