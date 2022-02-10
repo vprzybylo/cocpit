@@ -18,8 +18,6 @@ def content():
         id="page-content",
         children=[
             dcc.Store(id='store-df', storage_type='session'),
-            dcc.Store(id='pie-values', storage_type='session'),
-            dcc.Store(id='pie-labels', storage_type='session'),
             dcc.Store(id='df-classification', storage_type='session'),
             dcc.Store(id='df-lat', storage_type='session'),
             dcc.Store(id='df-lon', storage_type='session'),
@@ -31,36 +29,36 @@ def content():
             dls.Hash(
                 dbc.Row(
                     [
-                        dbc.Col(
-                            [
-                                dbc.Row(
-                                    dbc.Label('Particle Type'),
-                                ),
-                                dbc.Row(
-                                    dcc.Checklist(
-                                        id="topo-map-particle_type",
-                                        options=[
-                                            {"label": i, "value": i}
-                                            for i in globals.particle_types_rename
-                                        ],
-                                        value=["aggregate"],
-                                        inputStyle={'margin-right': "5px"},
-                                        labelStyle={
-                                            'display': 'block',
-                                        },
-                                        style={
-                                            'width': "120px",
-                                            "overflow": "auto",
-                                        },
-                                    ),
-                                ),
-                            ],
-                            xs=12,
-                            sm=12,
-                            md=12,
-                            lg=12,
-                            xl=2,
-                        ),
+                        # dbc.Col(
+                        #    [
+                        #     dbc.Row(
+                        #         dbc.Label('Particle Type'),
+                        #     ),
+                        #     dbc.Row(
+                        #         dcc.Checklist(
+                        #             id="topo-map-particle_type",
+                        #             options=[
+                        #                 {"label": i, "value": i}
+                        #                 for i in globals.particle_types_rename
+                        #             ],
+                        #             value=["aggregate"],
+                        #             inputStyle={'margin-right': "5px"},
+                        #             labelStyle={
+                        #                 'display': 'block',
+                        #             },
+                        #             style={
+                        #                 'width': "120px",
+                        #                 "overflow": "auto",
+                        #             },
+                        #         ),
+                        #     ),
+                        # ],
+                        # xs=12,
+                        # sm=12,
+                        # md=12,
+                        # lg=12,
+                        # xl=2,
+                        # ),
                         # dbc.Col(
                         #     [
                         #         dbc.Row(
@@ -85,12 +83,20 @@ def content():
                         #     xl=2,
                         # ),
                         dbc.Col(
-                            dcc.Graph(id='flat-topo', figure={}),
+                            dcc.Graph(id='top-down-map', figure={}),
                             xs=12,
                             sm=12,
                             md=12,
-                            lg=12,
-                            xl=10,
+                            lg=7,
+                            xl=7,
+                        ),
+                        dbc.Col(
+                            dcc.Graph(id='pie', figure={}),
+                            xs=12,
+                            sm=12,
+                            md=12,
+                            lg=5,
+                            xl=5,
                         ),
                     ],
                     align="center",
@@ -143,14 +149,6 @@ def content():
                     ),
                     dbc.Row(
                         [
-                            dbc.Col(
-                                dcc.Graph(id='pie', figure={}),
-                                xs=12,
-                                sm=12,
-                                md=12,
-                                lg=12,
-                                xl=6,
-                            ),
                             dbc.Col(
                                 dcc.Graph(id='prop_fig', figure={}),
                                 xs=12,

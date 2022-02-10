@@ -148,74 +148,70 @@ def register(app):
         lat_fig = process.update_layout(lat_fig, len(classification), contour=True)
         return lat_fig
 
-    # @app.callback(
-    #     Output("top-down-map", "figure"),
-    #     Input("store-df", "data"),
-    #     Input("topo-map-particle_type", "value"),
-    # )
-    # def map_top_down(
-    #     df,
-    #     part_type,
-    # ):
-    #     '''aircraft location and particle type overlaid on map'''
-    #     # df = pd.read_json(json_file)
-    #     df = df[df['Classification'].isin(part_type)]
+    @app.callback(
+        Output("top-down-map", "figure"),
+        [
+            Input("df-classification", "data"),
+            Input("df-lat", "data"),
+            Input("df-lon", "data"),
+        ],
+    )
+    def map_top_down(df_classification, df_lat, df_lon):
+        '''aircraft location and particle type overlaid on map'''
 
-    #     # Find Lat Long center
-    #     lat_center = df['Latitude'][df['Latitude'] != -999.99].mean()
-    #     lon_center = df['Longitude'][df['Latitude'] != -999.99].mean()
+        # Find Lat Long center
+        lat_center = df_lat[df_lat != -999.99].mean()
+        lon_center = df_lon[df_lon != -999.99].mean()
 
-    #     fig = px.scatter_mapbox(
-    #         df,
-    #         lat="Latitude",
-    #         lon="Longitude",
-    #         color='Classification',
-    #         size=df['Ice Water Content'] * 4,
-    #         color_discrete_sequence=px.colors.qualitative.Antique,
-    #         hover_data={
-    #             'Ice Water Content': True,
-    #             'Temperature': True,
-    #             'Pressure': True,
-    #         },
-    #         custom_data=['Temperature', 'Pressure', 'Ice Water Content'],
-    #     )
-    #     fig.update_traces(
-    #         hovertemplate="<br>".join(
-    #             [
-    #                 "Latitude: %{lat}",
-    #                 "Longitude: %{lon}",
-    #                 "Temperature: %{customdata[0]}",
-    #                 "Pressure: %{customdata[1]}",
-    #                 "Ice Water Content: %{customdata[2]}",
-    #             ]
-    #         ),
-    #     )
-    #     # Specify layout information
-    #     fig.update_layout(
-    #         title={
-    #             'text': f"n={len(df)}",
-    #             'x': 0.5,
-    #             'xanchor': 'center',
-    #             'yanchor': 'top',
-    #         },
-    #         mapbox_layers=[
-    #             {
-    #                 "below": 'traces',
-    #                 "sourcetype": "raster",
-    #                 "sourceattribution": "United States Geological Survey",
-    #                 "source": [
-    #                     "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
-    #                 ],
-    #             }
-    #         ],
-    #         mapbox=dict(
-    #             style='light',
-    #             accesstoken=os.getenv('MAPBOX_TOKEN'),
-    #             center=dict(lon=lon_center, lat=lat_center),
-    #             zoom=5,
-    #         ),
-    #     )
-    #     return fig
+        fig = px.scatter_mapbox(
+            lat=df_lat,
+            lon=df_lon,
+            color=df_classification,
+            color_discrete_sequence=px.colors.qualitative.Antique,
+            # hover_data={
+            #     'Ice Water Content': True,
+            #     'Temperature': True,
+            #     'Pressure': True,
+            # },
+            # custom_data=['Temperature', 'Pressure', 'Ice Water Content'],
+        )
+        # fig.update_traces(
+        #     hovertemplate="<br>".join(
+        #         [
+        #             "Latitude: %{lat}",
+        #             "Longitude: %{lon}",
+        #             "Temperature: %{customdata[0]}",
+        #             "Pressure: %{customdata[1]}",
+        #             "Ice Water Content: %{customdata[2]}",
+        #         ]
+        #     ),
+        # )
+        # Specify layout information
+        fig.update_layout(
+            title={
+                'text': f"n={len(df_classification)}",
+                'x': 0.5,
+                'xanchor': 'center',
+                'yanchor': 'top',
+            },
+            mapbox_layers=[
+                {
+                    "below": 'traces',
+                    "sourcetype": "raster",
+                    "sourceattribution": "United States Geological Survey",
+                    "source": [
+                        "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
+                    ],
+                }
+            ],
+            mapbox=dict(
+                style='light',
+                accesstoken=os.getenv('MAPBOX_TOKEN'),
+                center=dict(lon=lon_center, lat=lat_center),
+                zoom=5,
+            ),
+        )
+        return fig
 
     # @app.callback(
     #     Output("3d map", "figure"),

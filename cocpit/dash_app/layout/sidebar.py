@@ -7,6 +7,7 @@ from datetime import date
 def sidebar():
 
     padding = '1px'
+    margin_bottom = '8px'
 
     # styling the sidebar
     SIDEBAR_STYLE = {
@@ -14,6 +15,7 @@ def sidebar():
         "top": 0,
         "left": 0,
         "bottom": 0,
+        'overflow-y': 'scroll',
         "width": "16rem",
         "padding": "2rem 1rem",
         "background-color": "#f8f9fa",
@@ -57,7 +59,7 @@ def sidebar():
                     placeholder="Campaign",
                     value='CRYSTAL FACE (UND)',
                 ),
-                style={"padding": padding},
+                style={"padding": padding, "margin-bottom": margin_bottom},
             ),
             dbc.Row(
                 dbc.Label('Particle Property:'),
@@ -72,7 +74,7 @@ def sidebar():
                     placeholder="Particle Property",
                     value='Complexity',
                 ),
-                style={"padding": padding},
+                style={"padding": padding, "margin-bottom": margin_bottom},
             ),
             dbc.Row(
                 dbc.Label('Date:'),
@@ -86,7 +88,7 @@ def sidebar():
                     month_format='MMM Do, YY',
                     display_format='MMM Do, YY',
                 ),
-                style={"padding": padding},
+                style={"padding": padding, "margin-bottom": margin_bottom},
             ),
             dbc.Row(
                 dbc.Label('Temperature Range [C]:'),
@@ -119,6 +121,7 @@ def sidebar():
                     #'width': '35%',
                     'margin-left': 6,
                     'margin-right': 1,
+                    "margin-bottom": margin_bottom,
                 },
                 align="center",
             ),
@@ -160,7 +163,7 @@ def sidebar():
                         100: {'label': '100hPa'},
                     },
                 ),
-                style={"padding": padding},
+                style={"padding": padding, "margin-bottom": margin_bottom},
             ),
             dbc.Row(
                 dbc.Label('Particle Size [micrometers]:'),
@@ -192,6 +195,7 @@ def sidebar():
                     #'width': '35%',
                     'margin-left': 5,
                     'margin-right': 1,
+                    "margin-bottom": margin_bottom,
                 },
                 align="center",
             ),
@@ -200,6 +204,20 @@ def sidebar():
                     id='submit-button',
                     n_clicks=0,
                     children='Apply Filters',
+                    className='btn btn-primary black-background white btn-lg ',
+                ),
+                style={
+                    "padding": '4px',
+                    'margin-left': 5,
+                    'margin-right': 1,
+                },
+            ),
+            dcc.Download(id="download-df-csv"),
+            dbc.Row(
+                html.Button(
+                    id='download-button',
+                    n_clicks=0,
+                    children='Download Data',
                     className='btn btn-primary black-background white btn-lg ',
                 ),
                 style={

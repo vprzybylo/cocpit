@@ -4,12 +4,7 @@ import dask.dataframe as dd
 import pandas as pd
 import globals
 import numpy as np
-from dash_extensions.enrich import (
-    Input,
-    Output,
-    State,
-    ServersideOutput,
-)
+from dash_extensions.enrich import Input, Output, State, ServersideOutput, dcc
 import datetime
 
 
@@ -38,6 +33,8 @@ def remove_bad_data(df):
         & (df['Pressure'] != 0)
         & (df['Ice Water Content'] > 1e-5)
         & (df["Complexity"] != -0.0)
+        & (df['Particle Height'] != 0.0)
+        & (df['Particle Width'] != 0.0)
     ]
     return df
 
@@ -87,6 +84,7 @@ def register(app):
             ServersideOutput("df-iwc", "data"),
             ServersideOutput("df-temp", "data"),
             ServersideOutput("len-df", "data"),
+            ServersideOutput("store-df", "data"),
         ],
         [
             Input('submit-button', 'n_clicks'),
@@ -97,12 +95,14 @@ def register(app):
             State("max-pres", "value"),
             State("date-picker", 'start_date'),
             State("date-picker", 'end_date'),
+            State("min-size", "value"),
+            State("max-size", "value"),
             State("property-dropdown", "value"),
         ],
         memoize=True,
     )
     def preprocess(
-        n_clicks,
+        nclicks,
         campaign,
         min_temp,
         max_temp,
@@ -110,20 +110,21 @@ def register(app):
         max_pres,
         start_date,
         end_date,
+        min_size,
+        max_size,
         prop,
     ):
         '''read campaign data and process based on user input from menu'''
         df = read_campaign(campaign)
         df = rename(df)
-        tic = datetime.datetime.now()
         df = remove_bad_data(df)
-        df = df[df['Temperature'].between(min_temp, max_temp)]
-        df = df[df['Pressure'].between(min_pres[0], max_pres[0])]
+        df['max_dim'] = np.maximum(df['Particle Width'], df['Particle Height'])
+        df['min_dim'] = np.minimum(df['Particle Width'], df['Particle Height'])
+        df = df[(df['min_dim'] >= int(min_size)) & (df['max_dim'] <= int(max_size))]
         df['date'] = df['date'].str.split(' ').str[0]
         df = df[df['date'].between(start_date, end_date)]
-
-        toc = datetime.datetime.now()
-        print(f"time to process data = {(toc-tic).total_seconds()}")
+        df = df[df['Temperature'].between(int(min_temp), int(max_temp))]
+        df = df[df['Pressure'].between(int(min_pres[0]), int(max_pres[0]))]
 
         return (
             df['Classification'],
@@ -134,7 +135,16 @@ def register(app):
             df['Ice Water Content'],
             df['Temperature'],
             len(df),
+            df,
         )
+
+    @app.callback(
+        Output("download-df-csv", "data"),
+        [Input("download-button", "n_clicks"), State('store-df', 'data')],
+        prevent_initial_call=True,
+    )
+    def func(n_clicks, df):
+        return dcc.send_data_frame(df.to_csv, "cocpit.csv")
 
     @app.callback(
         [
