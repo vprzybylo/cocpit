@@ -12,7 +12,7 @@ def content():
     CONTENT_STYLE = {
         "margin-left": "18rem",
         "margin-right": "2rem",
-        "margin-top": "4rem",
+        "margin-top": "2rem",
     }
     return html.Div(
         id="page-content",
@@ -82,113 +82,158 @@ def content():
                         #     lg=12,
                         #     xl=2,
                         # ),
+                        # dbc.Col(
+                        #     dcc.Graph(id='top-down-map', figure={}),
+                        #     xs=12,
+                        #     sm=12,
+                        #     md=12,
+                        #     lg=6,
+                        #     xl=6,
+                        # ),
+                        # dbc.Col(
+                        #     dcc.Graph(id='pie', figure={}),
+                        #     xs=12,
+                        #     sm=12,
+                        #     md=12,
+                        #     lg=6,
+                        #     xl=6,
+                        # ),
                         dbc.Col(
-                            dcc.Graph(id='top-down-map', figure={}),
+                            children=[
+                                dbc.Card(
+                                    [
+                                        dbc.CardHeader("Particle Location"),
+                                        dbc.CardBody(
+                                            children=[
+                                                dcc.Graph(id='top-down-map', figure={}),
+                                            ]
+                                        ),
+                                    ],
+                                )
+                            ],
                             xs=12,
                             sm=12,
                             md=12,
-                            lg=7,
-                            xl=7,
+                            lg=6,
+                            xl=6,
                         ),
                         dbc.Col(
-                            dcc.Graph(id='pie', figure={}),
+                            children=[
+                                dbc.Card(
+                                    [
+                                        dbc.CardHeader("Particle Type Percentage"),
+                                        dbc.CardBody(
+                                            children=[dcc.Graph(id='pie', figure={})]
+                                        ),
+                                    ],
+                                )
+                            ],
                             xs=12,
                             sm=12,
                             md=12,
-                            lg=5,
-                            xl=5,
+                            lg=6,
+                            xl=6,
                         ),
                     ],
                     align="center",
                     justify="center",
-                )
+                ),
             ),
-            html.Hr(),
             dls.Hash(
                 [
                     dbc.Row(
-                        html.H4(
-                            'Geographic Attributes',
-                            className='text-center',
-                        ),
-                        style={"background-color": "#f8f9fa"},
-                    ),
-                    dbc.Row(
                         [
                             dbc.Col(
-                                dcc.Graph(id='lon-alt-hist', figure={}),
+                                children=[
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader("Cross-Section (Longitude)"),
+                                            dbc.CardBody(
+                                                children=[
+                                                    dcc.Graph(
+                                                        id='lon-alt-hist', figure={}
+                                                    )
+                                                ]
+                                            ),
+                                        ],
+                                    )
+                                ],
                                 xs=12,
                                 sm=12,
                                 md=12,
-                                lg=12,
+                                lg=6,
                                 xl=6,
                             ),
                             dbc.Col(
-                                dcc.Graph(id='lat-alt-hist', figure={}),
+                                children=[
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader("Cross Section (Latitude)"),
+                                            dbc.CardBody(
+                                                children=[
+                                                    dcc.Graph(
+                                                        id='lat-alt-hist', figure={}
+                                                    )
+                                                ]
+                                            ),
+                                        ],
+                                    )
+                                ],
                                 xs=12,
                                 sm=12,
                                 md=12,
-                                lg=12,
+                                lg=6,
                                 xl=6,
                             ),
                         ],
                         align="center",
                         justify="center",
                     ),
-                ]
+                ],
             ),
-            html.Hr(),
             dls.Hash(
                 [
                     dbc.Row(
-                        html.H4(
-                            'Geometric Attributes',
-                            className='text-center',
-                        ),
-                        style={"background-color": "#f8f9fa"},
-                    ),
-                    dbc.Row(
                         [
                             dbc.Col(
-                                dcc.Graph(id='prop_fig', figure={}),
+                                children=[
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader("Geometric Property"),
+                                            dbc.CardBody(
+                                                children=[
+                                                    dcc.Graph(id='prop-fig', figure={})
+                                                ]
+                                            ),
+                                        ],
+                                    )
+                                ],
                                 xs=12,
                                 sm=12,
                                 md=12,
-                                lg=12,
-                                xl=6,
-                            ),
-                        ],
-                        align="center",
-                        justify="center",
-                    ),
-                ]
-            ),
-            html.Hr(),
-            dls.Hash(
-                [
-                    dbc.Row(
-                        html.H4(
-                            'Environmental Attributes',
-                            className='text-center',
-                        ),
-                        style={"background-color": "#f8f9fa"},
-                    ),
-                    dbc.Row(
-                        [
-                            dbc.Col(
-                                dcc.Graph(id='type-temp-violin', figure={}),
-                                xs=12,
-                                sm=12,
-                                md=12,
-                                lg=12,
+                                lg=6,
                                 xl=6,
                             ),
                             dbc.Col(
-                                dcc.Graph(id='type-iwc-violin', figure={}),
+                                children=[
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader("Environmental Attributes"),
+                                            dbc.CardBody(
+                                                children=[
+                                                    dcc.Graph(
+                                                        id='type-iwc-violin', figure={}
+                                                    )
+                                                ]
+                                            ),
+                                        ],
+                                        style={"margin": "0px"},
+                                    )
+                                ],
                                 xs=12,
                                 sm=12,
                                 md=12,
-                                lg=12,
+                                lg=6,
                                 xl=6,
                             ),
                         ],
@@ -218,7 +263,6 @@ def content():
             #         xl=12,
             #     )
             # ),
-            html.Hr(),
             html.P(
                 'Copyright All Rights Reserved',
                 style={"color": '#D3D3D3', 'text-align': 'center'},

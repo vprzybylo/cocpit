@@ -12,12 +12,27 @@ import plotly.graph_objects as go
 
 
 def register(app):
-    @app.callback(Output("pie", "figure"), Input("df-classification", "data"))
-    def pie(df):
+    @app.callback(
+        Output("pie", "figure"),
+        [
+            Input("df-classification", "data"),
+            Input("df-lat", "data"),
+            Input("df-lon", "data"),
+            Input('top-down-map', 'selectedData'),
+        ],
+    )
+    def pie(df_classification, df_lat, df_lon, selectedData):
         '''pie chart for percentage of particle types for a given campaign'''
+        if selectedData and selectedData['points']:
+            print(selectedData['points'])
 
-        values = df.value_counts()
-        labels = df.unique()
+            sel_data = pd.DataFrame(selectedData['points'])
+            df_classification = df_classification[
+                (df_lat.isin(sel_data['lat'])) & (df_lon.isin(sel_data['lon']))
+            ]
+            print(len(df_classification))
+        values = df_classification.value_counts()
+        labels = df_classification.unique()
 
         pie = px.pie(
             labels,
@@ -27,7 +42,7 @@ def register(app):
         )
         pie.update_layout(
             title={
-                'text': f"n={len(df)}",
+                'text': f"n={len(df_classification)}",
                 'x': 0.43,
                 'xanchor': 'center',
                 'yanchor': 'top',
@@ -36,7 +51,7 @@ def register(app):
         return pie
 
     @app.callback(
-        Output("prop_fig", "figure"),
+        Output("prop-fig", "figure"),
         [
             Input("df-classification", "data"),
             Input("df-prop", "data"),

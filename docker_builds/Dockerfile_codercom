@@ -40,6 +40,9 @@ RUN wget https://github.com/cdr/code-server/releases/download/v4.0.2/code-server
 EXPOSE 8443
 # auto load vscode extensions following: publisher.extension
 CMD /bin/bash -c "./code-server-4.0.2-linux-amd64/code-server \
+	--install-extension ms-python.python \
+	--install-extension tabnine.tabnine-vscode \
+	--install-extension coenraads.bracket-pair-colorizer \
 	--host 0.0.0.0 \
 	--port 8443 \
 	data/data"
