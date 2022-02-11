@@ -2,8 +2,8 @@ version: "2.1"
 services:
   code-server:
     build:
-        context: .
-        dockerfile: Dockerfile_codercom
+      context: .
+      dockerfile: Dockerfile_codercom
     image: vprzybylo/code_server:v0.0.0
     container_name: code-server-vanessa
     environment:
@@ -18,39 +18,33 @@ services:
       - $PWD/.config:/home/coder/.config
       - $HOME:/home/coder/project
     deploy:
-        resources:
-           limits:
-                cpus: '20'
-           reservations:
-                devices:
-                    - driver: nvidia
-                      capabilities: [ gpu ]
-                      device_ids: ['5,6']
+      resources:
+        limits:
+          cpus: '20'
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [ gpu ]
+              device_ids: [ '5,6' ]
     ports:
       - 8443:8443
-      - 8050:8050
     restart: unless-stopped
 
-  cocpit:
-    image: vprzybylo/cocpit_dev:v2.0.0
-    container_name: jupyter_cocpit_dev
+  dash:
+    build:
+      context: .
+      dockerfile: Dockerfile_dash
+    logging:
+      driver: local
+    image: vprzybylo/cocpit_dash:v0.0.0
+    container_name: dash_app
     environment:
       - PUID=1001
       - PGID=1001
     volumes:
       - /raid/data/:/data/data/
     ports:
-      - 8889:8889
+      - 8050:8050
     shm_size: '256G'
     user: ${UID_GID}
-    runtime: nvidia
-    deploy:
-        resources:
-            limits:
-                cpus: '10'
-            reservations:
-                devices:
-                    - driver: nvidia
-                      capabilities: [ gpu ]
-                      device_ids: ['5,6']
     restart: unless-stopped

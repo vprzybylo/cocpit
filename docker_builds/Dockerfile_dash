@@ -1,0 +1,17 @@
+FROM python:3.9-slim-buster
+WORKDIR /data/data
+
+RUN apt-get -y update && apt-get install -y --no-install-recommends \
+	git \
+	vim \
+        && apt-get clean all && rm -rf /var/lib/apt/lists/*
+
+RUN groupadd -o -g 1001 vanessa \
+        && useradd -o -r -m -u 1001 -g 1001 vanessa
+
+RUN pip3 install --upgrade pip
+COPY requirements_dash.txt requirements_dash.txt
+RUN pip3 install -r requirements_dash.txt
+ENV PYTHONUNBUFFERED=0
+EXPOSE 8050
+CMD ["python", "-u", "/data/data/cocpit/dash_app/app.py"]

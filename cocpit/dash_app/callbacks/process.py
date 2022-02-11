@@ -1,6 +1,5 @@
 '''CPI campaign data processing functions for dataframes'''
 
-import dask.dataframe as dd
 import pandas as pd
 import globals
 import numpy as np
@@ -17,10 +16,9 @@ def read_campaign(campaign):
     campaign = 'ICE_L' if campaign == 'ICE L' else campaign
     campaign = 'AIRS_II' if campaign == 'AIRS II' else campaign
     df = pd.read_parquet(
-        f"../../final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
+        f"/data/data/final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
         engine='fastparquet',
     )
-
     return df
 
 
@@ -125,7 +123,6 @@ def register(app):
         df = df[df['date'].between(start_date, end_date)]
         df = df[df['Temperature'].between(int(min_temp), int(max_temp))]
         df = df[df['Pressure'].between(int(min_pres[0]), int(max_pres[0]))]
-
         return (
             df['Classification'],
             df['Latitude'],
