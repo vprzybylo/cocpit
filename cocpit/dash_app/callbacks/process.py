@@ -4,7 +4,7 @@ import dask.dataframe as dd
 import pandas as pd
 import globals
 import numpy as np
-from dash_extensions.enrich import FileSystemStore, Input, Output, ServersideOutput
+from dash_extensions.enrich import Input, Output, State, ServersideOutput, dcc
 import datetime
 
 
@@ -12,13 +12,15 @@ def read_campaign(campaign):
     '''read particle property df and environmental property df_env
     merged based on filename and date'''
 
-    tic = datetime.datetime.now()
+    campaign = 'CRYSTAL_FACE_NASA' if campaign == 'CRYSTAL FACE (NASA)' else campaign
+    campaign = 'CRYSTAL_FACE_UND' if campaign == 'CRYSTAL FACE (UND)' else campaign
+    campaign = 'ICE_L' if campaign == 'ICE L' else campaign
+    campaign = 'AIRS_II' if campaign == 'AIRS II' else campaign
     df = pd.read_parquet(
         f"../../final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
         engine='fastparquet',
     )
-    toc = datetime.datetime.now()
-    print(f"time to read data = {(toc-tic).total_seconds()}")
+
     return df
 
 
@@ -31,27 +33,9 @@ def remove_bad_data(df):
         & (df['Pressure'] != 0)
         & (df['Ice Water Content'] > 1e-5)
         & (df["Complexity"] != -0.0)
+        & (df['Particle Height'] != 0.0)
+        & (df['Particle Width'] != 0.0)
     ]
-    return df
-
-
-def check_date_range(df, start_date, end_date):
-    df['date'] = df['date'].str.split(' ').str[0]
-    df = df[df['date'].between(start_date, end_date)]
-    return df
-
-
-def check_temp_range(df, min_temp, max_temp):
-    '''find temperature within a user range from input'''
-    df = df[df['Temperature'] >= int(min_temp)]
-    df = df[df['Temperature'] <= int(max_temp)]
-    return df
-
-
-def check_pres_range(df, min_pres, max_pres):
-    '''find pressure within a user range from slider'''
-    df = df[df['Pressure'] >= int(min_pres)]
-    df = df[df['Pressure'] <= int(max_pres)]
     return df
 
 
@@ -59,10 +43,13 @@ def rename(df):
     '''remove underscores in particle properties in classification column'''
     rename_types = dict(zip(globals.particle_types, globals.particle_types_rename))
     df = df.replace(rename_types)
+    rename_types = dict(zip(globals.campaigns, globals.campaigns_rename))
+    df = df.replace(rename_types)
     return df
 
 
-def update_layout(fig, df, contour=False):
+def update_layout(fig, len_df, contour=False):
+    '''update figures to have white background, and include and center sample size in title'''
     fig.update_layout(
         {
             'plot_bgcolor': 'rgba(0, 0, 0, 0)',
@@ -71,7 +58,7 @@ def update_layout(fig, df, contour=False):
         xaxis_showgrid=True,
         xaxis_zeroline=False,
         title={
-            'text': f"n={len(df)}",
+            'text': f"n={len_df}",
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top',
@@ -89,58 +76,90 @@ def update_layout(fig, df, contour=False):
 def register(app):
     @app.callback(
         [
-            ServersideOutput("pie-values", "data"),
-            ServersideOutput("pie-labels", "data"),
+            ServersideOutput("df-classification", "data"),
+            ServersideOutput("df-lat", "data"),
+            ServersideOutput("df-lon", "data"),
+            ServersideOutput("df-alt", "data"),
+            ServersideOutput("df-prop", "data"),
+            ServersideOutput("df-iwc", "data"),
+            ServersideOutput("df-temp", "data"),
+            ServersideOutput("len-df", "data"),
             ServersideOutput("store-df", "data"),
         ],
         [
-            Input("campaign-dropdown", "value"),
-            Input("min-temp", "value"),
-            Input("max-temp", "value"),
-            Input("min-pres", "value"),
-            Input("max-pres", "value"),
-            Input("date-picker", 'start_date'),
-            Input("date-picker", 'end_date'),
+            Input('submit-button', 'n_clicks'),
+            State("campaign-dropdown", "value"),
+            State("min-temp", "value"),
+            State("max-temp", "value"),
+            State("min-pres", "value"),
+            State("max-pres", "value"),
+            State("date-picker", 'start_date'),
+            State("date-picker", 'end_date'),
+            State("min-size", "value"),
+            State("max-size", "value"),
+            State("property-dropdown", "value"),
         ],
+        memoize=True,
     )
     def preprocess(
-        campaign, min_temp, max_temp, min_pres, max_pres, start_date, end_date
+        nclicks,
+        campaign,
+        min_temp,
+        max_temp,
+        min_pres,
+        max_pres,
+        start_date,
+        end_date,
+        min_size,
+        max_size,
+        prop,
     ):
+        '''read campaign data and process based on user input from menu'''
         df = read_campaign(campaign)
-        df = remove_bad_data(df)
         df = rename(df)
-        df = check_temp_range(df, min_temp, max_temp)
-        df = check_pres_range(df, min_pres[0], max_pres[0])
-        df = check_date_range(df, start_date, end_date)
-
-        values = df["Classification"].value_counts()
-        labels = df["Classification"].unique()
+        df = remove_bad_data(df)
+        df['max_dim'] = np.maximum(df['Particle Width'], df['Particle Height'])
+        df['min_dim'] = np.minimum(df['Particle Width'], df['Particle Height'])
+        df = df[(df['min_dim'] >= int(min_size)) & (df['max_dim'] <= int(max_size))]
+        df['date'] = df['date'].str.split(' ').str[0]
+        df = df[df['date'].between(start_date, end_date)]
+        df = df[df['Temperature'].between(int(min_temp), int(max_temp))]
+        df = df[df['Pressure'].between(int(min_pres[0]), int(max_pres[0]))]
 
         return (
-            values,
-            labels,
-            df[
-                [
-                    'Temperature',
-                    'Classification',
-                    'Ice Water Content',
-                    'Longitude',
-                    'Latitude',
-                    'Altitude',
-                ]
-            ],
+            df['Classification'],
+            df['Latitude'],
+            df['Longitude'],
+            df['Altitude'],
+            df[prop],
+            df['Ice Water Content'],
+            df['Temperature'],
+            len(df),
+            df,
         )
+
+    @app.callback(
+        Output("download-df-csv", "data"),
+        [Input("download-button", "n_clicks"), State('store-df', 'data')],
+        prevent_initial_call=True,
+    )
+    def func(n_clicks, df):
+        return dcc.send_data_frame(df.to_csv, "cocpit.csv")
 
     @app.callback(
         [
             Output('date-picker', 'min_date_allowed'),
             Output('date-picker', 'max_date_allowed'),
+            Output('date-picker', 'start_date'),
+            Output('date-picker', 'end_date'),
         ],
         Input('campaign-dropdown', 'value'),
     )
     def set_date_picker(campaign):
         '''update date picker based on campaign start and end dates'''
         return (
+            globals.min_dates[campaign],
+            globals.max_dates[campaign],
             globals.campaign_start_dates[campaign],
             globals.campaign_end_dates[campaign],
         )
