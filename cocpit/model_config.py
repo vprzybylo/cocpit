@@ -78,8 +78,6 @@ def label_counts(i, label_cnts, labels):
 
     for n, _ in enumerate(config.CLASS_NAMES):
         label_cnts[n] += len(np.where(labels.numpy() == n)[0])
-        # print("batch index {}, {} counts: {}".format(
-        i, n, (labels == n).sum()
     print("LABEL COUNT = ", label_cnts)
 
     return label_cnts
