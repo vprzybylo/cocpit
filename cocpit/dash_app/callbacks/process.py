@@ -15,7 +15,7 @@ def read_campaign(campaign):
     campaign = 'ICE_L' if campaign == 'ICE L' else campaign
     campaign = 'AIRS_II' if campaign == 'AIRS II' else campaign
     df = pd.read_parquet(
-        f"/data/data/final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
+        f"../../final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
         engine='fastparquet',
     )
     return df
@@ -78,7 +78,7 @@ def register(app):
             ServersideOutput("df-lon", "data"),
             ServersideOutput("df-alt", "data"),
             ServersideOutput("df-prop", "data"),
-            ServersideOutput("df-iwc", "data"),
+            ServersideOutput("df-env", "data"),
             ServersideOutput("df-temp", "data"),
             ServersideOutput("len-df", "data"),
             ServersideOutput("store-df", "data"),
@@ -86,6 +86,7 @@ def register(app):
         [
             Input('submit-button', 'n_clicks'),
             State("campaign-dropdown", "value"),
+            State("part-type-dropdown", "value"),
             State("min-temp", "value"),
             State("max-temp", "value"),
             State("min-pres", "value"),
@@ -95,12 +96,14 @@ def register(app):
             State("min-size", "value"),
             State("max-size", "value"),
             State("property-dropdown", "value"),
+            State("env-dropdown", "value"),
         ],
         memoize=True,
     )
     def preprocess(
         nclicks,
         campaign,
+        part_type,
         min_temp,
         max_temp,
         min_pres,
@@ -109,12 +112,14 @@ def register(app):
         end_date,
         min_size,
         max_size,
-        prop,
+        part_prop,
+        env_prop,
     ):
         '''read campaign data and process based on user input from menu'''
         df = read_campaign(campaign)
         df = rename(df)
         df = remove_bad_data(df)
+        df = df[df['Classification'].isin(part_type)]
         df['max_dim'] = np.maximum(df['Particle Width'], df['Particle Height'])
         df['min_dim'] = np.minimum(df['Particle Width'], df['Particle Height'])
         df = df[(df['min_dim'] >= int(min_size)) & (df['max_dim'] <= int(max_size))]
@@ -127,8 +132,8 @@ def register(app):
             df['Latitude'],
             df['Longitude'],
             df['Altitude'],
-            df[prop],
-            df['Ice Water Content'],
+            df[part_prop],
+            df[env_prop],
             df['Temperature'],
             len(df),
             df,
@@ -160,9 +165,9 @@ def register(app):
             globals.campaign_end_dates[campaign],
         )
 
-    @app.callback(
-        Output('card_text-images', 'children'),
-        ServersideOutput("len-df", "data"),
-    )
-    def update_cards(len_df):
-        return len_df
+    # @app.callback(s
+    #     Output('card_text-images', 'children'),
+    #     ServersideOutput("len-df", "data"),
+    # )
+    # def update_cards(len_df):
+    #     return len_df

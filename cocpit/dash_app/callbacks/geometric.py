@@ -24,13 +24,10 @@ def register(app):
     def pie(df_classification, df_lat, df_lon, selectedData):
         '''pie chart for percentage of particle types for a given campaign'''
         if selectedData and selectedData['points']:
-            print(selectedData['points'])
-
             sel_data = pd.DataFrame(selectedData['points'])
             df_classification = df_classification[
                 (df_lat.isin(sel_data['lat'])) & (df_lon.isin(sel_data['lon']))
             ]
-            print(len(df_classification))
         values = df_classification.value_counts()
         labels = df_classification.unique()
 
