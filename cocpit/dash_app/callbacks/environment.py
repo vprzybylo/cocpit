@@ -12,30 +12,30 @@ from dash_extensions.enrich import Input, Output
 
 
 def register(app):
-    @app.callback(
-        Output("type-temp-violin", "figure"),
-        [
-            Input("df-classification", "data"),
-            Input("df-temp", "data"),
-        ],
-    )
-    def type_temp_violin(classification, temp):
-        '''violin plot of particle type vs temperature'''
-        temp_fig = px.violin(
-            x=classification,
-            y=temp,
-            color=classification,
-            color_discrete_sequence=px.colors.qualitative.Antique,
-            points=False,
-            labels={
-                "x": "Particle Type",
-                "y": 'Temperature',
-            },
-        )
+    # @app.callback(
+    #     Output("type-temp-violin", "figure"),
+    #     [
+    #         Input("df-classification", "data"),
+    #         Input("df-temp", "data"),
+    #     ],
+    # )
+    # def type_temp_violin(classification, temp):
+    #     '''violin plot of particle type vs temperature'''
+    #     temp_fig = px.violin(
+    #         x=classification,
+    #         y=temp,
+    #         color=classification,
+    #         color_discrete_sequence=px.colors.qualitative.Antique,
+    #         points=False,
+    #         labels={
+    #             "x": "Particle Type",
+    #             "y": 'Temperature',
+    #         },
+    #     )
 
-        temp_fig = process.update_layout(temp_fig, len(temp))
-        temp_fig.update_yaxes(autorange="reversed")
-        return temp_fig
+    #     temp_fig = process.update_layout(temp_fig, len(temp))
+    #     temp_fig.update_yaxes(autorange="reversed")
+    #     return temp_fig
 
     @app.callback(
         Output("type-iwc-violin", "figure"),

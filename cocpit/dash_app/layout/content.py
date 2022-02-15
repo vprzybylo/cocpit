@@ -39,70 +39,41 @@ def content():
         "margin-right": "2rem",
         "margin-top": "2rem",
     }
+    storage = 'session'
     return html.Div(
         id="page-content",
         children=[
-            dcc.Store(id='store-df', storage_type='session'),
-            dcc.Store(id='df-classification', storage_type='session'),
-            dcc.Store(id='df-lat', storage_type='session'),
-            dcc.Store(id='df-lon', storage_type='session'),
-            dcc.Store(id='df-alt', storage_type='session'),
-            dcc.Store(id='df-iwc', storage_type='session'),
-            dcc.Store(id='df-temp', storage_type='session'),
-            dcc.Store(id='df-prop', storage_type='session'),
-            dcc.Store(id='len-df', storage_type='session'),
-            dls.Hash(
-                dbc.Row(
-                    dbc.Col(
-                        header_cards(
-                            'card-title',
-                            'card-text',
-                            'Number of images',
-                            'card-header-images',
-                            'card-text-images',
-                        ),
-                        xs=12,
-                        sm=12,
-                        md=12,
-                        lg=6,
-                        xl=6,
-                    ),
-                    align="center",
-                    justify="center",
-                ),
-            ),
+            dcc.Store(id='store-df', storage_type=storage),
+            dcc.Store(id='df-classification', storage_type=storage),
+            dcc.Store(id='df-lat', storage_type=storage),
+            dcc.Store(id='df-lon', storage_type=storage),
+            dcc.Store(id='df-alt', storage_type=storage),
+            dcc.Store(id='df-iwc', storage_type=storage),
+            dcc.Store(id='df-temp', storage_type=storage),
+            dcc.Store(id='df-prop', storage_type=storage),
+            dcc.Store(id='len-df', storage_type=storage),
+            # dls.Hash(
+            #     dbc.Row(
+            #         dbc.Col(
+            #             header_cards(
+            #                 'card-title',
+            #                 'card-text',
+            #                 'Number of images',
+            #                 'card-header-images',
+            #                 'card-text-images',
+            #             ),
+            #             xs=12,
+            #             sm=12,
+            #             md=12,
+            #             lg=6,
+            #             xl=6,
+            #         ),
+            #         align="center",
+            #         justify="center",
+            #     ),
+            # ),
             dbc.Row(
                 [
-                    # dbc.Col(
-                    #    [
-                    #     dbc.Row(
-                    #         dbc.Label('Particle Type'),
-                    #     ),
-                    #     dbc.Row(
-                    #         dcc.Checklist(
-                    #             id="topo-map-particle_type",
-                    #             options=[
-                    #                 {"label": i, "value": i}
-                    #                 for i in globals.particle_types_rename
-                    #             ],
-                    #             value=["aggregate"],
-                    #             inputStyle={'margin-right': "5px"},
-                    #             labelStyle={
-                    #                 'display': 'block',
-                    #             },
-                    #             style={
-                    #                 'width': "120px",
-                    #                 "overflow": "auto",
-                    #             },
-                    #         ),
-                    #     ),
-                    # ],
-                    # xs=12,
-                    # sm=12,
-                    # md=12,
-                    # lg=12,
-                    # xl=2,
-                    # ),
                     # dbc.Col(
                     #     [
                     #         dbc.Row(
@@ -126,22 +97,6 @@ def content():
                     #     lg=12,
                     #     xl=2,
                     # ),
-                    # dbc.Col(
-                    #     dcc.Graph(id='top-down-map', figure={}),
-                    #     xs=12,
-                    #     sm=12,
-                    #     md=12,
-                    #     lg=6,
-                    #     xl=6,
-                    # ),
-                    # dbc.Col(
-                    #     dcc.Graph(id='pie', figure={}),
-                    #     xs=12,
-                    #     sm=12,
-                    #     md=12,
-                    #     lg=6,
-                    #     xl=6,
-                    # ),
                     dbc.Col(
                         children=[
                             dbc.Card(
@@ -150,9 +105,14 @@ def content():
                                     dbc.CardBody(
                                         children=[
                                             dcc.Graph(id='top-down-map', figure={}),
+                                            html.P(
+                                                'Hover over image and choose box select icon to update all figures based on chosen location',
+                                                style={'text-align': 'center'},
+                                            ),
                                         ]
                                     ),
                                 ],
+                                style={"margin": "0px", 'height': '550px'},
                             )
                         ],
                         xs=12,
@@ -170,6 +130,7 @@ def content():
                                         children=[dcc.Graph(id='pie', figure={})]
                                     ),
                                 ],
+                                style={"margin": "0px", 'height': '550px'},
                             )
                         ],
                         xs=12,
@@ -199,6 +160,7 @@ def content():
                                                 ]
                                             ),
                                         ],
+                                        style={"margin": "0px", 'height': '550px'},
                                     )
                                 ],
                                 xs=12,
@@ -220,6 +182,7 @@ def content():
                                                 ]
                                             ),
                                         ],
+                                        style={"margin": "0px", 'height': '550px'},
                                     )
                                 ],
                                 xs=12,
@@ -249,6 +212,7 @@ def content():
                                                 ]
                                             ),
                                         ],
+                                        style={"margin": "0px", 'height': '550px'},
                                     )
                                 ],
                                 xs=12,
@@ -270,7 +234,7 @@ def content():
                                                 ]
                                             ),
                                         ],
-                                        style={"margin": "0px"},
+                                        style={"margin": "0px", 'height': '550px'},
                                     )
                                 ],
                                 xs=12,

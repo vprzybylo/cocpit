@@ -62,6 +62,21 @@ def sidebar():
                 style={"padding": padding, "margin-bottom": margin_bottom},
             ),
             dbc.Row(
+                dbc.Label('Particle Type:'),
+            ),
+            dbc.Row(
+                dcc.Dropdown(
+                    id='part-type-dropdown',
+                    multi=True,
+                    options=[
+                        {'label': i, 'value': i} for i in globals.particle_types_rename
+                    ],
+                    placeholder="Particle Type",
+                    value=globals.particle_types_rename,
+                ),
+                style={"padding": padding, "margin-bottom": margin_bottom},
+            ),
+            dbc.Row(
                 dbc.Label('Particle Property:'),
                 style={"padding": padding},
             ),

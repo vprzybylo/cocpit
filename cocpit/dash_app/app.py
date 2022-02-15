@@ -6,8 +6,6 @@ from dash import dcc
 from dotenv import load_dotenv
 from layout import content, sidebar
 from dash_extensions.enrich import Dash
-import plotly.express as px
-from flask_caching import Cache
 
 
 def main():
