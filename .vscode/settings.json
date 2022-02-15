@@ -1,6 +1,0 @@
-{
-    "python.pythonPath": "/usr/local/bin/python",
-    "python.linting.enabled": false,
-    "python.linting.pylintEnabled": true,
-    "C_Cpp.errorSquiggles": "Disabled"
-}

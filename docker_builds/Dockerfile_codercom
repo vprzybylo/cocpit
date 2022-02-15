@@ -1,0 +1,55 @@
+FROM python:3.9-slim-buster
+WORKDIR /data/data
+
+LABEL com.nvidia.volumes.needed="nvidia_driver"
+ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+ENV NVIDIA_VISIBLE_DEVICES=all
+
+RUN apt-get -y update && apt-get install -y curl
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+RUN apt-get -y update && apt-get install -y --no-install-recommends \
+        wget \
+	python3-setuptools \
+	nodejs \
+	gcc \
+	git \
+	vim \
+	ffmpeg \
+	libsm6 \
+	sudo \
+	python3-pip \
+        && apt-get clean all && rm -rf /var/lib/apt/lists/*
+
+RUN groupadd -o -g 1001 vanessa \
+        && useradd -o -r -m -u 1001 -g 1001 vanessa
+
+RUN pip3 install --upgrade pip
+COPY requirements_dev.txt requirements_dev.txt
+RUN pip3 install -r requirements_dev.txt
+
+# install cocpit package for dev
+COPY setup.py setup.py
+COPY README.md README.md
+RUN pip3 install -e .
+
+WORKDIR /code_server
+RUN wget https://github.com/cdr/code-server/releases/download/v4.0.1/code-server-4.0.1-linux-amd64.tar.gz  && \
+	tar -xzvf code-server-4.0.1-linux-amd64.tar.gz
+EXPOSE 8443 8050
+# auto load vscode extensions following: publisher.extension
+CMD /bin/bash -c "./code-server-4.0.1-linux-amd64/code-server \
+	--install-extension ms-vscode.live-server \
+	--install-extension ms-python.python \
+	--install-extension tabnine.tabnine-vscode \
+	--install-extension coenraads.bracket-pair-colorizer \
+	--install-extension gimly81.fortran \
+	--install-extension njpwerner.autodocstring \
+	--install-extension ms-pyright.pyright \
+	--install-extension grapecity.gc-excelviewer && \
+	./code-server-4.0.1-linux-amd64/code-server \
+	--host 0.0.0.0 \
+	--port 8443 \
+	--auth none \
+	/	data/data"

@@ -1,4 +1,4 @@
-#!/opt/conda/bin/python
+#! /usr/bin/python3.9
 """COCPIT package for classifying ice crystal images from the CPI probe
 Usage:
 ------
@@ -18,9 +18,7 @@ import cocpit
 import cocpit.config as config  # isort: split
 import os
 import time
-import warnings
 
-import feather
 import pandas as pd
 import torch
 
@@ -37,8 +35,9 @@ def _preprocess_sheets():
 
     # where the sheets of images for each campaign live
     # if sheets were processed using rois in IDL, change 'sheets' to 'ROI_PNGS'
-    sheet_dir = f"/Users/vprzybylo/Desktop/CPI/cocpit/cpi_data/"
-    save_dir = f"/Users/vprzybylo/Desktop/CPI/cocpit/cpi_data/single_imgs_{config.TAG}/"
+    # sheet_dir and save_dir can't go in config since using campaign var
+    sheet_dir = f"{config.BASE_DIR}/campaigns/{campaign}/sheets/"
+    save_dir = f"{config.BASE_DIR}/campaigns/{campaign}/single_imgs_{config.TAG}/"
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
@@ -46,9 +45,9 @@ def _preprocess_sheets():
         sheet_dir,
         save_dir,
         save_df=df_path,
-        show_original=True,  # all set to False due to lack of display on server
-        show_dilate=True,
-        show_cropped=True,
+        show_original=False,  # all set to False due to lack of display on server
+        show_dilate=False,
+        show_cropped=False,
     )
 
     print("time to preprocess sheets: %.2f" % (time.time() - start_time))
@@ -59,7 +58,7 @@ def _build_model():
     train ML models
     """
 
-    data = cocpit.data_loaders.get_data()
+    # data = cocpit.data_loaders.get_data()
 
     # loop through batch sizes, models, epochs, and/or folds
     for batch_size in config.BATCH_SIZE:
@@ -69,21 +68,11 @@ def _build_model():
             for epochs in config.MAX_EPOCHS:
                 print("MAX EPOCH: ", epochs)
 
-                # K-FOLD
-                if config.KFOLD != 0:
-                    cocpit.kfold_training.main(
-                        data,
-                        batch_size,
-                        model_name,
-                        epochs,
-                    )
-                else:  # no kfold
-                    cocpit.no_fold_training.main(
-                        data,
-                        batch_size,
-                        model_name,
-                        epochs,
-                    )
+                cocpit.setup_training.main(
+                    batch_size,
+                    model_name,
+                    epochs,
+                )
 
 
 def _ice_classification():
@@ -100,7 +89,7 @@ def _ice_classification():
     # load df of quality ice particles to make predictions on
     df = pd.read_csv(df_path)
     df = cocpit.run_model.main(df, open_dir, model)
-    df.to_csv(df_path, index=False)
+    # df.to_csv(df_path, index=False)
 
     print("done classifying all images!")
     print("time to classify ice = %.2f seconds" % (time.time() - start_time))

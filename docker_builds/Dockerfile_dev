@@ -2,6 +2,7 @@ FROM python:3.9-slim-buster
 
 COPY requirements_dev.txt /requirements_dev.txt
 RUN pip3 install -r /requirements_dev.txt
-EXPOSE 8889
+EXPOSE 8889 8050
 
 RUN jupyter lab build -y
+CMD ["sh","-c", "jupyter lab --notebook-dir=/data/data/ --ip=0.0.0.0 --no-browser --allow-root --port=8889 --ServerApp.token='' --ServerApp.password='' --ServerApp.allow_origin='*'"]
