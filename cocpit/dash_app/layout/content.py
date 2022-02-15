@@ -6,6 +6,31 @@ import globals
 from dash import dcc, html
 
 
+def header_cards(class_name_header, class_name_body, title, id_header, id_body):
+    return dbc.Card(
+        [
+            dbc.CardBody(
+                [
+                    html.H4(title, className=class_name_header, id=id_header),
+                    html.P(
+                        globals.campaign_image_count,
+                        className=class_name_body,
+                        id=id_body,
+                    ),
+                ]
+            )
+        ],
+        style={
+            'display': 'inline-block',
+            'width': '33.3%',
+            'text-align': 'center',
+            'color': 'white',
+            'background-color': 'rgba(37, 150, 190)',
+        },
+        outline=True,
+    )
+
+
 def content():
 
     # padding for the page content
@@ -28,116 +53,134 @@ def content():
             dcc.Store(id='len-df', storage_type='session'),
             dls.Hash(
                 dbc.Row(
-                    [
-                        # dbc.Col(
-                        #    [
-                        #     dbc.Row(
-                        #         dbc.Label('Particle Type'),
-                        #     ),
-                        #     dbc.Row(
-                        #         dcc.Checklist(
-                        #             id="topo-map-particle_type",
-                        #             options=[
-                        #                 {"label": i, "value": i}
-                        #                 for i in globals.particle_types_rename
-                        #             ],
-                        #             value=["aggregate"],
-                        #             inputStyle={'margin-right': "5px"},
-                        #             labelStyle={
-                        #                 'display': 'block',
-                        #             },
-                        #             style={
-                        #                 'width': "120px",
-                        #                 "overflow": "auto",
-                        #             },
-                        #         ),
-                        #     ),
-                        # ],
-                        # xs=12,
-                        # sm=12,
-                        # md=12,
-                        # lg=12,
-                        # xl=2,
-                        # ),
-                        # dbc.Col(
-                        #     [
-                        #         dbc.Row(
-                        #             dbc.Label('Vertical Axis Property:'),
-                        #         ),
-                        #         dbc.Row(
-                        #             dcc.Dropdown(
-                        #                 id='3d_vertical_prop',
-                        #                 options=[
-                        #                     {'label': i, 'value': i}
-                        #                     for i in globals.vertical_vars
-                        #                 ],
-                        #                 placeholder="Vertical Axis Property",
-                        #                 value='Temperature',
-                        #             ),
-                        #         ),
-                        #     ],
-                        #     xs=12,
-                        #     sm=12,
-                        #     md=12,
-                        #     lg=12,
-                        #     xl=2,
-                        # ),
-                        # dbc.Col(
-                        #     dcc.Graph(id='top-down-map', figure={}),
-                        #     xs=12,
-                        #     sm=12,
-                        #     md=12,
-                        #     lg=6,
-                        #     xl=6,
-                        # ),
-                        # dbc.Col(
-                        #     dcc.Graph(id='pie', figure={}),
-                        #     xs=12,
-                        #     sm=12,
-                        #     md=12,
-                        #     lg=6,
-                        #     xl=6,
-                        # ),
-                        dbc.Col(
-                            children=[
-                                dbc.Card(
-                                    [
-                                        dbc.CardHeader("Particle Location"),
-                                        dbc.CardBody(
-                                            children=[
-                                                dcc.Graph(id='top-down-map', figure={}),
-                                            ]
-                                        ),
-                                    ],
-                                )
-                            ],
-                            xs=12,
-                            sm=12,
-                            md=12,
-                            lg=6,
-                            xl=6,
+                    dbc.Col(
+                        header_cards(
+                            'card-title',
+                            'card-text',
+                            'Number of images',
+                            'card-header-images',
+                            'card-text-images',
                         ),
-                        dbc.Col(
-                            children=[
-                                dbc.Card(
-                                    [
-                                        dbc.CardHeader("Particle Type Percentage"),
-                                        dbc.CardBody(
-                                            children=[dcc.Graph(id='pie', figure={})]
-                                        ),
-                                    ],
-                                )
-                            ],
-                            xs=12,
-                            sm=12,
-                            md=12,
-                            lg=6,
-                            xl=6,
-                        ),
-                    ],
+                        xs=12,
+                        sm=12,
+                        md=12,
+                        lg=6,
+                        xl=6,
+                    ),
                     align="center",
                     justify="center",
                 ),
+            ),
+            dbc.Row(
+                [
+                    # dbc.Col(
+                    #    [
+                    #     dbc.Row(
+                    #         dbc.Label('Particle Type'),
+                    #     ),
+                    #     dbc.Row(
+                    #         dcc.Checklist(
+                    #             id="topo-map-particle_type",
+                    #             options=[
+                    #                 {"label": i, "value": i}
+                    #                 for i in globals.particle_types_rename
+                    #             ],
+                    #             value=["aggregate"],
+                    #             inputStyle={'margin-right': "5px"},
+                    #             labelStyle={
+                    #                 'display': 'block',
+                    #             },
+                    #             style={
+                    #                 'width': "120px",
+                    #                 "overflow": "auto",
+                    #             },
+                    #         ),
+                    #     ),
+                    # ],
+                    # xs=12,
+                    # sm=12,
+                    # md=12,
+                    # lg=12,
+                    # xl=2,
+                    # ),
+                    # dbc.Col(
+                    #     [
+                    #         dbc.Row(
+                    #             dbc.Label('Vertical Axis Property:'),
+                    #         ),
+                    #         dbc.Row(
+                    #             dcc.Dropdown(
+                    #                 id='3d_vertical_prop',
+                    #                 options=[
+                    #                     {'label': i, 'value': i}
+                    #                     for i in globals.vertical_vars
+                    #                 ],
+                    #                 placeholder="Vertical Axis Property",
+                    #                 value='Temperature',
+                    #             ),
+                    #         ),
+                    #     ],
+                    #     xs=12,
+                    #     sm=12,
+                    #     md=12,
+                    #     lg=12,
+                    #     xl=2,
+                    # ),
+                    # dbc.Col(
+                    #     dcc.Graph(id='top-down-map', figure={}),
+                    #     xs=12,
+                    #     sm=12,
+                    #     md=12,
+                    #     lg=6,
+                    #     xl=6,
+                    # ),
+                    # dbc.Col(
+                    #     dcc.Graph(id='pie', figure={}),
+                    #     xs=12,
+                    #     sm=12,
+                    #     md=12,
+                    #     lg=6,
+                    #     xl=6,
+                    # ),
+                    dbc.Col(
+                        children=[
+                            dbc.Card(
+                                [
+                                    dbc.CardHeader("Particle Location"),
+                                    dbc.CardBody(
+                                        children=[
+                                            dcc.Graph(id='top-down-map', figure={}),
+                                        ]
+                                    ),
+                                ],
+                            )
+                        ],
+                        xs=12,
+                        sm=12,
+                        md=12,
+                        lg=6,
+                        xl=6,
+                    ),
+                    dbc.Col(
+                        children=[
+                            dbc.Card(
+                                [
+                                    dbc.CardHeader("Particle Type Percentage"),
+                                    dbc.CardBody(
+                                        children=[dcc.Graph(id='pie', figure={})]
+                                    ),
+                                ],
+                            )
+                        ],
+                        xs=12,
+                        sm=12,
+                        md=12,
+                        lg=6,
+                        xl=6,
+                    ),
+                ],
+                align="center",
+                justify="center",
             ),
             dls.Hash(
                 [

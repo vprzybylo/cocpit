@@ -4,7 +4,6 @@ import pandas as pd
 import globals
 import numpy as np
 from dash_extensions.enrich import Input, Output, State, ServersideOutput, dcc
-import datetime
 
 
 def read_campaign(campaign):
@@ -160,3 +159,10 @@ def register(app):
             globals.campaign_start_dates[campaign],
             globals.campaign_end_dates[campaign],
         )
+
+    @app.callback(
+        Output('card_text-images', 'children'),
+        ServersideOutput("len-df", "data"),
+    )
+    def update_cards(len_df):
+        return len_df

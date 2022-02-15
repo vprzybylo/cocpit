@@ -4,19 +4,20 @@ services:
     build:
       context: .
       dockerfile: Dockerfile_codercom
-    image: vprzybylo/code_server:v0.0.0
+    image: vprzybylo/code_server:v1.0.0
     container_name: code-server-vanessa
     environment:
       - PORT=8443 code-server
       - PUID=1001
       - PGID=1001
+      - DEFAULT_WORKSPACE=/data/data
       - TZ=America/New_York
     shm_size: '256G'
     user: ${UID_GID}
     volumes:
       - /raid/data/:/data/data/
-      - $PWD/.config:/home/coder/.config
-      - $HOME:/home/coder/project
+      - ${HOME}/.local/share/code-server/:/home/vanessa/.local/share/code-server
+      - ${PWD}:/home/coder/project
     deploy:
       resources:
         limits:

@@ -152,3 +152,20 @@ Ctopo = [
     [0.9, 'rgb(200,200,200)'],
     [1.0, 'rgb(255,255,255)'],
 ]
+
+campaign_image_count = {
+    "AIRS II": 1,
+    "ARM": 1,
+    "ATTREX": 1,
+    "CRYSTAL FACE (UND)": 396139,
+    "CRYSTAL FACE (NASA)": 61859,
+    "ICE L": 1,
+    "IPHEX": 1,
+    "ISDAC": 1,
+    "MACPEX": 1,
+    "MC3E": 1,
+    "MIDCIX": 1,
+    "MPACE": 1,
+    "POSIDON": 1,
+    "OLYMPEX": 1,
+}
