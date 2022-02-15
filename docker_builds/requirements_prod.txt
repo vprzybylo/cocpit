@@ -7,7 +7,6 @@ cycler==0.10.0
 dulwich==0.20.25
 efficientnet-pytorch==0.7.1
 everett==2.0.1
-feather==0.1.2
 greenlet==1.1.1
 idna
 imutils==0.5.4
