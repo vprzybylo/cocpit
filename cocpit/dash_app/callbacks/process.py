@@ -78,7 +78,7 @@ def register(app):
             ServersideOutput("df-lon", "data"),
             ServersideOutput("df-alt", "data"),
             ServersideOutput("df-prop", "data"),
-            ServersideOutput("df-iwc", "data"),
+            ServersideOutput("df-env", "data"),
             ServersideOutput("df-temp", "data"),
             ServersideOutput("len-df", "data"),
             ServersideOutput("store-df", "data"),
@@ -96,6 +96,7 @@ def register(app):
             State("min-size", "value"),
             State("max-size", "value"),
             State("property-dropdown", "value"),
+            State("env-dropdown", "value"),
         ],
         memoize=True,
     )
@@ -111,7 +112,8 @@ def register(app):
         end_date,
         min_size,
         max_size,
-        prop,
+        part_prop,
+        env_prop,
     ):
         '''read campaign data and process based on user input from menu'''
         df = read_campaign(campaign)
@@ -130,8 +132,8 @@ def register(app):
             df['Latitude'],
             df['Longitude'],
             df['Altitude'],
-            df[prop],
-            df['Ice Water Content'],
+            df[part_prop],
+            df[env_prop],
             df['Temperature'],
             len(df),
             df,

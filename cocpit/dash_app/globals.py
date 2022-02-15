@@ -55,6 +55,8 @@ particle_types_rename = [
     "rimed",
 ]
 
+env_properties = ['Ice Water Content', 'Temperature', 'Pressure']
+
 particle_properties = [
     'Contour Area',
     'Circularity',

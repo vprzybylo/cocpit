@@ -48,7 +48,7 @@ def content():
             dcc.Store(id='df-lat', storage_type=storage),
             dcc.Store(id='df-lon', storage_type=storage),
             dcc.Store(id='df-alt', storage_type=storage),
-            dcc.Store(id='df-iwc', storage_type=storage),
+            dcc.Store(id='df-env', storage_type=storage),
             dcc.Store(id='df-temp', storage_type=storage),
             dcc.Store(id='df-prop', storage_type=storage),
             dcc.Store(id='len-df', storage_type=storage),
@@ -229,7 +229,7 @@ def content():
                                             dbc.CardBody(
                                                 children=[
                                                     dcc.Graph(
-                                                        id='type-iwc-violin', figure={}
+                                                        id='type-env-violin', figure={}
                                                     )
                                                 ]
                                             ),
@@ -249,27 +249,6 @@ def content():
                     ),
                 ]
             ),
-            # dls.Hash(
-            #     dbc.Col(
-            #         dbc.Row(
-            #             dash_table.DataTable(
-            #                 id="table",
-            #                 columns=[{"name": i, "id": i} for i in df.columns],
-            #                 data=df.to_dict("records"),
-            #                 # export_columns='all',
-            #                 export_headers='display',
-            #                 export_format="csv",
-            #                 fixed_rows={'headers': True},
-            #                 style_table={'height': '300px', 'overflowY': 'auto'},
-            #             )
-            #         ),
-            #         xs=12,
-            #         sm=12,
-            #         md=12,
-            #         lg=12,
-            #         xl=12,
-            #     )
-            # ),
             html.P(
                 'Copyright All Rights Reserved',
                 style={"color": '#D3D3D3', 'text-align': 'center'},

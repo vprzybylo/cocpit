@@ -92,6 +92,19 @@ def sidebar():
                 style={"padding": padding, "margin-bottom": margin_bottom},
             ),
             dbc.Row(
+                dbc.Label('Environmental Variable:'),
+                style={"padding": padding},
+            ),
+            dbc.Row(
+                dcc.Dropdown(
+                    id='env-dropdown',
+                    options=[{'label': i, 'value': i} for i in globals.env_properties],
+                    placeholder="Environmental Variable",
+                    value='Ice Water Content',
+                ),
+                style={"padding": padding, "margin-bottom": margin_bottom},
+            ),
+            dbc.Row(
                 dbc.Label('Date:'),
                 style={"padding": padding},
             ),
