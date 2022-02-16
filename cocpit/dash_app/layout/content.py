@@ -31,7 +31,7 @@ def header_cards(class_name_header, class_name_body, title, id_header, id_body):
     )
 
 
-def content():
+def content(card_height='555px'):
 
     # padding for the page content
     CONTENT_STYLE = {
@@ -106,13 +106,14 @@ def content():
                                         children=[
                                             dcc.Graph(id='top-down-map', figure={}),
                                             html.P(
-                                                'Hover over image and choose box select icon to update all figures based on chosen location',
+                                                'Hover over image and choose box select icon to update all figures based on chosen location. \n \
+                                                Select empty region to reset view with all data points',
                                                 style={'text-align': 'center'},
                                             ),
                                         ]
                                     ),
                                 ],
-                                style={"margin": "0px", 'height': '550px'},
+                                style={"margin": "5px", 'height': card_height},
                             )
                         ],
                         xs=12,
@@ -130,7 +131,7 @@ def content():
                                         children=[dcc.Graph(id='pie', figure={})]
                                     ),
                                 ],
-                                style={"margin": "0px", 'height': '550px'},
+                                style={"margin": "0px", 'height': card_height},
                             )
                         ],
                         xs=12,
@@ -160,7 +161,7 @@ def content():
                                                 ]
                                             ),
                                         ],
-                                        style={"margin": "0px", 'height': '550px'},
+                                        style={"margin": "0px", 'height': card_height},
                                     )
                                 ],
                                 xs=12,
@@ -182,7 +183,7 @@ def content():
                                                 ]
                                             ),
                                         ],
-                                        style={"margin": "0px", 'height': '550px'},
+                                        style={"margin": "0px", 'height': card_height},
                                     )
                                 ],
                                 xs=12,
@@ -212,7 +213,7 @@ def content():
                                                 ]
                                             ),
                                         ],
-                                        style={"margin": "0px", 'height': '550px'},
+                                        style={"margin": "0px", 'height': card_height},
                                     )
                                 ],
                                 xs=12,
@@ -234,7 +235,7 @@ def content():
                                                 ]
                                             ),
                                         ],
-                                        style={"margin": "0px", 'height': '550px'},
+                                        style={"margin": "0px", 'height': card_height},
                                     )
                                 ],
                                 xs=12,

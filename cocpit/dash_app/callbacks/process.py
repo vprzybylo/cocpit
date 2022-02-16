@@ -18,6 +18,7 @@ def read_campaign(campaign):
         f"../../final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
         engine='fastparquet',
     )
+
     return df
 
 
@@ -45,21 +46,17 @@ def rename(df):
     return df
 
 
-def update_layout(fig, len_df, contour=False):
+def update_layout(fig, contour=False, margin=50):
     '''update figures to have white background, and include and center sample size in title'''
     fig.update_layout(
         {
             'plot_bgcolor': 'rgba(0, 0, 0, 0)',
             'paper_bgcolor': 'rgba(0, 0, 0, 0)',
         },
+        margin=dict(l=margin, r=margin, t=margin, b=margin),
         xaxis_showgrid=True,
         xaxis_zeroline=False,
-        title={
-            'text': f"n={len_df}",
-            'x': 0.5,
-            'xanchor': 'center',
-            'yanchor': 'top',
-        },
+        showlegend=False,
     )
 
     fig.update_xaxes(showline=True, linewidth=1, linecolor='black')
@@ -85,6 +82,7 @@ def register(app):
         ],
         [
             Input('submit-button', 'n_clicks'),
+            Input('top-down-map', 'selectedData'),
             State("campaign-dropdown", "value"),
             State("part-type-dropdown", "value"),
             State("min-temp", "value"),
@@ -102,6 +100,7 @@ def register(app):
     )
     def preprocess(
         nclicks,
+        selected_data,
         campaign,
         part_type,
         min_temp,
@@ -127,6 +126,17 @@ def register(app):
         df = df[df['date'].between(start_date, end_date)]
         df = df[df['Temperature'].between(int(min_temp), int(max_temp))]
         df = df[df['Pressure'].between(int(min_pres[0]), int(max_pres[0]))]
+
+        # hone data to lats and lons chosen by box select
+        if selected_data and selected_data['points']:
+            sel_data = pd.DataFrame(selected_data['points'])
+            df = df[
+                (df['Longitude'] < sel_data['lon'].max())
+                & (df['Longitude'] > sel_data['lon'].min())
+                & (df['Latitude'] > sel_data['lat'].min())
+                & (df['Latitude'] < sel_data['lat'].max())
+            ]
+
         return (
             df['Classification'],
             df['Latitude'],

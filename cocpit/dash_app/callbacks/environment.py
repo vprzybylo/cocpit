@@ -19,7 +19,7 @@ def register(app):
             State("env-dropdown", "value"),
         ],
     )
-    def type_temp_violin(env_prop, classification, label):
+    def environment_violin(env_prop, classification, label):
         '''violin plot of particle type vs ice water content'''
         fig = px.violin(
             x=classification,
@@ -31,4 +31,4 @@ def register(app):
                 "y": label,
             },
         )
-        return process.update_layout(fig, len(classification))
+        return process.update_layout(fig)
