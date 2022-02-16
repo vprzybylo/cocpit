@@ -5,14 +5,11 @@ includes callbacks
 '''
 
 import os
-
-import globals
-import numpy as np
+import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
-from callbacks import process, topo_flat
+from callbacks import process
 from callbacks.topo_map import TopoMap as TopoMap
-from dash_extensions.enrich import Input, Output
+from dash_extensions.enrich import Input, Output, ServersideOutput, State
 
 
 def register(app):
@@ -22,11 +19,12 @@ def register(app):
         Input("df-alt", "data"),
         Input("df-classification", "data"),
     )
-    def lon_alt_hist(longitude, altitude, classification):
+    def lon_alt_hist(df_lon, df_alt, df_classification):
+
         lon_fig = px.density_contour(
-            x=longitude,
-            y=altitude,
-            color=classification,
+            x=df_lon,
+            y=df_alt,
+            color=df_classification,
             marginal_x="box",
             marginal_y="box",
             color_discrete_sequence=px.colors.qualitative.Antique,
@@ -35,7 +33,7 @@ def register(app):
                 "y": 'Altitude',
             },
         )
-        lon_fig = process.update_layout(lon_fig, len(classification), contour=True)
+        lon_fig = process.update_layout(lon_fig, contour=True)
         return lon_fig
 
     @app.callback(
@@ -57,7 +55,7 @@ def register(app):
                 "y": 'Altitude',
             },
         )
-        lat_fig = process.update_layout(lat_fig, len(classification), contour=True)
+        lat_fig = process.update_layout(lat_fig, contour=True)
         return lat_fig
 
     @app.callback(
@@ -101,12 +99,6 @@ def register(app):
         # )
         # Specify layout information
         fig.update_layout(
-            title={
-                'text': f"n={len(df_classification)}",
-                'x': 0.5,
-                'xanchor': 'center',
-                'yanchor': 'top',
-            },
             mapbox_layers=[
                 {
                     "below": 'traces',
@@ -124,4 +116,4 @@ def register(app):
                 zoom=5,
             ),
         )
-        return fig
+        return process.update_layout(fig, contour=True, margin=30)
