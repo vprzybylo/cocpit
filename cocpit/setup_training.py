@@ -77,7 +77,7 @@ def print_composition(train_labels, val_labels):
     print(Counter(val_labels))
 
 
-def data_setup(train_indices, val_indices, composition: bool = False):
+def data_setup(train_indices, val_indices, composition: bool = True):
     '''apply different transforms to train and
     validation datasets from ImageFolder'''
     data = data_loaders.get_data('train')
