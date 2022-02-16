@@ -6,39 +6,33 @@ import globals
 from dash import dcc, html
 
 
-def header_cards(class_name_header, class_name_body, title, id_header, id_body):
+def header_cards(
+    class_name_header,
+    class_name_body,
+    title,
+    id_header,
+    id_body,
+    campaign='CRYSTAL FACE (UND)',
+):
     return dbc.Card(
         [
             dbc.CardBody(
                 [
                     html.H4(title, className=class_name_header, id=id_header),
                     html.P(
-                        globals.campaign_image_count,
+                        globals.campaign_image_count[campaign],
                         className=class_name_body,
                         id=id_body,
                     ),
                 ]
             )
         ],
-        style={
-            'display': 'inline-block',
-            'width': '33.3%',
-            'text-align': 'center',
-            'color': 'white',
-            'background-color': 'rgba(37, 150, 190)',
-        },
-        outline=True,
+        className='top-cards',
     )
 
 
-def content(card_height='420px', margin='5px'):
+def content():
 
-    # padding for the page content
-    CONTENT_STYLE = {
-        "margin-left": "18rem",
-        "margin-right": "2rem",
-        "margin-top": "2rem",
-    }
     storage = 'session'
     return html.Div(
         id="page-content",
@@ -52,26 +46,26 @@ def content(card_height='420px', margin='5px'):
             dcc.Store(id='df-temp', storage_type=storage),
             dcc.Store(id='df-prop', storage_type=storage),
             dcc.Store(id='len-df', storage_type=storage),
-            # dls.Hash(
-            #     dbc.Row(
-            #         dbc.Col(
-            #             header_cards(
-            #                 'card-title',
-            #                 'card-text',
-            #                 'Number of images',
-            #                 'card-header-images',
-            #                 'card-text-images',
-            #             ),
-            #             xs=12,
-            #             sm=12,
-            #             md=12,
-            #             lg=6,
-            #             xl=6,
-            #         ),
-            #         align="center",
-            #         justify="center",
-            #     ),
-            # ),
+            dls.Hash(
+                dbc.Row(
+                    dbc.Col(
+                        header_cards(
+                            'card-title',
+                            'card-text',
+                            'Number of images',
+                            'card-header-images',
+                            'card-text-images',
+                        ),
+                        xs=12,
+                        sm=12,
+                        md=12,
+                        lg=12,
+                        xl=6,
+                    ),
+                    align="center",
+                    justify="center",
+                ),
+            ),
             dbc.Row(
                 [
                     # dbc.Col(
@@ -111,18 +105,21 @@ def content(card_height='420px', margin='5px'):
                                             html.P(
                                                 'Hover over image and choose box select icon to update all figures based on chosen location. \n \
                                                 Select empty region to reset view with all data points.',
-                                                style={'text-align': 'center'},
+                                                style={
+                                                    'text-align': 'center',
+                                                    'margin': '0px',
+                                                },
                                             ),
                                         ]
                                     ),
                                 ],
-                                style={"margin": margin, 'height': card_height},
+                                className='card-body',
                             )
                         ],
                         xs=12,
                         sm=12,
                         md=12,
-                        lg=6,
+                        lg=12,
                         xl=6,
                     ),
                     dbc.Col(
@@ -134,13 +131,13 @@ def content(card_height='420px', margin='5px'):
                                         children=[dcc.Graph(id='pie', figure={})]
                                     ),
                                 ],
-                                style={"margin": margin, 'height': card_height},
+                                className='card-body',
                             )
                         ],
                         xs=12,
                         sm=12,
                         md=12,
-                        lg=6,
+                        lg=12,
                         xl=6,
                     ),
                 ],
@@ -164,13 +161,13 @@ def content(card_height='420px', margin='5px'):
                                                 ]
                                             ),
                                         ],
-                                        style={"margin": margin, 'height': card_height},
+                                        className='card-body',
                                     )
                                 ],
                                 xs=12,
                                 sm=12,
                                 md=12,
-                                lg=6,
+                                lg=12,
                                 xl=6,
                             ),
                             dbc.Col(
@@ -186,13 +183,13 @@ def content(card_height='420px', margin='5px'):
                                                 ]
                                             ),
                                         ],
-                                        style={"margin": margin, 'height': card_height},
+                                        className='card-body',
                                     )
                                 ],
                                 xs=12,
                                 sm=12,
                                 md=12,
-                                lg=6,
+                                lg=12,
                                 xl=6,
                             ),
                         ],
@@ -216,13 +213,12 @@ def content(card_height='420px', margin='5px'):
                                                 ]
                                             ),
                                         ],
-                                        style={"margin": margin, 'height': card_height},
                                     )
                                 ],
                                 xs=12,
                                 sm=12,
                                 md=12,
-                                lg=6,
+                                lg=12,
                                 xl=6,
                             ),
                             dbc.Col(
@@ -238,13 +234,12 @@ def content(card_height='420px', margin='5px'):
                                                 ]
                                             ),
                                         ],
-                                        style={"margin": margin, 'height': card_height},
                                     )
                                 ],
                                 xs=12,
                                 sm=12,
                                 md=12,
-                                lg=6,
+                                lg=12,
                                 xl=6,
                             ),
                         ],
@@ -255,8 +250,7 @@ def content(card_height='420px', margin='5px'):
             ),
             html.P(
                 'Copyright All Rights Reserved',
-                style={"color": '#D3D3D3', 'text-align': 'center'},
+                id='copyright',
             ),
         ],
-        style=CONTENT_STYLE,
     )

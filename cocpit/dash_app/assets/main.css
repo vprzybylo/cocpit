@@ -1,0 +1,22 @@
+.top-cards {
+    height: 100px;
+}
+
+.card-body {
+    background-color: #ffffff;
+    margin: 5px;
+    border-radius: 0.5rem;
+}
+
+
+
+#copyright {
+    color: #D3D3D3;
+    text-align: center;
+}
+
+#page-content{
+    margin-left: 18rem;
+    margin-right: 2rem;
+    margin-top: 2rem;
+}
