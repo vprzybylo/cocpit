@@ -116,4 +116,4 @@ def register(app):
                 zoom=5,
             ),
         )
-        return process.update_layout(fig, contour=True, margin=30)
+        return process.update_layout(fig, contour=True, margin=10, height=300)

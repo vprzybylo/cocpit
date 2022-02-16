@@ -46,7 +46,7 @@ def rename(df):
     return df
 
 
-def update_layout(fig, contour=False, margin=50):
+def update_layout(fig, contour=False, margin=20, height=300):
     '''update figures to have white background, and include and center sample size in title'''
     fig.update_layout(
         {
@@ -57,6 +57,7 @@ def update_layout(fig, contour=False, margin=50):
         xaxis_showgrid=True,
         xaxis_zeroline=False,
         showlegend=False,
+        height=height,
     )
 
     fig.update_xaxes(showline=True, linewidth=1, linecolor='black')
