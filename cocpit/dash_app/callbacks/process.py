@@ -176,9 +176,9 @@ def register(app):
             globals.campaign_end_dates[campaign],
         )
 
-    # @app.callback(s
-    #     Output('card_text-images', 'children'),
-    #     ServersideOutput("len-df", "data"),
+    # @app.callback(
+    #     ServersideOutput("card-content", "data"),
+    #     Input('campaign-dropdown', 'value'),
     # )
-    # def update_cards(len_df):
-    #     return len_df
+    # def update_cards(campaign):
+    #     return globals.campaign_image_count[campaign]

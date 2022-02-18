@@ -59,7 +59,6 @@ def sidebar():
                     placeholder="Campaign",
                     value='CRYSTAL FACE (UND)',
                 ),
-                style={"padding": padding, "margin-bottom": margin_bottom},
             ),
             dbc.Row(
                 dbc.Label('Particle Type:'),
@@ -74,11 +73,9 @@ def sidebar():
                     placeholder="Particle Type",
                     value=globals.particle_types_rename,
                 ),
-                style={"padding": padding, "margin-bottom": margin_bottom},
             ),
             dbc.Row(
                 dbc.Label('Particle Property:'),
-                style={"padding": padding},
             ),
             dbc.Row(
                 dcc.Dropdown(
@@ -89,11 +86,9 @@ def sidebar():
                     placeholder="Particle Property",
                     value='Complexity',
                 ),
-                style={"padding": padding, "margin-bottom": margin_bottom},
             ),
             dbc.Row(
                 dbc.Label('Environmental Variable:'),
-                style={"padding": padding},
             ),
             dbc.Row(
                 dcc.Dropdown(
@@ -102,11 +97,9 @@ def sidebar():
                     placeholder="Environmental Variable",
                     value='Ice Water Content',
                 ),
-                style={"padding": padding, "margin-bottom": margin_bottom},
             ),
             dbc.Row(
                 dbc.Label('Date:'),
-                style={"padding": padding},
             ),
             dbc.Row(
                 dcc.DatePickerRange(
@@ -116,11 +109,9 @@ def sidebar():
                     month_format='MMM Do, YY',
                     display_format='MMM Do, YY',
                 ),
-                style={"padding": padding, "margin-bottom": margin_bottom},
             ),
             dbc.Row(
                 dbc.Label('Temperature Range [C]:'),
-                style={"padding": padding},
             ),
             dbc.Row(
                 dcc.Input(
@@ -155,7 +146,6 @@ def sidebar():
             ),
             dbc.Row(
                 dbc.Label('Pressure Maximum:'),
-                style={"padding": padding},
             ),
             dbc.Row(
                 dcc.RangeSlider(
@@ -191,7 +181,6 @@ def sidebar():
                         100: {'label': '100hPa'},
                     },
                 ),
-                style={"padding": padding, "margin-bottom": margin_bottom},
             ),
             dbc.Row(
                 dbc.Label('Particle Size [micrometers]:'),
@@ -232,7 +221,7 @@ def sidebar():
                     id='submit-button',
                     n_clicks=0,
                     children='Apply Filters',
-                    className='btn btn-primary black-background white btn-lg ',
+                    className='btn btn-primary white btn-lg',
                 ),
                 style={
                     "padding": '4px',
@@ -246,7 +235,7 @@ def sidebar():
                     id='download-button',
                     n_clicks=0,
                     children='Download Data',
-                    className='btn btn-primary black-background white btn-lg ',
+                    className='btn btn-primary white btn-lg ',
                 ),
                 style={
                     "padding": '4px',

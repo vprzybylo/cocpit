@@ -4,31 +4,7 @@ import dash_bootstrap_components as dbc
 import dash_loading_spinners as dls
 import globals
 from dash import dcc, html
-
-
-def header_cards(
-    class_name_header,
-    class_name_body,
-    title,
-    id_header,
-    id_body,
-    campaign='CRYSTAL FACE (UND)',
-):
-    return dbc.Card(
-        [
-            dbc.CardBody(
-                [
-                    html.H4(title, className=class_name_header, id=id_header),
-                    html.P(
-                        globals.campaign_image_count[campaign],
-                        className=class_name_body,
-                        id=id_body,
-                    ),
-                ]
-            )
-        ],
-        className='top-cards',
-    )
+from layout import header_info
 
 
 def content():
@@ -46,51 +22,94 @@ def content():
             dcc.Store(id='df-temp', storage_type=storage),
             dcc.Store(id='df-prop', storage_type=storage),
             dcc.Store(id='len-df', storage_type=storage),
-            dls.Hash(
-                dbc.Row(
+            dbc.Row(
+                className="row",
+                children=[
                     dbc.Col(
-                        header_cards(
-                            'card-title',
-                            'card-text',
-                            'Number of images',
-                            'card-header-images',
-                            'card-text-images',
-                        ),
-                        xs=12,
-                        sm=12,
-                        md=12,
-                        lg=12,
-                        xl=6,
+                        className="card col-xs-12 col-sm-12 col-md-2 col-lg-3 col-xl-3 mb-2 border-left-primary shadow h-100 py-2",
+                        children=[
+                            html.Div(
+                                className='card-body',
+                                children=[
+                                    html.Div(
+                                        className='row no-gutters align-items-center',
+                                        children=[
+                                            html.Div(
+                                                children=[
+                                                    html.Div(
+                                                        className='text-xs font-weight-bold text-primary text-uppercase mb-1',
+                                                        children=['test'],
+                                                    ),
+                                                    html.Div(
+                                                        className="card-content h5 mb-0 font-weight-bold text-gray-900",
+                                                        children=['30000'],
+                                                    ),
+                                                ],
+                                            ),
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ],
                     ),
-                    align="center",
-                    justify="center",
-                ),
+                    html.Div(
+                        className="card col-xs-12 col-sm-12 col-md-2 col-lg-3 col-xl-3 mb-2 border-left-primary shadow h-100 py-2",
+                        children=[
+                            html.Div(
+                                className='card-body',
+                                children=[
+                                    html.Div(
+                                        className='row no-gutters align-items-center',
+                                        children=[
+                                            html.Div(
+                                                children=[
+                                                    html.Div(
+                                                        className='text-xs font-weight-bold text-primary text-uppercase mb-1',
+                                                        children=['test'],
+                                                    ),
+                                                    html.Div(
+                                                        className="card-content h5 mb-0 font-weight-bold text-gray-900",
+                                                        children=['3000'],
+                                                    ),
+                                                ],
+                                            ),
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                    html.Div(
+                        className="card col-xs-12 col-sm-12 col-md-2 col-lg-3 col-xl-3 mb-2 border-left-primary shadow h-100 py-2",
+                        children=[
+                            html.Div(
+                                className='card-body',
+                                children=[
+                                    html.Div(
+                                        className='row no-gutters align-items-center',
+                                        children=[
+                                            html.Div(
+                                                children=[
+                                                    html.Div(
+                                                        className='text-xs font-weight-bold text-primary text-uppercase mb-1',
+                                                        children=['test'],
+                                                    ),
+                                                    html.Div(
+                                                        className="card-content h5 mb-0 font-weight-bold text-gray-900",
+                                                        children=['3999'],
+                                                    ),
+                                                ],
+                                            ),
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
             ),
             dbc.Row(
                 [
-                    # dbc.Col(
-                    #     [
-                    #         dbc.Row(
-                    #             dbc.Label('Vertical Axis Property:'),
-                    #         ),
-                    #         dbc.Row(
-                    #             dcc.Dropdown(
-                    #                 id='3d_vertical_prop',
-                    #                 options=[
-                    #                     {'label': i, 'value': i}
-                    #                     for i in globals.vertical_vars
-                    #                 ],
-                    #                 placeholder="Vertical Axis Property",
-                    #                 value='Temperature',
-                    #             ),
-                    #         ),
-                    #     ],
-                    #     xs=12,
-                    #     sm=12,
-                    #     md=12,
-                    #     lg=12,
-                    #     xl=2,
-                    # ),
                     dbc.Col(
                         children=[
                             dbc.Card(
@@ -113,14 +132,14 @@ def content():
                                         ]
                                     ),
                                 ],
-                                className='card-body',
+                                # className='card-body',
                             )
                         ],
                         xs=12,
                         sm=12,
                         md=12,
-                        lg=12,
-                        xl=6,
+                        lg=4,
+                        xl=4,
                     ),
                     dbc.Col(
                         children=[
@@ -131,14 +150,14 @@ def content():
                                         children=[dcc.Graph(id='pie', figure={})]
                                     ),
                                 ],
-                                className='card-body',
+                                # className='card-body',
                             )
                         ],
                         xs=12,
                         sm=12,
                         md=12,
-                        lg=12,
-                        xl=6,
+                        lg=4,
+                        xl=4,
                     ),
                 ],
                 align="center",
