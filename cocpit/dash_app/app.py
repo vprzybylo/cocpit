@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 from callbacks import environment, geometric, process, topographic
 from dash import dcc
 from dotenv import load_dotenv
-from layout import content, sidebar, header_info
+from layout import content, sidebar
 from dash_extensions.enrich import Dash
 
 
@@ -13,9 +13,7 @@ def main():
 
     return Dash(
         __name__,
-        external_stylesheets=[
-            'https://raw.githubusercontent.com/StartBootstrap/startbootstrap-sb-admin-2/master/css/sb-admin-2.css'
-        ],
+        # external_stylesheets=['assets/main.css'],
         meta_tags=[
             {'name': 'viewport', 'content': 'width=device-width, initial-scale=1.0'},
         ],
@@ -34,7 +32,7 @@ if __name__ == '__main__':
             content.content(),
             sidebar.sidebar(),
         ],
-        # fluid=True,
+        fluid=True,
     )
 
     process.register(app)

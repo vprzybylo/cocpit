@@ -9,18 +9,6 @@ def sidebar():
     padding = '1px'
     margin_bottom = '8px'
 
-    # styling the sidebar
-    SIDEBAR_STYLE = {
-        "position": "fixed",
-        "top": 0,
-        "left": 0,
-        "bottom": 0,
-        'overflow-y': 'scroll',
-        "width": "16rem",
-        "padding": "2rem 1rem",
-        "background-color": "#f8f9fa",
-    }
-
     sidebar = html.Div(
         [
             html.H1(
@@ -28,26 +16,16 @@ def sidebar():
                     "COCPIT",
                     href="http://www.specinc.com/cloud-particle-imager",
                     style={'margin': "0px"},
-                    className='lead display-6 text-body text-decoration-none',
+                    className='h1 text-body',
                 ),
             ),
             html.Hr(),
-            html.H5(
+            html.H6(
                 "Classification of Ice Particle Imagery and Thermodynamics",
             ),
             html.Hr(),
-            # html.H6(
-            #     'Images taken from the:',
-            #     style={'margin': "0px"},
-            # ),
-            # html.A(
-            #     "Cloud Particle Imager",
-            #     href="http://www.specinc.com/cloud-particle-imager",
-            #     style={'margin': "0px"},
-            # ),
-            # html.Hr(),
             dbc.Row(
-                dbc.Label('Campaign:'),
+                dbc.Label('Campaign:', className='label'),
             ),
             dbc.Row(
                 dcc.Dropdown(
@@ -61,7 +39,7 @@ def sidebar():
                 ),
             ),
             dbc.Row(
-                dbc.Label('Particle Type:'),
+                dbc.Label('Particle Type:', className='label'),
             ),
             dbc.Row(
                 dcc.Dropdown(
@@ -75,7 +53,7 @@ def sidebar():
                 ),
             ),
             dbc.Row(
-                dbc.Label('Particle Property:'),
+                dbc.Label('Particle Property:', className='label'),
             ),
             dbc.Row(
                 dcc.Dropdown(
@@ -88,7 +66,7 @@ def sidebar():
                 ),
             ),
             dbc.Row(
-                dbc.Label('Environmental Variable:'),
+                dbc.Label('Environmental Variable:', className='label'),
             ),
             dbc.Row(
                 dcc.Dropdown(
@@ -99,7 +77,7 @@ def sidebar():
                 ),
             ),
             dbc.Row(
-                dbc.Label('Date:'),
+                dbc.Label('Date:', className='label'),
             ),
             dbc.Row(
                 dcc.DatePickerRange(
@@ -111,7 +89,7 @@ def sidebar():
                 ),
             ),
             dbc.Row(
-                dbc.Label('Temperature Range [C]:'),
+                dbc.Label('Temperature Range [C]:', className='label'),
             ),
             dbc.Row(
                 dcc.Input(
@@ -164,7 +142,7 @@ def sidebar():
                 style={"padding": padding},
             ),
             dbc.Row(
-                dbc.Label('Pressure Minimum:'),
+                dbc.Label('Pressure Minimum:', className='label'),
                 style={"padding": padding},
             ),
             dbc.Row(
@@ -183,7 +161,7 @@ def sidebar():
                 ),
             ),
             dbc.Row(
-                dbc.Label('Particle Size [micrometers]:'),
+                dbc.Label('Particle Size [micrometers]:', className='label'),
             ),
             dbc.Row(
                 dcc.Input(
@@ -223,11 +201,6 @@ def sidebar():
                     children='Apply Filters',
                     className='btn btn-primary white btn-lg',
                 ),
-                style={
-                    "padding": '4px',
-                    'margin-left': 5,
-                    'margin-right': 1,
-                },
             ),
             dcc.Download(id="download-df-csv"),
             dbc.Row(
@@ -235,16 +208,11 @@ def sidebar():
                     id='download-button',
                     n_clicks=0,
                     children='Download Data',
-                    className='btn btn-primary white btn-lg ',
+                    className='btn btn-primary white btn-lg',
                 ),
-                style={
-                    "padding": '4px',
-                    'margin-left': 5,
-                    'margin-right': 1,
-                },
             ),
         ],
-        style=SIDEBAR_STYLE,
+        id='sidebar',
     )
 
     return sidebar

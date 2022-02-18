@@ -5,6 +5,37 @@
  * Copyright 2011-2021 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+
+
+#sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  overflow-y: scroll;
+  width: 22rem;
+  padding: 2rem;
+  background-color: #fefefe;
+}
+
+.card-body {
+  background-color: #ffffff;
+  margin: 3px;
+  border-radius: 0.5rem;
+}
+
+
+#copyright {
+  color: #D3D3D3;
+  text-align: center;
+}
+
+#page-content{
+  margin-left: 22rem;
+  margin-right: 2rem;
+  margin-top: 2rem;
+}
+
 :root {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;
@@ -99,7 +130,7 @@ hr:not([size]) {
 h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
   margin-top: 0;
   margin-bottom: 0.5rem;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.2;
 }
 
@@ -229,9 +260,11 @@ sup {
   top: -0.5em;
 }
 
+
 a {
   color: #0d6efd;
-  text-decoration: underline;
+  text-decoration: none;
+
 }
 a:hover {
   color: #0a58ca;
@@ -322,10 +355,6 @@ th {
   border-color: inherit;
   border-style: solid;
   border-width: 0;
-}
-
-label {
-  display: inline-block;
 }
 
 button {
@@ -2152,6 +2181,7 @@ progress {
 }
 .form-label {
   margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .col-form-label {
@@ -2973,6 +3003,7 @@ textarea.form-control-lg {
 
 .btn {
   display: inline-block;
+  margin: 5px;
   font-weight: 400;
   line-height: 1.5;
   color: #212529;
@@ -3009,13 +3040,13 @@ textarea.form-control-lg {
 
 .btn-primary {
   color: #fff;
-  background-color: #0d6efd;
-  border-color: #0d6efd;
+  background-color: #122642;
+  border-color: #648ac1;
 }
 .btn-primary:hover {
   color: #fff;
-  background-color: #0b5ed7;
-  border-color: #0a58ca;
+  background-color: #204c8f;
+  border-color: #648ac1;
 }
 .btn-check:focus + .btn-primary, .btn-primary:focus {
   color: #fff;
