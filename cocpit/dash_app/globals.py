@@ -171,3 +171,37 @@ campaign_image_count = {
     "POSIDON": 1,
     "OLYMPEX": 1,
 }
+
+campaign_flight_count = {
+    "AIRS II": 1,
+    "ARM": 1,
+    "ATTREX": 1,
+    "CRYSTAL FACE (UND)": '10',
+    "CRYSTAL FACE (NASA)": '10',
+    "ICE L": 1,
+    "IPHEX": 1,
+    "ISDAC": 1,
+    "MACPEX": 1,
+    "MC3E": 1,
+    "MIDCIX": 1,
+    "MPACE": 1,
+    "POSIDON": 1,
+    "OLYMPEX": 1,
+}
+
+campaign_flight_hours = {
+    "AIRS II": 1,
+    "ARM": 1,
+    "ATTREX": 1,
+    "CRYSTAL FACE (UND)": '10',
+    "CRYSTAL FACE (NASA)": '10',
+    "ICE L": 1,
+    "IPHEX": 1,
+    "ISDAC": 1,
+    "MACPEX": 1,
+    "MC3E": 1,
+    "MIDCIX": 1,
+    "MPACE": 1,
+    "POSIDON": 1,
+    "OLYMPEX": 1,
+}

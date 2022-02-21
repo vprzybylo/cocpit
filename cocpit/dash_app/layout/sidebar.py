@@ -2,6 +2,7 @@ import dash_bootstrap_components as dbc
 from dash import dcc, html
 import globals
 from datetime import date
+from dash_extensions.enrich import Input, Output, State, ServersideOutput, dcc
 
 
 def sidebar():
@@ -10,13 +11,20 @@ def sidebar():
     margin_bottom = '8px'
 
     sidebar = html.Div(
-        [
+        children=[
+            dbc.Button(
+                "Filters",
+                outline=True,
+                color="secondary",
+                className="mr-1",
+                id="btn btn-primary btn-customized open-menu fas fa-align-right",
+            ),
             html.H1(
                 html.A(
                     "COCPIT",
                     href="http://www.specinc.com/cloud-particle-imager",
                     style={'margin': "0px"},
-                    className='h1 text-body',
+                    className='h1 logo',
                 ),
             ),
             html.Hr(),

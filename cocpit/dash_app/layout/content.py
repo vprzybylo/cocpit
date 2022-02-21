@@ -18,17 +18,194 @@ def content():
             dcc.Store(id='df-lat', storage_type=storage),
             dcc.Store(id='df-lon', storage_type=storage),
             dcc.Store(id='df-alt', storage_type=storage),
+            dcc.Store(id='df-date', storage_type=storage),
             dcc.Store(id='df-env', storage_type=storage),
             dcc.Store(id='df-temp', storage_type=storage),
             dcc.Store(id='df-prop', storage_type=storage),
             dcc.Store(id='len-df', storage_type=storage),
+            dbc.Row(id='header'),
+            dbc.Row(
+                className="row justify-content-center",
+                children=[
+                    dbc.Col(
+                        className="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4 legend shadow h-50",
+                        children=[
+                            dbc.Card(
+                                children=[
+                                    dbc.CardBody(
+                                        className='m-auto justify-center text-gray-900 h5 font-weight-bold text-uppercase p-1',
+                                        children=['Image Count:'],
+                                    ),
+                                    dbc.CardBody(
+                                        className="m-auto h2 font-weight-bold p-1",
+                                        id='image-count',
+                                        children=[
+                                            globals.campaign_image_count[
+                                                'CRYSTAL FACE (UND)'
+                                            ],
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                    dbc.Col(
+                        className="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4 legend shadow h-50",
+                        children=[
+                            dbc.Card(
+                                children=[
+                                    dbc.CardBody(
+                                        className='m-auto justify-center text-gray-900 h5 font-weight-bold text-uppercase p-1',
+                                        children=['Individual Flights:'],
+                                    ),
+                                    dbc.CardBody(
+                                        className="m-auto h2 font-weight-bold p-1",
+                                        id='flight-count',
+                                        children=[
+                                            globals.campaign_flight_count[
+                                                'CRYSTAL FACE (UND)'
+                                            ],
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                    dbc.Col(
+                        className="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4 legend shadow h-50",
+                        children=[
+                            dbc.Card(
+                                children=[
+                                    dbc.CardBody(
+                                        className='m-auto justify-center text-gray-900 h5 font-weight-bold text-uppercase p-1',
+                                        children=['Flight Hours:'],
+                                    ),
+                                    dbc.CardBody(
+                                        className="m-auto h2 font-weight-bold p-1",
+                                        id='flight-hours',
+                                        children=[
+                                            globals.campaign_flight_hours[
+                                                'CRYSTAL FACE (UND)'
+                                            ],
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+            dbc.Row(
+                className="row justify-content-center",
+                children=[
+                    dbc.Card(
+                        className='col-xs-12 col-sm-12 col-md-12 col-lg-3 col-xl-3 m-2 h-10 legend-card agg shadow',
+                        children=[
+                            dbc.CardImg(
+                                className='legend-image',
+                                src="assets/agg.png",
+                            ),
+                            dbc.CardBody(html.P("Aggregate", className="card-text")),
+                        ],
+                    ),
+                    dbc.Card(
+                        className='col-xs-12 col-sm-12 col-md-12 col-lg-3 col-xl-3 m-2 h-10 legend-card compact shadow',
+                        children=[
+                            dbc.CardImg(
+                                className='legend-image',
+                                src="assets/compact.png",
+                            ),
+                            dbc.CardBody(
+                                html.P("Compact Irregular", className="card-text")
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+            dbc.Row(
+                className="row justify-content-center",
+                children=[
+                    dbc.Col(
+                        className="col-xs-12 col-sm-12 col-md-12 col-lg-2 col-xl-2 m-2 legend agg shadow h-5 py-2",
+                        children=[
+                            html.Div(
+                                className='row no-gutters align-items-center',
+                                children=[
+                                    html.Div(
+                                        children=[
+                                            html.Div(
+                                                className='text-xs font-weight-bold text-body text-uppercase mb-1 py-2',
+                                                children=['Aggregate'],
+                                            ),
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                    dbc.Col(
+                        className="col-xs-12 col-sm-12 col-md-12 col-lg-2 col-xl-2 m-2 legend compact shadow h-5 py-2",
+                        children=[
+                            html.Div(
+                                className='row no-gutters align-items-center',
+                                children=[
+                                    html.Div(
+                                        children=[
+                                            html.Div(
+                                                className='text-xs font-weight-bold text-body text-uppercase mb-1 py-2',
+                                                children=['Compact Irregular'],
+                                            ),
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                    dbc.Col(
+                        className="col-xs-12 col-sm-12 col-md-12 col-lg-2 col-xl-2 m-2 legend budding shadow h-5 py-2",
+                        children=[
+                            html.Div(
+                                className='row no-gutters align-items-center',
+                                children=[
+                                    html.Div(
+                                        children=[
+                                            html.Div(
+                                                className='text-xs font-weight-bold text-body text-uppercase mb-1 py-2',
+                                                children=['Budding Rosette'],
+                                            ),
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                    dbc.Col(
+                        className="col-xs-12 col-sm-12 col-md-12 col-lg-2 col-xl-2 m-2 legend bullet shadow h-5 py-2",
+                        children=[
+                            html.Div(
+                                className='row no-gutters align-items-center',
+                                children=[
+                                    html.Div(
+                                        children=[
+                                            html.Div(
+                                                className='text-xs font-weight-bold text-body text-uppercase mb-1 py-2',
+                                                children=['Bullet Rosette'],
+                                            ),
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
+            ),
             dls.Hash(
                 [
                     html.Div(
                         className='row',
                         children=[
                             html.Div(
-                                className='col-sm-12 col-md-12 col-lg-6 col-xl-6',
+                                className='col-sm-12 col-md-12 col-lg-12 col-xl-12',
                                 children=[
                                     dbc.Card(
                                         [
@@ -41,25 +218,9 @@ def content():
                                                     ),
                                                     html.P(
                                                         'Hover over image and choose box select icon to update all figures based on chosen location. \n \
-                                                        Select empty region to reset view with all data points.',
+                                                        Select an empty region to reset view with all data points.',
                                                         className='p',
                                                     ),
-                                                ]
-                                            ),
-                                        ],
-                                        className='card-body',
-                                    )
-                                ],
-                            ),
-                            html.Div(
-                                className='col-sm-12 col-md-12 col-lg-6 col-xl-6',
-                                children=[
-                                    dbc.Card(
-                                        [
-                                            dbc.CardHeader("Particle Type Percentage"),
-                                            dbc.CardBody(
-                                                children=[
-                                                    dcc.Graph(id='pie', figure={})
                                                 ]
                                             ),
                                         ],
@@ -79,12 +240,10 @@ def content():
                                 children=[
                                     dbc.Card(
                                         [
-                                            dbc.CardHeader("Cross-Section (Longitude)"),
+                                            dbc.CardHeader("Vertical Distribution"),
                                             dbc.CardBody(
                                                 children=[
-                                                    dcc.Graph(
-                                                        id='lon-alt-hist', figure={}
-                                                    )
+                                                    dcc.Graph(id='vert-dist', figure={})
                                                 ]
                                             ),
                                         ],
@@ -93,23 +252,21 @@ def content():
                                 ],
                                 className='col-sm-12 col-md-12 col-lg-6 col-xl-6',
                             ),
-                            dbc.Col(
+                            html.Div(
+                                className='col-sm-12 col-md-12 col-lg-6 col-xl-6',
                                 children=[
                                     dbc.Card(
                                         [
-                                            dbc.CardHeader("Cross Section (Latitude)"),
+                                            dbc.CardHeader("Particle Type Percentage"),
                                             dbc.CardBody(
                                                 children=[
-                                                    dcc.Graph(
-                                                        id='lat-alt-hist', figure={}
-                                                    )
+                                                    dcc.Graph(id='pie', figure={})
                                                 ]
                                             ),
                                         ],
                                         className='card-body',
                                     )
                                 ],
-                                className='col-sm-12 col-md-12 col-lg-6 col-xl-6',
                             ),
                         ],
                         # className='justify-content-center align-items-center',
@@ -140,7 +297,7 @@ def content():
                                 children=[
                                     dbc.Card(
                                         [
-                                            dbc.CardHeader("Environmental Attributes"),
+                                            dbc.CardHeader("Environmental Property"),
                                             dbc.CardBody(
                                                 children=[
                                                     dcc.Graph(

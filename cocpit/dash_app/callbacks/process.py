@@ -75,6 +75,7 @@ def register(app):
             ServersideOutput("df-lat", "data"),
             ServersideOutput("df-lon", "data"),
             ServersideOutput("df-alt", "data"),
+            ServersideOutput("df-date", "data"),
             ServersideOutput("df-prop", "data"),
             ServersideOutput("df-env", "data"),
             ServersideOutput("df-temp", "data"),
@@ -143,12 +144,21 @@ def register(app):
             df['Latitude'],
             df['Longitude'],
             df['Altitude'],
+            df['date'],
             df[part_prop],
             df[env_prop],
             df['Temperature'],
             len(df),
             df,
         )
+
+    @app.callback(
+        Output('image-count', 'children'),
+        Input('df-classification', 'data'),
+    )
+    def change_image_count(df_classification):
+        '''update image count card based on number of points in map selection'''
+        return len(df_classification)
 
     @app.callback(
         Output("download-df-csv", "data"),
@@ -176,9 +186,20 @@ def register(app):
             globals.campaign_end_dates[campaign],
         )
 
-    # @app.callback(
-    #     ServersideOutput("card-content", "data"),
-    #     Input('campaign-dropdown', 'value'),
-    # )
-    # def update_cards(campaign):
-    #     return globals.campaign_image_count[campaign]
+    @app.callback(
+        Output('flight-count', 'children'),
+        [
+            Input('submit-button', 'n_clicks'),
+            State('df-date', 'data'),
+            State('date-picker', 'start_date'),
+            State('date-picker', 'end_date'),
+        ],
+    )
+    def find_iops(df_date, start_date, end_date):
+        '''update number of flights after filtering dates'''
+
+        hour = pd.Timedelta('5h')
+        in_block = ((df_date - df_date.shift(-1)).abs() == hour) | (
+            df_date.diff() == hour
+        )
+        print(in_block)

@@ -6,6 +6,12 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
 
+ #header{
+   position: fixed;
+   top: 0;
+   background-color: #d3d6d8;
+   height: 20px;
+ }
 
 #sidebar {
   position: fixed;
@@ -18,13 +24,6 @@
   background-color: #fefefe;
 }
 
-.card-body {
-  background-color: #ffffff;
-  margin: 3px;
-  border-radius: 0.5rem;
-}
-
-
 #copyright {
   color: #D3D3D3;
   text-align: center;
@@ -34,6 +33,59 @@
   margin-left: 22rem;
   margin-right: 2rem;
   margin-top: 2rem;
+}
+
+
+.text-gray-900{
+  color: #565656;
+}
+.text-xs {
+  font-size: 0.8em;
+}
+
+.legend-card{
+  width:10rem;
+}
+
+.legend-image{
+  width: 5rem;
+  justify-content: center;
+}
+
+.legend {
+  padding: 5px;
+  background-color: #ffffff;
+  border-left: 15px solid #122642;
+  -webkit-box-shadow: 0 5px 8px -6px rgba(0,0,0,.2);
+     -moz-box-shadow: 0 5px 8px -6px rgba(0,0,0,.2);
+          box-shadow: 0 5px 8px -6px rgba(0,0,0,.2);
+}
+
+.agg{
+  background-color: rgb(115, 111, 76);
+}
+
+.compact{
+  border-color: rgb(133, 92, 117);
+}
+
+.planar {
+  border-color:rgb(175, 100, 88);
+}
+
+.rimed {
+  border-color:  rgb(217, 175, 107);
+}
+
+.column{
+  border-color:  rgb(82, 106, 131);
+  border-left: 6px solid;
+}
+.budding{
+  border-left-color:  rgb(104, 133, 92);
+}
+.bullet{
+  border-left-color:  rgb(98, 83, 119);
 }
 
 :root {
@@ -136,6 +188,7 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
 
 h1, .h1 {
   font-size: calc(1.375rem + 1.5vw);
+  color: #122642;
 }
 @media (min-width: 1200px) {
   h1, .h1 {
@@ -4523,10 +4576,10 @@ textarea.form-control-lg {
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: #fff;
   background-clip: border-box;
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.25rem;
+  margin: 5px;
 }
 .card > hr {
   margin-right: 0;
@@ -4552,6 +4605,7 @@ textarea.form-control-lg {
 }
 
 .card-body {
+  border-radius: 0.5rem;
   flex: 1 1 auto;
   padding: 1rem 1rem;
 }
@@ -4602,34 +4656,6 @@ textarea.form-control-lg {
 .card-header-pills {
   margin-right: -0.5rem;
   margin-left: -0.5rem;
-}
-
-.card-img-overlay {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  padding: 1rem;
-  border-radius: calc(0.25rem - 1px);
-}
-
-.card-img,
-.card-img-top,
-.card-img-bottom {
-  width: 100%;
-}
-
-.card-img,
-.card-img-top {
-  border-top-left-radius: calc(0.25rem - 1px);
-  border-top-right-radius: calc(0.25rem - 1px);
-}
-
-.card-img,
-.card-img-bottom {
-  border-bottom-right-radius: calc(0.25rem - 1px);
-  border-bottom-left-radius: calc(0.25rem - 1px);
 }
 
 .card-group > .card {
