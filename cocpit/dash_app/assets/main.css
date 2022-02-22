@@ -129,15 +129,15 @@ p {
   border-radius: 0.5rem;
   flex: 1 1 auto;
   padding: 1rem 1rem;
+  margin: auto;
 }
 
-.legend-card{
-  width:10rem;
+.card-text {
+  text-align: center;
 }
 
 .legend-image{
   width: 5rem;
-  justify-content: center;
 }
 
 .legend {
@@ -145,37 +145,53 @@ p {
   background-color: #ffffff;
   border-left: 3px solid #313131;
   border-right: 3px solid #313131;
+}
+
+.legend-border{
   -webkit-box-shadow: 0 5px 8px -6px rgba(0,0,0,.2);
      -moz-box-shadow: 0 5px 8px -6px rgba(0,0,0,.2);
           box-shadow: 0 5px 8px -6px rgba(0,0,0,.2);
+
 }
 
 .agg{
-  background-color: rgb(115, 111, 76);
+  border: 5px solid rgb(115, 111, 76);
+  background-color: rgb(115, 111, 76, 0.5);
 }
 
 .compact{
   border-color: rgb(133, 92, 117);
+  border: 5px solid rgb(133, 92, 117);
+  background-color: rgb(133, 92, 117, 0.5);
 }
-
 .planar {
   border-color:rgb(175, 100, 88);
+  border-left: 5px solid rgb(175, 100, 88);
+  border-right: 5px solid rgb(175, 100, 88);
 }
 
 .rimed {
   border-color:  rgb(217, 175, 107);
+  border-left: 5px solid rgb(217, 175, 107);
+  border-right: 5px solid rgb(217, 175, 107);
 }
 
 .column{
   border-color:  rgb(82, 106, 131);
-  border-left: 6px solid;
+  border-left: 5px solid rgb(82, 106, 131);
+  border-right: 5px solid rgb(82, 106, 131);
 }
 .budding{
   border-left-color:  rgb(104, 133, 92);
+  border-left: 5px solid rgb(104, 133, 92);
+  border-right: 5px solid rgb(104, 133, 92);
 }
 .bullet{
   border-left-color:  rgb(98, 83, 119);
+  border-left: 5px solid rgb(98, 83, 119);
+  border-right: 5px solid rgb(98, 83, 119);
 }
+
 
 :root {
   --bs-blue: #0d6efd;

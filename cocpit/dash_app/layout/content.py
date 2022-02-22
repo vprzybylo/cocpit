@@ -25,7 +25,7 @@ def content():
             dcc.Store(id='len-df', storage_type=storage),
             dbc.Row(id='header'),
             dbc.Row(
-                className="justify-content-center",
+                className="d-flex justify-content-around h-50",
                 children=[
                     dbc.Col(
                         className="col-xs-12 col-sm-3 col-md-3 col-lg-3 col-xl-3 legend shadow h-50",
@@ -95,110 +95,82 @@ def content():
                     ),
                 ],
             ),
-            # dbc.Row(
-            #     className="row justify-content-center",
-            #     children=[
-            #         dbc.Card(
-            #             className='col-xs-12 col-sm-12 col-md-12 col-lg-3 col-xl-3 m-2 h-10 legend-card agg shadow',
-            #             children=[
-            #                 dbc.CardImg(
-            #                     className='legend-image',
-            #                     src="assets/agg.png",
-            #                 ),
-            #                 dbc.CardBody(html.P("Aggregate", className="card-text")),
-            #             ],
-            #         ),
-            #         dbc.Card(
-            #             className='col-xs-12 col-sm-12 col-md-12 col-lg-3 col-xl-3 m-2 h-10 legend-card compact shadow',
-            #             children=[
-            #                 dbc.CardImg(
-            #                     className='legend-image',
-            #                     src="assets/compact.png",
-            #                 ),
-            #                 dbc.CardBody(
-            #                     html.P("Compact Irregular", className="card-text")
-            #                 ),
-            #             ],
-            #         ),
-            #     ],
-            # ),
-            # dbc.Row(
-            #     className="row justify-content-center",
-            #     children=[
-            #         dbc.Col(
-            #             className="col-xs-12 col-sm-12 col-md-12 col-lg-2 col-xl-2 m-2 legend agg shadow h-5 py-2",
-            #             children=[
-            #                 html.Div(
-            #                     className='row no-gutters align-items-center',
-            #                     children=[
-            #                         html.Div(
-            #                             children=[
-            #                                 html.Div(
-            #                                     className='text-xs font-weight-bold text-body text-uppercase mb-1 py-2',
-            #                                     children=['Aggregate'],
-            #                                 ),
-            #                             ],
-            #                         ),
-            #                     ],
-            #                 ),
-            #             ],
-            #         ),
-            #         dbc.Col(
-            #             className="col-xs-12 col-sm-12 col-md-12 col-lg-2 col-xl-2 m-2 legend compact shadow h-5 py-2",
-            #             children=[
-            #                 html.Div(
-            #                     className='row no-gutters align-items-center',
-            #                     children=[
-            #                         html.Div(
-            #                             children=[
-            #                                 html.Div(
-            #                                     className='text-xs font-weight-bold text-body text-uppercase mb-1 py-2',
-            #                                     children=['Compact Irregular'],
-            #                                 ),
-            #                             ],
-            #                         ),
-            #                     ],
-            #                 ),
-            #             ],
-            #         ),
-            #         dbc.Col(
-            #             className="col-xs-12 col-sm-12 col-md-12 col-lg-2 col-xl-2 m-2 legend budding shadow h-5 py-2",
-            #             children=[
-            #                 html.Div(
-            #                     className='row no-gutters align-items-center',
-            #                     children=[
-            #                         html.Div(
-            #                             children=[
-            #                                 html.Div(
-            #                                     className='text-xs font-weight-bold text-body text-uppercase mb-1 py-2',
-            #                                     children=['Budding Rosette'],
-            #                                 ),
-            #                             ],
-            #                         ),
-            #                     ],
-            #                 ),
-            #             ],
-            #         ),
-            #         dbc.Col(
-            #             className="col-xs-12 col-sm-12 col-md-12 col-lg-2 col-xl-2 m-2 legend bullet shadow h-5 py-2",
-            #             children=[
-            #                 html.Div(
-            #                     className='row no-gutters align-items-center',
-            #                     children=[
-            #                         html.Div(
-            #                             children=[
-            #                                 html.Div(
-            #                                     className='text-xs font-weight-bold text-body text-uppercase mb-1 py-2',
-            #                                     children=['Bullet Rosette'],
-            #                                 ),
-            #                             ],
-            #                         ),
-            #                     ],
-            #                 ),
-            #             ],
-            #         ),
-            #     ],
-            # ),
+            dbc.Row(
+                className="row justify-content-center",
+                children=[
+                    dbc.Card(
+                        className='col-xs-12 col-sm-12 col-md-4 col-lg-2 col-xl-2 m-2 font-weight-bold text-body text-uppercasefont-weight-bold text-body text-uppercase legend-card legend-border agg shadow',
+                        children=[
+                            dbc.CardImg(
+                                className='legend-image m-auto p-2',
+                                src="assets/agg.png",
+                            ),
+                            dbc.CardBody(
+                                html.P(
+                                    "Aggregate",
+                                    className="card-text m-auto",
+                                )
+                            ),
+                        ],
+                    ),
+                    dbc.Card(
+                        className='col-xs-12 col-sm-12 col-md-4 col-lg-2 col-xl-2 m-2 font-weight-bold text-body text-uppercasefont-weight-bold text-body text-uppercase legend-card legend-border compact shadow',
+                        children=[
+                            dbc.CardImg(
+                                className='legend-image m-auto p-2',
+                                src="assets/compact.png",
+                            ),
+                            dbc.CardBody(
+                                html.P(
+                                    "Compact Irregular",
+                                    className="card-text m-auto",
+                                )
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+            dbc.Row(
+                className="row justify-content-center",
+                children=[
+                    dbc.Col(
+                        className="col-xs-12 col-sm-12 col-md-12 col-lg-2 col-xl-2 m-2 legend legend-border budding shadow h-5 py-2",
+                        children=[
+                            html.Div(
+                                className='row no-gutters align-items-center',
+                                children=[
+                                    html.Div(
+                                        children=[
+                                            html.Div(
+                                                className='text-xs font-weight-bold text-body text-uppercase mb-1 py-2',
+                                                children=['Budding Rosette'],
+                                            ),
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                    dbc.Col(
+                        className="col-xs-12 col-sm-12 col-md-12 col-lg-2 col-xl-2 m-2 legend legend-border bullet shadow h-5 py-2",
+                        children=[
+                            html.Div(
+                                className='row no-gutters align-items-center',
+                                children=[
+                                    html.Div(
+                                        children=[
+                                            html.Div(
+                                                className='text-xs font-weight-bold text-body text-uppercase mb-1 py-2',
+                                                children=['Bullet Rosette'],
+                                            ),
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
+            ),
             dls.Hash(
                 [
                     html.Div(

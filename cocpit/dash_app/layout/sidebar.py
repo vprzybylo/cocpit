@@ -16,7 +16,6 @@ def sidebar():
                 "Filters",
                 outline=True,
                 color="secondary",
-                className="mr-1",
                 id="btn btn-primary btn-customized open-menu fas fa-align-right",
             ),
             html.H1(
