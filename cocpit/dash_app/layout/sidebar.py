@@ -28,12 +28,13 @@ def sidebar():
                 ),
             ),
             html.Hr(),
-            html.H6(
+            html.Div(
                 "Classification of Ice Particle Imagery and Thermodynamics",
+                className='h3',
             ),
             html.Hr(),
             dbc.Row(
-                dbc.Label('Campaign:', className='label'),
+                dbc.Label('Campaign:', className='label h4 fw-bold'),
             ),
             dbc.Row(
                 dcc.Dropdown(
@@ -44,10 +45,11 @@ def sidebar():
                     ],
                     placeholder="Campaign",
                     value='CRYSTAL FACE (UND)',
+                    className='h4',
                 ),
             ),
             dbc.Row(
-                dbc.Label('Particle Type:', className='label'),
+                dbc.Label('Particle Type:', className='label h4 fw-bold'),
             ),
             dbc.Row(
                 dcc.Dropdown(
@@ -58,10 +60,11 @@ def sidebar():
                     ],
                     placeholder="Particle Type",
                     value=globals.particle_types_rename,
+                    className='h4',
                 ),
             ),
             dbc.Row(
-                dbc.Label('Particle Property:', className='label'),
+                dbc.Label('Particle Property:', className='label h4 fw-bold'),
             ),
             dbc.Row(
                 dcc.Dropdown(
@@ -71,10 +74,11 @@ def sidebar():
                     ],
                     placeholder="Particle Property",
                     value='Complexity',
+                    className='h4',
                 ),
             ),
             dbc.Row(
-                dbc.Label('Environmental Variable:', className='label'),
+                dbc.Label('Environmental Variable:', className='label h4 fw-bold'),
             ),
             dbc.Row(
                 dcc.Dropdown(
@@ -82,22 +86,23 @@ def sidebar():
                     options=[{'label': i, 'value': i} for i in globals.env_properties],
                     placeholder="Environmental Variable",
                     value='Ice Water Content',
+                    className='h4',
                 ),
             ),
             dbc.Row(
-                dbc.Label('Date:', className='label'),
+                dbc.Label('Date:', className='label h4'),
             ),
             dbc.Row(
                 dcc.DatePickerRange(
                     id='date-picker',
-                    start_date=date(2002, 7, 11),
-                    end_date=date(2002, 7, 12),
+                    start_date=date(2002, 7, 19),
+                    end_date=date(2002, 7, 23),
                     month_format='MMM Do, YY',
                     display_format='MMM Do, YY',
                 ),
             ),
             dbc.Row(
-                dbc.Label('Temperature Range [C]:', className='label'),
+                dbc.Label('Temperature Range [C]:', className='label h4'),
             ),
             dbc.Row(
                 dcc.Input(

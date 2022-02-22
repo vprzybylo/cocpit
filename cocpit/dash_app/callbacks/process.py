@@ -4,6 +4,7 @@ import pandas as pd
 import globals
 import numpy as np
 from dash_extensions.enrich import Input, Output, State, ServersideOutput, dcc
+import dash
 
 
 def read_campaign(campaign):
@@ -117,6 +118,7 @@ def register(app):
         env_prop,
     ):
         '''read campaign data and process based on user input from menu'''
+
         df = read_campaign(campaign)
         df = rename(df)
         df = remove_bad_data(df)
@@ -189,17 +191,17 @@ def register(app):
     @app.callback(
         Output('flight-count', 'children'),
         [
-            Input('submit-button', 'n_clicks'),
-            State('df-date', 'data'),
-            State('date-picker', 'start_date'),
-            State('date-picker', 'end_date'),
+            Input('df-date', 'data'),
         ],
     )
-    def find_iops(df_date, start_date, end_date):
+    def find_iops(df_date):
         '''update number of flights after filtering dates'''
 
-        hour = pd.Timedelta('5h')
-        in_block = ((df_date - df_date.shift(-1)).abs() == hour) | (
-            df_date.diff() == hour
-        )
-        print(in_block)
+        df_date = pd.to_datetime(df_date)
+        grouped_df = df_date.groupby([df_date.dt.month, df_date.dt.day])
+
+        # print(df_date.groupby([df_date.dt.month, df_date.dt.day]).agg({'count'}))
+        for key, item in grouped_df:
+            print(grouped_df.get_group(key))
+        print('NGROUPS', grouped_df.ngroups)
+        return grouped_df.ngroups
