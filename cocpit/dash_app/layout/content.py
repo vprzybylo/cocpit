@@ -12,6 +12,7 @@ def content():
     return html.Div(
         id="page-content",
         children=[
+            dcc.Store(id='side_click'),
             dcc.Store(id='store-df', storage_type=storage),
             dcc.Store(id='df-classification', storage_type=storage),
             dcc.Store(id='df-lat', storage_type=storage),
@@ -134,7 +135,7 @@ def content():
                         className='row justify-content-around',
                         children=[
                             html.Div(
-                                className='col-sm-12 col-md-12 col-lg-12 col-xl-12',
+                                className='col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12',
                                 children=[
                                     dbc.Card(
                                         [

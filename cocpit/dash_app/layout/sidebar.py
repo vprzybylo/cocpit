@@ -104,7 +104,7 @@ def sidebar():
             dbc.Row(
                 dbc.Label('Pressure Maximum:', className='label h3'),
             ),
-            dbc.Row(
+            html.Div(
                 dcc.RangeSlider(
                     id='max-pres',
                     min=400,
@@ -123,7 +123,7 @@ def sidebar():
             dbc.Row(
                 dbc.Label('Pressure Minimum:', className='label h3'),
             ),
-            dbc.Row(
+            html.Div(
                 dcc.RangeSlider(
                     id='min-pres',
                     min=100,
@@ -181,7 +181,7 @@ def sidebar():
             ),
         ],
         id='sidebar',
-        className='position-fixed bottom-0 left-0 top-0 overflow-y-scroll',
+        className='position-fixed bottom-0 left-0 overflow-y-scroll',
     )
 
     return sidebar

@@ -14,9 +14,17 @@
 
 }
 
+
+#navbar{
+  background-color: #424b54;
+}
+
 #sidebar{
   background-color: #fefefe;
   margin: 1rem;
+  width: 20rem;
+  top: 8rem;
+  z-index: 1;
 }
 
 .dash-dropdown{
@@ -89,11 +97,14 @@ button:not(:disabled), [type=button]:not(:disabled), [type=reset]:not(:disabled)
  text-align: center;
 }
 
-/* #page-content{
- margin-left: 22rem;
+#page-content{
+ /* margin-left: 22rem; */
+ margin-top: 6rem;
+ transition: margin-left .5s;
+ margin-left: 20rem;
  margin-right: 2rem;
- margin-top: 2rem;
-} */
+ padding: 2rem 1rem;
+}
 
 .CalendarDay__selected, .CalendarDay__selected:active, .CalendarDay__selected:hover {
  background: rgb(41, 56, 55) !important;
