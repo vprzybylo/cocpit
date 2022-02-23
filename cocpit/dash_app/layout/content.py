@@ -23,33 +23,10 @@ def content():
             dcc.Store(id='df-prop', storage_type=storage),
             dcc.Store(id='len-df', storage_type=storage),
             dbc.Row(
-                className='header sticky-top',
-                children=[
-                    dbc.Button(
-                        "Filters",
-                        outline=True,
-                        color="secondary",
-                        id="btn btn-primary sticky-top",
-                    ),
-                    html.H1(
-                        html.A(
-                            "COCPIT",
-                            href="http://www.specinc.com/cloud-particle-imager",
-                            style={'margin': "0px"},
-                            className='h1 sticky-top',
-                        ),
-                    ),
-                    html.Div(
-                        "Classification of Ice Particle Imagery and Thermodynamics",
-                        className='h3 sticky-top',
-                    ),
-                ],
-            ),
-            dbc.Row(
-                className="d-flex justify-content-around h-50",
+                className="d-flex justify-content-around",
                 children=[
                     dbc.Col(
-                        className="col-xs-12 col-sm-12 col-md-12 col-lg-3 col-xl-3 legend shadow h-50",
+                        className="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 legend shadow h-50",
                         children=[
                             dbc.Card(
                                 children=[
@@ -71,7 +48,7 @@ def content():
                         ],
                     ),
                     dbc.Col(
-                        className="col-xs-12 col-sm-12 col-md-12 col-lg-3 col-xl-3 legend shadow h-50",
+                        className="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 legend shadow h-50",
                         children=[
                             dbc.Card(
                                 children=[
@@ -93,7 +70,7 @@ def content():
                         ],
                     ),
                     dbc.Col(
-                        className="col-xs-12 col-sm-12 col-md-12 col-lg-3 col-xl-3 legend shadow h-50",
+                        className="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 legend shadow h-50",
                         children=[
                             dbc.Card(
                                 children=[
@@ -117,10 +94,10 @@ def content():
                 ],
             ),
             dbc.Row(
-                className="row justify-content-center h-10",
+                className="row justify-content-around",
                 children=[
                     dbc.Card(
-                        className='col-xs-12 col-sm-12 col-md-12 col-lg-2 col-xl-2 m-2 text-body text-uppercase legend-border agg shadow',
+                        className='col-xs-12 col-sm-12 col-md-4 col-lg-2 col-xl-2 m-2 text-body text-uppercase legend-border agg shadow',
                         children=[
                             dbc.CardImg(
                                 className='legend-image m-auto p-2',
@@ -129,13 +106,13 @@ def content():
                             dbc.CardBody(
                                 html.P(
                                     "Aggregate",
-                                    className="legend-text m-auto",
+                                    className="legend-text m-auto  mb-0",
                                 )
                             ),
                         ],
                     ),
                     dbc.Card(
-                        className='col-xs-12 col-sm-12 col-md-4 col-lg-2 col-xl-2 m-2 text-body text-body text-uppercase legend-card legend-border compact shadow',
+                        className='col-xs-12 col-sm-12 col-md-4 col-lg-2 col-xl-2 m-2 text-body text-uppercase legend-border compact shadow',
                         children=[
                             dbc.CardImg(
                                 className='legend-image m-auto p-2',
@@ -151,51 +128,10 @@ def content():
                     ),
                 ],
             ),
-            dbc.Row(
-                className="row justify-content-center",
-                children=[
-                    dbc.Col(
-                        className="col-xs-12 col-sm-12 col-md-12 col-lg-2 col-xl-2 m-2 legend legend-border budding shadow h-5 py-2",
-                        children=[
-                            html.Div(
-                                className='row no-gutters align-items-center',
-                                children=[
-                                    html.Div(
-                                        children=[
-                                            html.Div(
-                                                className='text-body text-uppercase mb-1 py-2',
-                                                children=['Budding Rosette'],
-                                            ),
-                                        ],
-                                    ),
-                                ],
-                            ),
-                        ],
-                    ),
-                    dbc.Col(
-                        className="col-xs-12 col-sm-12 col-md-12 col-lg-2 col-xl-2 m-2 legend legend-border bullet shadow h-5 py-2",
-                        children=[
-                            html.Div(
-                                className='row no-gutters align-items-center',
-                                children=[
-                                    html.Div(
-                                        children=[
-                                            html.Div(
-                                                className='text-body text-uppercase mb-1 py-2',
-                                                children=['Bullet Rosette'],
-                                            ),
-                                        ],
-                                    ),
-                                ],
-                            ),
-                        ],
-                    ),
-                ],
-            ),
             dls.Hash(
                 [
                     html.Div(
-                        className='row',
+                        className='row justify-content-around',
                         children=[
                             html.Div(
                                 className='col-sm-12 col-md-12 col-lg-12 col-xl-12',
@@ -262,7 +198,7 @@ def content():
                                 ],
                             ),
                         ],
-                        # className='justify-content-center align-items-center',
+                        #  className='justify-content-center align-items-center',
                     ),
                 ],
             ),
@@ -305,7 +241,7 @@ def content():
                                 className='col col-sm-12 col-md-12 col-lg-6 col-xl-6',
                             ),
                         ],
-                        # className='justify-content-center align-items-center',
+                        #  className='justify-content-center align-items-center',
                     ),
                 ]
             ),
