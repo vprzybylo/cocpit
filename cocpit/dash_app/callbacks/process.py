@@ -199,9 +199,15 @@ def register(app):
 
         df_date = pd.to_datetime(df_date)
         grouped_df = df_date.groupby([df_date.dt.month, df_date.dt.day])
-
-        # print(df_date.groupby([df_date.dt.month, df_date.dt.day]).agg({'count'}))
-        for key, item in grouped_df:
-            print(grouped_df.get_group(key))
-        print('NGROUPS', grouped_df.ngroups)
         return grouped_df.ngroups
+
+    # add callback for toggling the collapse on small screens
+    @app.callback(
+        Output("navbar-collapse", "is_open"),
+        [Input("navbar-toggler", "n_clicks")],
+        [State("navbar-collapse", "is_open")],
+    )
+    def toggle_navbar_collapse(n, is_open):
+        if n:
+            return not is_open
+        return is_open

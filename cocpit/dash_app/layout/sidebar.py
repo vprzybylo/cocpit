@@ -12,26 +12,6 @@ def sidebar():
 
     sidebar = html.Div(
         children=[
-            dbc.Button(
-                "Filters",
-                outline=True,
-                color="secondary",
-                id="btn btn-primary btn-customized open-menu fas fa-align-right",
-            ),
-            html.H1(
-                html.A(
-                    "COCPIT",
-                    href="http://www.specinc.com/cloud-particle-imager",
-                    style={'margin': "0px"},
-                    className='h1 logo',
-                ),
-            ),
-            html.Hr(),
-            html.Div(
-                "Classification of Ice Particle Imagery and Thermodynamics",
-                className='h3',
-            ),
-            html.Hr(),
             dbc.Row(
                 dbc.Label('Campaign:', className='label h4 fw-bold'),
             ),
@@ -44,7 +24,7 @@ def sidebar():
                     ],
                     placeholder="Campaign",
                     value='CRYSTAL FACE (UND)',
-                    className='h4',
+                    className='h4 dropdown-menu',
                 ),
             ),
             dbc.Row(

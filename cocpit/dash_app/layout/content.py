@@ -4,7 +4,6 @@ import dash_bootstrap_components as dbc
 import dash_loading_spinners as dls
 import globals
 from dash import dcc, html
-from layout import header_info
 
 
 def content():
@@ -23,21 +22,43 @@ def content():
             dcc.Store(id='df-temp', storage_type=storage),
             dcc.Store(id='df-prop', storage_type=storage),
             dcc.Store(id='len-df', storage_type=storage),
-            dbc.Row(id='header'),
+            dbc.Row(
+                className='header sticky-top',
+                children=[
+                    dbc.Button(
+                        "Filters",
+                        outline=True,
+                        color="secondary",
+                        id="btn btn-primary sticky-top",
+                    ),
+                    html.H1(
+                        html.A(
+                            "COCPIT",
+                            href="http://www.specinc.com/cloud-particle-imager",
+                            style={'margin': "0px"},
+                            className='h1 sticky-top',
+                        ),
+                    ),
+                    html.Div(
+                        "Classification of Ice Particle Imagery and Thermodynamics",
+                        className='h3 sticky-top',
+                    ),
+                ],
+            ),
             dbc.Row(
                 className="d-flex justify-content-around h-50",
                 children=[
                     dbc.Col(
-                        className="col-xs-12 col-sm-3 col-md-3 col-lg-3 col-xl-3 legend shadow h-50",
+                        className="col-xs-12 col-sm-12 col-md-12 col-lg-3 col-xl-3 legend shadow h-50",
                         children=[
                             dbc.Card(
                                 children=[
                                     dbc.CardBody(
-                                        className='m-auto justify-center text-gray-900 h4 font-weight-bold text-uppercase p-1',
+                                        className='m-auto justify-center text-center text-gray-900 h4 text-uppercase p-1',
                                         children=['Image Count:'],
                                     ),
                                     dbc.CardBody(
-                                        className="m-auto h2 font-weight-bold p-1",
+                                        className="m-auto h2 p-1 text-center",
                                         id='image-count',
                                         children=[
                                             globals.campaign_image_count[
@@ -50,16 +71,16 @@ def content():
                         ],
                     ),
                     dbc.Col(
-                        className="col-xs-12 col-sm-3 col-md-3 col-lg-3 col-xl-3 legend shadow h-50",
+                        className="col-xs-12 col-sm-12 col-md-12 col-lg-3 col-xl-3 legend shadow h-50",
                         children=[
                             dbc.Card(
                                 children=[
                                     dbc.CardBody(
-                                        className='m-auto justify-center text-gray-900 h4 font-weight-bold text-uppercase p-1',
+                                        className='m-auto justify-center text-center text-gray-900 h4 text-uppercase p-1',
                                         children=['Number of Flights:'],
                                     ),
                                     dbc.CardBody(
-                                        className="m-auto h2 font-weight-bold p-1",
+                                        className="m-auto h2 p-1 text-center",
                                         id='flight-count',
                                         children=[
                                             globals.campaign_flight_count[
@@ -72,16 +93,16 @@ def content():
                         ],
                     ),
                     dbc.Col(
-                        className="col-xs-12 col-sm-3 col-md-3 col-lg-3 col-xl-3 legend shadow h-50",
+                        className="col-xs-12 col-sm-12 col-md-12 col-lg-3 col-xl-3 legend shadow h-50",
                         children=[
                             dbc.Card(
                                 children=[
                                     dbc.CardBody(
-                                        className='m-auto justify-center text-gray-900 h4 font-weight-bold text-uppercase p-1',
+                                        className='m-auto justify-center text-gray-900 text-center h4 text-uppercase p-1',
                                         children=['Flight Hours:'],
                                     ),
                                     dbc.CardBody(
-                                        className="m-auto h2 font-weight-bold p-1",
+                                        className="m-auto h2 p-1 text-center",
                                         id='flight-hours',
                                         children=[
                                             globals.campaign_flight_hours[
@@ -96,10 +117,10 @@ def content():
                 ],
             ),
             dbc.Row(
-                className="row justify-content-center",
+                className="row justify-content-center h-10",
                 children=[
                     dbc.Card(
-                        className='col-xs-12 col-sm-12 col-md-4 col-lg-2 col-xl-2 m-2 font-weight-bold text-body text-uppercasefont-weight-bold text-body text-uppercase legend-card legend-border agg shadow',
+                        className='col-xs-12 col-sm-12 col-md-12 col-lg-2 col-xl-2 m-2 text-body text-uppercase legend-border agg shadow',
                         children=[
                             dbc.CardImg(
                                 className='legend-image m-auto p-2',
@@ -108,13 +129,13 @@ def content():
                             dbc.CardBody(
                                 html.P(
                                     "Aggregate",
-                                    className="card-text m-auto",
+                                    className="legend-text m-auto",
                                 )
                             ),
                         ],
                     ),
                     dbc.Card(
-                        className='col-xs-12 col-sm-12 col-md-4 col-lg-2 col-xl-2 m-2 font-weight-bold text-body text-uppercasefont-weight-bold text-body text-uppercase legend-card legend-border compact shadow',
+                        className='col-xs-12 col-sm-12 col-md-4 col-lg-2 col-xl-2 m-2 text-body text-body text-uppercase legend-card legend-border compact shadow',
                         children=[
                             dbc.CardImg(
                                 className='legend-image m-auto p-2',
@@ -142,7 +163,7 @@ def content():
                                     html.Div(
                                         children=[
                                             html.Div(
-                                                className='text-xs font-weight-bold text-body text-uppercase mb-1 py-2',
+                                                className='text-body text-uppercase mb-1 py-2',
                                                 children=['Budding Rosette'],
                                             ),
                                         ],
@@ -160,7 +181,7 @@ def content():
                                     html.Div(
                                         children=[
                                             html.Div(
-                                                className='text-xs font-weight-bold text-body text-uppercase mb-1 py-2',
+                                                className='text-body text-uppercase mb-1 py-2',
                                                 children=['Bullet Rosette'],
                                             ),
                                         ],

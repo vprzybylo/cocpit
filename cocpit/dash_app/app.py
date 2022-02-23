@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 from callbacks import environment, geometric, process, topographic
 from dash import dcc
 from dotenv import load_dotenv
-from layout import content, sidebar
+from layout import content, navbar
 from dash_extensions.enrich import Dash
 
 
@@ -14,10 +14,13 @@ def main():
     return Dash(
         __name__,
         external_stylesheets=[
-            'assets/main.css',
+            'assets/main.css?ver=1.0',
         ],
         meta_tags=[
-            {'name': 'viewport', 'content': 'width=device-width, initial-scale=1.0'},
+            {
+                'name': 'viewport',
+                'content': 'width=device-width, initial-scale=1',
+            }
         ],
     )
 
@@ -29,11 +32,7 @@ if __name__ == '__main__':
     app.title = 'COCPIT'
 
     app.layout = dbc.Container(
-        [
-            dcc.Location(id="url"),
-            content.content(),
-            sidebar.sidebar(),
-        ],
+        [navbar.navbar(), content.content()],
         fluid=True,
     )
 
