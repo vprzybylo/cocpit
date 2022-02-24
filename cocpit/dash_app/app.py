@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 from callbacks import environment, geometric, process, topographic
 from dash import dcc
 from dotenv import load_dotenv
-from layout import content, navbar, sidebar
+from layout import content, navbar, sidebar, navbar_collapse
 from dash_extensions.enrich import Dash
 
 
@@ -15,6 +15,8 @@ def main():
         __name__,
         external_stylesheets=[
             'assets/main.css?ver=1.0',
+            dbc.themes.LUX,
+            dbc.icons.BOOTSTRAP,
         ],
         meta_tags=[
             {
@@ -32,7 +34,7 @@ if __name__ == '__main__':
     app.title = 'COCPIT'
 
     app.layout = dbc.Container(
-        [sidebar.sidebar(), content.content(), navbar.navbar()],
+        [navbar_collapse.navbar()],
         fluid=True,
     )
 
