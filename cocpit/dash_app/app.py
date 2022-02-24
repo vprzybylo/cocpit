@@ -14,17 +14,7 @@ def main():
     return Dash(
         __name__,
         external_scripts=[
-            'assets/sidebar.js',
-            {
-                'src': 'https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js',
-                'integrity': 'sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY',
-                'crossorigin': 'anonymous',
-            },
-            {
-                'src': 'https://code.jquery.com/jquery-3.3.1.slim.min.js',
-                'integrity': 'sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY',
-                'crossorigin': 'anonymous',
-            },
+            'assets/test.js',
         ],
         external_stylesheets=[
             dbc.themes.BOOTSTRAP,
