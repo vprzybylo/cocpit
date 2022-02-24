@@ -21,21 +21,27 @@ SIDEBAR_HIDEN = {
 
 
 def navbar():
+
     navbar = html.Div(
         id='navbar',
         className='fixed-top',
         children=[
+            # html.Div(id='black-nav-div'),
             dbc.Row(
                 children=[
                     dbc.Col(
-                        dbc.Button(
-                            "Filters",
-                            outline=True,
-                            color="secondary",
-                            className="mr-1",
-                            id="btn_sidebar",
-                        ),
-                        className="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 m-1",
+                        children=[
+                            dbc.Col(
+                                dbc.Button(
+                                    "Filters",
+                                    outline=True,
+                                    className="mr-1 btn-secondary",
+                                    id="btn_sidebar",
+                                ),
+                                className="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 mx-3",
+                            ),
+                        ],
+                        className='my-2',
                     ),
                     dbc.Col(
                         children=[
@@ -44,7 +50,7 @@ def navbar():
                                     html.A(
                                         "COCPIT",
                                         href="http://www.specinc.com/cloud-particle-imager",
-                                        className='text-white my-2',
+                                        className='text-white',
                                     ),
                                 ),
                             ),
@@ -55,7 +61,7 @@ def navbar():
                                 ),
                             ),
                         ],
-                        className="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 m-2",
+                        className="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 my-2",
                     ),
                 ],
                 justify='between',

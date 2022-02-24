@@ -14,9 +14,17 @@
 
 }
 
+#black-nav-div{
+  background-color: #000;
+  height: 2%;
+  width:100%;
+  position: absolute;
+  margin-top: 0.5rem;
+  left: 0;
+}
 
 #navbar{
-  background-color: #424b54;
+  background-color: #6b6b6b;
 }
 
 #sidebar{
@@ -464,7 +472,6 @@ sup {
 a {
   color: #0d6efd;
   text-decoration: none;
-
 }
 a:hover {
   color: #0a58ca;
@@ -3255,7 +3262,7 @@ textarea.form-control-lg {
 
 .btn-secondary {
   color: #fff;
-  background-color: #6c757d;
+  background-color: #aeaeae;
   border-color: #6c757d;
 }
 .btn-secondary:hover {
@@ -3676,9 +3683,9 @@ textarea.form-control-lg {
 }
 
 .btn-lg, .btn-group-lg > .btn {
-  padding: 0.5rem 1rem;
-  font-size: 1.25rem;
-  border-radius: 0.3rem;
+  padding: 0.5rem 1rem !important;
+  font-size: 1.5rem !important;
+  border-radius: 0.3rem !important;
 }
 
 .btn-sm, .btn-group-sm > .btn {
