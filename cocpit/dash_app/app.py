@@ -13,10 +13,23 @@ def main():
 
     return Dash(
         __name__,
+        external_scripts=[
+            'assets/sidebar.js',
+            {
+                'src': 'https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js',
+                'integrity': 'sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY',
+                'crossorigin': 'anonymous',
+            },
+            {
+                'src': 'https://code.jquery.com/jquery-3.3.1.slim.min.js',
+                'integrity': 'sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY',
+                'crossorigin': 'anonymous',
+            },
+        ],
         external_stylesheets=[
-            'assets/main.css?ver=1.0',
-            dbc.themes.LUX,
-            dbc.icons.BOOTSTRAP,
+            dbc.themes.BOOTSTRAP,
+            'assets/main.css',
+            'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
         ],
         meta_tags=[
             {
@@ -32,14 +45,13 @@ if __name__ == '__main__':
 
     app = main()
     app.title = 'COCPIT'
-
     app.layout = dbc.Container(
         [navbar_collapse.navbar()],
         fluid=True,
     )
 
-    process.register(app)
-    topographic.register(app)
-    environment.register(app)
-    geometric.register(app)
+    # process.register(app)
+    # topographic.register(app)
+    # environment.register(app)
+    # geometric.register(app)
     app.run_server(port=8050, host='0.0.0.0', debug=True)

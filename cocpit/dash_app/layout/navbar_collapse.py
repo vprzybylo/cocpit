@@ -3,82 +3,34 @@ import dash_bootstrap_components as dbc
 
 
 def navbar():
-    return html.Div(
+    return html.Ul(
         [
-            html.Div(
+            html.Li(
                 [
                     html.Div(
                         [
-                            html.Button(
-                                [
-                                    html.Div(className='icon-bar'),
-                                    html.Div(className='icon-bar'),
-                                    html.Div(className='icon-bar'),
-                                ],
-                                className='navbar-toggle',
-                                type='button',
-                                **{
-                                    'data-toggle': 'collapse',
-                                    'data-target': '.sidebar-navbar-collapse',
-                                }
+                            html.A(
+                                'COCPIT',
+                                href='#',
+                                id='title',
+                                className='text-white text-decoration-none',
                             ),
-                            html.Div(
-                                html.H2(
-                                    html.A(
-                                        "COCPIT",
-                                        href="http://www.specinc.com/cloud-particle-imager",
-                                        className='text-white navbar-brand',
-                                    ),
-                                ),
-                                className='visible-xs',
+                            html.A(
+                                href='#',
+                                id='sidebarToggleHolder',
+                                className='text-white float-right',
+                                children=[
+                                    html.Div(
+                                        className='fas fa-bars', id='sidebarToggle'
+                                    )
+                                ],
                             ),
                         ],
-                        className='navbar-header',
-                    ),
-                    html.Div(
-                        [
-                            html.Ul(
-                                [
-                                    html.Li(
-                                        html.H2(
-                                            html.A(
-                                                "COCPIT",
-                                                href="http://www.specinc.com/cloud-particle-imager",
-                                                className='text-white navbar-brand',
-                                            ),
-                                        ),
-                                        className='d-none d-sm-block',
-                                    ),
-                                    html.Li(
-                                        [
-                                            html.I(
-                                                className='glyphicon glyphicon-th-list'
-                                            ),
-                                            html.A(
-                                                "Campaign",
-                                                href="#",
-                                                className='dropdown-toggle',
-                                                **{
-                                                    'data-toggle': 'dropdown',
-                                                    'data-target': '.sidebar-navbar-collapse',
-                                                }
-                                            ),
-                                            html.B(className='caret'),
-                                        ],
-                                        className='dropdown',
-                                    ),
-                                    html.Li("Item 3"),
-                                ],
-                                className='nav navbar-nav',
-                            )
-                        ],
-                        className='navbar-collapse collapse sidebar-navbar-collapse',
-                    ),
+                        className='text-center text-white logo py-4 mx-4',
+                    )
                 ],
-                id="navbar-red",
-                className="navbar navbar-default",
-            ),
+                className='nav-item logo-holder',
+            )
         ],
-        id="column-red",
-        className="column-nav",
+        className='nav flex-column shadow d-flex sidebar',
     )
