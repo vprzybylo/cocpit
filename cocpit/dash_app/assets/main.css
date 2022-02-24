@@ -31,7 +31,7 @@
   background-color: #fefefe;
   margin: 1rem;
   width: 20rem;
-  top: 8rem;
+  top: 6rem;
   z-index: 1;
 }
 
@@ -353,22 +353,22 @@ h2, .h2 {
 }
 
 h3, .h3 {
-  font-size: calc(0.8rem + 0.2vw);
+  font-size: calc(1.0rem + 0.2vw);
   font-weight: 500;
   }
   @media (min-width: 1200px) {
     h3, .h3 {
-      font-size: 1.0rem;
+      font-size: 1.2rem;
       font-weight: 500;
     }
   }
 
 h4, .h4 {
-font-size: calc(0.8rem + 0.2vw);
+font-size: calc(1.0rem + 0.2vw);
 }
 @media (min-width: 1200px) {
   h4, .h4 {
-    font-size: 0.8rem;
+    font-size: 1.0rem;
   }
 }
 
@@ -4711,7 +4711,6 @@ textarea.form-control-lg {
 
 .card {
   position: relative;
-  flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
   background-clip: border-box;
