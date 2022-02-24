@@ -14,7 +14,9 @@ def main():
     return Dash(
         __name__,
         external_stylesheets=[
-            'assets/main.css?ver=1.0',
+            dbc.themes.BOOTSTRAP,
+            'assets/main.css',
+            'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
         ],
         meta_tags=[
             {
