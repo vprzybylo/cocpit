@@ -201,78 +201,12 @@ def register(app):
         grouped_df = df_date.groupby([df_date.dt.month, df_date.dt.day])
         return grouped_df.ngroups
 
-    # @app.callback(
-    #     [
-    #         Output("sidebar", "style"),
-    #         Output("page-content", "style"),
-    #         Output("side_click", "data"),
-    #     ],
-    #     [Input("btn_sidebar", "n_clicks")],
-    #     [
-    #         State("side_click", "data"),
-    #     ],
-    # )
-    # def toggle_sidebar(n, n_clicks):
-    #     print('in toggle')
-
-    #     SIDEBAR_STYLE = {
-    #         "position": "fixed",
-    #         "top": 62.5,
-    #         "left": 0,
-    #         "bottom": 0,
-    #         "width": "16rem",
-    #         "height": "100%",
-    #         "z-index": 1,
-    #         "overflow-x": "hidden",
-    #         "transition": "all 0.5s",
-    #         "padding": "0.5rem 1rem",
-    #         "background-color": "#f8f9fa",
-    #     }
-
-    #     SIDEBAR_HIDEN = {
-    #         "position": "fixed",
-    #         "top": 62.5,
-    #         "left": "-16rem",
-    #         "bottom": 0,
-    #         "width": "16rem",
-    #         "height": "100%",
-    #         "z-index": 1,
-    #         "overflow-x": "hidden",
-    #         "transition": "all 0.5s",
-    #         "padding": "0rem 0rem",
-    #         "background-color": "#f8f9fa",
-    #     }
-
-    #     # the styles for the main content position it to the right of the sidebar and
-    #     # add some padding.
-    #     CONTENT_STYLE = {
-    #         "transition": "margin-left .5s",
-    #         "margin-left": "18rem",
-    #         "margin-right": "2rem",
-    #         "padding": "2rem 1rem",
-    #         "background-color": "#f8f9fa",
-    #     }
-
-    #     CONTENT_STYLE1 = {
-    #         "transition": "margin-left .5s",
-    #         "margin-left": "2rem",
-    #         "margin-right": "2rem",
-    #         "padding": "2rem 1rem",
-    #         "background-color": "#f8f9fa",
-    #     }
-
-    #     if n:
-    #         if n_clicks == "SHOW":
-    #             sidebar_style = SIDEBAR_HIDEN
-    #             content_style = CONTENT_STYLE1
-    #             cur_nclick = "HIDDEN"
-    #         else:
-    #             sidebar_style = SIDEBAR_STYLE
-    #             content_style = CONTENT_STYLE
-    #             cur_nclick = "SHOW"
-    #     else:
-    #         sidebar_style = SIDEBAR_STYLE
-    #         content_style = CONTENT_STYLE
-    #         cur_nclick = 'SHOW'
-
-    #     return sidebar_style, content_style, cur_nclick
+    @app.callback(
+        Output(f"navbar-collapse1", "is_open"),
+        [Input(f"navbar-toggler1", "n_clicks")],
+        [State(f"navbar-collapse1", "is_open")],
+    )
+    def toggle_navbar_collapse(n, is_open):
+        if n:
+            return not is_open
+        return is_open

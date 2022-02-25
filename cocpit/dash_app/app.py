@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 from callbacks import environment, geometric, process, topographic
 from dash import dcc
 from dotenv import load_dotenv
-from layout import content, navbar, sidebar, navbar_collapse
+from layout import content, navbar, sidebar, navbar_collapse, filters
 from dash_extensions.enrich import Dash
 
 
@@ -13,9 +13,6 @@ def main():
 
     return Dash(
         __name__,
-        external_scripts=[
-            'assets/test.js',
-        ],
         external_stylesheets=[
             # dbc.themes.BOOTSTRAP,
             'assets/main.css',
@@ -36,7 +33,7 @@ if __name__ == '__main__':
     app = main()
     app.title = 'COCPIT'
     app.layout = dbc.Container(
-        [navbar_collapse.navbar()],
+        [navbar.navbar(), content.content()],
         fluid=True,
     )
 
