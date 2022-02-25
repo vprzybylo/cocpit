@@ -17,9 +17,9 @@ def main():
             'assets/test.js',
         ],
         external_stylesheets=[
-            dbc.themes.BOOTSTRAP,
+            # dbc.themes.BOOTSTRAP,
             'assets/main.css',
-            'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
+            #'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
         ],
         meta_tags=[
             {
