@@ -106,9 +106,8 @@ button:not(:disabled), [type=button]:not(:disabled), [type=reset]:not(:disabled)
 }
 
 #page-content{
- margin-top: 1rem;
  transition: margin-left .5s;
- padding: 2rem 1rem;
+ padding: 1rem 1rem;
 }
 
 .CalendarDay__selected, .CalendarDay__selected:active, .CalendarDay__selected:hover {
@@ -158,8 +157,8 @@ p {
  min-width: 0;
  word-wrap: break-word;
  background-clip: border-box;
- border: 1px solid rgba(0, 0, 0, 0.125);
- border-radius: 0.25rem;
+ /* border: 1px solid rgba(0, 0, 0, 0.125); */
+ /* border-radius: 0.25rem; */
  margin: 10px;
 }
 

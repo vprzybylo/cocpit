@@ -27,7 +27,7 @@ def content():
                 className="d-flex justify-content-around",
                 children=[
                     dbc.Col(
-                        className="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 legend shadow h-50",
+                        className="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 legend shadow",
                         children=[
                             dbc.Card(
                                 children=[
@@ -36,7 +36,7 @@ def content():
                                         children=['Image Count:'],
                                     ),
                                     dbc.CardBody(
-                                        className="m-auto h2 p-1 text-center",
+                                        className="m-auto h3 p-1 text-center",
                                         id='image-count',
                                         children=[
                                             globals.campaign_image_count[
@@ -49,16 +49,16 @@ def content():
                         ],
                     ),
                     dbc.Col(
-                        className="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 legend shadow h-50",
+                        className="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 legend shadow",
                         children=[
                             dbc.Card(
                                 children=[
                                     dbc.CardBody(
                                         className='m-auto justify-center text-center text-gray-900 h4 text-uppercase p-1',
-                                        children=['Number of Flights:'],
+                                        children=['# Flights:'],
                                     ),
                                     dbc.CardBody(
-                                        className="m-auto h2 p-1 text-center",
+                                        className="m-auto h3 p-1 text-center",
                                         id='flight-count',
                                         children=[
                                             globals.campaign_flight_count[
@@ -71,7 +71,7 @@ def content():
                         ],
                     ),
                     dbc.Col(
-                        className="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 legend shadow h-50",
+                        className="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 legend shadow",
                         children=[
                             dbc.Card(
                                 children=[
@@ -80,7 +80,7 @@ def content():
                                         children=['Flight Hours:'],
                                     ),
                                     dbc.CardBody(
-                                        className="m-auto h2 p-1 text-center",
+                                        className="m-auto h3 p-1 text-center",
                                         id='flight-hours',
                                         children=[
                                             globals.campaign_flight_hours[
