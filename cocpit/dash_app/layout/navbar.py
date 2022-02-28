@@ -1,5 +1,4 @@
 import dash_bootstrap_components as dbc
-from layout import sidebar
 from dash import html
 
 # make a reuseable navitem for the different examples
