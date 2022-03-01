@@ -9,6 +9,7 @@
 
  .fa{
    font-size: 2em;
+
   }
 
 .icon-bgrd{
@@ -17,7 +18,8 @@
 
 .legend {
   margin: 4px;
-  border-left: 5px solid #313131;
+  border-left: 5px solid #6b6b6b;
+  border-right: 5px solid #6b6b6b;
  }
 
  .header{
@@ -42,8 +44,8 @@
 }
 
 #sidebar{
-  position: absolute;
-  bottom: 0;
+  /* position: absolute;
+  bottom: 0; */
   background-color: #fefefe;
   margin: 2rem;
   width: 20rem;
@@ -161,6 +163,11 @@ p {
 .text-gray-900{
  color: #565656;
 }
+
+.text-gray-300{
+  color: #c1c1c1;
+ }
+
 .text-xs {
  font-size: 0.8em;
 }
@@ -184,46 +191,42 @@ p {
  margin: auto;
 }
 
+
 .card-text {
  text-align: center;
 }
 
+.legend-bgrd{
+  background-color: #6b6b6b;
+}
 
 .agg{
- background-color: rgb(115, 111, 76, 0.5);
+ background-color: #3c3a2680;
 }
 
 .compact{
- border-color: rgb(133, 92, 117);
- border: 5px solid rgb(133, 92, 117);
+ word-wrap: break-word;
  background-color: rgb(133, 92, 117, 0.5);
 }
 .planar {
- border-color:rgb(175, 100, 88);
- border-left: 5px solid rgb(175, 100, 88);
- border-right: 5px solid rgb(175, 100, 88);
+ word-wrap: break-word;
+ background-color:rgb(175, 100, 88);
 }
 
 .rimed {
- border-color:  rgb(217, 175, 107);
- border-left: 5px solid rgb(217, 175, 107);
- border-right: 5px solid rgb(217, 175, 107);
+  background-color:  rgb(217, 175, 107);
 }
 
 .column{
- border-color:  rgb(82, 106, 131);
- border-left: 5px solid rgb(82, 106, 131);
- border-right: 5px solid rgb(82, 106, 131);
+  background-color:  rgb(82, 106, 131);
 }
 .budding{
- border-left-color:  rgb(104, 133, 92);
- border-left: 5px solid rgb(104, 133, 92);
- border-right: 5px solid rgb(104, 133, 92);
+  word-wrap: break-word;
+  background-color:  rgb(104, 133, 92);
 }
 .bullet{
- border-left-color:  rgb(98, 83, 119);
- border-left: 5px solid rgb(98, 83, 119);
- border-right: 5px solid rgb(98, 83, 119);
+  word-wrap: break-word;
+  background-color:  rgb(98, 83, 119);
 }
 
 :root {
@@ -4698,6 +4701,7 @@ textarea.form-control-lg {
   color: #fff;
 }
 
+
 .card {
   position: relative;
   min-width: 0;
@@ -4792,23 +4796,10 @@ textarea.form-control-lg {
   border-radius: calc(0.25rem - 1px);
 }
 
-.card-img,
-.card-img-top,
-.card-img-bottom {
-  width: 100%;
+.card-img {
+  border-radius: 50rem;
 }
 
-.card-img,
-.card-img-top {
-  border-top-left-radius: calc(0.25rem - 1px);
-  border-top-right-radius: calc(0.25rem - 1px);
-}
-
-.card-img,
-.card-img-bottom {
-  border-bottom-right-radius: calc(0.25rem - 1px);
-  border-bottom-left-radius: calc(0.25rem - 1px);
-}
 
 .card-group > .card {
   margin-bottom: 0.75rem;
@@ -4819,7 +4810,6 @@ textarea.form-control-lg {
     flex-flow: row wrap;
   }
   .card-group > .card {
-    flex: 1 0 0%;
     margin-bottom: 0;
   }
   .card-group > .card + .card {
@@ -7183,6 +7173,7 @@ textarea.form-control-lg {
 .mh-100 {
   max-height: 100% !important;
 }
+
 
 .vh-100 {
   height: 100vh !important;

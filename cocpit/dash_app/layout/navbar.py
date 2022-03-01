@@ -1,16 +1,24 @@
+from layout import sidebar
 import dash_bootstrap_components as dbc
 from dash import html
+import globals
 
 # make a reuseable navitem for the different examples
 nav_item = dbc.NavItem(dbc.NavLink("Link", href="#"))
 
+items = [dbc.DropdownMenuItem(i) for i in globals.campaigns_rename]
 # make a reuseable dropdown for the different examples
 dropdown = dbc.DropdownMenu(
     children=[
-        dbc.DropdownMenuItem("Entry 1"),
-        dbc.DropdownMenuItem("Entry 2"),
-        dbc.DropdownMenuItem(divider=True),
-        dbc.DropdownMenuItem("Entry 3"),
+        items
+        # dbc.DropdownMenuItem(
+        #     id='campaign-dropdown',
+        #     multi=False,
+        #     options=[{'label': i, 'value': i} for i in globals.campaigns_rename],
+        #     placeholder="Campaign",
+        #     value='CRYSTAL FACE (UND)',
+        #     className='h4',
+        # ),
     ],
     nav=True,
     in_navbar=True,

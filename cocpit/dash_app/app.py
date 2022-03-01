@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 from callbacks import environment, geometric, process, topographic
 from dash import dcc
 from dotenv import load_dotenv
-from layout import content, navbar, sidebar, legend, banners
+from layout import content, navbar, legend, banners, sidebar
 from dash_extensions.enrich import Dash
 
 
@@ -33,7 +33,13 @@ if __name__ == '__main__':
     app = main()
     app.title = 'COCPIT'
     app.layout = dbc.Container(
-        [navbar.navbar(), banners.banners(), legend.legend(), content.content()],
+        [
+            # sidebar.sidebar(),
+            navbar.navbar(),
+            banners.banners(),
+            legend.legend(),
+            content.content(),
+        ],
         fluid=True,
     )
 

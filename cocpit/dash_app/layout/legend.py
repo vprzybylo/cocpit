@@ -5,29 +5,111 @@ from dash import html
 def legend():
     return html.Div(
         children=[
-            dbc.Row(
-                className="d-flex justify-content-around",
+            dbc.CardGroup(
+                className="justify-content-around",
                 children=[
                     dbc.Col(
-                        className="d-flex agg justify-content-around shadow m-2",
+                        className="agg legend p-1",
                         children=[
-                            dbc.Col(
-                                children=[
-                                    dbc.Row(
-                                        className='justify-content-center text-center text-gray-900  h4 text-uppercase',
-                                        children=['Aggregate'],
-                                    ),
-                                ],
-                                className='p-2',
+                            dbc.Row(
+                                html.Img(
+                                    className='m-auto img-fluid card-img shadow p-1',
+                                    src='assets/agg.png',
+                                ),
                             ),
-                            dbc.Col(
-                                children=[
-                                    html.Img(
-                                        className='w-25 m-auto px-3 align-middle',
-                                        src='assets/agg.png',
-                                    ),
-                                ],
-                                className='d-flex',
+                            dbc.Row(
+                                className='justify-content-center text-center p-1 h4 text-uppercase',
+                                children=['Aggregate'],
+                            ),
+                        ],
+                    ),
+                    dbc.Col(
+                        className="budding legend p-1",
+                        children=[
+                            dbc.Row(
+                                html.Img(
+                                    className='m-auto img-fluid card-img shadow p-1',
+                                    src='assets/budding.png',
+                                ),
+                            ),
+                            dbc.Row(
+                                className='justify-content-center text-center p-1 h4 text-uppercase',
+                                children=['Budding Rosette'],
+                            ),
+                        ],
+                    ),
+                    dbc.Col(
+                        className="bullet legend p-1",
+                        children=[
+                            dbc.Row(
+                                html.Img(
+                                    className='m-auto img-fluid card-img shadow p-1',
+                                    src='assets/bullet.png',
+                                ),
+                            ),
+                            dbc.Row(
+                                className='justify-content-center text-center p-1 h4 text-uppercase',
+                                children=['Bullet Rosette'],
+                            ),
+                        ],
+                    ),
+                    dbc.Col(
+                        className="column legend p-1",
+                        children=[
+                            dbc.Row(
+                                html.Img(
+                                    className='m-auto img-fluid card-img shadow p-1',
+                                    src='assets/column.png',
+                                ),
+                            ),
+                            dbc.Row(
+                                className='justify-content-center text-center p-1 h4 text-uppercase',
+                                children=['Column'],
+                            ),
+                        ],
+                    ),
+                    dbc.Col(
+                        className="compact legend p-1",
+                        children=[
+                            dbc.Row(
+                                html.Img(
+                                    className='m-auto img-fluid card-img shadow p-1',
+                                    src='assets/compact.png',
+                                ),
+                            ),
+                            dbc.Row(
+                                className='justify-content-center text-center p-1 h4 text-uppercase',
+                                children=['Compact Irregular'],
+                            ),
+                        ],
+                    ),
+                    dbc.Col(
+                        className="planar legend p-1",
+                        children=[
+                            dbc.Row(
+                                html.Img(
+                                    className='m-auto img-fluid card-img shadow p-1',
+                                    src='assets/planar.png',
+                                ),
+                            ),
+                            dbc.Row(
+                                className='justify-content-center text-center p-1 h4 text-uppercase',
+                                children=['Planar Polycrystal'],
+                            ),
+                        ],
+                    ),
+                    dbc.Col(
+                        className="rimed legend p-1",
+                        children=[
+                            dbc.Row(
+                                html.Img(
+                                    className='m-auto img-fluid card-img shadow p-1',
+                                    src='assets/rimed.png',
+                                ),
+                            ),
+                            dbc.Row(
+                                className='justify-content-center text-center p-1 h4 text-uppercase',
+                                children=['Rimed'],
                             ),
                         ],
                     ),

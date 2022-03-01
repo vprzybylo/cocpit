@@ -10,12 +10,12 @@ def banners():
                 className="d-flex justify-content-around",
                 children=[
                     dbc.Col(
-                        className="d-flex justify-content-around legend shadow m-2",
+                        className="col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-3 d-flex justify-content-around legend shadow m-2",
                         children=[
                             dbc.Col(
                                 children=[
                                     dbc.Row(
-                                        className=' justify-content-center text-center text-gray-900  h4 text-uppercase',
+                                        className='justify-content-center text-center text-gray-900 h4 text-uppercase',
                                         children=['Image Count:'],
                                     ),
                                     dbc.Row(
@@ -33,20 +33,20 @@ def banners():
                             dbc.Col(
                                 children=[
                                     html.I(
-                                        className='fa fa-image m-auto px-3 align-middle',
+                                        className='fa fa-image m-auto px-3 align-middle  text-gray-300',
                                     ),
                                 ],
-                                className='d-flex icon-bgrd',
+                                className='d-flex',
                             ),
                         ],
                     ),
                     dbc.Col(
-                        className="d-flex justify-content-around legend shadow m-2",
+                        className="col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-3 d-flex justify-content-around legend shadow m-2",
                         children=[
                             dbc.Col(
                                 children=[
                                     dbc.Row(
-                                        className=' justify-content-center text-center text-gray-900  h4 text-uppercase',
+                                        className='justify-content-center text-center text-gray-900 h4 text-uppercase',
                                         children=['Flight Count:'],
                                     ),
                                     dbc.Row(
@@ -64,15 +64,15 @@ def banners():
                             dbc.Col(
                                 children=[
                                     html.I(
-                                        className='fa fa-plane m-auto px-3 align-middle',
+                                        className='fa fa-plane m-auto px-3 align-middle  text-gray-300',
                                     ),
                                 ],
-                                className='d-flex icon-bgrd',
+                                className='d-flex',
                             ),
                         ],
                     ),
                     dbc.Col(
-                        className="d-flex justify-content-around legend shadow m-2",
+                        className="col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-3 d-flex justify-content-around legend shadow m-2",
                         children=[
                             dbc.Col(
                                 children=[
@@ -95,10 +95,10 @@ def banners():
                             dbc.Col(
                                 children=[
                                     html.I(
-                                        className='fa fa-clock m-auto px-3 align-middle',
+                                        className='fa fa-clock m-auto px-3 align-middle  text-gray-300',
                                     ),
                                 ],
-                                className='d-flex icon-bgrd',
+                                className='d-flex',
                             ),
                         ],
                     ),
