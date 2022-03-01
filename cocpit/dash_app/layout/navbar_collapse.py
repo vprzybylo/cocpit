@@ -7,26 +7,14 @@ from datetime import date
 
 def navbar_collapse():
     return dbc.Row(
+        id='navbar_collapse',
         className='d-flex justify-content-left',
         children=[
             dbc.Navbar(
                 children=[
-                    dbc.NavbarToggler(id="navbar-toggler"),
+                    dbc.NavbarToggler(id="navbar-toggler", className='m-2'),
                     dbc.Collapse(
                         children=[
-                            dbc.Col(
-                                dcc.Dropdown(
-                                    id='campaign-dropdown',
-                                    multi=False,
-                                    options=[
-                                        {'label': i, 'value': i}
-                                        for i in globals.campaigns_rename
-                                    ],
-                                    placeholder="Campaign",
-                                    value='CRYSTAL FACE (UND)',
-                                    className='h4',
-                                ),
-                            ),
                             dbc.Col(
                                 dcc.Dropdown(
                                     id='part-type-dropdown',
@@ -37,39 +25,49 @@ def navbar_collapse():
                                     ],
                                     placeholder="Particle Type",
                                     value=globals.particle_types_rename,
-                                    className='h4',
+                                    className='h4 d-flex col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-3',
                                 ),
-                                className='m-2 col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-3 d-flex justify-content-around',
+                                className='d-flex',
                             ),
-                            dbc.Row(
-                                children=[
-                                    dbc.Col(
-                                        dcc.Dropdown(
-                                            id='property-dropdown',
-                                            options=[
-                                                {'label': i, 'value': i}
-                                                for i in globals.particle_properties
-                                            ],
-                                            placeholder="Particle Property",
-                                            value='Complexity',
-                                            className='h4',
-                                        ),
-                                        className='m-2 col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-3 d-flex justify-content-around',
-                                    ),
-                                    dbc.Col(
-                                        dcc.Dropdown(
-                                            id='env-dropdown',
-                                            options=[
-                                                {'label': i, 'value': i}
-                                                for i in globals.env_properties
-                                            ],
-                                            placeholder="Environmental Variable",
-                                            value='Ice Water Content',
-                                            className='h4',
-                                        ),
-                                        className='m-2 col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-3 d-flex justify-content-around',
-                                    ),
-                                ],
+                            dbc.Col(
+                                dcc.Dropdown(
+                                    id='campaign-dropdown',
+                                    multi=False,
+                                    options=[
+                                        {'label': i, 'value': i}
+                                        for i in globals.campaigns_rename
+                                    ],
+                                    placeholder="Campaign",
+                                    value='CRYSTAL FACE (UND)',
+                                    className='h4 d-flex col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-3',
+                                ),
+                                className='d-flex m-2 ',
+                            ),
+                            dbc.Col(
+                                dcc.Dropdown(
+                                    id='property-dropdown',
+                                    options=[
+                                        {'label': i, 'value': i}
+                                        for i in globals.particle_properties
+                                    ],
+                                    placeholder="Particle Property",
+                                    value='Complexity',
+                                    className='h4 d-flex col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-3',
+                                ),
+                                className='d-flex m-2 ',
+                            ),
+                            dbc.Col(
+                                dcc.Dropdown(
+                                    id='env-dropdown',
+                                    options=[
+                                        {'label': i, 'value': i}
+                                        for i in globals.env_properties
+                                    ],
+                                    placeholder="Environmental Variable",
+                                    value='Ice Water Content',
+                                    className='h4 d-flex col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-3',
+                                ),
+                                className='d-flex m-2 ',
                             ),
                             dbc.Col(
                                 dcc.DatePickerRange(
@@ -79,30 +77,27 @@ def navbar_collapse():
                                     month_format='MMM Do, YY',
                                     display_format='MMM Do, YY',
                                 ),
+                                className='d-flex m-2 h4 d-flex col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-3',
                             ),
-                            dbc.Row(
-                                children=[
-                                    dbc.Col(
-                                        dcc.Input(
-                                            type='text',
-                                            placeholder='min [C], e.g., -70',
-                                            id='min-temp',
-                                            value=-70,
-                                        ),
-                                        className='p-1',
-                                        align="center",
-                                    ),
-                                    dbc.Col(
-                                        dcc.Input(
-                                            type='text',
-                                            placeholder='max [C], e.g., 20',
-                                            id='max-temp',
-                                            value=40,
-                                        ),
-                                        className='p-1',
-                                        align="center",
-                                    ),
-                                ],
+                            dbc.Col(
+                                dcc.Input(
+                                    type='text',
+                                    placeholder='min [C], e.g., -70',
+                                    id='min-temp',
+                                    value=-70,
+                                ),
+                                className='p-1',
+                                align="center",
+                            ),
+                            dbc.Col(
+                                dcc.Input(
+                                    type='text',
+                                    placeholder='max [C], e.g., 20',
+                                    id='max-temp',
+                                    value=40,
+                                ),
+                                className='p-1',
+                                align="center",
                             ),
                             dbc.Col(
                                 children=[
@@ -120,7 +115,7 @@ def navbar_collapse():
                                                 1000: {'label': '1000hPa'},
                                             },
                                         ),
-                                        className='p-1',
+                                        className='p-1 col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-3',
                                     ),
                                     html.Div(
                                         dcc.RangeSlider(
@@ -136,9 +131,10 @@ def navbar_collapse():
                                                 100: {'label': '100hPa'},
                                             },
                                         ),
-                                        className='p-1',
+                                        className='p-1 col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-3',
                                     ),
                                 ],
+                                className='m-2 justify-content-around',
                             ),
                             dbc.Col(
                                 children=[
@@ -163,23 +159,26 @@ def navbar_collapse():
                                         align="center",
                                     ),
                                 ],
+                                className='d-flex m-2  justify-content-around',
                             ),
-                            dbc.Row(
+                            dbc.Col(
                                 html.Button(
                                     id='submit-button',
                                     n_clicks=0,
                                     children='Apply Filters',
-                                    className='btn btn-primary white btn-lg m-auto my-1',
+                                    className='btn btn-secondary white btn-lg m-auto my-1',
                                 ),
+                                className='d-flex m-2  justify-content-around',
                             ),
                             dcc.Download(id="download-df-csv"),
-                            dbc.Row(
+                            dbc.Col(
                                 html.Button(
                                     id='download-button',
                                     n_clicks=0,
                                     children='Download Data',
-                                    className='btn btn-primary white btn-lg m-auto my-1',
+                                    className='btn btn-secondary white btn-lg m-auto my-1',
                                 ),
+                                className='d-flex m-2  justify-content-around',
                             ),
                         ],
                         # className="ml-auto",
@@ -188,7 +187,7 @@ def navbar_collapse():
                         # horizontal="center",
                         is_open=False,
                         id="navbar-collapse",
-                        navbar=True,
+                        navbar=False,
                     ),
                 ],
             ),

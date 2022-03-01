@@ -9,52 +9,52 @@ def legend():
                 className="justify-content-around",
                 children=[
                     dbc.Col(
-                        className="agg legend p-1",
+                        className="agg legend p-1 d-flex justify-content-around",
                         children=[
                             dbc.Row(
                                 html.Img(
-                                    className='m-auto img-fluid card-img shadow',
+                                    className='m-auto img-fluid card-img shadow p-1',
                                     src='assets/agg.png',
                                 ),
                             ),
                             dbc.Row(
-                                className='justify-content-center text-center p-1 h4 text-uppercase',
+                                className='justify-content-center text-center py-2 h4 text-uppercase text-white',
                                 children=['Aggregate'],
                             ),
                         ],
                     ),
                     dbc.Col(
-                        className="budding legend p-1",
+                        className="budding legend p-1 d-flex justify-content-around",
                         children=[
                             dbc.Row(
                                 html.Img(
-                                    className='m-auto img-fluid card-img shadow',
+                                    className='m-auto img-fluid card-img shadow p-1',
                                     src='assets/budding.png',
                                 ),
                             ),
                             dbc.Row(
-                                className='justify-content-center text-center p-1 h4 text-uppercase',
+                                className='justify-content-center text-center p-1 h4 text-uppercase text-white',
                                 children=['Budding Rosette'],
                             ),
                         ],
                     ),
                     dbc.Col(
-                        className="bullet legend p-1",
+                        className="bullet legend p-1 d-flex justify-content-around ",
                         children=[
                             dbc.Row(
                                 html.Img(
-                                    className='m-auto img-fluid card-img shadow',
+                                    className='m-auto img-fluid card-img shadow p-1',
                                     src='assets/bullet.png',
                                 ),
                             ),
                             dbc.Row(
-                                className='justify-content-center text-center p-1 h4 text-uppercase',
+                                className='justify-content-center text-center p-1 h4 text-uppercase text-white',
                                 children=['Bullet Rosette'],
                             ),
                         ],
                     ),
                     dbc.Col(
-                        className="column legend p-1",
+                        className="column legend p-1 d-flex justify-content-around",
                         children=[
                             dbc.Row(
                                 html.Img(
@@ -63,13 +63,13 @@ def legend():
                                 ),
                             ),
                             dbc.Row(
-                                className='justify-content-center text-center p-1 h4 text-uppercase',
+                                className='justify-content-center text-center p-1 h4 text-uppercase text-white ',
                                 children=['Column'],
                             ),
                         ],
                     ),
                     dbc.Col(
-                        className="compact legend p-1",
+                        className="compact legend p-1 d-flex justify-content-around  ",
                         children=[
                             dbc.Row(
                                 html.Img(
@@ -78,13 +78,13 @@ def legend():
                                 ),
                             ),
                             dbc.Row(
-                                className='justify-content-center text-center p-1 h4 text-uppercase',
+                                className='justify-content-center text-center p-1 h4 text-uppercase text-white',
                                 children=['Compact Irregular'],
                             ),
                         ],
                     ),
                     dbc.Col(
-                        className="planar legend p-1",
+                        className="planar legend p-1 d-flex justify-content-around",
                         children=[
                             dbc.Row(
                                 html.Img(
@@ -93,13 +93,13 @@ def legend():
                                 ),
                             ),
                             dbc.Row(
-                                className='justify-content-center text-center p-1 h4 text-uppercase',
+                                className='justify-content-center text-center p-1 h4 text-uppercase text-white',
                                 children=['Planar Polycrystal'],
                             ),
                         ],
                     ),
                     dbc.Col(
-                        className="rimed legend p-1",
+                        className="rimed legend p-1 d-flex justify-content-around",
                         children=[
                             dbc.Row(
                                 html.Img(
@@ -108,7 +108,7 @@ def legend():
                                 ),
                             ),
                             dbc.Row(
-                                className='justify-content-center text-center p-1 h4 text-uppercase',
+                                className='justify-content-center text-center p-1 h4 text-uppercase text-white',
                                 children=['Rimed'],
                             ),
                         ],
