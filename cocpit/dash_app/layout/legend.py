@@ -13,7 +13,7 @@ def legend():
                         children=[
                             dbc.Row(
                                 html.Img(
-                                    className='m-auto img-fluid card-img shadow p-1',
+                                    className='m-auto img-fluid card-img shadow',
                                     src='assets/agg.png',
                                 ),
                             ),
@@ -28,7 +28,7 @@ def legend():
                         children=[
                             dbc.Row(
                                 html.Img(
-                                    className='m-auto img-fluid card-img shadow p-1',
+                                    className='m-auto img-fluid card-img shadow',
                                     src='assets/budding.png',
                                 ),
                             ),
@@ -43,7 +43,7 @@ def legend():
                         children=[
                             dbc.Row(
                                 html.Img(
-                                    className='m-auto img-fluid card-img shadow p-1',
+                                    className='m-auto img-fluid card-img shadow',
                                     src='assets/bullet.png',
                                 ),
                             ),

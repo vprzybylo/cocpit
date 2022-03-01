@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 from callbacks import environment, geometric, process, topographic
 from dash import dcc
 from dotenv import load_dotenv
-from layout import content, navbar, legend, banners, sidebar
+from layout import content, header, legend, banners, sidebar, navbar_collapse
 from dash_extensions.enrich import Dash
 
 
@@ -35,7 +35,8 @@ if __name__ == '__main__':
     app.layout = dbc.Container(
         [
             # sidebar.sidebar(),
-            navbar.navbar(),
+            header.header(),
+            navbar_collapse.navbar_collapse(),
             banners.banners(),
             legend.legend(),
             content.content(),
@@ -43,8 +44,8 @@ if __name__ == '__main__':
         fluid=True,
     )
 
-    # process.register(app)
-    # topographic.register(app)
-    # environment.register(app)
-    # geometric.register(app)
+    process.register(app)
+    topographic.register(app)
+    environment.register(app)
+    geometric.register(app)
     app.run_server(port=8050, host='0.0.0.0', debug=True)

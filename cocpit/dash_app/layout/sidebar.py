@@ -13,18 +13,18 @@ def sidebar():
             dbc.Row(
                 dbc.Label('Campaign:', className='label h3'),
             ),
-            dbc.Row(
-                dcc.Dropdown(
-                    id='campaign-dropdown',
-                    multi=False,
-                    options=[
-                        {'label': i, 'value': i} for i in globals.campaigns_rename
-                    ],
-                    placeholder="Campaign",
-                    value='CRYSTAL FACE (UND)',
-                    className='h4',
-                ),
-            ),
+            # dbc.Row(
+            #     dcc.Dropdown(
+            #         id='campaign-dropdown',
+            #         multi=False,
+            #         options=[
+            #             {'label': i, 'value': i} for i in globals.campaigns_rename
+            #         ],
+            #         placeholder="Campaign",
+            #         value='CRYSTAL FACE (UND)',
+            #         className='h4',
+            #     ),
+            # ),
             dbc.Row(
                 dbc.Label('Particle Type:', className='label h3'),
             ),

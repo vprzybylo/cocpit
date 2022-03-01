@@ -202,9 +202,9 @@ def register(app):
         return grouped_df.ngroups
 
     @app.callback(
-        Output(f"navbar-collapse1", "is_open"),
-        [Input(f"navbar-toggler1", "n_clicks")],
-        [State(f"navbar-collapse1", "is_open")],
+        Output(f"navbar-collapse", "is_open"),
+        [Input(f"navbar-toggler", "n_clicks")],
+        [State(f"navbar-collapse", "is_open")],
     )
     def toggle_navbar_collapse(n, is_open):
         if n:

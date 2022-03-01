@@ -39,13 +39,18 @@
   z-index: 1;
 }
 
-#navbar{
+#header{
   background-color: #6b6b6b;
 }
 
+#navbar_collapse{
+  background-color: #888888;
+}
+
 #sidebar{
-  /* position: absolute;
-  bottom: 0; */
+  position: absolute;
+  bottom: 0;
+  top:80;
   background-color: #fefefe;
   margin: 2rem;
   width: 20rem;
@@ -200,15 +205,16 @@ p {
   background-color: #6b6b6b;
 }
 
-.agg{
- background-color: #3c3a2680;
+.planar{
+ background-color: rgb(82,106,131);
 }
 
 .compact{
  word-wrap: break-word;
- background-color: rgb(133, 92, 117, 0.5);
+ background-color: rgb(133, 92, 117);
 }
-.planar {
+
+.agg {
  word-wrap: break-word;
  background-color:rgb(175, 100, 88);
 }
@@ -218,13 +224,13 @@ p {
 }
 
 .column{
-  background-color:  rgb(82, 106, 131);
+  background-color:  rgb(115, 111, 76);
 }
-.budding{
+.bullet{
   word-wrap: break-word;
   background-color:  rgb(104, 133, 92);
 }
-.bullet{
+.budding{
   word-wrap: break-word;
   background-color:  rgb(98, 83, 119);
 }
@@ -354,13 +360,14 @@ h3, .h3 {
 
 h4, .h4 {
 font-size: calc(1.0rem + 0.2vw) !important;
-font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+font-family: 'Lucida Grande';
+font-weight: 400 !important;
 
 }
 @media (min-width: 1200px) {
   h4, .h4 {
-    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-
+    font-family: 'Lucida Grande';
+    font-weight: 400 !important;
     font-size: 1.0rem !important;
   }
 }
@@ -4707,7 +4714,7 @@ textarea.form-control-lg {
   min-width: 0;
   word-wrap: break-word;
   background-clip: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.125);
+  /* border: 1px solid rgba(0, 0, 0, 0.125); */
   border-radius: 0.25rem;
 }
 .card > hr {
@@ -6925,8 +6932,10 @@ textarea.form-control-lg {
   display: none !important;
 }
 
+
+
 .shadow {
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
 }
 
 .shadow-sm {
@@ -8014,8 +8023,7 @@ textarea.form-control-lg {
 }
 
 .bg-light {
-  --bs-bg-opacity: 1;
-  background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;
+  background-color: #f0f0f0!important;
 }
 
 .bg-dark {
