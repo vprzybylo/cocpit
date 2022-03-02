@@ -23,32 +23,7 @@ def navbar_collapse():
                                             dbc.Label(
                                                 'Campaign:', className='label h4'
                                             ),
-                                            className='m-2 justify-content-around',
-                                        ),
-                                        dbc.Row(
-                                            dcc.Dropdown(
-                                                id='part-type-dropdown',
-                                                multi=True,
-                                                options=[
-                                                    {'label': i, 'value': i}
-                                                    for i in globals.particle_types_rename
-                                                ],
-                                                placeholder="Particle Type",
-                                                value=globals.particle_types_rename,
-                                                className='h4 ',
-                                            ),
-                                            className='m-2',
-                                        ),
-                                    ],
-                                    className='m-2 col-xs-12 col-sm-6 col-md-3 col-lg-3 col-xl-3',
-                                ),
-                                dbc.Col(
-                                    children=[
-                                        dbc.Row(
-                                            dbc.Label(
-                                                'Particle Type:', className='label h4'
-                                            ),
-                                            className='m-2 justify-content-around',
+                                            className='justify-content-around',
                                         ),
                                         dbc.Row(
                                             dcc.Dropdown(
@@ -62,23 +37,60 @@ def navbar_collapse():
                                                 value='CRYSTAL FACE (UND)',
                                                 className='h4',
                                             ),
-                                            className='m-2',
+                                            className='m-2 d-inline',
                                         ),
                                     ],
-                                    className='m-2 col-xs-12 col-sm-6 col-md-3 col-lg-3 col-xl-3',
+                                    className='m-1 col-xs-12 col-sm-6 col-md-3 col-lg-3 col-xl-3',
                                 ),
                                 dbc.Col(
-                                    dcc.Dropdown(
-                                        id='property-dropdown',
-                                        options=[
-                                            {'label': i, 'value': i}
-                                            for i in globals.particle_properties
-                                        ],
-                                        placeholder="Particle Property",
-                                        value='Complexity',
-                                        className='h4',
-                                    ),
-                                    className='m-2 col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3',
+                                    children=[
+                                        dbc.Row(
+                                            dbc.Label(
+                                                'Particle Type:', className='label h4'
+                                            ),
+                                            className='justify-content-around',
+                                        ),
+                                        dbc.Row(
+                                            dcc.Dropdown(
+                                                id='part-type-dropdown',
+                                                multi=True,
+                                                options=[
+                                                    {'label': i, 'value': i}
+                                                    for i in globals.particle_types_rename
+                                                ],
+                                                placeholder="Particle Type",
+                                                value=globals.particle_types_rename,
+                                                className='h4',
+                                            ),
+                                            className='d-inline',
+                                        ),
+                                    ],
+                                    className='m-1 col-xs-12 col-sm-6 col-md-3 col-lg-3 col-xl-3',
+                                ),
+                                dbc.Col(
+                                    children=[
+                                        dbc.Row(
+                                            dbc.Label(
+                                                'Particle Property:',
+                                                className='label h4',
+                                            ),
+                                            className='justify-content-around',
+                                        ),
+                                        dbc.Row(
+                                            dcc.Dropdown(
+                                                id='property-dropdown',
+                                                options=[
+                                                    {'label': i, 'value': i}
+                                                    for i in globals.particle_properties
+                                                ],
+                                                placeholder="Particle Property",
+                                                value='Complexity',
+                                                className='h4',
+                                            ),
+                                            className='d-inline',
+                                        ),
+                                    ],
+                                    className='m-1 col-xs-12 col-sm-6 col-md-3 col-lg-3 col-xl-3',
                                 ),
                                 # dbc.Col(
                                 #     dcc.Dropdown(
@@ -205,7 +217,7 @@ def navbar_collapse():
                                 #     className='d-flex m-2  justify-content-around',
                                 # ),
                             ],
-                            className='align-content-center justify-content-around',
+                            className='justify-content-around',
                         ),
                         is_open=False,
                         id="navbar-collapse",
@@ -214,5 +226,5 @@ def navbar_collapse():
                 ],
             ),
         ],
-        # sticky="top",
+        sticky="top",
     )

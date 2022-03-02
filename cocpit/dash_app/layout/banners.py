@@ -36,6 +36,7 @@ def banners():
                                         className='fa fa-image m-auto px-3 text-gray-300',
                                     ),
                                 ],
+                                className='my-auto',
                             ),
                         ],
                     ),
@@ -63,9 +64,10 @@ def banners():
                             dbc.Col(
                                 children=[
                                     html.I(
-                                        className='fa fa-plane m-auto px-3 align-middle  text-gray-300',
+                                        className='fa fa-plane m-auto px-3 text-gray-300',
                                     ),
                                 ],
+                                className='my-auto',
                             ),
                         ],
                     ),
@@ -93,9 +95,10 @@ def banners():
                             dbc.Col(
                                 children=[
                                     html.I(
-                                        className='fa fa-clock m-auto px-3 align-middle  text-gray-300',
+                                        className='fa fa-clock m-auto px-3 text-gray-300',
                                     ),
                                 ],
+                                className='my-auto',
                             ),
                         ],
                     ),
