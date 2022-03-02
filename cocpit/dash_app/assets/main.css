@@ -225,7 +225,7 @@ p {
 
 .card {
  position: relative;
- display: inline !important;
+ /* display: flex !important; */
  min-width: 0;
  word-wrap: break-word;
  background-clip: border-box;
@@ -239,6 +239,7 @@ p {
  flex: 1 1 auto;
  padding: 1rem 1rem;
  margin: auto;
+ border: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 
