@@ -37,10 +37,10 @@ def navbar_collapse():
                                                 value='CRYSTAL FACE (UND)',
                                                 className='h4',
                                             ),
-                                            className='m-2 d-inline',
+                                            className='d-inline',
                                         ),
                                     ],
-                                    className='m-1 col-xs-12 col-sm-6 col-md-3 col-lg-3 col-xl-3',
+                                    className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-4 col-xl-4',
                                 ),
                                 dbc.Col(
                                     children=[
@@ -65,7 +65,7 @@ def navbar_collapse():
                                             className='d-inline',
                                         ),
                                     ],
-                                    className='m-1 col-xs-12 col-sm-6 col-md-3 col-lg-3 col-xl-3',
+                                    className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-4 col-xl-4',
                                 ),
                                 dbc.Col(
                                     children=[
@@ -90,21 +90,33 @@ def navbar_collapse():
                                             className='d-inline',
                                         ),
                                     ],
-                                    className='m-1 col-xs-12 col-sm-6 col-md-3 col-lg-3 col-xl-3',
+                                    className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-4 col-xl-4',
                                 ),
-                                # dbc.Col(
-                                #     dcc.Dropdown(
-                                #         id='env-dropdown',
-                                #         options=[
-                                #             {'label': i, 'value': i}
-                                #             for i in globals.env_properties
-                                #         ],
-                                #         placeholder="Environmental Variable",
-                                #         value='Ice Water Content',
-                                #         className='h4',
-                                #     ),
-                                #     className='d-flex m-2 col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3',
-                                # ),
+                                dbc.Col(
+                                    children=[
+                                        dbc.Row(
+                                            dbc.Label(
+                                                'Environmental Property:',
+                                                className='label h4',
+                                            ),
+                                            className='justify-content-around',
+                                        ),
+                                        dbc.Row(
+                                            dcc.Dropdown(
+                                                id='env-dropdown',
+                                                options=[
+                                                    {'label': i, 'value': i}
+                                                    for i in globals.env_properties
+                                                ],
+                                                placeholder="Environmental Variable",
+                                                value='Ice Water Content',
+                                                className='h4',
+                                            ),
+                                            className='d-inline',
+                                        ),
+                                    ],
+                                    className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-4 col-xl-4',
+                                ),
                                 # dbc.Col(
                                 #     dcc.DatePickerRange(
                                 #         id='date-picker',
