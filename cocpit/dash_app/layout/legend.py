@@ -13,12 +13,12 @@ def legend():
                         children=[
                             dbc.Row(
                                 html.Img(
-                                    className='m-auto img-fluid card-img shadow p-1',
+                                    className='my-auto img-fluid card-img shadow p-1',
                                     src='assets/agg.png',
                                 ),
                             ),
                             dbc.Row(
-                                className='justify-content-center text-center py-2 h4 text-uppercase text-white',
+                                className='my-auto justify-content-center text-center py-2 h4 text-uppercase text-white',
                                 children=['Aggregate'],
                             ),
                         ],
@@ -28,12 +28,12 @@ def legend():
                         children=[
                             dbc.Row(
                                 html.Img(
-                                    className='m-auto img-fluid card-img shadow p-1',
+                                    className='my-auto img-fluid card-img shadow p-1',
                                     src='assets/budding.png',
                                 ),
                             ),
                             dbc.Row(
-                                className='justify-content-center text-center p-1 h4 text-uppercase text-white',
+                                className='my-auto justify-content-center text-center p-1 h4 text-uppercase text-white',
                                 children=['Budding Rosette'],
                             ),
                         ],
@@ -43,12 +43,12 @@ def legend():
                         children=[
                             dbc.Row(
                                 html.Img(
-                                    className='m-auto img-fluid card-img shadow p-1',
+                                    className='img-fluid card-img shadow p-1',
                                     src='assets/bullet.png',
                                 ),
                             ),
                             dbc.Row(
-                                className='justify-content-center text-center p-1 h4 text-uppercase text-white',
+                                className='my-auto justify-content-center text-center p-1 h4 text-uppercase text-white',
                                 children=['Bullet Rosette'],
                             ),
                         ],
@@ -58,12 +58,12 @@ def legend():
                         children=[
                             dbc.Row(
                                 html.Img(
-                                    className='m-auto img-fluid card-img shadow p-1',
+                                    className='my-auto img-fluid card-img shadow p-1',
                                     src='assets/column.png',
                                 ),
                             ),
                             dbc.Row(
-                                className='justify-content-center text-center p-1 h4 text-uppercase text-white ',
+                                className='my-auto justify-content-center text-center p-1 h4 text-uppercase text-white ',
                                 children=['Column'],
                             ),
                         ],
@@ -73,12 +73,12 @@ def legend():
                         children=[
                             dbc.Row(
                                 html.Img(
-                                    className='m-auto img-fluid card-img shadow p-1',
+                                    className='my-auto img-fluid card-img shadow p-1',
                                     src='assets/compact.png',
                                 ),
                             ),
                             dbc.Row(
-                                className='justify-content-center text-center p-1 h4 text-uppercase text-white',
+                                className='my-auto justify-content-center text-center p-1 h4 text-uppercase text-white',
                                 children=['Compact Irregular'],
                             ),
                         ],
@@ -88,12 +88,12 @@ def legend():
                         children=[
                             dbc.Row(
                                 html.Img(
-                                    className='m-auto img-fluid card-img shadow p-1',
+                                    className='my-auto img-fluid card-img shadow p-1',
                                     src='assets/planar.png',
                                 ),
                             ),
                             dbc.Row(
-                                className='justify-content-center text-center p-1 h4 text-uppercase text-white',
+                                className='my-auto justify-content-center text-center p-1 h4 text-uppercase text-white',
                                 children=['Planar Polycrystal'],
                             ),
                         ],
@@ -103,12 +103,12 @@ def legend():
                         children=[
                             dbc.Row(
                                 html.Img(
-                                    className='m-auto img-fluid card-img shadow p-1',
+                                    className='my-auto img-fluid card-img shadow p-1',
                                     src='assets/rimed.png',
                                 ),
                             ),
                             dbc.Row(
-                                className='justify-content-center text-center p-1 h4 text-uppercase text-white',
+                                className='my-auto justify-content-center text-center p-1 h4 text-uppercase text-white',
                                 children=['Rimed'],
                             ),
                         ],

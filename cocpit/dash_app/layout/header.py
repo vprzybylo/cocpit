@@ -47,39 +47,5 @@ def header():
                 ],
                 className='d-flex justify-content-between align-items-center',
             ),
-            dbc.Navbar(
-                dbc.Row(
-                    [
-                        dbc.Col(
-                            children=[
-                                dbc.NavbarToggler(id="navbar-toggler1"),
-                                dbc.Collapse(
-                                    dbc.Nav(
-                                        [campaign_dropdown],
-                                        className="ms-auto",
-                                        navbar=True,
-                                    ),
-                                    id="navbar-collapse1",
-                                    navbar=True,
-                                ),
-                            ],
-                        ),
-                        # dbc.Col(
-                        #     children=[
-                        #         dbc.Col(
-                        #             dbc.Button(
-                        #                 'Apply Filters',
-                        #                 outline=True,
-                        #                 className="mr-1 btn-secondary fas fa-bars",
-                        #                 id="btn_sidebar",
-                        #             ),
-                        #             className="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 mx-4",
-                        #         ),
-                        #     ],
-                        # ),
-                    ],
-                    className='justify-content-between align-items-center',
-                ),
-            ),
         ],
     )
