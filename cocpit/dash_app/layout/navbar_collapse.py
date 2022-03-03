@@ -7,7 +7,6 @@ from datetime import date
 
 def navbar_collapse():
     return dbc.Navbar(
-        id='navbar_collapse',
         children=[
             dbc.Row(
                 children=[
@@ -22,7 +21,8 @@ def navbar_collapse():
                                         children=[
                                             dbc.Row(
                                                 dbc.Label(
-                                                    'Campaign:', className='label h4'
+                                                    'Campaign:',
+                                                    className='label h4',
                                                 ),
                                                 className='justify-content-around',
                                             ),
@@ -41,33 +41,32 @@ def navbar_collapse():
                                                 className='d-inline',
                                             ),
                                         ],
-                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-4 col-xl-4',
+                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-3 col-xl-3',
                                     ),
                                     dbc.Col(
                                         children=[
                                             dbc.Row(
                                                 dbc.Label(
-                                                    'Particle Type:',
+                                                    'Environmental Property:',
                                                     className='label h4',
                                                 ),
                                                 className='justify-content-around',
                                             ),
                                             dbc.Row(
                                                 dcc.Dropdown(
-                                                    id='part-type-dropdown',
-                                                    multi=True,
+                                                    id='env-dropdown',
                                                     options=[
                                                         {'label': i, 'value': i}
-                                                        for i in globals.particle_types_rename
+                                                        for i in globals.env_properties
                                                     ],
-                                                    placeholder="Particle Type",
-                                                    value=globals.particle_types_rename,
-                                                    className='h4',
+                                                    placeholder="Environmental Variable",
+                                                    value='Ice Water Content',
+                                                    className='h4 dropdown',
                                                 ),
                                                 className='d-inline',
                                             ),
                                         ],
-                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-4 col-xl-4',
+                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-3 col-xl-3',
                                     ),
                                     dbc.Col(
                                         children=[
@@ -92,32 +91,7 @@ def navbar_collapse():
                                                 className='d-inline',
                                             ),
                                         ],
-                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-4 col-xl-4',
-                                    ),
-                                    dbc.Col(
-                                        children=[
-                                            dbc.Row(
-                                                dbc.Label(
-                                                    'Environmental Property:',
-                                                    className='label h4',
-                                                ),
-                                                className='justify-content-around',
-                                            ),
-                                            dbc.Row(
-                                                dcc.Dropdown(
-                                                    id='env-dropdown',
-                                                    options=[
-                                                        {'label': i, 'value': i}
-                                                        for i in globals.env_properties
-                                                    ],
-                                                    placeholder="Environmental Variable",
-                                                    value='Ice Water Content',
-                                                    className='h4',
-                                                ),
-                                                className='d-inline',
-                                            ),
-                                        ],
-                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-4 col-xl-4',
+                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-3 col-xl-3',
                                     ),
                                     dbc.Col(
                                         children=[
@@ -140,7 +114,7 @@ def navbar_collapse():
                                                 className='justify-content-around',
                                             ),
                                         ],
-                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-4 col-xl-4',
+                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-3 col-xl-3',
                                     ),
                                     dbc.Col(
                                         children=[
@@ -171,7 +145,7 @@ def navbar_collapse():
                                                 className='justify-content-around',
                                             ),
                                         ],
-                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-4 col-xl-4',
+                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-3 col-xl-3',
                                     ),
                                     dbc.Col(
                                         children=[
@@ -198,7 +172,7 @@ def navbar_collapse():
                                                         },
                                                     ),
                                                 ),
-                                                className='justify-content-around d-inline',
+                                                className='justify-content-around d-inline ',
                                             ),
                                             dbc.Row(
                                                 html.Div(
@@ -219,7 +193,7 @@ def navbar_collapse():
                                                 className='justify-content-around d-inline',
                                             ),
                                         ],
-                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-4 col-xl-4',
+                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-3 col-xl-3',
                                     ),
                                     dbc.Col(
                                         children=[
@@ -250,7 +224,33 @@ def navbar_collapse():
                                                 className='p-1 mx-auto justify-content-around',
                                             ),
                                         ],
-                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-4 col-xl-4',
+                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-3 col-xl-3',
+                                    ),
+                                    dbc.Col(
+                                        children=[
+                                            dbc.Row(
+                                                dbc.Label(
+                                                    'Particle Type:',
+                                                    className='label h4',
+                                                ),
+                                                className='justify-content-around',
+                                            ),
+                                            dbc.Row(
+                                                dcc.Dropdown(
+                                                    id='part-type-dropdown',
+                                                    multi=True,
+                                                    options=[
+                                                        {'label': i, 'value': i}
+                                                        for i in globals.particle_types_rename
+                                                    ],
+                                                    placeholder="Particle Type",
+                                                    value=globals.particle_types_rename,
+                                                    className='h4',
+                                                ),
+                                                className='d-inline',
+                                            ),
+                                        ],
+                                        className='m-1 col-xs-10 col-sm-8 col-md-8 col-lg-8 col-xl-8',
                                     ),
                                 ],
                                 className='justify-content-around',
