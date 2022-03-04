@@ -202,11 +202,20 @@ def register(app):
         return grouped_df.ngroups
 
     @app.callback(
-        Output("navbar-collapse", "is_open"),
+        [Output("navbar-collapse", "is_open"), Output("navbar-collapse", "style")],
         [Input("navbar-toggler", "n_clicks")],
         [State("navbar-collapse", "is_open")],
     )
     def toggle_navbar_collapse(n, is_open):
         if n:
-            return not is_open
-        return is_open
+            is_open = not is_open
+            if is_open is True:
+                print('in true')
+                return is_open, {
+                    'overflow-y': 'scroll',
+                    'height': '10rem',
+                }
+            else:
+                return is_open, {}
+        else:
+            return is_open, {}
