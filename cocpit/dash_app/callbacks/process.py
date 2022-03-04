@@ -16,7 +16,7 @@ def read_campaign(campaign):
     campaign = 'ICE_L' if campaign == 'ICE L' else campaign
     campaign = 'AIRS_II' if campaign == 'AIRS II' else campaign
     df = pd.read_parquet(
-        f"../../final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
+        f"/data/data/final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
         engine='fastparquet',
     )
 
@@ -202,9 +202,9 @@ def register(app):
         return grouped_df.ngroups
 
     @app.callback(
-        Output(f"navbar-collapse", "is_open"),
-        [Input(f"navbar-toggler", "n_clicks")],
-        [State(f"navbar-collapse", "is_open")],
+        Output("navbar-collapse", "is_open"),
+        [Input("navbar-toggler", "n_clicks")],
+        [State("navbar-collapse", "is_open")],
     )
     def toggle_navbar_collapse(n, is_open):
         if n:
