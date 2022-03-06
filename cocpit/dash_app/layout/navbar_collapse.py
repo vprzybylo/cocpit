@@ -1,4 +1,3 @@
-from dash import html
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 import globals
@@ -120,7 +119,7 @@ def navbar_collapse():
                                         children=[
                                             dbc.Row(
                                                 dbc.Label(
-                                                    'Temperature Range:',
+                                                    'Temperature Range [C]:',
                                                     className='label h4',
                                                 ),
                                                 className='justify-content-around',
@@ -199,7 +198,7 @@ def navbar_collapse():
                                         children=[
                                             dbc.Row(
                                                 dbc.Label(
-                                                    'Size Range:',
+                                                    'Size Range [µm]:',
                                                     className='label h4',
                                                 ),
                                                 className='justify-content-around',
@@ -250,7 +249,7 @@ def navbar_collapse():
                                                 className='d-inline',
                                             ),
                                         ],
-                                        className='m-1 col-xs-10 col-sm-8 col-md-8 col-lg-8 col-xl-8',
+                                        className='m-1 col-xs-10 col-sm-7 col-md-7 col-lg-7 col-xl-7',
                                     ),
                                 ],
                                 className='justify-content-around',

@@ -15,6 +15,7 @@ services:
     shm_size: '256G'
     user: ${UID_GID}
     volumes:
+      - /home/vanessa/:/home/vanessa
       - /raid/data/:/data/data/
       - ${HOME}/.local/share/code-server/:/home/vanessa/.local/share/code-server
       - ${PWD}:/home/coder/project

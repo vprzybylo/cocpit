@@ -60,7 +60,7 @@ def content():
                 [
                     dbc.Row(
                         [
-                            dbc.Col(
+                            html.Div(
                                 children=[
                                     dbc.Card(
                                         [
@@ -77,7 +77,6 @@ def content():
                                 className='col-sm-12 col-md-12 col-lg-6 col-xl-6',
                             ),
                             html.Div(
-                                className='col-sm-12 col-md-12 col-lg-6 col-xl-6',
                                 children=[
                                     dbc.Card(
                                         [
@@ -91,6 +90,7 @@ def content():
                                         className='card-body',
                                     )
                                 ],
+                                className='col-sm-12 col-md-12 col-lg-6 col-xl-6',
                             ),
                         ],
                         #  className='justify-content-center align-items-center',
@@ -115,7 +115,7 @@ def content():
                                         className='card-body',
                                     )
                                 ],
-                                className='col col-sm-12 col-md-12 col-lg-6 col-xl-6',
+                                className='d-flex col-sm-12 col-md-12 col-lg-6 col-xl-6',
                             ),
                             dbc.Col(
                                 children=[
@@ -133,7 +133,7 @@ def content():
                                         className='card-body',
                                     )
                                 ],
-                                className='col col-sm-12 col-md-12 col-lg-6 col-xl-6',
+                                className='d-flex col-sm-12 col-md-12 col-lg-6 col-xl-6',
                             ),
                         ],
                         #  className='justify-content-center align-items-center',

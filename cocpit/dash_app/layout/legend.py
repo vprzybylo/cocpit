@@ -9,7 +9,7 @@ def legend():
                 className="justify-content-around",
                 children=[
                     dbc.Col(
-                        className="agg legend p-1 d-flex justify-content-around",
+                        className="agg legend p-1 d-flex justify-space-between",
                         children=[
                             dbc.Row(
                                 html.Img(
@@ -24,7 +24,7 @@ def legend():
                         ],
                     ),
                     dbc.Col(
-                        className="budding legend p-1 d-flex justify-content-around",
+                        className="budding legend p-1 d-flex justify-space-between",
                         children=[
                             dbc.Row(
                                 html.Img(
@@ -39,7 +39,7 @@ def legend():
                         ],
                     ),
                     dbc.Col(
-                        className="bullet legend p-1 d-flex justify-content-around ",
+                        className="bullet legend p-1 d-flex justify-space-between",
                         children=[
                             dbc.Row(
                                 html.Img(
@@ -54,7 +54,7 @@ def legend():
                         ],
                     ),
                     dbc.Col(
-                        className="column legend p-1 d-flex justify-content-around",
+                        className="column legend p-1 d-flex justify-space-between",
                         children=[
                             dbc.Row(
                                 html.Img(
@@ -69,7 +69,7 @@ def legend():
                         ],
                     ),
                     dbc.Col(
-                        className="compact legend p-1 d-flex justify-content-around  ",
+                        className="compact legend p-1 d-flex justify-space-between",
                         children=[
                             dbc.Row(
                                 html.Img(
@@ -84,7 +84,7 @@ def legend():
                         ],
                     ),
                     dbc.Col(
-                        className="planar legend p-1 d-flex justify-content-around",
+                        className="planar legend p-1 d-flex justify-space-between",
                         children=[
                             dbc.Row(
                                 html.Img(
@@ -99,7 +99,7 @@ def legend():
                         ],
                     ),
                     dbc.Col(
-                        className="rimed legend p-1 d-flex justify-content-around",
+                        className="rimed legend p-1 d-flex justify-space-between",
                         children=[
                             dbc.Row(
                                 html.Img(
