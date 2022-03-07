@@ -69,7 +69,6 @@ def register(app):
         df['max_dim'] = np.maximum(df['Particle Width'], df['Particle Height'])
         df['min_dim'] = np.minimum(df['Particle Width'], df['Particle Height'])
         df = df[(df['min_dim'] >= int(min_size)) & (df['max_dim'] <= int(max_size))]
-        df['date'] = df['date'].str.split(' ').str[0]
         df = df[df['date'].between(start_date, end_date)]
         df = df[df['Temperature'].between(int(min_temp), int(max_temp))]
         df = df[df['Pressure'].between(int(min_pres[0]), int(max_pres[0]))]
@@ -125,7 +124,7 @@ def register(app):
         [Input("download-button", "n_clicks"), State('store-df', 'data')],
         prevent_initial_call=True,
     )
-    def func(n_clicks, df):
+    def download_data(n_clicks, df):
         return dcc.send_data_frame(df.to_csv, "cocpit.csv")
 
     @app.callback(
@@ -158,6 +157,24 @@ def register(app):
         df_date = pd.to_datetime(df_date)
         grouped_df = df_date.groupby([df_date.dt.month, df_date.dt.day])
         return grouped_df.ngroups
+
+    @app.callback(
+        Output('flight-hours', 'children'),
+        [
+            Input('df-date', 'data'),
+        ],
+    )
+    def find_flight_hours(df_date):
+        '''update number of flight hours after filtering dates'''
+
+        df_date1 = pd.to_datetime(df_date, format='%Y-%m-%d %H:%M:%S')
+        group_by_day = df_date1.groupby([df_date1.dt.day])
+        sum_hours_over_days = 0
+        for day in group_by_day:
+            print(day[1].dt.hour.unique())
+            sum_hours_over_days += len(day[1].dt.hour.unique())
+
+        return sum_hours_over_days
 
     @app.callback(
         [
