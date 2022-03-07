@@ -40,11 +40,11 @@ def content():
                                                         figure={},
                                                     ),
                                                     html.P(
-                                                        'Hover over image and choose box select icon to update all figures based on chosen location. \n \
+                                                        'Hover over the image and choose the box select icon to update all figures based on selected location. \n \
                                                         Select an empty region to reset view with all data points.',
-                                                        className='p',
+                                                        className='p text-center',
                                                     ),
-                                                ]
+                                                ],
                                             ),
                                         ],
                                         className='card-body',

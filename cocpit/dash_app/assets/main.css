@@ -267,33 +267,33 @@ p {
 }
 
 .planar{
- background-color: rgb(82,106,131,0.9);
+ background-color: rgba(114, 98, 136, 0.9);
 }
 
 .compact{
  word-wrap: break-word;
- background-color: rgb(133, 92, 117, 0.9);
+ background-color: rgba(82,106,131, 0.9);
 }
 
 .agg {
  word-wrap: break-word;
- background-color:rgb(175, 100, 88, 0.9);
+ background-color: rgba(130, 63, 63, 0.9);
 }
 
 .rimed {
-  background-color:  rgb(217, 175, 107,0.9);
+  background-color:  rgba(82, 113, 91, 0.9);
 }
 
 .column{
-  background-color:  rgb(115, 111, 76,0.9);
+  background-color:  rgb(124, 124, 124, 0.9);
 }
 .bullet{
   word-wrap: break-word;
-  background-color:  rgb(104, 133, 92,0.9);
+  background-color:  rgb(217, 175, 107,0.9);
 }
 .budding{
   word-wrap: break-word;
-  background-color:  rgb(98, 83, 119,0.9);
+  background-color:  rgba(198, 137, 100, 0.9);
 }
 
 :root {

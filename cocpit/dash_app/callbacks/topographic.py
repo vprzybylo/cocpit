@@ -10,6 +10,7 @@ import plotly.express as px
 from callbacks import process
 from callbacks.topo_map import TopoMap as TopoMap
 from dash_extensions.enrich import Input, Output
+import globals
 
 
 def register(app):
@@ -32,7 +33,7 @@ def register(app):
             lat=df_lat,
             lon=df_lon,
             color=df_classification,
-            color_discrete_sequence=px.colors.qualitative.Antique,
+            color_discrete_map=globals.color_discrete_map,
             mapbox_style="stamen-terrain"
             # hover_data={
             #     'Ice Water Content': True,
@@ -80,12 +81,11 @@ def register(app):
         Input("df-classification", "data"),
     )
     def vert_dist(df_lon, df_alt, df_classification):
-
         vert_dist = px.violin(
             x=df_classification,
             y=df_alt,
             color=df_classification,
-            color_discrete_sequence=px.colors.qualitative.Antique,
+            color_discrete_map=globals.color_discrete_map,
             labels={
                 "x": "Particle Type",
                 "y": 'Altitude',

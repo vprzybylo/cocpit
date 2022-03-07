@@ -7,6 +7,7 @@ includes callbacks
 import plotly.express as px
 from callbacks import process
 from dash_extensions.enrich import Input, Output
+import globals
 
 
 def register(app):
@@ -24,7 +25,8 @@ def register(app):
             labels,
             values=values,
             names=labels,
-            color_discrete_sequence=px.colors.qualitative.Antique,
+            color=labels,
+            color_discrete_map=globals.color_discrete_map,
         )
 
         return process.update_layout(pie, contour=True)
@@ -45,7 +47,7 @@ def register(app):
             x=classification,
             y=prop,
             color=classification,
-            color_discrete_sequence=px.colors.qualitative.Antique,
+            color_discrete_map=globals.color_discrete_map,
             labels={
                 "x": "Particle Type",
                 "y": prop_name,

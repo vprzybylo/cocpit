@@ -78,8 +78,8 @@ campaign_start_dates = {
     "AIRS II": date(2003, 11, 14),
     "ARM": date(2000, 3, 9),
     "ATTREX": date(2014, 3, 4),
-    "CRYSTAL FACE (UND)": date(2002, 7, 19),
-    "CRYSTAL FACE (NASA)": date(2002, 7, 19),
+    "CRYSTAL FACE (UND)": date(2002, 7, 13),
+    "CRYSTAL FACE (NASA)": date(2002, 7, 13),
     "ICE L": date(2007, 11, 16),
     "IPHEX": date(2014, 4, 22),
     "ISDAC": date(2008, 4, 1),
@@ -214,4 +214,15 @@ part_type_count = {
     "compact": 13483,
     "planar": 1036,
     "rimed": 293,
+}
+
+
+color_discrete_map = {
+    'aggregate': 'rgb(130, 63, 63)',
+    'budding rosette': 'rgb(198, 137, 100)',
+    'bullet rosette': 'rgb(217, 175, 107)',
+    'compact irregular': 'rgb(82,106,131)',
+    'column': 'rgb(124, 124, 124)',
+    'planar polycrystal': 'rgb(114, 98, 136)',
+    'rimed': 'rgb(82, 113, 91)',
 }

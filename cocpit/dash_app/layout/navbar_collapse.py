@@ -104,7 +104,7 @@ def navbar_collapse():
                                             dbc.Row(
                                                 dcc.DatePickerRange(
                                                     id='date-picker',
-                                                    start_date=date(2002, 7, 19),
+                                                    start_date=date(2002, 7, 13),
                                                     end_date=date(2002, 7, 23),
                                                     month_format='MMM Do, YY',
                                                     display_format='MMM Do, YY',

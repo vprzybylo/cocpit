@@ -8,6 +8,7 @@ import pandas as pd
 import plotly.express as px
 from callbacks import process
 from dash_extensions.enrich import Input, Output, State
+import globals
 
 
 def register(app):
@@ -25,7 +26,7 @@ def register(app):
             x=classification,
             y=env_prop,
             color=classification,
-            color_discrete_sequence=px.colors.qualitative.Antique,
+            color_discrete_map=globals.color_discrete_map,
             labels={
                 "x": "Particle Type",
                 "y": label,
