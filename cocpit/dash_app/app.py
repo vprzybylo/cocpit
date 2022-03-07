@@ -1,7 +1,7 @@
 '''main dashboard executable'''
 
 import dash_bootstrap_components as dbc
-from callbacks import environment, geometric, process, topographic
+from callbacks import environment, geometric, process, topographic, navbar
 from dash import dcc
 from dotenv import load_dotenv
 from layout import content, header, legend, banners, sidebar, navbar_collapse
@@ -44,7 +44,7 @@ if __name__ == '__main__':
         fluid=True,
     )
 
-    process.register(app)
+    navbar.register(app)
     topographic.register(app)
     environment.register(app)
     geometric.register(app)

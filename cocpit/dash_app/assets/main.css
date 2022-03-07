@@ -6,6 +6,15 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
 
+.dropdown{
+  text-align: center !important;
+  width: 17rem;
+}
+
+.dash-input{
+  text-align: center !important;
+  width: 5rem;
+}
 
 .navbar-light .navbar-toggler {
   color: rgba(0, 0, 0, 0.55);
@@ -258,33 +267,33 @@ p {
 }
 
 .planar{
- background-color: rgb(82,106,131);
+ background-color: rgb(82,106,131,0.9);
 }
 
 .compact{
  word-wrap: break-word;
- background-color: rgb(133, 92, 117);
+ background-color: rgb(133, 92, 117, 0.9);
 }
 
 .agg {
  word-wrap: break-word;
- background-color:rgb(175, 100, 88);
+ background-color:rgb(175, 100, 88, 0.9);
 }
 
 .rimed {
-  background-color:  rgb(217, 175, 107);
+  background-color:  rgb(217, 175, 107,0.9);
 }
 
 .column{
-  background-color:  rgb(115, 111, 76);
+  background-color:  rgb(115, 111, 76,0.9);
 }
 .bullet{
   word-wrap: break-word;
-  background-color:  rgb(104, 133, 92);
+  background-color:  rgb(104, 133, 92,0.9);
 }
 .budding{
   word-wrap: break-word;
-  background-color:  rgb(98, 83, 119);
+  background-color:  rgb(98, 83, 119,0.9);
 }
 
 :root {
@@ -413,13 +422,13 @@ h3, .h3 {
 h4, .h4 {
 font-size: calc(1.0rem + 0.2vw) !important;
 font-family: 'Georgia';
-font-weight: 400 !important;
+/* font-weight: 400 !important; */
 
 }
 @media (min-width: 1200px) {
   h4, .h4 {
     font-family: 'Georgia','Lucida Grande';
-    font-weight: 400 !important;
+    /* font-weight: 400 !important; */
     font-size: 1.0rem !important;
   }
 }
@@ -633,6 +642,7 @@ textarea {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
+  text-align: center;
 }
 
 button,
@@ -1228,7 +1238,7 @@ progress {
     flex: 0 0 auto;
     width: 100%;
   }
-  }
+
 }
 
 @media (min-width: 576px) {
@@ -7897,7 +7907,7 @@ textarea.form-control-lg {
 }
 
 .fw-bold {
-  font-weight: 700 !important;
+  font-weight: 500 !important;
 }
 
 .fw-bolder {

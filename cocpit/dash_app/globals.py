@@ -205,3 +205,13 @@ campaign_flight_hours = {
     "POSIDON": 1,
     "OLYMPEX": 1,
 }
+
+part_type_count = {
+    "agg": 2350,
+    "budding": 158,
+    "bullet": 14,
+    "column": 411,
+    "compact": 13483,
+    "planar": 1036,
+    "rimed": 293,
+}

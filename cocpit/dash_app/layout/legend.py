@@ -1,5 +1,6 @@
 import dash_bootstrap_components as dbc
 from dash import html
+import globals
 
 
 def legend():
@@ -9,7 +10,7 @@ def legend():
                 className="justify-content-around",
                 children=[
                     dbc.Col(
-                        className="agg legend p-1 d-flex justify-space-between",
+                        className="agg legend p-1 d-flex",
                         children=[
                             dbc.Row(
                                 html.Img(
@@ -17,9 +18,20 @@ def legend():
                                     src='assets/agg.png',
                                 ),
                             ),
-                            dbc.Row(
-                                className='my-auto justify-content-center text-center py-2 h4 text-uppercase text-white',
-                                children=['Aggregate'],
+                            dbc.Col(
+                                className='py-2 h3 text-white',
+                                children=[
+                                    dbc.Row(
+                                        html.H4('Aggregate', className='m-1'),
+                                    ),
+                                    dbc.Row(
+                                        html.H4(
+                                            'n = %d' % globals.part_type_count['agg'],
+                                            id='agg-count',
+                                            className='m-1 mx-auto fw-normal',
+                                        ),
+                                    ),
+                                ],
                             ),
                         ],
                     ),
@@ -32,9 +44,21 @@ def legend():
                                     src='assets/budding.png',
                                 ),
                             ),
-                            dbc.Row(
-                                className='my-auto justify-content-center text-center p-1 h4 text-uppercase text-white',
-                                children=['Budding Rosette'],
+                            dbc.Col(
+                                className='py-2 h3 text-white',
+                                children=[
+                                    dbc.Row(
+                                        html.H4('Budding Rosette', className='m-1'),
+                                    ),
+                                    dbc.Row(
+                                        html.H4(
+                                            'n = %d'
+                                            % globals.part_type_count['budding'],
+                                            id='budding-count',
+                                            className='m-1 mx-auto fw-normal',
+                                        ),
+                                    ),
+                                ],
                             ),
                         ],
                     ),
@@ -47,9 +71,21 @@ def legend():
                                     src='assets/bullet.png',
                                 ),
                             ),
-                            dbc.Row(
-                                className='my-auto justify-content-center text-center p-1 h4 text-uppercase text-white',
-                                children=['Bullet Rosette'],
+                            dbc.Col(
+                                className='py-2 h3 text-white',
+                                children=[
+                                    dbc.Row(
+                                        html.H4('Bullet Rosette', className='m-1'),
+                                    ),
+                                    dbc.Row(
+                                        html.H4(
+                                            'n = %d'
+                                            % globals.part_type_count['bullet'],
+                                            id='bullet-count',
+                                            className='m-1 mx-auto fw-normal',
+                                        ),
+                                    ),
+                                ],
                             ),
                         ],
                     ),
@@ -62,9 +98,21 @@ def legend():
                                     src='assets/column.png',
                                 ),
                             ),
-                            dbc.Row(
-                                className='my-auto justify-content-center text-center p-1 h4 text-uppercase text-white ',
-                                children=['Column'],
+                            dbc.Col(
+                                className='py-2 h3 text-white',
+                                children=[
+                                    dbc.Row(
+                                        html.H4('Column', className='m-1'),
+                                    ),
+                                    dbc.Row(
+                                        html.H4(
+                                            'n = %d'
+                                            % globals.part_type_count['column'],
+                                            id='column-count',
+                                            className='m-1 mx-auto fw-normal',
+                                        ),
+                                    ),
+                                ],
                             ),
                         ],
                     ),
@@ -77,9 +125,21 @@ def legend():
                                     src='assets/compact.png',
                                 ),
                             ),
-                            dbc.Row(
-                                className='my-auto justify-content-center text-center p-1 h4 text-uppercase text-white',
-                                children=['Compact Irregular'],
+                            dbc.Col(
+                                className='py-2 h3 text-white',
+                                children=[
+                                    dbc.Row(
+                                        html.H4('Compact Irregular', className='m-1'),
+                                    ),
+                                    dbc.Row(
+                                        html.H4(
+                                            'n = %d'
+                                            % globals.part_type_count['compact'],
+                                            id='compact-count',
+                                            className='m-1 mx-auto fw-normal',
+                                        ),
+                                    ),
+                                ],
                             ),
                         ],
                     ),
@@ -92,9 +152,24 @@ def legend():
                                     src='assets/planar.png',
                                 ),
                             ),
-                            dbc.Row(
-                                className='my-auto justify-content-center text-center p-1 h4 text-uppercase text-white',
-                                children=['Planar Polycrystal'],
+                            dbc.Col(
+                                className='py-2 h3 text-white',
+                                children=[
+                                    dbc.Row(
+                                        html.H4(
+                                            'Planar Polycrystal',
+                                            className='m-1',
+                                        ),
+                                    ),
+                                    dbc.Row(
+                                        html.H4(
+                                            'n = %d'
+                                            % globals.part_type_count['planar'],
+                                            id='planar-count',
+                                            className='m-1 mx-auto fw-normal',
+                                        ),
+                                    ),
+                                ],
                             ),
                         ],
                     ),
@@ -107,9 +182,20 @@ def legend():
                                     src='assets/rimed.png',
                                 ),
                             ),
-                            dbc.Row(
-                                className='my-auto justify-content-center text-center p-1 h4 text-uppercase text-white',
-                                children=['Rimed'],
+                            dbc.Col(
+                                className='py-2 h3 text-white',
+                                children=[
+                                    dbc.Row(
+                                        html.H4('Rimed', className='m-1'),
+                                    ),
+                                    dbc.Row(
+                                        html.H4(
+                                            'n = %d' % globals.part_type_count['rimed'],
+                                            id='rimed-count',
+                                            className='m-1 mx-auto fw-normal',
+                                        ),
+                                    ),
+                                ],
                             ),
                         ],
                     ),

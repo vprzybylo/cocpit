@@ -21,7 +21,7 @@ def navbar_collapse():
                                             dbc.Row(
                                                 dbc.Label(
                                                     'Campaign:',
-                                                    className='label h4',
+                                                    className='h4 fw-bolder',
                                                 ),
                                                 className='justify-content-around',
                                             ),
@@ -35,19 +35,19 @@ def navbar_collapse():
                                                     ],
                                                     placeholder="Campaign",
                                                     value='CRYSTAL FACE (UND)',
-                                                    className='h4',
+                                                    className='h4 dropdown',
                                                 ),
-                                                className='d-inline',
+                                                className='justify-content-around',
                                             ),
                                         ],
-                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-3 col-xl-3',
+                                        className='m-1 col-xs-10 col-sm-10 col-md-4 col-lg-3 col-xl-3',
                                     ),
                                     dbc.Col(
                                         children=[
                                             dbc.Row(
                                                 dbc.Label(
                                                     'Environmental Property:',
-                                                    className='label h4',
+                                                    className='h4 fw-bolder',
                                                 ),
                                                 className='justify-content-around',
                                             ),
@@ -62,17 +62,17 @@ def navbar_collapse():
                                                     value='Ice Water Content',
                                                     className='h4 dropdown',
                                                 ),
-                                                className='d-inline',
+                                                className='justify-content-around',
                                             ),
                                         ],
-                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-3 col-xl-3',
+                                        className='m-1 col-xs-10 col-sm-10 col-md-4 col-lg-3 col-xl-3',
                                     ),
                                     dbc.Col(
                                         children=[
                                             dbc.Row(
                                                 dbc.Label(
                                                     'Particle Property:',
-                                                    className='label h4',
+                                                    className='h4 fw-bolder',
                                                 ),
                                                 className='justify-content-around',
                                             ),
@@ -85,19 +85,19 @@ def navbar_collapse():
                                                     ],
                                                     placeholder="Particle Property",
                                                     value='Complexity',
-                                                    className='h4',
+                                                    className='h4 dropdown',
                                                 ),
-                                                className='d-inline',
+                                                className='justify-content-around',
                                             ),
                                         ],
-                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-3 col-xl-3',
+                                        className='m-1 col-xs-10 col-sm-10 col-md-4 col-lg-3 col-xl-3',
                                     ),
                                     dbc.Col(
                                         children=[
                                             dbc.Row(
                                                 dbc.Label(
                                                     'Date Range:',
-                                                    className='label h4',
+                                                    className='h4 fw-bolder',
                                                 ),
                                                 className='justify-content-around',
                                             ),
@@ -113,14 +113,14 @@ def navbar_collapse():
                                                 className='justify-content-around',
                                             ),
                                         ],
-                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-3 col-xl-3',
+                                        className='m-1 col-xs-10 col-sm-10 col-md-4 col-lg-3 col-xl-3',
                                     ),
                                     dbc.Col(
                                         children=[
                                             dbc.Row(
                                                 dbc.Label(
-                                                    'Temperature Range [C]:',
-                                                    className='label h4',
+                                                    'Temperature Range [C]: ',
+                                                    className='h4 fw-bolder',
                                                 ),
                                                 className='justify-content-around',
                                             ),
@@ -131,32 +131,93 @@ def navbar_collapse():
                                                         placeholder='min [C], e.g., -70',
                                                         id='min-temp',
                                                         value=-70,
-                                                        className='m-1',
+                                                        className='m-1 dash-input',
                                                     ),
                                                     dcc.Input(
                                                         type='text',
                                                         placeholder='max [C], e.g., 20',
                                                         id='max-temp',
                                                         value=40,
-                                                        className='m-1',
+                                                        className='m-1 dash-input',
                                                     ),
                                                 ],
-                                                className='justify-content-around',
+                                                className='justify-content-center',
                                             ),
                                         ],
-                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-3 col-xl-3',
+                                        className='m-1 col-xs-10 col-sm-10 col-md-4 col-lg-3 col-xl-3',
+                                    ),
+                                    dbc.Col(
+                                        children=[
+                                            dbc.Row(
+                                                dbc.Label(
+                                                    'Size Range [µm]:',
+                                                    className='h4 fw-bolder',
+                                                ),
+                                                className='justify-content-around',
+                                            ),
+                                            dbc.Row(
+                                                children=[
+                                                    dcc.Input(
+                                                        type='text',
+                                                        placeholder='min, e.g., 100',
+                                                        id='min-size',
+                                                        value=30,
+                                                        className='m-1 dash-input',
+                                                    ),
+                                                    dcc.Input(
+                                                        type='text',
+                                                        placeholder='max, e.g., 2000',
+                                                        id='max-size',
+                                                        value=3000,
+                                                        className='m-1 dash-input',
+                                                    ),
+                                                ],
+                                                className='p-1 mx-auto justify-content-center',
+                                            ),
+                                        ],
+                                        className='m-1 col-xs-10 col-sm-10 col-md-4 col-lg-3 col-xl-3',
                                     ),
                                     dbc.Col(
                                         children=[
                                             dbc.Row(
                                                 dbc.Label(
                                                     'Pressure Range:',
-                                                    className='label h4',
+                                                    className='h4 fw-bolder',
                                                 ),
                                                 className='justify-content-around',
                                             ),
                                             dbc.Row(
-                                                html.Div(
+                                                [
+                                                    html.P('Minimum:'),
+                                                    html.Div(
+                                                        dcc.RangeSlider(
+                                                            id='min-pres',
+                                                            min=100,
+                                                            max=400,
+                                                            value=[100],
+                                                            allowCross=False,
+                                                            marks={
+                                                                400: {
+                                                                    'label': '400hPa'
+                                                                },
+                                                                300: {
+                                                                    'label': '300hPa'
+                                                                },
+                                                                200: {
+                                                                    'label': '200hPa'
+                                                                },
+                                                                100: {
+                                                                    'label': '100hPa'
+                                                                },
+                                                            },
+                                                        ),
+                                                    ),
+                                                ],
+                                                className='justify-content-around d-inline',
+                                            ),
+                                            dbc.Row(
+                                                [
+                                                    html.P('Maximum:'),
                                                     dcc.RangeSlider(
                                                         id='max-pres',
                                                         min=400,
@@ -170,67 +231,18 @@ def navbar_collapse():
                                                             1000: {'label': '1000hPa'},
                                                         },
                                                     ),
-                                                ),
-                                                className='justify-content-around d-inline ',
-                                            ),
-                                            dbc.Row(
-                                                html.Div(
-                                                    dcc.RangeSlider(
-                                                        id='min-pres',
-                                                        min=100,
-                                                        max=400,
-                                                        value=[100],
-                                                        allowCross=False,
-                                                        marks={
-                                                            400: {'label': '400hPa'},
-                                                            300: {'label': '300hPa'},
-                                                            200: {'label': '200hPa'},
-                                                            100: {'label': '100hPa'},
-                                                        },
-                                                    ),
-                                                ),
+                                                ],
                                                 className='justify-content-around d-inline',
                                             ),
                                         ],
-                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-3 col-xl-3',
-                                    ),
-                                    dbc.Col(
-                                        children=[
-                                            dbc.Row(
-                                                dbc.Label(
-                                                    'Size Range [µm]:',
-                                                    className='label h4',
-                                                ),
-                                                className='justify-content-around',
-                                            ),
-                                            dbc.Row(
-                                                children=[
-                                                    dcc.Input(
-                                                        type='text',
-                                                        placeholder='min, e.g., 100',
-                                                        id='min-size',
-                                                        value=30,
-                                                        className='m-1',
-                                                    ),
-                                                    dcc.Input(
-                                                        type='text',
-                                                        placeholder='max, e.g., 2000',
-                                                        id='max-size',
-                                                        value=3000,
-                                                        className='m-1',
-                                                    ),
-                                                ],
-                                                className='p-1 mx-auto justify-content-around',
-                                            ),
-                                        ],
-                                        className='m-1 col-xs-10 col-sm-4 col-md-4 col-lg-3 col-xl-3',
+                                        className='m-1 col-xs-10 col-sm-10 col-md-4 col-lg-3 col-xl-3',
                                     ),
                                     dbc.Col(
                                         children=[
                                             dbc.Row(
                                                 dbc.Label(
                                                     'Particle Type:',
-                                                    className='label h4',
+                                                    className='h4 fw-bolder',
                                                 ),
                                                 className='justify-content-around',
                                             ),
@@ -246,10 +258,10 @@ def navbar_collapse():
                                                     value=globals.particle_types_rename,
                                                     className='h4',
                                                 ),
-                                                className='d-inline',
+                                                className='justify-content-around',
                                             ),
                                         ],
-                                        className='m-1 col-xs-10 col-sm-7 col-md-7 col-lg-7 col-xl-7',
+                                        className='m-1 col-xs-10 col-sm-6 col-md-7 col-lg-7 col-xl-7',
                                     ),
                                 ],
                                 className='justify-content-around',
@@ -263,7 +275,7 @@ def navbar_collapse():
                                             children='Apply Filters',
                                             className='btn btn-secondary white btn-lg m-auto',
                                         ),
-                                        className='m-1',
+                                        className='m-2',
                                     ),
                                     dcc.Download(id="download-df-csv"),
                                     dbc.Col(
@@ -273,7 +285,7 @@ def navbar_collapse():
                                             children='Download Data',
                                             className='btn btn-secondary white btn-lg m-auto',
                                         ),
-                                        className='m-1',
+                                        className='m-2',
                                     ),
                                 ],
                                 className='justify-content-center',
