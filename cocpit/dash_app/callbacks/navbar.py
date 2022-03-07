@@ -171,7 +171,6 @@ def register(app):
         group_by_day = df_date1.groupby([df_date1.dt.day])
         sum_hours_over_days = 0
         for day in group_by_day:
-            print(day[1].dt.hour.unique())
             sum_hours_over_days += len(day[1].dt.hour.unique())
 
         return sum_hours_over_days

@@ -12,7 +12,6 @@ def content():
     return html.Div(
         id="page-content",
         children=[
-            dcc.Store(id='side_click'),
             dcc.Store(id='store-df', storage_type=storage),
             dcc.Store(id='df-classification', storage_type=storage),
             dcc.Store(id='df-lat', storage_type=storage),
@@ -74,7 +73,7 @@ def content():
                                         className='card-body',
                                     )
                                 ],
-                                className='col-sm-12 col-md-12 col-lg-6 col-xl-6',
+                                className='col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6',
                             ),
                             html.Div(
                                 children=[
@@ -90,10 +89,9 @@ def content():
                                         className='card-body',
                                     )
                                 ],
-                                className='col-sm-12 col-md-12 col-lg-6 col-xl-6',
+                                className='col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6',
                             ),
                         ],
-                        #  className='justify-content-center align-items-center',
                     ),
                 ],
             ),
@@ -115,7 +113,7 @@ def content():
                                         className='card-body',
                                     )
                                 ],
-                                className='d-flex col-sm-12 col-md-12 col-lg-6 col-xl-6',
+                                className='col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6',
                             ),
                             dbc.Col(
                                 children=[
@@ -133,10 +131,9 @@ def content():
                                         className='card-body',
                                     )
                                 ],
-                                className='d-flex col-sm-12 col-md-12 col-lg-6 col-xl-6',
+                                className='col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6',
                             ),
                         ],
-                        #  className='justify-content-center align-items-center',
                     ),
                 ]
             ),
