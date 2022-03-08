@@ -1,68 +1,32 @@
+from pydoc import classname
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 import globals
 from datetime import date
+from dash_extensions.enrich import Input, Output, State, ServersideOutput, dcc
 
 
 def sidebar():
 
-    padding = '1px'
-    margin_bottom = '8px'
-
-    # styling the sidebar
-    SIDEBAR_STYLE = {
-        "position": "fixed",
-        "top": 0,
-        "left": 0,
-        "bottom": 0,
-        'overflow-y': 'scroll',
-        "width": "16rem",
-        "padding": "2rem 1rem",
-        "background-color": "#f8f9fa",
-    }
-
     sidebar = html.Div(
-        [
-            html.H1(
-                html.A(
-                    "COCPIT",
-                    href="http://www.specinc.com/cloud-particle-imager",
-                    style={'margin': "0px"},
-                    className='lead display-6 text-body text-decoration-none',
-                ),
+        children=[
+            dbc.Row(
+                dbc.Label('Campaign:', className='label h3'),
             ),
-            html.Hr(),
-            html.H5(
-                "Classification of Ice Particle Imagery and Thermodynamics",
-            ),
-            html.Hr(),
-            # html.H6(
-            #     'Images taken from the:',
-            #     style={'margin': "0px"},
+            # dbc.Row(
+            #     dcc.Dropdown(
+            #         id='campaign-dropdown',
+            #         multi=False,
+            #         options=[
+            #             {'label': i, 'value': i} for i in globals.campaigns_rename
+            #         ],
+            #         placeholder="Campaign",
+            #         value='CRYSTAL FACE (UND)',
+            #         className='h4',
+            #     ),
             # ),
-            # html.A(
-            #     "Cloud Particle Imager",
-            #     href="http://www.specinc.com/cloud-particle-imager",
-            #     style={'margin': "0px"},
-            # ),
-            # html.Hr(),
             dbc.Row(
-                dbc.Label('Campaign:'),
-            ),
-            dbc.Row(
-                dcc.Dropdown(
-                    id='campaign-dropdown',
-                    multi=False,
-                    options=[
-                        {'label': i, 'value': i} for i in globals.campaigns_rename
-                    ],
-                    placeholder="Campaign",
-                    value='CRYSTAL FACE (UND)',
-                ),
-                style={"padding": padding, "margin-bottom": margin_bottom},
-            ),
-            dbc.Row(
-                dbc.Label('Particle Type:'),
+                dbc.Label('Particle Type:', className='label h3'),
             ),
             dbc.Row(
                 dcc.Dropdown(
@@ -73,12 +37,11 @@ def sidebar():
                     ],
                     placeholder="Particle Type",
                     value=globals.particle_types_rename,
+                    className='h4',
                 ),
-                style={"padding": padding, "margin-bottom": margin_bottom},
             ),
             dbc.Row(
-                dbc.Label('Particle Property:'),
-                style={"padding": padding},
+                dbc.Label('Particle Property:', className='label h3'),
             ),
             dbc.Row(
                 dcc.Dropdown(
@@ -88,12 +51,11 @@ def sidebar():
                     ],
                     placeholder="Particle Property",
                     value='Complexity',
+                    className='h4',
                 ),
-                style={"padding": padding, "margin-bottom": margin_bottom},
             ),
             dbc.Row(
-                dbc.Label('Environmental Variable:'),
-                style={"padding": padding},
+                dbc.Label('Environmental Variable:', className='label h3'),
             ),
             dbc.Row(
                 dcc.Dropdown(
@@ -101,26 +63,23 @@ def sidebar():
                     options=[{'label': i, 'value': i} for i in globals.env_properties],
                     placeholder="Environmental Variable",
                     value='Ice Water Content',
+                    className='h4',
                 ),
-                style={"padding": padding, "margin-bottom": margin_bottom},
             ),
             dbc.Row(
-                dbc.Label('Date:'),
-                style={"padding": padding},
+                dbc.Label('Date:', className='label h3'),
             ),
             dbc.Row(
                 dcc.DatePickerRange(
                     id='date-picker',
-                    start_date=date(2002, 7, 11),
-                    end_date=date(2002, 7, 12),
+                    start_date=date(2002, 7, 19),
+                    end_date=date(2002, 7, 23),
                     month_format='MMM Do, YY',
                     display_format='MMM Do, YY',
                 ),
-                style={"padding": padding, "margin-bottom": margin_bottom},
             ),
             dbc.Row(
-                dbc.Label('Temperature Range [C]:'),
-                style={"padding": padding},
+                dbc.Label('Temperature Range [C]:', className='label h3'),
             ),
             dbc.Row(
                 dcc.Input(
@@ -129,12 +88,7 @@ def sidebar():
                     id='min-temp',
                     value=-70,
                 ),
-                style={
-                    "padding": padding,
-                    #'width': '35%',
-                    'margin-left': 6,
-                    'margin-right': 1,
-                },
+                className='p-1',
                 align="center",
             ),
             dbc.Row(
@@ -144,20 +98,13 @@ def sidebar():
                     id='max-temp',
                     value=40,
                 ),
-                style={
-                    "padding": padding,
-                    #'width': '35%',
-                    'margin-left': 6,
-                    'margin-right': 1,
-                    "margin-bottom": margin_bottom,
-                },
+                className='p-1',
                 align="center",
             ),
             dbc.Row(
-                dbc.Label('Pressure Maximum:'),
-                style={"padding": padding},
+                dbc.Label('Pressure Maximum:', className='label h3'),
             ),
-            dbc.Row(
+            html.Div(
                 dcc.RangeSlider(
                     id='max-pres',
                     min=400,
@@ -171,13 +118,12 @@ def sidebar():
                         1000: {'label': '1000hPa'},
                     },
                 ),
-                style={"padding": padding},
+                className='p-1',
             ),
             dbc.Row(
-                dbc.Label('Pressure Minimum:'),
-                style={"padding": padding},
+                dbc.Label('Pressure Minimum:', className='label h3'),
             ),
-            dbc.Row(
+            html.Div(
                 dcc.RangeSlider(
                     id='min-pres',
                     min=100,
@@ -191,10 +137,10 @@ def sidebar():
                         100: {'label': '100hPa'},
                     },
                 ),
-                style={"padding": padding, "margin-bottom": margin_bottom},
+                className='p-1',
             ),
             dbc.Row(
-                dbc.Label('Particle Size [micrometers]:'),
+                dbc.Label('Particle Size [micrometers]:', className='label h3'),
             ),
             dbc.Row(
                 dcc.Input(
@@ -203,12 +149,7 @@ def sidebar():
                     id='min-size',
                     value=30,
                 ),
-                style={
-                    "padding": padding,
-                    #'width': '35%',
-                    'margin-left': 5,
-                    'margin-right': 1,
-                },
+                className='p-1',
                 align="center",
             ),
             dbc.Row(
@@ -218,13 +159,7 @@ def sidebar():
                     id='max-size',
                     value=3000,
                 ),
-                style={
-                    "padding": padding,
-                    #'width': '35%',
-                    'margin-left': 5,
-                    'margin-right': 1,
-                    "margin-bottom": margin_bottom,
-                },
+                className='p-1',
                 align="center",
             ),
             dbc.Row(
@@ -232,13 +167,8 @@ def sidebar():
                     id='submit-button',
                     n_clicks=0,
                     children='Apply Filters',
-                    className='btn btn-primary black-background white btn-lg ',
+                    className='btn btn-primary white btn-lg m-auto my-1',
                 ),
-                style={
-                    "padding": '4px',
-                    'margin-left': 5,
-                    'margin-right': 1,
-                },
             ),
             dcc.Download(id="download-df-csv"),
             dbc.Row(
@@ -246,16 +176,12 @@ def sidebar():
                     id='download-button',
                     n_clicks=0,
                     children='Download Data',
-                    className='btn btn-primary black-background white btn-lg ',
+                    className='btn btn-primary white btn-lg m-auto my-1',
                 ),
-                style={
-                    "padding": '4px',
-                    'margin-left': 5,
-                    'margin-right': 1,
-                },
             ),
         ],
-        style=SIDEBAR_STYLE,
+        id='sidebar',
+        className='position-fixed bottom-0 left-0 overflow-y-scroll',
     )
 
     return sidebar

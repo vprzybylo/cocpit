@@ -79,7 +79,7 @@ campaign_start_dates = {
     "ARM": date(2000, 3, 9),
     "ATTREX": date(2014, 3, 4),
     "CRYSTAL FACE (UND)": date(2002, 7, 13),
-    "CRYSTAL FACE (NASA)": date(2002, 7, 20),
+    "CRYSTAL FACE (NASA)": date(2002, 7, 13),
     "ICE L": date(2007, 11, 16),
     "IPHEX": date(2014, 4, 22),
     "ISDAC": date(2008, 4, 1),
@@ -95,8 +95,8 @@ campaign_end_dates = {
     "AIRS II": date(2003, 11, 19),
     "ARM": date(2000, 3, 19),
     "ATTREX": date(2014, 3, 5),
-    "CRYSTAL FACE (UND)": date(2002, 7, 16),
-    "CRYSTAL FACE (NASA)": date(2002, 7, 21),
+    "CRYSTAL FACE (UND)": date(2002, 7, 23),
+    "CRYSTAL FACE (NASA)": date(2002, 7, 23),
     "ICE L": date(2007, 12, 16),
     "IPHEX": date(2014, 6, 13),
     "ISDAC": date(2008, 4, 29),
@@ -159,8 +159,8 @@ campaign_image_count = {
     "AIRS II": 1,
     "ARM": 1,
     "ATTREX": 1,
-    "CRYSTAL FACE (UND)": 396139,
-    "CRYSTAL FACE (NASA)": 61859,
+    "CRYSTAL FACE (UND)": '396139',
+    "CRYSTAL FACE (NASA)": '61859',
     "ICE L": 1,
     "IPHEX": 1,
     "ISDAC": 1,
@@ -170,4 +170,59 @@ campaign_image_count = {
     "MPACE": 1,
     "POSIDON": 1,
     "OLYMPEX": 1,
+}
+
+campaign_flight_count = {
+    "AIRS II": 1,
+    "ARM": 1,
+    "ATTREX": 1,
+    "CRYSTAL FACE (UND)": '10',
+    "CRYSTAL FACE (NASA)": '10',
+    "ICE L": 1,
+    "IPHEX": 1,
+    "ISDAC": 1,
+    "MACPEX": 1,
+    "MC3E": 1,
+    "MIDCIX": 1,
+    "MPACE": 1,
+    "POSIDON": 1,
+    "OLYMPEX": 1,
+}
+
+campaign_flight_hours = {
+    "AIRS II": 1,
+    "ARM": 1,
+    "ATTREX": 1,
+    "CRYSTAL FACE (UND)": '10',
+    "CRYSTAL FACE (NASA)": '10',
+    "ICE L": 1,
+    "IPHEX": 1,
+    "ISDAC": 1,
+    "MACPEX": 1,
+    "MC3E": 1,
+    "MIDCIX": 1,
+    "MPACE": 1,
+    "POSIDON": 1,
+    "OLYMPEX": 1,
+}
+
+part_type_count = {
+    "agg": 2350,
+    "budding": 158,
+    "bullet": 14,
+    "column": 411,
+    "compact": 13483,
+    "planar": 1036,
+    "rimed": 293,
+}
+
+
+color_discrete_map = {
+    'aggregate': 'rgb(130, 63, 63)',
+    'budding rosette': 'rgb(198, 137, 100)',
+    'bullet rosette': 'rgb(217, 175, 107)',
+    'compact irregular': 'rgb(82,106,131)',
+    'column': 'rgb(124, 124, 124)',
+    'planar polycrystal': 'rgb(114, 98, 136)',
+    'rimed': 'rgb(82, 113, 91)',
 }

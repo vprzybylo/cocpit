@@ -6,39 +6,8 @@ import globals
 from dash import dcc, html
 
 
-def header_cards(class_name_header, class_name_body, title, id_header, id_body):
-    return dbc.Card(
-        [
-            dbc.CardBody(
-                [
-                    html.H4(title, className=class_name_header, id=id_header),
-                    html.P(
-                        globals.campaign_image_count,
-                        className=class_name_body,
-                        id=id_body,
-                    ),
-                ]
-            )
-        ],
-        style={
-            'display': 'inline-block',
-            'width': '33.3%',
-            'text-align': 'center',
-            'color': 'white',
-            'background-color': 'rgba(37, 150, 190)',
-        },
-        outline=True,
-    )
-
-
 def content():
 
-    # padding for the page content
-    CONTENT_STYLE = {
-        "margin-left": "18rem",
-        "margin-right": "2rem",
-        "margin-top": "2rem",
-    }
     storage = 'session'
     return html.Div(
         id="page-content",
@@ -48,152 +17,125 @@ def content():
             dcc.Store(id='df-lat', storage_type=storage),
             dcc.Store(id='df-lon', storage_type=storage),
             dcc.Store(id='df-alt', storage_type=storage),
+            dcc.Store(id='df-date', storage_type=storage),
             dcc.Store(id='df-env', storage_type=storage),
             dcc.Store(id='df-temp', storage_type=storage),
             dcc.Store(id='df-prop', storage_type=storage),
             dcc.Store(id='len-df', storage_type=storage),
             # dls.Hash(
-            #     dbc.Row(
-            #         dbc.Col(
-            #             header_cards(
-            #                 'card-title',
-            #                 'card-text',
-            #                 'Number of images',
-            #                 'card-header-images',
-            #                 'card-text-images',
+            #     [
+            #     html.Div(
+            #         className='row justify-content-around',
+            #         children=[
+            #             html.Div(
+            #                 className='col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12',
+            #                 children=[
+            #                     dbc.Card(
+            #                         [
+            #                             dbc.CardHeader("Particle Location"),
+            #                             dbc.CardBody(
+            #                                 children=[
+            #                                     dcc.Graph(
+            #                                         id='top-down-map',
+            #                                         figure={},
+            #                                     ),
+            #                                     html.P(
+            #                                         'Hover over the image and choose the box select icon to update all figures based on selected location. \n \
+            #                                         Select an empty region to reset view with all data points.',
+            #                                         className='p text-center',
+            #                                     ),
+            #                                 ],
+            #                             ),
+            #                         ],
+            #                         className='card-body',
+            #                     )
+            #                 ],
             #             ),
-            #             xs=12,
-            #             sm=12,
-            #             md=12,
-            #             lg=6,
-            #             xl=6,
-            #         ),
-            #         align="center",
-            #         justify="center",
+            #         ],
             #     ),
+            # ],
             # ),
-            dbc.Row(
-                [
-                    # dbc.Col(
-                    #     [
-                    #         dbc.Row(
-                    #             dbc.Label('Vertical Axis Property:'),
-                    #         ),
-                    #         dbc.Row(
-                    #             dcc.Dropdown(
-                    #                 id='3d_vertical_prop',
-                    #                 options=[
-                    #                     {'label': i, 'value': i}
-                    #                     for i in globals.vertical_vars
-                    #                 ],
-                    #                 placeholder="Vertical Axis Property",
-                    #                 value='Temperature',
-                    #             ),
-                    #         ),
-                    #     ],
-                    #     xs=12,
-                    #     sm=12,
-                    #     md=12,
-                    #     lg=12,
-                    #     xl=2,
-                    # ),
-                    dbc.Col(
-                        children=[
-                            dbc.Card(
-                                [
-                                    dbc.CardHeader("Particle Location"),
-                                    dbc.CardBody(
-                                        children=[
-                                            dcc.Graph(id='top-down-map', figure={}),
-                                            html.P(
-                                                'Hover over image and choose box select icon to update all figures based on chosen location',
-                                                style={'text-align': 'center'},
-                                            ),
-                                        ]
-                                    ),
-                                ],
-                                style={"margin": "0px", 'height': '550px'},
-                            )
-                        ],
-                        xs=12,
-                        sm=12,
-                        md=12,
-                        lg=6,
-                        xl=6,
-                    ),
-                    dbc.Col(
-                        children=[
-                            dbc.Card(
-                                [
-                                    dbc.CardHeader("Particle Type Percentage"),
-                                    dbc.CardBody(
-                                        children=[dcc.Graph(id='pie', figure={})]
-                                    ),
-                                ],
-                                style={"margin": "0px", 'height': '550px'},
-                            )
-                        ],
-                        xs=12,
-                        sm=12,
-                        md=12,
-                        lg=6,
-                        xl=6,
-                    ),
-                ],
-                align="center",
-                justify="center",
-            ),
             dls.Hash(
                 [
                     dbc.Row(
                         [
-                            dbc.Col(
+                            html.Div(
                                 children=[
                                     dbc.Card(
-                                        [
-                                            dbc.CardHeader("Cross-Section (Longitude)"),
+                                        children=[
+                                            dbc.CardHeader("Particle Location"),
                                             dbc.CardBody(
                                                 children=[
                                                     dcc.Graph(
-                                                        id='lon-alt-hist', figure={}
-                                                    )
-                                                ]
+                                                        id='top-down-map',
+                                                        figure={},
+                                                    ),
+                                                    html.P(
+                                                        'Hover over the image and choose the box select icon to update all figures based on selected location. \n \
+                                                        Select an empty region to reset view with all data points.',
+                                                        className='p text-center',
+                                                    ),
+                                                ],
                                             ),
                                         ],
-                                        style={"margin": "0px", 'height': '550px'},
+                                        className='card-body',
                                     )
                                 ],
-                                xs=12,
-                                sm=12,
-                                md=12,
-                                lg=6,
-                                xl=6,
+                                className='col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6',
                             ),
-                            dbc.Col(
+                            html.Div(
                                 children=[
                                     dbc.Card(
                                         [
-                                            dbc.CardHeader("Cross Section (Latitude)"),
+                                            dbc.CardHeader(
+                                                "Particle Type Distribution by Location"
+                                            ),
                                             dbc.CardBody(
                                                 children=[
                                                     dcc.Graph(
-                                                        id='lat-alt-hist', figure={}
+                                                        id='density-contour', figure={}
                                                     )
                                                 ]
                                             ),
                                         ],
-                                        style={"margin": "0px", 'height': '550px'},
+                                        className='card-body',
                                     )
                                 ],
-                                xs=12,
-                                sm=12,
-                                md=12,
-                                lg=6,
-                                xl=6,
+                                className='col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6',
+                            ),
+                            html.Div(
+                                children=[
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader("Vertical Distribution"),
+                                            dbc.CardBody(
+                                                children=[
+                                                    dcc.Graph(id='vert-dist', figure={})
+                                                ]
+                                            ),
+                                        ],
+                                        className='card-body',
+                                    )
+                                ],
+                                className='col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6',
+                            ),
+                            html.Div(
+                                children=[
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader("Particle Type Percentage"),
+                                            dbc.CardBody(
+                                                children=[
+                                                    dcc.Graph(id='pie', figure={})
+                                                ]
+                                            ),
+                                        ],
+                                        className='card-body',
+                                    )
+                                ],
+                                className='col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6',
                             ),
                         ],
-                        align="center",
-                        justify="center",
                     ),
                 ],
             ),
@@ -212,20 +154,16 @@ def content():
                                                 ]
                                             ),
                                         ],
-                                        style={"margin": "0px", 'height': '550px'},
+                                        className='card-body',
                                     )
                                 ],
-                                xs=12,
-                                sm=12,
-                                md=12,
-                                lg=6,
-                                xl=6,
+                                className='col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6',
                             ),
                             dbc.Col(
                                 children=[
                                     dbc.Card(
                                         [
-                                            dbc.CardHeader("Environmental Attributes"),
+                                            dbc.CardHeader("Environmental Property"),
                                             dbc.CardBody(
                                                 children=[
                                                     dcc.Graph(
@@ -234,25 +172,19 @@ def content():
                                                 ]
                                             ),
                                         ],
-                                        style={"margin": "0px", 'height': '550px'},
+                                        className='card-body',
                                     )
                                 ],
-                                xs=12,
-                                sm=12,
-                                md=12,
-                                lg=6,
-                                xl=6,
+                                className='col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6',
                             ),
                         ],
-                        align="center",
-                        justify="center",
                     ),
                 ]
             ),
+            html.Hr(),
             html.P(
                 'Copyright All Rights Reserved',
-                style={"color": '#D3D3D3', 'text-align': 'center'},
+                id='copyright',
             ),
         ],
-        style=CONTENT_STYLE,
     )

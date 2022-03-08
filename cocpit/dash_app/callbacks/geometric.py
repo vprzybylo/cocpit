@@ -4,30 +4,20 @@ pie chart for particle percentage and violin plot for particle property for each
 includes callbacks
 '''
 
-import pandas as pd
 import plotly.express as px
 from callbacks import process
-from dash_extensions.enrich import Input, Output, State
-import plotly.graph_objects as go
+from dash_extensions.enrich import Input, Output
+import globals
 
 
 def register(app):
     @app.callback(
         Output("pie", "figure"),
-        [
-            Input("df-classification", "data"),
-            Input("df-lat", "data"),
-            Input("df-lon", "data"),
-            Input('top-down-map', 'selectedData'),
-        ],
+        Input("df-classification", "data"),
     )
-    def pie(df_classification, df_lat, df_lon, selectedData):
+    def pie(df_classification):
         '''pie chart for percentage of particle types for a given campaign'''
-        if selectedData and selectedData['points']:
-            sel_data = pd.DataFrame(selectedData['points'])
-            df_classification = df_classification[
-                (df_lat.isin(sel_data['lat'])) & (df_lon.isin(sel_data['lon']))
-            ]
+
         values = df_classification.value_counts()
         labels = df_classification.unique()
 
@@ -35,17 +25,11 @@ def register(app):
             labels,
             values=values,
             names=labels,
-            color_discrete_sequence=px.colors.qualitative.Antique,
+            color=labels,
+            color_discrete_map=globals.color_discrete_map,
         )
-        pie.update_layout(
-            title={
-                'text': f"n={len(df_classification)}",
-                'x': 0.43,
-                'xanchor': 'center',
-                'yanchor': 'top',
-            }
-        )
-        return pie
+
+        return process.update_layout(pie, contour=True)
 
     @app.callback(
         Output("prop-fig", "figure"),
@@ -63,11 +47,10 @@ def register(app):
             x=classification,
             y=prop,
             color=classification,
-            color_discrete_sequence=px.colors.qualitative.Antique,
+            color_discrete_map=globals.color_discrete_map,
             labels={
                 "x": "Particle Type",
                 "y": prop_name,
             },
         )
-        prop_fig = process.update_layout(prop_fig, len(classification))
-        return prop_fig
+        return process.update_layout(prop_fig)
