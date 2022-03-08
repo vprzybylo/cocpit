@@ -24,6 +24,15 @@ def register(app):
     )
     def density_contour(df_classification, df_lat, df_lon):
         '''2d histogram of particles in space with particle type plotted as color'''
+
+        # resort by original index so that rimed isn't plotted on top
+        #   - was blocking all other colors/particle types
+        # the df was originally sorted alphabetically
+        #   - so that particle type colors are always consistent across viiolin figures
+        df_classification = df_classification.sort_index()
+        df_lat = df_lat.sort_index()
+        df_lon = df_lon.sort_index()
+
         fig = px.scatter(
             x=df_lon,
             y=df_lat,
@@ -37,7 +46,7 @@ def register(app):
             },
         )
 
-        return fig
+        return process.update_layout(fig, contour=True, margin=5)
 
     @app.callback(
         Output("top-down-map", "figure"),
@@ -53,44 +62,20 @@ def register(app):
         # Find Lat Long center
         lat_center = df_lat[df_lat != -999.99].mean()
         lon_center = df_lon[df_lon != -999.99].mean()
+        df_classification = df_classification.sort_index()
+        df_lat = df_lat.sort_index()
+        df_lon = df_lon.sort_index()
 
         fig = px.scatter_mapbox(
             lat=df_lat,
             lon=df_lon,
             color=df_classification,
             color_discrete_map=globals.color_discrete_map,
-            mapbox_style="stamen-terrain"
-            # hover_data={
-            #     'Ice Water Content': True,
-            #     'Temperature': True,
-            #     'Pressure': True,
-            # },
-            # custom_data=['Temperature', 'Pressure', 'Ice Water Content'],
+            mapbox_style="stamen-terrain",
         )
 
-        # fig.update_traces(
-        #     hovertemplate="<br>".join(
-        #         [
-        #             "Latitude: %{lat}",
-        #             "Longitude: %{lon}",
-        #             "Temperature: %{customdata[0]}",
-        #             "Pressure: %{customdata[1]}",
-        #             "Ice Water Content: %{customdata[2]}",
-        #         ]
-        #     ),
-        # )
         # Specify layout information
         fig.update_layout(
-            # mapbox_layers=[
-            #     {
-            #         "below": 'traces',
-            #         "sourcetype": "raster",
-            #         "sourceattribution": "United States Geological Survey",
-            #         "source": [
-            #             "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
-            #         ],
-            #     }
-            # ],
             mapbox=dict(
                 accesstoken=os.getenv('MAPBOX_TOKEN'),
                 center=dict(lon=lon_center, lat=lat_center),

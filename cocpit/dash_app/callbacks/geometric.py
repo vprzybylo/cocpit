@@ -19,8 +19,7 @@ def register(app):
         '''pie chart for percentage of particle types for a given campaign'''
 
         values = df_classification.value_counts()
-        labels = df_classification.unique()
-
+        labels = values.keys()
         pie = px.pie(
             labels,
             values=values,
