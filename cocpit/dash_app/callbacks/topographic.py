@@ -3,7 +3,7 @@ plot topographic map
 scatter plot overlaid where particle images were captured
 includes callbacks
 '''
-
+import plotly.graph_objects as go
 import os
 import pandas as pd
 import plotly.express as px
@@ -14,6 +14,31 @@ import globals
 
 
 def register(app):
+    @app.callback(
+        Output('density-contour', 'figure'),
+        [
+            Input('df-classification', 'data'),
+            Input('df-lat', 'data'),
+            Input('df-lon', 'data'),
+        ],
+    )
+    def density_contour(df_classification, df_lat, df_lon):
+        '''2d histogram of particles in space with particle type plotted as color'''
+        fig = px.scatter(
+            x=df_lon,
+            y=df_lat,
+            marginal_x='histogram',
+            marginal_y='histogram',
+            color=df_classification,
+            color_discrete_map=globals.color_discrete_map,
+            labels={
+                "x": "Longitude",
+                "y": "Latitude",
+            },
+        )
+
+        return fig
+
     @app.callback(
         Output("top-down-map", "figure"),
         [

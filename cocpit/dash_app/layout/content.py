@@ -22,16 +22,47 @@ def content():
             dcc.Store(id='df-temp', storage_type=storage),
             dcc.Store(id='df-prop', storage_type=storage),
             dcc.Store(id='len-df', storage_type=storage),
+            # dls.Hash(
+            #     [
+            #     html.Div(
+            #         className='row justify-content-around',
+            #         children=[
+            #             html.Div(
+            #                 className='col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12',
+            #                 children=[
+            #                     dbc.Card(
+            #                         [
+            #                             dbc.CardHeader("Particle Location"),
+            #                             dbc.CardBody(
+            #                                 children=[
+            #                                     dcc.Graph(
+            #                                         id='top-down-map',
+            #                                         figure={},
+            #                                     ),
+            #                                     html.P(
+            #                                         'Hover over the image and choose the box select icon to update all figures based on selected location. \n \
+            #                                         Select an empty region to reset view with all data points.',
+            #                                         className='p text-center',
+            #                                     ),
+            #                                 ],
+            #                             ),
+            #                         ],
+            #                         className='card-body',
+            #                     )
+            #                 ],
+            #             ),
+            #         ],
+            #     ),
+            # ],
+            # ),
             dls.Hash(
                 [
-                    html.Div(
-                        className='row justify-content-around',
-                        children=[
+                    dbc.Row(
+                        [
                             html.Div(
-                                className='col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12',
                                 children=[
                                     dbc.Card(
-                                        [
+                                        children=[
                                             dbc.CardHeader("Particle Location"),
                                             dbc.CardBody(
                                                 children=[
@@ -50,15 +81,28 @@ def content():
                                         className='card-body',
                                     )
                                 ],
+                                className='col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6',
                             ),
-                        ],
-                    ),
-                ],
-            ),
-            dls.Hash(
-                [
-                    dbc.Row(
-                        [
+                            html.Div(
+                                children=[
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader(
+                                                "Particle Type Distribution by Location"
+                                            ),
+                                            dbc.CardBody(
+                                                children=[
+                                                    dcc.Graph(
+                                                        id='density-contour', figure={}
+                                                    )
+                                                ]
+                                            ),
+                                        ],
+                                        className='card-body',
+                                    )
+                                ],
+                                className='col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6',
+                            ),
                             html.Div(
                                 children=[
                                     dbc.Card(

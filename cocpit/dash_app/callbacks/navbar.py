@@ -72,9 +72,7 @@ def register(app):
         df = df[df['date'].between(start_date, end_date)]
         df = df[df['Temperature'].between(int(min_temp), int(max_temp))]
         df = df[df['Pressure'].between(int(min_pres[0]), int(max_pres[0]))]
-        df = df.sort_values(by=['Classification'])
 
-        print(df['date'].min(), df['date'].max())
         # hone data to lats and lons chosen by box select
         if selected_data and selected_data['points']:
             sel_data = pd.DataFrame(selected_data['points'])
@@ -92,6 +90,7 @@ def register(app):
         compact_count = len(df[df['Classification'] == 'compact irregular'])
         planar_count = len(df[df['Classification'] == 'planar polycrystal'])
         rimed_count = len(df[df['Classification'] == 'rimed'])
+        df = df.sort_values(by=['Classification'])
 
         return (
             df['Classification'],
