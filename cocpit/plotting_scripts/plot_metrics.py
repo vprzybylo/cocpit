@@ -133,8 +133,12 @@ def model_metric_folds(
         value_vars=["precision", "recall", "f1-score"],
         var_name="Metric",
     )
-
-    dd.sort_values(["model", "Metric"], inplace=True)
+    convert_metric_names = {
+        'f1-score': 'F1-score',
+        'precision': 'Precision',
+        'recall': 'Recall',
+    }
+    dd = dd.replace(convert_metric_names).sort_values(["model", "Metric"])
 
     g = sns.boxplot(x="model", y="value", data=dd, hue="Metric")
     grid_shader.GridShader(ax, facecolor="lightgrey", first=False, alpha=0.7)
