@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
-
+import cocpit.plotting_scripts.grid_shader as grid_shader
 import cocpit.config as config  # isort: split
 
 
@@ -106,6 +106,7 @@ def model_metric_folds(
     if avg == "classes":
         # average across classes, include all folds
         df = df[(df["class"] == "macro avg")]
+        title = 'Averaging across Classes \n Variation in Folds'
     elif avg == "folds":
         # first don't include class averages
         df = df[
@@ -115,6 +116,7 @@ def model_metric_folds(
         ]
         # average across folds, include all classes
         df = df.groupby(["model", "class"]).mean().reset_index()
+        title = 'Averaging across Folds \n Variation in Classes'
 
     else:
         # include all classes and folds
@@ -123,6 +125,7 @@ def model_metric_folds(
             & (df["class"] != "macro avg")
             & (df["class"] != "weighted avg")
         ]
+        title = 'No Averaging \n Variation in Folds and Classes'
 
     dd = pd.melt(
         df,
@@ -130,9 +133,11 @@ def model_metric_folds(
         value_vars=["precision", "recall", "f1-score"],
         var_name="Metric",
     )
-    dd.sort_values("model", inplace=True)
+
+    dd.sort_values(["model", "Metric"], inplace=True)
 
     g = sns.boxplot(x="model", y="value", data=dd, hue="Metric")
+    grid_shader.GridShader(ax, facecolor="lightgrey", first=False, alpha=0.7)
     g.set_xticklabels(g.get_xticklabels(), rotation=90)
     g.set_xlabel("Model")
     g.set_ylabel("Value")
@@ -142,6 +147,7 @@ def model_metric_folds(
 
     g.yaxis.grid(True, linestyle="-", which="major", color="lightgrey", alpha=0.5)
     g.set_ylim(0.75, 1.00)
+    g.set_title(title)
     if save_fig:
         plt.savefig(save_name, dpi=300, bbox_inches="tight")
 
