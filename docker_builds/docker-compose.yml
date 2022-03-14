@@ -16,7 +16,7 @@ services:
     user: ${UID_GID}
     volumes:
       - /home/vanessa/:/home/vanessa
-      - /raid/data/:/data/data/
+      - /raid/vanessa/cocpit:/data/data/
       - ${HOME}/.local/share/code-server/:/home/vanessa/.local/share/code-server
       - ${PWD}:/home/coder/project
     deploy:
@@ -38,13 +38,13 @@ services:
       dockerfile: Dockerfile_dash
     logging:
       driver: local
-    image: vprzybylo/cocpit_dash:v0.0.0
+    image: vprzybylo/cocpit_dash:v2.1.0
     container_name: dash_app
     environment:
       - PUID=1001
       - PGID=1001
     volumes:
-      - /raid/data/:/data/data/
+      - /raid/vanessa/cocpit/:/data/data/
     ports:
       - 8050:8050
     shm_size: '256G'
