@@ -35,36 +35,35 @@ def register(app):
         df_lon = df_lon.sort_index()
         lat_center = df_lat[df_lat != -999.99].mean()
         lon_center = df_lon[df_lon != -999.99].mean()
-        # fig = px.scatter(
-        #     x=df_lon,
-        #     y=df_lat,
-        #     marginal_x='histogram',
-        #     marginal_y='histogram',
-        #     color=df_classification,
-        #     color_discrete_map=globals.color_discrete_map,
-        #     labels={"x": "Longitude", "y": "Latitude"},
-        # )
 
+        # group individual points into grids
         gridx = np.linspace(df_lon.min(), df_lon.max())
         gridy = np.linspace(df_lat.min(), df_lat.max())
+        # count number of points per grid based on lat and lon
         grid, _, _ = np.histogram2d(df_lon, df_lat, bins=[gridx, gridy])
 
-        # find center points of grid in x and y
-        avg_x = [(a + b) / 2 for a, b in zip(gridx[::1], gridx[1::1])]
-        avg_y = [(a + b) / 2 for a, b in zip(gridy[::1], gridy[1::1])]
+        # find center points of grid in x and y for plotting heatmap
+        centers_x = [(a + b) / 2 for a, b in zip(gridx[::1], gridx[1::1])]
+        centers_y = [(a + b) / 2 for a, b in zip(gridy[::1], gridy[1::1])]
 
-        center_lats = []
-        center_lons = []
+        # Plotting each grids (x,y) center point.
+        # For each one of those points, the color will
+        # correspond to the # of points per grid box.
+        # grid is 2D whereas centers_x (longitudes) and
+        # centers_y (latitudes) are 1D so repeat lats and lons
+        # so that all arrays are the same length
+        center_xs = []
+        center_ys = []
         counts = []
-        for x, center_lat in enumerate(avg_x):
-            for y, center_lon in enumerate(avg_y):
+        for x, center_x in enumerate(centers_x):
+            for y, center_y in enumerate(centers_y):
                 counts.append(grid[x, y])
-                center_lats.append(center_lat)
-                center_lons.append(center_lon)
+                center_xs.append(center_x)
+                center_ys.append(center_y)
 
         fig = px.density_mapbox(
-            lat=center_lons,
-            lon=center_lats,
+            lat=center_ys,
+            lon=center_xs,
             z=counts,
             color_continuous_scale=px.colors.sequential.OrRd_r,
             radius=10,
