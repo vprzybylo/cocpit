@@ -11,6 +11,7 @@ from processing_scripts import process
 from callbacks.topo_map import TopoMap as TopoMap
 from dash_extensions.enrich import Input, Output
 import globals
+import numpy as np
 
 
 def register(app):
@@ -32,36 +33,45 @@ def register(app):
         df_classification = df_classification.sort_index()
         df_lat = df_lat.sort_index()
         df_lon = df_lon.sort_index()
-
-        fig = px.scatter(
-            x=df_lon,
-            y=df_lat,
-            marginal_x='histogram',
-            marginal_y='histogram',
-            color=df_classification,
-            color_discrete_map=globals.color_discrete_map,
-            labels={"x": "Longitude", "y": "Latitude"},
-        )
-
+        lat_center = df_lat[df_lat != -999.99].mean()
+        lon_center = df_lon[df_lon != -999.99].mean()
         # fig = px.scatter(
         #     x=df_lon,
         #     y=df_lat,
         #     marginal_x='histogram',
         #     marginal_y='histogram',
         #     color=df_classification,
-        #     custom_data=['Longitude', 'Latitude', 'Particle Type'],
         #     color_discrete_map=globals.color_discrete_map,
         #     labels={"x": "Longitude", "y": "Latitude"},
         # )
-        # fig.update_traces(
-        #     hovertemplate="<br>".join(
-        #         [
-        #             "Longitude: %{x}",
-        #             "Latitude: %{y}",
-        #             "Particle Type: %{color}",
-        #         ]
-        #     )
-        # )
+
+        gridx = np.linspace(df_lon.min(), df_lon.max())
+        gridy = np.linspace(df_lat.min(), df_lat.max())
+        grid, _, _ = np.histogram2d(df_lon, df_lat, bins=[gridx, gridy])
+
+        # find center points of grid in x and y
+        avg_x = [(a + b) / 2 for a, b in zip(gridx[::1], gridx[1::1])]
+        avg_y = [(a + b) / 2 for a, b in zip(gridy[::1], gridy[1::1])]
+
+        center_lats = []
+        center_lons = []
+        counts = []
+        for x, center_lat in enumerate(avg_x):
+            for y, center_lon in enumerate(avg_y):
+                counts.append(grid[x, y])
+                center_lats.append(center_lat)
+                center_lons.append(center_lon)
+
+        fig = px.density_mapbox(
+            lat=center_lons,
+            lon=center_lats,
+            z=counts,
+            color_continuous_scale=px.colors.sequential.OrRd_r,
+            radius=10,
+            center=dict(lat=lat_center, lon=lon_center),
+            zoom=5,
+            mapbox_style="stamen-terrain",
+        )
 
         return process.update_layout(fig, contour=True, margin=5)
 

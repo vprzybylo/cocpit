@@ -9,10 +9,10 @@ def read_campaign(campaign):
     '''read particle property df and environmental property df_env
     merged based on filename and date'''
 
-    campaign = 'CRYSTAL_FACE_NASA' if campaign == 'CRYSTAL FACE (NASA)' else campaign
-    campaign = 'CRYSTAL_FACE_UND' if campaign == 'CRYSTAL FACE (UND)' else campaign
-    campaign = 'ICE_L' if campaign == 'ICE L' else campaign
-    campaign = 'AIRS_II' if campaign == 'AIRS II' else campaign
+    # replace spaces with underscores and remove parentheses
+    # filenames don't have spaces or parentheses
+    campaign = campaign.replace(" ", "_").replace("(", "").replace(")", "")
+
     df = pd.read_parquet(
         f"../../final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
         engine='fastparquet',
