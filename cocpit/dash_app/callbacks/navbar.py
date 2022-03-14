@@ -1,5 +1,5 @@
 from dash_extensions.enrich import Input, Output, State, ServersideOutput, dcc
-from callbacks import process
+from processing_scripts import process
 import numpy as np
 import pandas as pd
 import globals

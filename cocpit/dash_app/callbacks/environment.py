@@ -1,12 +1,11 @@
 '''
 plot figures for environmental attributes of ice crystals
-2d histogram contours for particle type in vertical cross section
 includes callbacks
 '''
 
 import pandas as pd
 import plotly.express as px
-from callbacks import process
+from processing_scripts import process
 from dash_extensions.enrich import Input, Output, State
 import globals
 

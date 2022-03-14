@@ -5,7 +5,7 @@ includes callbacks
 '''
 
 import plotly.express as px
-from callbacks import process
+from processing_scripts import process
 from dash_extensions.enrich import Input, Output
 import globals
 

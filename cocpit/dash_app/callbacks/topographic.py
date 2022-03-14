@@ -7,7 +7,7 @@ import plotly.graph_objects as go
 import os
 import pandas as pd
 import plotly.express as px
-from callbacks import process
+from processing_scripts import process
 from callbacks.topo_map import TopoMap as TopoMap
 from dash_extensions.enrich import Input, Output
 import globals
@@ -25,7 +25,7 @@ def register(app):
     def density_contour(df_classification, df_lat, df_lon):
         '''2d histogram of particles in space with particle type plotted as color'''
 
-        # resort by original index so that rimed isn't plotted on top
+        # re-sort by original index so that rimed isn't plotted on top
         #   - was blocking all other colors/particle types
         # the df was originally sorted alphabetically
         #   - so that particle type colors are always consistent across viiolin figures
@@ -40,11 +40,28 @@ def register(app):
             marginal_y='histogram',
             color=df_classification,
             color_discrete_map=globals.color_discrete_map,
-            labels={
-                "x": "Longitude",
-                "y": "Latitude",
-            },
+            labels={"x": "Longitude", "y": "Latitude"},
         )
+
+        # fig = px.scatter(
+        #     x=df_lon,
+        #     y=df_lat,
+        #     marginal_x='histogram',
+        #     marginal_y='histogram',
+        #     color=df_classification,
+        #     custom_data=['Longitude', 'Latitude', 'Particle Type'],
+        #     color_discrete_map=globals.color_discrete_map,
+        #     labels={"x": "Longitude", "y": "Latitude"},
+        # )
+        # fig.update_traces(
+        #     hovertemplate="<br>".join(
+        #         [
+        #             "Longitude: %{x}",
+        #             "Latitude: %{y}",
+        #             "Particle Type: %{color}",
+        #         ]
+        #     )
+        # )
 
         return process.update_layout(fig, contour=True, margin=5)
 

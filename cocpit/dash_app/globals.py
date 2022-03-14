@@ -86,7 +86,7 @@ campaign_start_dates = {
     "MACPEX": date(2011, 4, 3),
     "MC3E": date(2011, 5, 23),
     "MIDCIX": date(2004, 4, 19),
-    "MPACE": date(2004, 9, 30),
+    "MPACE": date(2004, 10, 5),
     "POSIDON": date(2016, 10, 12),
     "OLYMPEX": date(2015, 11, 12),
 }
@@ -103,7 +103,7 @@ campaign_end_dates = {
     "MACPEX": date(2011, 4, 25),
     "MC3E": date(2011, 6, 2),
     "MIDCIX": date(2004, 5, 6),
-    "MPACE": date(2004, 10, 22),
+    "MPACE": date(2004, 10, 21),
     "POSIDON": date(2016, 10, 28),
     "OLYMPEX": date(2015, 12, 20),
 }
@@ -120,7 +120,7 @@ min_dates = {
     "MACPEX": date(2011, 4, 3),
     "MC3E": date(2011, 5, 23),
     "MIDCIX": date(2004, 4, 19),
-    "MPACE": date(2004, 9, 30),
+    "MPACE": date(2004, 10, 5),
     "POSIDON": date(2016, 10, 12),
     "OLYMPEX": date(2015, 11, 12),
 }
@@ -137,7 +137,7 @@ max_dates = {
     "MACPEX": date(2011, 4, 25),
     "MC3E": date(2011, 6, 2),
     "MIDCIX": date(2004, 5, 6),
-    "MPACE": date(2004, 10, 22),
+    "MPACE": date(2004, 10, 21),
     "POSIDON": date(2016, 10, 28),
     "OLYMPEX": date(2015, 12, 20),
 }
