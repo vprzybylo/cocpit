@@ -14,7 +14,7 @@ def read_campaign(campaign):
     campaign = campaign.replace(" ", "_").replace("(", "").replace(")", "")
 
     df = pd.read_parquet(
-        f"../../final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
+        f"/data/data/final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
         engine='fastparquet',
     )
 

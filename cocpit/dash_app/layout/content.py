@@ -88,13 +88,17 @@ def content():
                                     dbc.Card(
                                         [
                                             dbc.CardHeader(
-                                                "Particle Type Distribution by Location"
+                                                "Data points grouped into gridbox counts"
                                             ),
                                             dbc.CardBody(
                                                 children=[
                                                     dcc.Graph(
                                                         id='density-contour', figure={}
-                                                    )
+                                                    ),
+                                                    html.P(
+                                                        'This figure (and all others) update based on filters applied in the dropdown menu',
+                                                        className='p text-center',
+                                                    ),
                                                 ]
                                             ),
                                         ],

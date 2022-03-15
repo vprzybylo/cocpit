@@ -21,6 +21,7 @@ def register(app):
     )
     def environment_violin(env_prop, classification, label):
         '''violin plot of particle type vs ice water content'''
+
         fig = px.violin(
             x=classification,
             y=env_prop,
@@ -31,4 +32,8 @@ def register(app):
                 "y": label,
             },
         )
+
+        if label == 'Temperature':
+            fig.update_yaxes(autorange="reversed")
+
         return process.update_layout(fig)
