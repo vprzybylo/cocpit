@@ -22,15 +22,14 @@ def read_campaign(campaign):
 
 
 def remove_bad_data(df):
-    '''remove missing or bad environmental data'''
-    df = df.replace([-999.99, -999.0, np.inf, -np.inf], np.nan).dropna()
+    '''remove bad data for particle properties'''
 
     df = df[
-        (df['Latitude'] != 0)
-        & (df['Longitude'] != 0)
-        & (df['Pressure'] != 0)
+        # (df['Latitude'] != 0)
+        # & (df['Longitude'] != 0)
+        (df['Pressure'] != 0)
         & (df['Ice Water Content'] > 1e-5)
-        & (df["Complexity"] != -0.0)
+        # & (df["Complexity"] != -0.0)
         & (df['Particle Height'] != 0.0)
         & (df['Particle Width'] != 0.0)
     ]

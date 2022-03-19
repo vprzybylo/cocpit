@@ -8,6 +8,7 @@ import plotly.express as px
 from processing_scripts import process
 from dash_extensions.enrich import Input, Output, State
 import globals
+import numpy as np
 
 
 def register(app):
@@ -20,7 +21,12 @@ def register(app):
         ],
     )
     def environment_violin(env_prop, classification, label):
-        '''violin plot of particle type vs ice water content'''
+        '''violin plot of particle type vs user selected environmental property'''
+        # remove rows where there is bad environmental data
+
+        env_prop = env_prop.replace([-999.99, -999.0, np.inf, -np.inf], np.nan)
+        classification = classification[env_prop != np.nan]
+        env_prop = env_prop.dropna()
 
         fig = px.violin(
             x=classification,

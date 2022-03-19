@@ -4,49 +4,30 @@ services:
     build:
       context: .
       dockerfile: Dockerfile_codercom
-    image: vprzybylo/code_server:v1.0.0
-    container_name: code-server-vanessa
+    image: vprzybylo/code_server_cocpit:v1.0.0
+    container_name: code-server-cocpit
     environment:
-      - PORT=8443 code-server
       - PUID=1001
       - PGID=1001
       - DEFAULT_WORKSPACE=/data/data
       - TZ=America/New_York
-    shm_size: '256G'
+#    shm_size: '100G'
     user: ${UID_GID}
     volumes:
       - /home/vanessa/:/home/vanessa
       - /raid/vanessa/cocpit:/data/data/
       - ${HOME}/.local/share/code-server/:/home/vanessa/.local/share/code-server
       - ${PWD}:/home/coder/project
-    deploy:
-      resources:
-        limits:
-          cpus: '20'
-        reservations:
-          devices:
-            - driver: nvidia
-              capabilities: [ gpu ]
-              device_ids: [ '6,7' ]
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '20'
+#        reservations:
+#          devices:
+#            - driver: nvidia
+#              capabilities: [ gpu ]
+#              device_ids: [ '6,7' ]
     ports:
       - 8443:8443
-    restart: unless-stopped
-
-  dash:
-    build:
-      context: .
-      dockerfile: Dockerfile_dash
-    logging:
-      driver: local
-    image: vprzybylo/cocpit_dash:v2.1.0
-    container_name: dash_app
-    environment:
-      - PUID=1001
-      - PGID=1001
-    volumes:
-      - /raid/vanessa/cocpit/:/data/data/
-    ports:
       - 8050:8050
-    shm_size: '256G'
-    user: ${UID_GID}
     restart: unless-stopped

@@ -27,7 +27,6 @@ def register(app):
             color=labels,
             color_discrete_map=globals.color_discrete_map,
         )
-
         return process.update_layout(pie, contour=True)
 
     @app.callback(
