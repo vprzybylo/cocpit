@@ -22,8 +22,8 @@ def register(app):
     )
     def environment_violin(env_prop, classification, label):
         '''violin plot of particle type vs user selected environmental property'''
-        # remove rows where there is bad environmental data
 
+        # remove rows where there is bad environmental data
         env_prop = env_prop.replace([-999.99, -999.0, np.inf, -np.inf], np.nan)
         classification = classification[env_prop != np.nan]
         env_prop = env_prop.dropna()
