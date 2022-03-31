@@ -1,8 +1,23 @@
+"""handles preprocessing and saving data based on navbar selctions"""
+
 from dash_extensions.enrich import Input, Output, State, ServersideOutput, dcc
-from callbacks import process
+from processing_scripts import process
 import numpy as np
 import pandas as pd
 import globals
+
+
+def hone_box_select(selected_data, df):
+    '''hone data to lats and lons chosen by box select'''
+    if selected_data and selected_data['points']:
+        sel_data = pd.DataFrame(selected_data['points'])
+        df = df[
+            (df['Longitude'] < sel_data['lon'].max())
+            & (df['Longitude'] > sel_data['lon'].min())
+            & (df['Latitude'] > sel_data['lat'].min())
+            & (df['Latitude'] < sel_data['lat'].max())
+        ]
+    return df
 
 
 def register(app):
@@ -65,6 +80,7 @@ def register(app):
         df = process.read_campaign(campaign)
         df = process.rename(df)
         df = process.remove_bad_data(df)
+
         df = df[df['Classification'].isin(part_type)]
         df['max_dim'] = np.maximum(df['Particle Width'], df['Particle Height'])
         df['min_dim'] = np.minimum(df['Particle Width'], df['Particle Height'])
@@ -73,15 +89,7 @@ def register(app):
         df = df[df['Temperature'].between(int(min_temp), int(max_temp))]
         df = df[df['Pressure'].between(int(min_pres[0]), int(max_pres[0]))]
 
-        # hone data to lats and lons chosen by box select
-        if selected_data and selected_data['points']:
-            sel_data = pd.DataFrame(selected_data['points'])
-            df = df[
-                (df['Longitude'] < sel_data['lon'].max())
-                & (df['Longitude'] > sel_data['lon'].min())
-                & (df['Latitude'] > sel_data['lat'].min())
-                & (df['Latitude'] < sel_data['lat'].max())
-            ]
+        df = hone_box_select(selected_data, df)
 
         agg_count = len(df[df['Classification'] == 'aggregate'])
         budding_count = len(df[df['Classification'] == 'budding rosette'])

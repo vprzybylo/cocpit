@@ -24,10 +24,12 @@ def batch_size_accuracy_bar(val_csv, save_name, save_fig=False):
     )
     df_val["Accuracy"] = df_val["Accuracy"] * 100
     groupedvalues = df_val.groupby("Batch Size")["Accuracy"].max()
-    print(groupedvalues)
-    my_cmap = cm.get_cmap("icefire")
-    my_norm = Normalize(vmin=95.0, vmax=97)
-    g = groupedvalues.plot.bar(color=my_cmap(my_norm(groupedvalues)))
+
+    my_cmap = cm.get_cmap('Oranges')
+    my_norm = Normalize(vmin=95.8, vmax=96.9)
+    cmap = my_cmap(my_norm(groupedvalues))
+
+    g = groupedvalues.plot.bar(color=cmap)
     g.set_xlabel("Batch Size", fontsize=14, fontfamily="serif")
     g.set_ylabel("Accuracy [%]", fontsize=14, fontfamily="serif")
     g.set_ylim(90, 100)
@@ -52,7 +54,6 @@ def batch_size_accuracy_bar(val_csv, save_name, save_fig=False):
             xytext=(0, 8),
             textcoords="offset points",
         )
-
     if save_fig:
         plt.savefig(save_name, dpi=300, bbox_inches="tight")
 

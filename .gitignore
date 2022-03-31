@@ -7,13 +7,10 @@ cocpit.egg-info
 setup.py
 ETOP*
 test.ipynb
-file_system_store
 tmp*
 final_databases
 .DS_store
-setup.py
 .virtual_documents
-ETOPO1*
 file_system_store
 data
 cpi_data

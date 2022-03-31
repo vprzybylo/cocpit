@@ -17,8 +17,6 @@
 [issues-url]: https://github.com/vprzybylo/cocpit/issues
 [license-shield]: https://img.shields.io/github/license/vprzybylo/COCPIT?style=plastic
 [license-url]: https://github.com/vprzybylo/cocpit/blob/master/LICENSE.md
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1L9afVqbOYwHh836MFwnEzy88l3tPycWz?authuser=1#scrollTo=MKD112KpRCOe)
 
 
 <br />
@@ -28,10 +26,10 @@
   </a>
 
   <h3 align="center">COCPIT</h3>
-		    
+
 
   <p align="center">
-    Classification of Cloud Particle Imagery and Thermodynamics 
+    Classification of Cloud Particle Imagery and Thermodynamics
     <br />
     <a href="https://vprzybylo.gitbook.io/cocpit/"><strong>Explore the docs »</strong></a>
     <br />
@@ -48,19 +46,18 @@
 # Table of Contents
 
 * [About](#about)
-  * [Installation](#installation)
-  * [Prerequisites](#prerequisites)
 * [Built With](#built-with)
-* [Roadmap](#roadmap)
 * [License](#license)
 * [Contact](#contact)
 * [Acknowledgements](#acknowledgements)
 
 ## About
 
-A tool for the characterization of cloud particle images from the (<a href="http://www.specinc.com/cloud-particle-imager">CPI</a>) probe.  Accessibility to a future user interface that correlates ice particle imagery with environmental properties will allow users to instantly evaluate the databases classifications without accompanying image storage or computational hardware needs.
+A tool for the characterization of cloud particle images from the (<a href="http://www.specinc.com/cloud-particle-imager">CPI</a>) probe using convolutional neural networks.  Ice particles are also collocated spatio-temporally with environmental properties from aircraft probes to gain an understanding of particle geometric, geographic, and environmental relationships.
 
-Currently, probe images are classified into 9 categories, but further development may extend these classes:
+A user interface located at _____ allows users to instantly evaluate and filter the database classifications for multiple field campaigns without accompanying image storage or computational hardware needs.
+
+Cloud probe images are classified into 9 categories, but further development may extend these classes:
 
 | Category         | Description                                                                                                                                                                 |
 |-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -131,27 +128,21 @@ Currently, probe images are classified into 9 categories, but further developmen
 
 ### Built With
 
-* <a href="https://www.python.org/"><a href="https://pytorch.org/docs/stable/torchvision/models.html">Python</a> </a> 
-* <a href="https://pytorch.org/docs/stable/torchvision/models.html">Pytorch</a> 
-* <a href="http://www.specinc.com/sites/default/files/software_and_manuals/CPI_Post Processing Software Manual_rev1.2_20120116.pdf">cpiview</a> 
+* <a href="https://www.python.org/"><a href="https://pytorch.org/docs/stable/torchvision/models.html">Python</a> </a>
+* <a href="https://pytorch.org/docs/stable/torchvision/models.html">Pytorch</a>
+* <a href="http://www.specinc.com/sites/default/files/software_and_manuals/CPI_Post Processing Software Manual_rev1.2_20120116.pdf">cpiview</a>
   * Desktop-developed software will need to be used to extract ''sheets'' of CPI images from region of interest (ROI) files output from the CPI probe should new data be wished to be processed and classified.
   * ![flowchart](https://github.com/vprzybylo/cocpit/blob/master/README_graphics/flow_chart_sheets-1.png)
 
-* <a href="https://www.nvidia.com/en-us/">nvidia</a> 
+* <a href="https://www.nvidia.com/en-us/">nvidia</a>
   * Resources used: NVIDIA DGX-1 server utilizing Tesla V100 GPUs. This system is housed in the University at Albanys Tier-3 Data Center, and managed/maintained by the xCITE (ExTREME Collaboration, Innovation and TEchnology) laboratory. The base DGX-1 V100 system contains 8 Tesla V100 GPUs with a combined total of 40,960 CUDA (graphics) cores, 5120 Tensor cores, and 256GB of GPU memory, all linked by NVIDIAs 300GB/s NVLINK interconnect. The DGX-1 is optimized for data loading, data transformations, and training, which are all critical to the ML processes required by this project.
 
-
-## Roadmap
-
-* Each image will have time-correlated in situ measurements added to the database via aircraft probes own through dierent cloud layers during field campaign initiatives. The CPI particle timestamp will be used to synchronize with other data systems on board to obtain environmental parameters, that include but are not limited to: location, atmospheric conditions, and other characteristics based on what was measured during the specic field program discussed.
-* Provide functions to determine a relative likelihood for a particular thermodynamic property to make up a predefined sample space, such as habit type.
-* It cannot be assumed that these particles initiated or grew within the environment at time of capture, hence, there is motivation to use trajectory analysis to track and associate particle characteristics with the environment in which they resided.
 
 ## License
 
 Distributed under the MIT License.  See `LICENSE` for more information.
 
-## Contact 
+## Contact
 
 Vanessa Przybylo - vprzybylo@albany.edu
 
@@ -162,5 +153,3 @@ Project Link: [https://vprzybylo.github.io/cocpit/](https://vprzybylo.github.io/
 ## Acknowledgements
 * V. Przybylo, K. Sulia, C. Schmitt, and Z. Lebo (collaborators on this project) would like to thank the Department of Energy for support under DOE Grant Number DE-SC0021033.
 * Development support given by the Atmospheric Sciences Research Center ExTreme Collaboration, Innovation, and TEchnology (xCITE) Laboratory.
-
-

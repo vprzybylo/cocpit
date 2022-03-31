@@ -5,7 +5,7 @@ includes callbacks
 '''
 
 import plotly.express as px
-from callbacks import process
+from processing_scripts import process
 from dash_extensions.enrich import Input, Output
 import globals
 
@@ -19,8 +19,7 @@ def register(app):
         '''pie chart for percentage of particle types for a given campaign'''
 
         values = df_classification.value_counts()
-        labels = df_classification.unique()
-
+        labels = values.keys()
         pie = px.pie(
             labels,
             values=values,
@@ -28,7 +27,6 @@ def register(app):
             color=labels,
             color_discrete_map=globals.color_discrete_map,
         )
-
         return process.update_layout(pie, contour=True)
 
     @app.callback(

@@ -9,12 +9,12 @@ def read_campaign(campaign):
     '''read particle property df and environmental property df_env
     merged based on filename and date'''
 
-    campaign = 'CRYSTAL_FACE_NASA' if campaign == 'CRYSTAL FACE (NASA)' else campaign
-    campaign = 'CRYSTAL_FACE_UND' if campaign == 'CRYSTAL FACE (UND)' else campaign
-    campaign = 'ICE_L' if campaign == 'ICE L' else campaign
-    campaign = 'AIRS_II' if campaign == 'AIRS II' else campaign
+    # replace spaces with underscores and remove parentheses
+    # filenames don't have spaces or parentheses
+    campaign = campaign.replace(" ", "_").replace("(", "").replace(")", "")
+
     df = pd.read_parquet(
-        f"../../final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
+        f"/data/data/final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
         engine='fastparquet',
     )
 
@@ -22,17 +22,18 @@ def read_campaign(campaign):
 
 
 def remove_bad_data(df):
-    '''remove missing or bad environmental data'''
-    df = df.replace([-999.99, -999.0, np.inf, -np.inf], np.nan).dropna()
+    '''remove bad data for particle properties'''
+
     df = df[
-        (df['Latitude'] != 0)
-        & (df['Longitude'] != 0)
-        & (df['Pressure'] != 0)
+        # (df['Latitude'] != 0)
+        # & (df['Longitude'] != 0)
+        (df['Pressure'] != 0)
         & (df['Ice Water Content'] > 1e-5)
-        & (df["Complexity"] != -0.0)
+        # & (df["Complexity"] != -0.0)
         & (df['Particle Height'] != 0.0)
         & (df['Particle Width'] != 0.0)
     ]
+
     return df
 
 

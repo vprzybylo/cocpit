@@ -1,7 +1,8 @@
 '''main dashboard executable'''
 
 import dash_bootstrap_components as dbc
-from callbacks import environment, geometric, process, topographic, navbar
+from callbacks import environment, geometric, topographic, navbar
+from processing_scripts import process
 from dash import dcc
 from dotenv import load_dotenv
 from layout import content, header, legend, banners, sidebar, navbar_collapse

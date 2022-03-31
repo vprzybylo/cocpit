@@ -33,7 +33,7 @@ def header():
                         html.H3(
                             html.A(
                                 "COCPIT",
-                                href="http://www.specinc.com/cloud-particle-imager",
+                                href="https://github.com/vprzybylo/cocpit",
                                 className='text-white px-3',
                             ),
                         ),

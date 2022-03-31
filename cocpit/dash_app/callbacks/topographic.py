@@ -7,10 +7,11 @@ import plotly.graph_objects as go
 import os
 import pandas as pd
 import plotly.express as px
-from callbacks import process
+from processing_scripts import process
 from callbacks.topo_map import TopoMap as TopoMap
 from dash_extensions.enrich import Input, Output
 import globals
+import numpy as np
 
 
 def register(app):
@@ -24,20 +25,55 @@ def register(app):
     )
     def density_contour(df_classification, df_lat, df_lon):
         '''2d histogram of particles in space with particle type plotted as color'''
-        fig = px.scatter(
-            x=df_lon,
-            y=df_lat,
-            marginal_x='histogram',
-            marginal_y='histogram',
-            color=df_classification,
-            color_discrete_map=globals.color_discrete_map,
-            labels={
-                "x": "Longitude",
-                "y": "Latitude",
-            },
-        )
 
-        return fig
+        # re-sort by original index so that rimed isn't plotted on top
+        #   - was blocking all other colors/particle types
+        # the df was originally sorted alphabetically
+        #   - so that particle type colors are always consistent across viiolin figures
+        df_classification = df_classification.sort_index()
+        df_lat = df_lat.sort_index()
+        df_lon = df_lon.sort_index()
+        lat_center = df_lat[df_lat != -999.99].mean()
+        lon_center = df_lon[df_lon != -999.99].mean()
+
+        # group individual points into grids
+        gridx = np.linspace(df_lon.min(), df_lon.max())
+        gridy = np.linspace(df_lat.min(), df_lat.max())
+        # count number of points per grid based on lat and lon
+        grid, _, _ = np.histogram2d(df_lon, df_lat, bins=[gridx, gridy])
+
+        # find center points of every gridbox for plotting heatmap
+        centers_x = [(a + b) / 2 for a, b in zip(gridx, gridx[1:])]
+        centers_y = [(a + b) / 2 for a, b in zip(gridy, gridy[1:])]
+
+        # Plotting each grids (x,y) center point.
+        # For each one of those points, the color will
+        # correspond to the # of points per grid box.
+        # grid is 2D whereas centers_x (longitudes) and
+        # centers_y (latitudes) are 1D so repeat lats and lons
+        # so that all arrays are the same length
+        center_xs = []
+        center_ys = []
+        counts = []
+        for x, center_x in enumerate(centers_x):
+            for y, center_y in enumerate(centers_y):
+                counts.append(grid[x, y])
+                center_xs.append(center_x)
+                center_ys.append(center_y)
+
+        fig = px.density_mapbox(
+            lat=center_ys,
+            lon=center_xs,
+            z=counts,
+            color_continuous_scale=px.colors.sequential.OrRd_r,
+            radius=10,
+            center=dict(lat=lat_center, lon=lon_center),
+            zoom=5,
+            mapbox_style="stamen-terrain",
+        )
+        fig.update_traces(hovertemplate='# per gridbox: %{z}')  #
+
+        return process.update_layout(fig, contour=True, margin=5)
 
     @app.callback(
         Output("top-down-map", "figure"),
@@ -53,44 +89,20 @@ def register(app):
         # Find Lat Long center
         lat_center = df_lat[df_lat != -999.99].mean()
         lon_center = df_lon[df_lon != -999.99].mean()
+        df_classification = df_classification.sort_index()
+        df_lat = df_lat.sort_index()
+        df_lon = df_lon.sort_index()
 
         fig = px.scatter_mapbox(
             lat=df_lat,
             lon=df_lon,
             color=df_classification,
             color_discrete_map=globals.color_discrete_map,
-            mapbox_style="stamen-terrain"
-            # hover_data={
-            #     'Ice Water Content': True,
-            #     'Temperature': True,
-            #     'Pressure': True,
-            # },
-            # custom_data=['Temperature', 'Pressure', 'Ice Water Content'],
+            mapbox_style="stamen-terrain",
         )
 
-        # fig.update_traces(
-        #     hovertemplate="<br>".join(
-        #         [
-        #             "Latitude: %{lat}",
-        #             "Longitude: %{lon}",
-        #             "Temperature: %{customdata[0]}",
-        #             "Pressure: %{customdata[1]}",
-        #             "Ice Water Content: %{customdata[2]}",
-        #         ]
-        #     ),
-        # )
         # Specify layout information
         fig.update_layout(
-            # mapbox_layers=[
-            #     {
-            #         "below": 'traces',
-            #         "sourcetype": "raster",
-            #         "sourceattribution": "United States Geological Survey",
-            #         "source": [
-            #             "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
-            #         ],
-            #     }
-            # ],
             mapbox=dict(
                 accesstoken=os.getenv('MAPBOX_TOKEN'),
                 center=dict(lon=lon_center, lat=lat_center),
@@ -105,7 +117,13 @@ def register(app):
         Input("df-alt", "data"),
         Input("df-classification", "data"),
     )
-    def vert_dist(df_lon, df_alt, df_classification):
+    def vert_distribution(df_lon, df_alt, df_classification):
+
+        df_alt = df_alt.replace([-999.99, -999.0, np.inf, -np.inf], np.nan)
+        df_classification = df_classification[df_alt != np.nan]
+        df_lon = df_lon[df_alt != np.nan]
+        df_alt = df_alt.dropna()
+
         vert_dist = px.violin(
             x=df_classification,
             y=df_alt,
@@ -116,7 +134,6 @@ def register(app):
                 "y": 'Altitude',
             },
         )
-        # print(df_classification.value_counts())
 
         vert_dist = process.update_layout(vert_dist, contour=False)
         return vert_dist
