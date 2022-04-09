@@ -75,18 +75,18 @@ def get_data(phase):
     """
 
     transform_dict = {
-        'train': transforms.Compose(
+        "train": transforms.Compose(
             [
                 transforms.Resize(224),
                 transforms.RandomHorizontalFlip(),
-                transforms.RandomVerticalFlip(),
+                # transforms.RandomVerticalFlip(),
                 transforms.ToTensor(),
                 transforms.Normalize(
                     mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
                 ),
             ]
         ),
-        'val': transforms.Compose(
+        "val": transforms.Compose(
             [
                 transforms.Resize(224),
                 transforms.ToTensor(),
@@ -123,7 +123,7 @@ def make_weights_for_balanced_classes(train_labels):
 
 
 def balanced_sampler(train_labels):
-    '''create a training dataloader for unbalanced class counts'''
+    """create a training dataloader for unbalanced class counts"""
 
     # For an unbalanced dataset create a weighted sampler
     class_counts, train_samples_weights = make_weights_for_balanced_classes(
@@ -137,8 +137,8 @@ def balanced_sampler(train_labels):
 
 
 def create_loader(data, batch_size, sampler, pin_memory=True):
-    '''Make an iterable of batches across either
-    the training or validation dataset'''
+    """Make an iterable of batches across either
+    the training or validation dataset"""
     return torch.utils.data.DataLoader(
         data,
         batch_size=batch_size,
@@ -149,7 +149,7 @@ def create_loader(data, batch_size, sampler, pin_memory=True):
 
 
 def save_valloader(val_data):
-    '''save validation dataloader based on paths in config.py'''
+    """save validation dataloader based on paths in config.py"""
     if not os.path.exists(config.VAL_LOADER_SAVE_DIR):
         os.makedirs(config.VAL_LOADER_SAVE_DIR)
     torch.save(val_data, config.VAL_LOADER_SAVENAME)

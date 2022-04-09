@@ -87,6 +87,7 @@ class GUI:
         when a class in the dropdown is selected, move the image and save
         it to the specified class
         """
+        print(change)
         self.save_image(change)
 
     def on_button_next(self, b):
@@ -96,7 +97,7 @@ class GUI:
         """
         self.index = self.index + 1
         self.bar_chart()
-
+        print("in next")
         # keep the default dropdown value to agg
         # don't want it to change based on previous selection
         self.menu.value = config.CLASS_NAMES[self.label]
@@ -126,7 +127,7 @@ class GUI:
         """
         clear_output()  # so that the next fig doesnt display below
         fig, (ax1, ax2) = plt.subplots(
-            constrained_layout=True, figsize=(5, 7), ncols=1, nrows=2
+            constrained_layout=True, figsize=(8, 8), ncols=1, nrows=2
         )
         image = self.open_image()
         ax1.imshow(image)
@@ -167,9 +168,11 @@ class GUI:
         """
         filename = self.all_paths[self.index].split("/")[-1]
 
-        data_dir = f"/data/data/cpi_data/training_datasets/hand_labeled_resized_{config.TAG}_sideplanes_copy/"
-        # print(f"{data_dir}{config.CLASS_NAMES[self.all_labels[self.index]]}/{filename}")
-        # print(f"{data_dir}{change.new}/{filename}")
+        # data_dir = f"/data/data/cpi_data/training_datasets/hand_labeled_resized_{config.TAG}_sideplanes_copy/"
+        data_dir = "/ai2es/night_precip_hand_labeled/2017/"
+
+        print(f"{data_dir}{config.CLASS_NAMES[self.all_labels[self.index]]}/{filename}")
+        print(f"{data_dir}{change.new}/{filename}")
         try:
             shutil.move(
                 f"{data_dir}{config.CLASS_NAMES[self.all_labels[self.index]]}/{filename}",
