@@ -10,7 +10,7 @@ from ipywidgets import Button
 import PIL
 from shutil import copyfile
 import os
-from typing import Union
+from typing import Union, List
 import cocpit.config as config
 
 
@@ -19,27 +19,23 @@ class GUI:
     view and label images in notebooks/label.ipynb
     """
 
-    def __init__(self, all_paths, folder_dest, split_path=True):
+    def __init__(self, all_paths: List[str], folder_dest: str):
         self.all_paths = all_paths
-        self.n_paths = len(self.all_paths)
+        self.n_paths: int = len(self.all_paths)
         self.folder_dest = folder_dest
-        self.index = 0
+        self.index: int = 0
         self.center = ipywidgets.Output()
         self.undo_btn = Button(description="Undo")
-        if split_path:
-            self.filename = self.all_paths[self.index].split("/")[-1]
-        else:
-            self.filename = self.all_paths[self.index]
+        # split path from filename if paths coming from ai2es project
+        self.filename = self.all_paths[self.index].split("/")[-1]
         self.buttons = []
 
     def open_image(self) -> Union[PIL.Image.Image, None]:
         try:
-            image = PIL.Image.open(self.all_paths[self.index])
-            return image
+            return PIL.Image.open(self.all_paths[self.index])
 
         except FileNotFoundError:
             print("This file was already moved and cannot be found. Please hit Next.")
-            return
 
     def make_buttons(self) -> None:
         """buttons for each category and undo button"""
@@ -56,7 +52,9 @@ class GUI:
             b: button instance
         """
 
-        output_path = os.path.join(self.folder_dest, b.description, self.filename)
+        output_path = os.path.join(
+            self.folder_dest, config.CLASS_NAME_MAP[b.description], self.filename
+        )
         copyfile(self.all_paths[self.index], output_path)
         self.index = self.index + 1
         self.display_image()
