@@ -42,6 +42,11 @@ gui.py
     - if a label is incorrect a user can move the image within the labeled dataset using a dropdown menu
     - called in notebooks/gui_move_wrong_predictions.ipynb
 
+gui_label.py
+    - An ipywidget interface for creating a training dataset
+    - buttons to choose a label and move an image into that dir
+    - called in notebooks/label.ipynb
+
 image_stats:
     - find the #/% of cutoff particles after removing blurry, fragmented, and spherical drops
     - used as a separate script (external - not being called in __main__.py)
@@ -102,6 +107,6 @@ from os.path import basename, dirname, isfile, join
 
 modules = glob.glob(join(dirname(__file__), "*.py"))
 __all__ = [
-    basename(f)[:-3] for f in modules if isfile(f) and not f.endswith('__init__.py')
+    basename(f)[:-3] for f in modules if isfile(f) and not f.endswith("__init__.py")
 ]
 from . import *  # noqa: F403 E402
