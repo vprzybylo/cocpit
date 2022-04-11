@@ -22,6 +22,16 @@ import cocpit.config as config
 from cocpit.auto_str import auto_str
 from cocpit.predictions import LoaderPredictions
 
+plt_params = {
+    "axes.labelsize": "xx-large",
+    "axes.titlesize": "xx-large",
+    "xtick.labelsize": "xx-large",
+    "ytick.labelsize": "xx-large",
+    "legend.title_fontsize": 12,
+}
+plt.rcParams["font.family"] = "serif"
+plt.rcParams.update(plt_params)
+
 
 @auto_str
 class GUI:
