@@ -42,7 +42,7 @@ TAG = "v0.0.0"
 BUILD_MODEL = True
 
 # classify images on new data?
-CLASSIFICATION = True
+CLASSIFICATION = False
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -63,13 +63,20 @@ KFOLD = 0
 VALID_SIZE = 0.20
 
 # images read into memory at a time during training
-BATCH_SIZE = [28]
+BATCH_SIZE = [64]
 
 # number of epochs to train model
 MAX_EPOCHS = [15]
 
 # names of each ice crystal class
 CLASS_NAMES = ["no precipitation", "obstructed", "precipitation"]
+
+# any abbreviations in folder names where the data lives for each class
+CLASS_NAME_MAP = {
+    "no precipitation": "no_precip",
+    "obstructed": "obstructed",
+    "precipitation": "precip",
+}
 
 # models to train
 MODEL_NAMES = [
@@ -83,9 +90,6 @@ MODEL_NAMES = [
     #     "densenet169",
     #     "densenet201",
 ]
-
-# model to load
-MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[15]_bs[64]_k1_vgg16.pt"
 
 # directory that holds the training data
 DATA_DIR = f"{BASE_DIR}/night_precip_hand_labeled/2017/"

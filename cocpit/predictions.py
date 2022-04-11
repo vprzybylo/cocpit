@@ -81,10 +81,7 @@ class LoaderPredictions:
         val_data = torch.load(
             f"{config.VAL_LOADER_SAVE_DIR}e{config.MAX_EPOCHS}_val_loader{int(config.VALID_SIZE*100)}_bs{config.BATCH_SIZE}_k{fold}_vgg16.pt"
         )
-        val_loader = cocpit.data_loaders.create_loader(
-            val_data, batch_size=100, sampler=None
-        )
-        return val_loader
+        return cocpit.data_loaders.create_loader(val_data, batch_size=100, sampler=None)
 
     def concat(self, var) -> np.ndarray:
         return np.asarray(list(itertools.chain(*var)))
