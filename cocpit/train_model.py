@@ -120,7 +120,7 @@ class Train:
                 self.val_metrics.all_preds.append(self.preds.cpu().numpy())
                 self.val_metrics.all_labels.append(self.labels.cpu().numpy())
 
-    def iterate_batches(self, dataloaders_dict, print_label_count=True):
+    def iterate_batches(self, dataloaders_dict, print_label_count=False):
         """iterate over a batch in a dataloader and train or evaluate"""
 
         label_cnts_total = np.zeros(len(config.CLASS_NAMES))

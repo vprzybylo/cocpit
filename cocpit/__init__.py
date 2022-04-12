@@ -102,6 +102,7 @@ train_model:
     - returns classification report
 
 """
+from comet_ml import Experiment  # isort:split
 import glob
 from os.path import basename, dirname, isfile, join
 

@@ -7,78 +7,69 @@ import matplotlib.pyplot as plt
 import torch
 import torchvision.transforms as T
 from PIL import Image
-
 import cocpit.config as config
+import numpy as np
+import torch.nn.functional as F
+
 
 plt_params = {
     "axes.labelsize": "large",
     "axes.titlesize": "large",
-    "xtick.labelsize": "large",
-    "ytick.labelsize": "large",
 }
 plt.rcParams["font.family"] = "serif"
 plt.rcParams.update(plt_params)
 
 
-def which_ax(x):
-    """for plotting on the correct ax"""
-    y = 0
-    y1 = 1
-    if x >= 3 and x < 6:
-        x -= 3
-        y = 2
-        y1 = 3
-    if x >= 6 and x < 9:
-        x -= 6
-        y = 4
-        y1 = 5
-    if x >= 9:
-        x -= 9
-    return x, y, y1
+def plot_image(ax, row, image, class_, file):
+    if row == 0:
+        ax[row, 1].set_title("Saliency Map")
+
+    ax[row, 0].imshow(image, aspect="auto")
+    ax[row, 0].set_title(
+        f"Label: {class_} \n Station: {file.split('_')[1].split('.')[0]}"
+    )
+    ax[row, 0].axes.xaxis.set_ticks([])
+    ax[row, 0].axes.yaxis.set_ticks([])
 
 
-def plot_on_axis(image, ax, x, class_, model):
-    '''plot saliency map on axis'''
-
-    x, y, y1 = which_ax(x)
-
-    ax[y, x].imshow(image)
-    ax[y, x].set_title(class_[1])
-    ax[y, 0].set_ylabel("Original Image")
-    ax[y, x].axes.xaxis.set_ticks([])
-    ax[y, x].axes.yaxis.set_ticks([])
-
-    image = preprocess(image)
-    saliency = get_saliency(image, model)
+def plot_saliency(image, ax, row, model):
+    saliency, pred, probs = get_saliency(image, model)
 
     # code to plot the saliency map as a heatmap
-    ax[y1, x].imshow(saliency[0], cmap=plt.cm.hot)
+    ax[row, 1].imshow(saliency[0], cmap=plt.cm.hot, aspect="auto")
+    ax[row, 1].set_title(
+        f"Prediction: {config.CLASS_NAMES[pred]} \n Probability: {np.round(probs.detach().numpy().max()*100, 2)}%"
+    )
+    ax[row, 1].axes.xaxis.set_ticks([])
+    ax[row, 1].axes.yaxis.set_ticks([])
 
-    ax[y1, 0].set_ylabel("Saliency Map")
-    ax[y1, x].axes.xaxis.set_ticks([])
-    ax[y1, x].axes.yaxis.set_ticks([])
 
-
-def plot_saliency(model, class_names, savefig=True):
+def saliency_runner(model, indices=11, savefig=True, size=224):
     """The saliency map will show the strength
-    for each pixel contribution to the final output"""
-    fig, ax = plt.subplots(6, 3, figsize=(5, 12))
-    for x, class_ in enumerate(class_names.items()):
+    for each pixel contribution to the final output
 
-        open_dir = (
-            f"{config.BASE_DIR}/cpi_data/training_datasets/hand_labeled_resized_v1.3.0_no_blank/%s/"
-            % class_[0]
-        )
+    Args:
+        model: loaded pytorch model
+        indices (int): number of class iterations to plot (1 index= 1 iteration of all classes).
+        savefig (bool): whether or not to save the figure
+        size (int): the size to transform the original image
+    """
 
-        file = os.listdir(open_dir)[21]
-        image = Image.open(open_dir + file).convert("RGB")
-        plot_on_axis(image, ax, x, class_, model)
+    for index in range(indices):
+        fig, ax = plt.subplots(len(config.CLASS_NAMES), 2, figsize=(10, 12))
+        for row, class_ in enumerate(config.CLASS_NAMES):
+            open_dir = f"{config.DATA_DIR}{config.CLASS_NAME_MAP[class_]}/"
+            file = os.listdir(open_dir)[index]
+            image = Image.open(open_dir + file).resize((size, size)).convert("RGB")
+            plot_image(ax, row, image, class_, file)
+            image = preprocess(image, size)
+            plot_saliency(image, ax, row, model)
 
-    if savefig:
-        fig.savefig(f"{config.BASE_DIR}/plots/saliency_maps.png")
+        if savefig:
+            fig.savefig(f"{config.BASE_DIR}/plots/saliency_maps.png")
 
 
-def preprocess(image, size=224):
+def preprocess(image, size):
     """Preprocess the image, convert to tensor, normalize,
     and convert to correct shape"""
 
@@ -89,7 +80,6 @@ def preprocess(image, size=224):
             T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]
     )
-
     tensor = transform(image).unsqueeze(0)
     tensor.requires_grad = True
     return tensor
@@ -105,10 +95,12 @@ def get_saliency(image, model):
 
     """
     forward pass through the model to get the scores
-    note that VGG-19 model doesn't perform softmax at the end
+    note that VGG model doesn't perform softmax at the end
     we also don't need softmax, just need scores
     """
     scores = model(image)
+    # turn scores into probabilty
+    probs = F.softmax(scores, dim=1).cpu()
 
     """Get the index corresponding to the
     maximum score and the maximum score itself."""
@@ -129,5 +121,6 @@ def get_saliency(image, model):
     value for each pixel (i, j), we take the maximum magnitude
     across all colour channels.
     """
+
     saliency, _ = torch.max(image.grad.data.abs(), dim=1)
-    return saliency
+    return saliency, score_max_index, probs
