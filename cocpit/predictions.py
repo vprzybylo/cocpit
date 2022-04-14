@@ -69,18 +69,20 @@ class LoaderPredictions:
         self.labels = True
 
     def load_model(self, fold: int):  # -> torch.nn.parallel.data_parallel.DataParallel:
-        model = torch.load(
-            f"{config.MODEL_SAVE_DIR}e{config.MAX_EPOCHS}"
-            f"_bs{config.BATCH_SIZE}"
-            f"_k{fold}_vgg16.pt"
-        ).cuda()
+        # model = torch.load(
+        #     f"{config.MODEL_SAVE_DIR}e{config.MAX_EPOCHS}"
+        #     f"_bs{config.BATCH_SIZE}"
+        #     f"_k{fold}_vgg16.pt"
+        # ).cuda()
+        model = torch.load(config.MODEL_SAVENAME)
         model.eval()
         return model
 
     def load_val_loader(self, fold: int):  # -> torch.utils.data.dataloader.DataLoader:
-        val_data = torch.load(
-            f"{config.VAL_LOADER_SAVE_DIR}e{config.MAX_EPOCHS}_val_loader{int(config.VALID_SIZE*100)}_bs{config.BATCH_SIZE}_k{fold}_vgg16.pt"
-        )
+        # val_data = torch.load(
+        #     f"{config.VAL_LOADER_SAVE_DIR}e{config.MAX_EPOCHS}_val_loader{int(config.VALID_SIZE*100)}_bs{config.BATCH_SIZE}_k{fold}_vgg16.pt"
+        # )
+        val_data = torch.load(config.ACC_SAVENAME_VAL)
         return cocpit.data_loaders.create_loader(val_data, batch_size=100, sampler=None)
 
     def concat(self, var) -> np.ndarray:
@@ -139,10 +141,7 @@ class LoaderPredictions:
                                 must be < number of classes
             folds (int): number of k-folds used in resampling procedure
                          if kfold cross validation was not used, keep as 1
-        Returns:
-            ndarray: converted image to gray scale
         """
-
         for fold in range(folds):
             for ((imgs, labels, paths), _) in self.load_val_loader(fold):
                 b = BatchPredictions(imgs, self.load_model(fold))
@@ -153,6 +152,27 @@ class LoaderPredictions:
                 self.all_max_preds.append(b.max_preds)
                 self.all_labels.append(labels)
                 self.all_paths.append(paths)
+
+    def predict_test_loader(self, test_loader, top_k_preds: int = 3) -> None:
+        """
+        loop over folds and find incorrect predictions across all possible validation
+        datasets if k-folds used (i.e., not just 20% at once)
+
+        Args:
+            test_loader (pytorch DataLoader): dataloader holding test set
+            top_k_preds (int):  the top k predictions will be displayed in bar chart
+                                must be < number of classes
+        Returns:
+            ndarray: converted image to gray scale
+        """
+        for (imgs, paths) in test_loader:
+            b = BatchPredictions(imgs, self.load_model(0))
+            b.find_max_preds()
+            b.top_k_preds(top_k_preds)
+            self.all_topk_probs.append(b.probs)
+            self.all_topk_classes.append(b.classes)
+            self.all_max_preds.append(b.max_preds)
+            self.all_paths.append(paths)
 
     def hone_incorrect_predictions(
         self, label_list: dict[str, int], human_label: int, model_label: int
