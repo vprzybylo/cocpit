@@ -26,6 +26,8 @@ resnet.pt
 guild-env
 guild-start
 logs
+config_cocpit.py
+config_ai2es.py
 config.py
 notebooks
 saved_models
