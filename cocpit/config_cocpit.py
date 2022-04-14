@@ -3,8 +3,10 @@
 - config.py in .gitignore to avoid version changes upon specifications
 - holds all user-defined variables
 - treated as global variables that do not change in any module
-- used in each module through 'import config as config'
+- used in each module through 'import cocpit.config as config'
 - call using config.VARIABLE_NAME
+- flags for what module of cocpit to run is found in the main directory in __main__.py (e.g., preprocess_sheets, build_model, ice_classification, geometric_attributes, add_date..)
+
 isort:skip_file
 """
 
@@ -15,36 +17,29 @@ from dotenv import load_dotenv
 import torch
 import sys
 
-# Absolute path to to folder where the data and models live
-# BASE_DIR = '/Volumes/TOSHIBA EXT/raid/data/cpi_data'
-BASE_DIR = "/ai2es"
+# cocpit version used in docker and git
+TAG = "v1.4.0"
 
-# /raid/NYSM/archive/nysm/netcdf/proc/ on hulk
-nc_file_dir = f"{BASE_DIR}/5_min_obs"
-
-# /raid/lgaudet/precip/Precip/NYSM_1min_data on hulk
-csv_file_dir = f"{BASE_DIR}/1_min_obs"
-
-# where to write time  matched data
-write_path = f"{BASE_DIR}/matched_parquet/"
-
-# root dir to raw images (before each year subdir)
-photo_dir = f"{BASE_DIR}/cam_photos/"
-
-# where the mesonet obs live in parquet format
-# output from nysm_obs_to_parquet
-parquet_dir = f"{BASE_DIR}/mesonet_parquet_1M"
-
-# ai2es version used in docker and git
-TAG = "v0.0.0"
+# extract each image from sheet of images
+PREPROCESS_SHEETS = True
 
 # create and save CNN
-BUILD_MODEL = True
+BUILD_MODEL = False
 
-# classify images on new data?
-CLASSIFICATION = False
+# run the category classification on quality images of ice particles
+ICE_CLASSIFICATION = True
+
+# calculates geometric particle properties and appends to databases
+GEOMETRIC_ATTRIBUTES = True
+
+# adds a column for the date from the filename
+ADD_DATE = True
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# Absolute path to to folder where the data and models live
+# BASE_DIR = '/Volumes/TOSHIBA EXT/raid/data/cpi_data'
+BASE_DIR = "/data/data"
 
 # model to load
 MODEL_PATH = f"{BASE_DIR}/saved_models/no_mask/{TAG}/e[15]_bs[64]_k0_vgg16.pt"
@@ -55,6 +50,13 @@ NUM_CPUS = 10
 # number of cpus used to load data in pytorch dataloaders
 NUM_WORKERS = 5
 
+# whether to save the individual extracted images
+# used in process_png_sheets_with_text.py
+SAVE_IMAGES = True
+
+# percent of image that can intersect the border
+CUTOFF = 10
+
 # how many folds used in training (cross-validation)
 # kold = 0 turns this off and splits the data according to valid_size
 KFOLD = 0
@@ -63,19 +65,35 @@ KFOLD = 0
 VALID_SIZE = 0.20
 
 # images read into memory at a time during training
-BATCH_SIZE = [64]
+BATCH_SIZE = [28]
 
 # number of epochs to train model
 MAX_EPOCHS = [15]
 
 # names of each ice crystal class
-CLASS_NAMES = ["no precipitation", "obstructed", "precipitation"]
+CLASS_NAMES = [
+    "aggregate",
+    "budding rosette",
+    "bullet rosette",
+    "column",
+    "compact irregular",
+    "fragment",
+    "planar polycrystal",
+    "rimed",
+    "sphere",
+]
 
 # any abbreviations in folder names where the data lives for each class
 CLASS_NAME_MAP = {
-    "no precipitation": "no_precip",
-    "obstructed": "obstructed",
-    "precipitation": "precip",
+    "aggregate": "agg",
+    "budding rosette": "budding",
+    "bullet rosette": "bullet",
+    "column": "column",
+    "compact irregular": "compact_irreg",
+    "fragment": "fragment",
+    "planar polycrystal": "planar_polycrystal",
+    "rimed": "rimed",
+    "sphere": "sphere",
 }
 
 # models to train
@@ -91,18 +109,21 @@ MODEL_NAMES = [
     #     "densenet201",
 ]
 
+# model to load
+MODEL_PATH = f"/data/data/saved_models/no_mask/{TAG}/e[15]_bs[64]_k1_vgg16.pt"
+
 # directory that holds the training data
-DATA_DIR = f"{BASE_DIR}/night_precip_hand_labeled/2017/"
+DATA_DIR = f"{BASE_DIR}/cpi_data/training_datasets/hand_labeled_{TAG}_noaug/"
 
 # whether to save the model
 SAVE_MODEL = True
-
 # directory to save the trained model to
-MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
+
+MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/no_mask/{TAG}/"
 
 # directory to save validation data to
 # for later inspection of predictions
-VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/{TAG}/"
+VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/no_mask/{TAG}/"
 
 MODEL_SAVENAME = (
     f"{MODEL_SAVE_DIR}e{max(MAX_EPOCHS)}_"
@@ -141,7 +162,7 @@ METRICS_SAVENAME = (
     f"{len(MODEL_NAMES)}model(s).csv"
 )
 
-CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
+CONF_MATRIX_SAVENAME = "{BASE_DIR}/plots/conf_matrix.png"
 
 # where to save final databases to
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"

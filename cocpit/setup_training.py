@@ -30,20 +30,23 @@ class Runner(cocpit.train_model.Train):
         self.val_data = val_data
 
     def update_save_names(self):
-        '''update save names for model and dataloader so that each fold gets saved'''
+        """update save names for model and dataloader so that each fold gets saved"""
         config.VAL_LOADER_SAVENAME = (
             f"{config.VAL_LOADER_SAVE_DIR}e{config.MAX_EPOCHS}"
             f"_val_loader20_bs{config.BATCH_SIZE}"
-            f"_k{str(self.kfold)}_vgg16.pt"
+            f"_k{str(self.kfold)}"
+            f"_{len(config.MODEL_NAMES)}model(s).pt"
         )
+
         config.MODEL_SAVENAME = (
             f"{config.MODEL_SAVE_DIR}e{config.MAX_EPOCHS}"
             f"_bs{config.BATCH_SIZE}"
-            f"_k{str(self.kfold)}_vgg16.pt"
+            f"_k{str(self.kfold)}"
+            f"_{len(config.MODEL_NAMES)}model(s).pt"
         )
 
     def create_dataloaders(self, train_labels, balance_weights: bool = True):
-        '''create dataloaders based on split from StratifiedKFold'''
+        """create dataloaders based on split from StratifiedKFold"""
 
         sampler = (
             data_loaders.balanced_sampler(train_labels) if balance_weights else None
@@ -69,7 +72,7 @@ class Runner(cocpit.train_model.Train):
 
 #############
 def print_composition(train_labels, val_labels):
-    '''prints length of train and test data based on validation %'''
+    """prints length of train and test data based on validation %"""
     print(len(train_labels), len(val_labels), len(train_labels) + len(val_labels))
     print("train counts")
     print(Counter(train_labels))
@@ -78,13 +81,13 @@ def print_composition(train_labels, val_labels):
 
 
 def data_setup(train_indices, val_indices, composition: bool = True):
-    '''apply different transforms to train and
-    validation datasets from ImageFolder'''
-    data = data_loaders.get_data('train')
+    """apply different transforms to train and
+    validation datasets from ImageFolder"""
+    data = data_loaders.get_data("train")
     train_labels = list(map(data.targets.__getitem__, train_indices))
     train_data = torch.utils.data.Subset(data, train_indices)
 
-    data = data_loaders.get_data('val')
+    data = data_loaders.get_data("val")
     val_data = torch.utils.data.Subset(data, val_indices)
     val_labels = list(map(data.targets.__getitem__, val_indices))
 
@@ -95,16 +98,16 @@ def data_setup(train_indices, val_indices, composition: bool = True):
 
 
 def kfold_training(batch_size, model_name, model, epochs):
-    '''
+    """
     1. split dataset into folds
         preserve the percentage of samples for each class with stratified
     2. create dataloaders
     3. initialize and train model
-    '''
+    """
     skf = StratifiedKFold(n_splits=config.KFOLD, shuffle=True, random_state=42)
     # datasets based on phase get called again in data_setup
     # needed here to initialize for skf.split
-    data = data_loaders.get_data('val')
+    data = data_loaders.get_data("val")
     for kfold, (train_indices, val_indices) in enumerate(
         skf.split(data.imgs, data.targets)
     ):
@@ -123,13 +126,13 @@ def kfold_training(batch_size, model_name, model, epochs):
 
 
 def nofold_indices():
-    '''
+    """
     if not applying cross-fold validation, split training dataset
     based on config.VALID_SIZE
-    shuffle first and then split dataset'''
+    shuffle first and then split dataset"""
 
     total_files = sum([len(files) for r, d, files in os.walk(config.DATA_DIR)])
-    print(f'len files {total_files}')
+    print(f"len files {total_files}")
 
     # randomly split indices for training and validation indices according to valid_size
     if config.VALID_SIZE < 0.01:
@@ -145,10 +148,10 @@ def nofold_indices():
 
 
 def nofold_training(batch_size, model_name, model, epochs, kfold=0):
-    '''
+    """
     execute training once through - no folds
     composition (bool): whether to print the length of train and test data based on validation %
-    '''
+    """
     train_indices, val_indices = nofold_indices()
     train_data, val_data, train_labels = data_setup(train_indices, val_indices)
     execute = Runner(train_data, val_data, kfold, batch_size, model_name, model, epochs)
