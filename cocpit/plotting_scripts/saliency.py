@@ -10,7 +10,7 @@ from PIL import Image
 import cocpit.config as config
 import numpy as np
 import torch.nn.functional as F
-
+from typing import Tuple
 
 plt_params = {
     "axes.labelsize": "large",
@@ -44,35 +44,9 @@ def plot_saliency(image, ax, row, model):
     ax[row, 1].axes.yaxis.set_ticks([])
 
 
-def saliency_runner(model, indices=11, savefig=True, size=224):
-    """The saliency map will show the strength
-    for each pixel contribution to the final output
-
-    Args:
-        model: loaded pytorch model
-        indices (int): number of class iterations to plot (1 index= 1 iteration of all classes).
-        savefig (bool): whether or not to save the figure
-        size (int): the size to transform the original image
-    """
-
-    for index in range(indices):
-        fig, ax = plt.subplots(len(config.CLASS_NAMES), 2, figsize=(10, 12))
-        for row, class_ in enumerate(config.CLASS_NAMES):
-            open_dir = f"{config.DATA_DIR}{config.CLASS_NAME_MAP[class_]}/"
-            file = os.listdir(open_dir)[index]
-            image = Image.open(open_dir + file).resize((size, size)).convert("RGB")
-            plot_image(ax, row, image, class_, file)
-            image = preprocess(image, size)
-            plot_saliency(image, ax, row, model)
-
-        if savefig:
-            fig.savefig(f"{config.BASE_DIR}/plots/saliency_maps.png")
-
-
 def preprocess(image, size):
     """Preprocess the image, convert to tensor, normalize,
     and convert to correct shape"""
-
     transform = T.Compose(
         [
             T.Resize((size, size)),
@@ -124,3 +98,41 @@ def get_saliency(image, model):
 
     saliency, _ = torch.max(image.grad.data.abs(), dim=1)
     return saliency, score_max_index, probs
+
+
+def saliency_runner(
+    model, indices=5, savefig=True, size=224, fig_size: Tuple[int, int] = (10, 12)
+):
+    """The saliency map will show the strength
+    for each pixel contribution to the final output
+
+    Args:
+        model: loaded pytorch model
+        indices (int): number of class iterations to plot (1 index= 1 iteration of all classes).
+        savefig (bool): whether or not to save the figure
+        size (int): the size to transform the original image
+        fig_size (Tuple[int, int]): figure size changes for the image aspect ratio in each project
+    """
+
+    for index in range(indices):
+        fig, ax = plt.subplots(len(config.CLASS_NAMES), 2, figsize=fig_size)
+        for row, class_ in enumerate(config.CLASS_NAMES):
+            open_dir = f"{config.DATA_DIR}{config.CLASS_NAME_MAP[class_]}/"
+            file = os.listdir(open_dir)[index]
+            image = Image.open(open_dir + file).resize((size, size)).convert("RGB")
+            plot_image(ax, row, image, class_, file)
+            image = preprocess(image, size)
+            plot_saliency(image, ax, row, model)
+
+        if savefig:
+            fig.savefig(f"{config.BASE_DIR}/plots/saliency_maps.png")
+
+
+def saliency_test_set(model, file, ax, size=224):
+
+    image = Image.open(file).convert("RGB")
+    image = preprocess(image, size)
+    saliency, _, _ = get_saliency(image, model)
+    ax.imshow(saliency[0], cmap=plt.cm.hot, aspect="auto")
+    ax.axes.xaxis.set_ticks([])
+    ax.axes.yaxis.set_ticks([])
