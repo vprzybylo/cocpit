@@ -120,7 +120,7 @@ class GUI:
             fig, ax = plt.subplots(
                 constrained_layout=True, figsize=(6, 6), ncols=1, nrows=1
             )
-            if self.precip:
+            if self.precip is not None:
                 ax.set_title(
                     f"{self.index}/{self.n_paths} \n {self.all_paths[self.index].split('/')[-1]} \n 1 minute accumulated precip [mm]: {self.precip[self.index]}"
                 )
