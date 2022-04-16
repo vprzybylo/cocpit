@@ -13,7 +13,7 @@ import cocpit.plotting_scripts.grid_shader as grid_shader
 import cocpit.config as config  # isort: split
 
 
-def conf_matrix(all_labels, all_preds, save_name, norm='true', save_fig=False):
+def conf_matrix(all_labels, all_preds, save_name, norm="true", save_fig=False):
     """
     Plot and save a confusion matrix from a saved validation dataloader
     Params
@@ -34,7 +34,7 @@ def conf_matrix(all_labels, all_preds, save_name, norm='true', save_fig=False):
     cm = confusion_matrix(all_labels, all_preds)
 
     cmap = copy.copy(mpl.cm.get_cmap("Reds"))
-    cmap.set_bad(color='white')
+    cmap.set_bad(color="white")
 
     if norm is not None:
         cmn = confusion_matrix(all_labels, all_preds, normalize=norm)
@@ -45,7 +45,7 @@ def conf_matrix(all_labels, all_preds, save_name, norm='true', save_fig=False):
             annot=True,
             fmt=".2f",
             linewidths=1,
-            linecolor='k',
+            linecolor="k",
             xticklabels=config.CLASS_NAMES,
             yticklabels=config.CLASS_NAMES,
             cmap=cmap,
@@ -62,11 +62,11 @@ def conf_matrix(all_labels, all_preds, save_name, norm='true', save_fig=False):
             cm,
             annot=True,
             linewidths=1,
-            linecolor='k',
+            linecolor="k",
             xticklabels=config.CLASS_NAMES,
             yticklabels=config.CLASS_NAMES,
             cmap=cmap,
-            fmt='.0f',
+            fmt=".0f",
             annot_kws={"size": 18},
         )
         plt.title("Unweighted", fontsize=18)
@@ -106,7 +106,7 @@ def model_metric_folds(
     if avg == "classes":
         # average across classes, include all folds
         df = df[(df["class"] == "macro avg")]
-        title = 'Averaging across Classes \n Variation in Folds'
+        title = "Averaging across Classes \n Variation in Folds"
     elif avg == "folds":
         # first don't include class averages
         df = df[
@@ -116,7 +116,7 @@ def model_metric_folds(
         ]
         # average across folds, include all classes
         df = df.groupby(["model", "class"]).mean().reset_index()
-        title = 'Averaging across Folds \n Variation in Classes'
+        title = "Averaging across Folds \n Variation in Classes"
 
     else:
         # include all classes and folds
@@ -125,7 +125,7 @@ def model_metric_folds(
             & (df["class"] != "macro avg")
             & (df["class"] != "weighted avg")
         ]
-        title = 'No Averaging \n Variation in Folds and Classes'
+        title = "No Averaging \n Variation in Folds and Classes"
 
     dd = pd.melt(
         df,
@@ -134,9 +134,9 @@ def model_metric_folds(
         var_name="Metric",
     )
     convert_metric_names = {
-        'f1-score': 'F1-score',
-        'precision': 'Precision',
-        'recall': 'Recall',
+        "f1-score": "F1-score",
+        "precision": "Precision",
+        "recall": "Recall",
     }
     dd = dd.replace(convert_metric_names).sort_values(["model", "Metric"])
 
@@ -181,9 +181,9 @@ def classification_report_classes(clf_report, save_name, save_fig=False):
         linecolor="k",
         linewidths=1,
         annot_kws={"fontsize": 14},
-        vmin=0.90,
+        vmin=0.80,
         vmax=1.00,
     )
-    ax.set_title('Weighted')
+    ax.set_title("Weighted")
     if save_fig:
         plt.savefig(save_name, dpi=300, bbox_inches="tight")
