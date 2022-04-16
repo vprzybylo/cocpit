@@ -32,8 +32,8 @@ def plot_image(ax, row, image, class_, file):
     ax[row, 0].axes.yaxis.set_ticks([])
 
 
-def plot_saliency(image, ax, row, model):
-    saliency, pred, probs = get_saliency(image, model)
+def plot_saliency(image, ax, row):
+    saliency, pred, probs = get_saliency(image)
 
     # code to plot the saliency map as a heatmap
     ax[row, 1].imshow(saliency[0], cmap=plt.cm.hot, aspect="auto")
@@ -59,8 +59,9 @@ def preprocess(image, size):
     return tensor
 
 
-def get_saliency(image, model):
+def get_saliency(image):
 
+    model = torch.load(config.MODEL_PATH)
     model.eval()
 
     """find the gradient with respect to
@@ -101,14 +102,16 @@ def get_saliency(image, model):
 
 
 def saliency_runner(
-    model, indices=5, savefig=True, size=224, fig_size: Tuple[int, int] = (10, 12)
+    indices=5, savefig=True, size=224, fig_size: Tuple[int, int] = (10, 12)
 ):
     """The saliency map will show the strength
-    for each pixel contribution to the final output
+    for each pixel contribution to the final output.
+    This function is called in notebooks/saliency.ipynb
+    to output maps for multiple iterations of images
 
     Args:
         model: loaded pytorch model
-        indices (int): number of class iterations to plot (1 index= 1 iteration of all classes).
+        indices (int): number of class iterations to plot (index=1 means 1 iteration of all classes).
         savefig (bool): whether or not to save the figure
         size (int): the size to transform the original image
         fig_size (Tuple[int, int]): figure size changes for the image aspect ratio in each project
@@ -122,17 +125,7 @@ def saliency_runner(
             image = Image.open(open_dir + file).resize((size, size)).convert("RGB")
             plot_image(ax, row, image, class_, file)
             image = preprocess(image, size)
-            plot_saliency(image, ax, row, model)
+            plot_saliency(image, ax, row)
 
         if savefig:
             fig.savefig(f"{config.BASE_DIR}/plots/saliency_maps.png")
-
-
-def saliency_test_set(model, file, ax, size=224):
-
-    image = Image.open(file).convert("RGB")
-    image = preprocess(image, size)
-    saliency, _, _ = get_saliency(image, model)
-    ax.imshow(saliency[0], cmap=plt.cm.hot, aspect="auto")
-    ax.axes.xaxis.set_ticks([])
-    ax.axes.yaxis.set_ticks([])
