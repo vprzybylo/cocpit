@@ -48,7 +48,7 @@ MODEL_PATH = f"{BASE_DIR}/saved_models/no_mask/{TAG}/e[15]_bs[64]_k0_vgg16.pt"
 NUM_CPUS = 10
 
 # number of cpus used to load data in pytorch dataloaders
-NUM_WORKERS = 5
+NUM_WORKERS = 10
 
 # whether to save the individual extracted images
 # used in process_png_sheets_with_text.py
@@ -126,15 +126,14 @@ MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/no_mask/{TAG}/"
 VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/no_mask/{TAG}/"
 
 MODEL_SAVENAME = (
-    f"{MODEL_SAVE_DIR}e{max(MAX_EPOCHS)}_"
-    f"bs{max(BATCH_SIZE)}_"
-    f"{len(MODEL_NAMES)}model(s).pt"
+    f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_" f"bs{BATCH_SIZE}_k{KFOLD}_" f"vgg16.pt"
 )
 
 VAL_LOADER_SAVENAME = (
-    f"{VAL_LOADER_SAVE_DIR}e{max(MAX_EPOCHS)}_"
-    f"bs{max(BATCH_SIZE)}_"
-    f"{len(MODEL_NAMES)}model(s).pt"
+    f"{VAL_LOADER_SAVE_DIR}e{MAX_EPOCHS}_"
+    f"val_loader20_"
+    f"bs{BATCH_SIZE}_k{KFOLD}_"
+    f"vgg16.pt"
 )
 
 # write training loss and accuracy to csv
