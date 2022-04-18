@@ -65,7 +65,7 @@ KFOLD = 0
 VALID_SIZE = 0.20
 
 # images read into memory at a time during training
-BATCH_SIZE = [28]
+BATCH_SIZE = [64]
 
 # number of epochs to train model
 MAX_EPOCHS = [15]

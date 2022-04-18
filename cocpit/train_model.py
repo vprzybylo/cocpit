@@ -73,7 +73,6 @@ class Train:
             epoch,
             self.epochs,
             self.phase,
-            acc_savename=config.ACC_SAVENAME_TRAIN,
         )
         if metrics.epoch_acc > best_acc and config.SAVE_MODEL:
             best_acc = metrics.epoch_acc

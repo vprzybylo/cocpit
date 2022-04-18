@@ -144,15 +144,18 @@ class LoaderPredictions:
                          if kfold cross validation was not used, keep as 1
         """
         for fold in range(folds):
-            for ((imgs, labels, paths), _) in self.load_val_loader(fold):
-                b = BatchPredictions(imgs, self.load_model(fold))
-                b.find_max_preds()
-                b.top_k_preds(top_k_preds)
-                self.all_topk_probs.append(b.probs)
-                self.all_topk_classes.append(b.classes)
-                self.all_max_preds.append(b.max_preds)
-                self.all_labels.append(labels)
-                self.all_paths.append(paths)
+            try:
+                for ((imgs, labels, paths), _) in self.load_val_loader(fold):
+                    b = BatchPredictions(imgs, self.load_model(fold))
+                    b.find_max_preds()
+                    b.top_k_preds(top_k_preds)
+                    self.all_topk_probs.append(b.probs)
+                    self.all_topk_classes.append(b.classes)
+                    self.all_max_preds.append(b.max_preds)
+                    self.all_labels.append(labels)
+                    self.all_paths.append(paths)
+            except FileNotFoundError:
+                pass
 
     def predict_test_loader(
         self, test_loader, top_k_preds: int = 3, fold: int = 0

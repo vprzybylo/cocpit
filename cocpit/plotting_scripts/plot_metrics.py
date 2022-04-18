@@ -37,11 +37,11 @@ def conf_matrix(all_labels, all_preds, save_name, norm="true", save_fig=False):
     cmap.set_bad(color="white")
 
     if norm is not None:
-        cmn = confusion_matrix(all_labels, all_preds, normalize=norm)
-        cmn[cmn < 0.005] = np.nan
+        cm = confusion_matrix(all_labels, all_preds, normalize=norm)
+        cm[cm < 0.005] = np.nan
 
         heat = sns.heatmap(
-            cmn,
+            cm,
             annot=True,
             fmt=".2f",
             linewidths=1,
@@ -79,6 +79,7 @@ def conf_matrix(all_labels, all_preds, save_name, norm="true", save_fig=False):
     heat.set_yticklabels(heat.get_xticklabels(), rotation=0, fontsize=20)
     if save_fig:
         plt.savefig(save_name, bbox_inches="tight")
+    return cm
 
 
 def model_metric_folds(

@@ -18,7 +18,7 @@ torch.cuda.empty_cache()
 
 
 def campaign_predictions(loader, model):
-    '''make predictions from test_loader'''
+    """make predictions from test_loader"""
     # defaultdict will "default" to an empty list if that key has not been set yet
     class_probs = defaultdict(list)
     top_class = []
@@ -48,7 +48,7 @@ def percent_category(df, category):
 
 
 def append_classifications(df, top_class):
-    '''append the top class'''
+    """append the top class"""
 
     df["classification"] = top_class
 
@@ -60,19 +60,19 @@ def append_classifications(df, top_class):
 
 
 def send_message():
-    '''
+    """
     use twilio to receive a text when the model has finished running!
     register for an account and then:
     add ACCOUNT_SID, AUTH_TOKEN, and PHONE_NUMBER to a .env file
-    '''
+    """
     load_dotenv()
-    account_sid = os.getenv('ACCOUNT_SID')
-    auth_token = os.getenv('AUTH_TOKEN')
+    account_sid = os.getenv("ACCOUNT_SID")
+    auth_token = os.getenv("AUTH_TOKEN")
     client = Client(account_sid, auth_token)
     message = client.messages.create(
         body="ML predictions completed!",
         from_="+19285175160",  # Provided phone number
-        to=os.getenv('PHONE_NUMBER'),
+        to=os.getenv("PHONE_NUMBER"),
     )  # Your phone number
     message.sid
 
@@ -88,7 +88,7 @@ def main(df, open_dir, model):
     class_probs, top_class = campaign_predictions(loader, model)
 
     for column in sorted(class_probs.keys()):
-        df[column] = d[column]
+        df[column] = df[column]
 
     # append predictions to dataframe for a campaign
     df = append_classifications(df, top_class)

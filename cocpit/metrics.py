@@ -96,7 +96,6 @@ def log_metrics(
     epoch,
     epochs,
     phase,
-    acc_savename,
 ):
     """
     calculate the accuracy and loss per epoch for validation data
@@ -115,6 +114,9 @@ def log_metrics(
         config.experiment.log_metric(f"epoch_loss_{phase}", metric_instance.epoch_loss)
 
     # write acc and loss to file within epoch iteration
+    acc_savename = (
+        config.ACC_SAVENAME_VAL if phase == "val" else config.ACC_SAVENAME_TRAIN
+    )
     if config.SAVE_ACC:
         with open(acc_savename, "a", newline="") as file:
             writer = csv.writer(file)

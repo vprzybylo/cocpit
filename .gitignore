@@ -27,7 +27,6 @@ guild-env
 guild-start
 logs
 config_cocpit.py
-config_ai2es.py
 notebooks
 saved_models
 saved_val_loaders
