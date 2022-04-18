@@ -10,12 +10,12 @@ import ipywidgets
 import matplotlib.pyplot as plt
 import numpy as np
 from IPython.display import clear_output
-from ipywidgets import Button
+from ipywidgets import Button, Layout
 import PIL
 from typing import Optional
 
-import cocpit.config as config
 from cocpit.auto_str import auto_str
+import cocpit
 
 plt_params = {
     "axes.labelsize": "xx-large",
@@ -33,7 +33,12 @@ class GUI:
     """create widgets"""
 
     def __init__(
-        self, wrong_trunc, all_labels, all_paths, all_topk_probs, all_topk_classes
+        self,
+        wrong_trunc,
+        all_labels,
+        all_paths,
+        all_topk_probs,
+        all_topk_classes,
     ):
 
         self.index = 0
@@ -41,38 +46,39 @@ class GUI:
         self.all_paths = all_paths[wrong_trunc]
         self.all_topk_probs = all_topk_probs[wrong_trunc]
         self.all_topk_classes = all_topk_classes[wrong_trunc]
+
         self.label = self.all_labels[self.index]
-        self.next_btn = Button(description="Next")
-        self.menu = ipywidgets.Dropdown(
-            options=config.CLASS_NAMES,
-            description="Category:",
-            value=config.CLASS_NAMES[self.label],
+        self.next_btn = Button(
+            description="Next",
+            style=dict(
+                font_style="italic",
+                font_weight="bold",
+                font_variant="small-caps",
+            ),
         )
+        self.buttons = []
         self.count = 0  # number of moved images
         self.center = ipywidgets.Output()  # center image with predictions
 
     def open_image(self) -> Optional[PIL.Image.Image]:
-        try:
-            return PIL.Image.open(self.all_paths[self.index])
-        except FileNotFoundError:
-            print("The file cannot be found.")
-            return
+        # try:
+        print(PIL.Image.open(self.all_paths[self.index]))
+        return PIL.Image.open(self.all_paths[self.index])
+        # except FileNotFoundError:
+        #    print("The file cannot be found.")
+        #    return
 
-    def button_functions(self) -> None:
-        """
-        create next button that progresses through incorrect predictions
-        define save image on change for dropdown
-        """
-        self.visualizations()
-        self.menu.observe(self.on_change, names="value")
+    def make_buttons(self) -> None:
+        """buttons for each category"""
+
+        for idx, label in enumerate(cocpit.config.CLASS_NAMES):
+            self.buttons.append(
+                Button(
+                    description=label,
+                )
+            )
+            self.buttons[idx].on_click(self.save_image)
         self.next_btn.on_click(self.on_button_next)
-
-    def on_change(self, change) -> None:
-        """
-        when a class in the dropdown is selected, move the image and save
-        it to the specified class
-        """
-        self.save_image(change)
 
     def on_button_next(self, b) -> None:
         """
@@ -86,11 +92,23 @@ class GUI:
         self.index = self.index + 1
         self.visualizations()
 
-        # keep the default dropdown value to agg
-        # don't want it to change based on previous selection
-        self.menu.value = config.CLASS_NAMES[self.label]
+    def align_buttons(self):
+        """
+        alter layout based on # of classes
+        """
+        with self.center:
+            if len(cocpit.config.CLASS_NAMES) > 5:
+                # align buttons vertically
+                self.label_btns = ipywidgets.VBox(
+                    [self.buttons[i] for i in range(len(cocpit.config.CLASS_NAMES))]
+                )
+            else:
+                # align buttons horizontally
+                self.label_btns = ipywidgets.HBox(
+                    [self.buttons[i] for i in range(len(cocpit.config.CLASS_NAMES))],
+                )
 
-    def show_image(self, image: PIL.Image.Image, ax1: plt.Axes) -> None:
+    def init_fig(self, image: PIL.Image.Image, ax1: plt.Axes) -> None:
         """
         display the raw image
 
@@ -98,11 +116,11 @@ class GUI:
             image (PIL.Image.Image): opened image
             ax1 (plt.Axes): subplot axis
         """
-        ax1.imshow(image)
+        clear_output()  # so that the next fig doesnt display below
+        ax1.imshow(image, aspect="auto")
         ax1.set_title(
-            f"Human Labeled as: {config.CLASS_NAMES[self.all_labels[self.index]]}\n"
-            f"Model Labeled as: {[config.CLASS_NAMES[e] for e in self.all_topk_classes[self.index]][0]}\n"
-            f"Index number: {self.index+1}"
+            f"Human Labeled as: {cocpit.config.CLASS_NAMES[self.all_labels[self.index]]}\n"
+            f"Model Labeled as: {[cocpit.config.CLASS_NAMES[e] for e in self.all_topk_classes[self.index]][0]}\n"
         )
         ax1.axis("off")
 
@@ -115,30 +133,51 @@ class GUI:
         """
 
         y_pos = np.arange(len(self.all_topk_probs[self.index]))
-        ax2.barh(y_pos, self.all_topk_probs[self.index], align="center")
+        ax2.barh(y_pos, self.all_topk_probs[self.index])
         ax2.set_yticks(y_pos)
-        ax2.set_yticklabels(self.all_topk_classes[self.index])
+        ax2.set_yticklabels(
+            [cocpit.config.CLASS_NAMES[e] for e in self.all_topk_classes[self.index]]
+        )
         ax2.tick_params(axis="y", rotation=45)
         ax2.invert_yaxis()  # labels read top-to-bottom
         ax2.set_title("Class Probability")
 
-    def save_image(self, change) -> None:
+    def plot_saliency(
+        self, image: PIL.Image.Image, ax2: plt.Axes, size: int = 224
+    ) -> None:
+        """create saliency map for image in test dataset
+
+        Args:
+            image (PIL.Image.Image): opened image
+            ax2 (plt.Axes): subplot axis
+            size (int): image size for transformation
+        """
+        image = cocpit.plotting_scripts.saliency.preprocess(image.convert("RGB"), size)
+        saliency, _, _ = cocpit.plotting_scripts.saliency.get_saliency(image)
+        ax2.imshow(saliency[0], cmap=plt.cm.hot, aspect="auto")
+        ax2.axes.xaxis.set_ticks([])
+        ax2.axes.yaxis.set_ticks([])
+
+    def save_image(self, b) -> None:
         """
         move the image based on dropdown selection
 
         Args:
             change (button dropdown instance): new class label
         """
+
         filename = self.all_paths[self.index].split("/")[-1]
 
         print(
-            f"{config.DATA_DIR}{config.CLASS_NAME_MAP[config.CLASS_NAMES[self.all_labels[self.index]]]}/{filename}"
+            f"{cocpit.config.DATA_DIR}{cocpit.config.CLASS_NAME_MAP[cocpit.config.CLASS_NAMES[self.all_labels[self.index]]]}/{filename}"
         )
-        print(f"{config.DATA_DIR}{config.CLASS_NAME_MAP[change.new]}/{filename}")
+        print(
+            f"{cocpit.config.DATA_DIR}{cocpit.config.CLASS_NAME_MAP[b.description]}/{filename}"
+        )
         try:
             shutil.move(
-                f"{config.DATA_DIR}{config.CLASS_NAME_MAP[config.CLASS_NAMES[self.all_labels[self.index]]]}/{filename}",
-                f"{config.DATA_DIR}{config.CLASS_NAME_MAP[change.new]}/{filename}",
+                f"{cocpit.config.DATA_DIR}{cocpit.config.CLASS_NAME_MAP[cocpit.config.CLASS_NAMES[self.all_labels[self.index]]]}/{filename}",
+                f"{cocpit.config.DATA_DIR}{cocpit.config.CLASS_NAME_MAP[b.description]}/{filename}",
             )
             self.count += 1
             print(f"moved {self.count} images")
@@ -160,11 +199,11 @@ class GUI:
                 return
             else:
                 image = self.open_image()
-                clear_output()  # so that the next fig doesnt display below
-                _, (ax1, ax2) = plt.subplots(
-                    constrained_layout=True, figsize=(9, 9), ncols=1, nrows=2
+                _, (ax1, ax2, ax3) = plt.subplots(
+                    constrained_layout=True, figsize=(19, 5), ncols=3, nrows=1
                 )
-                self.show_image(image, ax1)
-                self.bar_chart(ax2)
+                self.init_fig(image, ax1)
+                self.plot_saliency(image, ax2)
+                self.bar_chart(ax3)
                 plt.show()
                 # fig.savefig(f"/ai2es/plots/wrong_preds{self.index}.pdf")
