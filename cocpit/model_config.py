@@ -1,17 +1,15 @@
-'''
+"""
 model configurations for:
     - dropout
     - device settings
     - parameters to update
     - checking label counts within a batch
     - normalization values for transformations
-'''
-
+"""
+import cocpit.config as config
 import numpy as np
 import torch
 from torch import nn
-
-import cocpit.config as config
 
 
 def set_dropout(model, drop_rate=0.1):

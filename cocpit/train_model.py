@@ -18,7 +18,6 @@ import cocpit.config as config  # isort:split
 
 @dataclass
 class Train:
-
     loss: Any = field(init=False)
     preds: Any = field(init=False)
     labels: Any = field(init=False)
@@ -29,9 +28,15 @@ class Train:
     phases: List[str] = field(default_factory=list, init=False)
     phase: str = field(default="train", init=False)
 
+    # train_metrics: cocpit.metrics.Metrics = field(
+    #     default_factory=cocpit.metrics.Metrics, init=False
+    # )
+    # val_metricss: cocpit.metrics.Metrics = field(
+    #     default_factory=cocpit.metrics.Metrics, init=False
+    # )
+
     def model_config(self):
         """model configurations"""
-
         params_to_update = cocpit.model_config.update_params(self.model)
         self.optimizer = optim.SGD(
             params_to_update, lr=0.01, momentum=0.9, nesterov=True
@@ -57,26 +62,6 @@ class Train:
             )
             label_cnts_total = list(map(operator.add, label_cnts, label_cnts_total))
 
-    def log_epoch_metrics(self, metrics, best_acc, epoch):
-        """log epoch metrics to comet and write to file
-        also saves model if acc improves"""
-        cocpit.metrics.log_metrics(
-            metrics,
-            self.kfold,
-            self.batch_size,
-            self.model_name,
-            epoch,
-            self.epochs,
-            self.phase,
-        )
-        if metrics.epoch_acc > best_acc and config.SAVE_MODEL:
-            best_acc = metrics.epoch_acc
-            # save/load best model weights
-            if not os.path.exists(config.MODEL_SAVE_DIR):
-                os.makedirs(config.MODEL_SAVE_DIR)
-            torch.save(self.model, config.MODEL_SAVENAME)
-        return best_acc, metrics.epoch_acc
-
     def forward(self):
         """perform forward operator"""
         with torch.set_grad_enabled(self.phase == "train"):
@@ -92,24 +77,16 @@ class Train:
         """calculate and log batch metrics"""
         if self.phase == "train" or config.VALID_SIZE < 0.01:
 
-            self.train_metrics.update_batch_metrics(
-                self.loss, self.inputs, self.preds, self.labels
-            )
+            self.train_metrics.update_batch_metrics()
             # print train batch metrics
             if (self.batch + 1) % 5 == 0:
-                self.train_metrics.print_batch_metrics(
-                    self.labels, self.batch, self.phase, self.dataloaders
-                )
+                self.train_metrics.print_batch_metrics()
 
         else:
-            self.val_metrics.update_batch_metrics(
-                self.loss, self.inputs, self.preds, self.labels
-            )
+            self.val_metrics.update_batch_metrics()
             # print val batch metrics
             if (self.batch + 1) % 5 == 0:
-                self.val_metrics.print_batch_metrics(
-                    self.labels, self.batch, self.phase, self.dataloaders
-                )
+                self.val_metrics.print_batch_metrics()
                 # append batch prediction and labels for plots
                 self.val_metrics.all_preds.append(self.preds.cpu().numpy())
                 self.val_metrics.all_labels.append(self.labels.cpu().numpy())
@@ -118,7 +95,7 @@ class Train:
         """iterate over a batch in a dataloader and train or evaluate"""
 
         label_cnts_total = np.zeros(len(config.CLASS_NAMES))
-        for self.batch, ((inputs, labels, paths), index) in enumerate(
+        for self.batch, ((inputs, labels, _), index) in enumerate(
             self.dataloaders[self.phase]
         ):
             if print_label_count:
@@ -132,34 +109,28 @@ class Train:
             self.forward()
             self.batch_metrics()
 
+    def reset_metrics(self):
+        """reset acc, loss, labels, and predictions for each epoch and each phase"""
+        self.train_metrics = cocpit.metrics.Metrics()
+        self.val_metrics = cocpit.metrics.Metrics()
+
     def epoch_metrics(self, epoch):
         """call epoch metrics"""
         if self.phase == "train" or config.VALID_SIZE < 0.01:
+            # calculate acc and loss for validation data
+            self.train_metrics.calculate_epoch_metrics()
             (
                 self.train_best_acc,
                 self.train_metrics.epoch_acc,
-            ) = self.log_epoch_metrics(self.train_metrics, self.train_best_acc, epoch)
-        else:
-            self.val_best_acc, self.val_metrics.epoch_acc = self.log_epoch_metrics(
-                self.val_metrics, self.val_best_acc, epoch
+            ) = self.train_metrics.log_epoch_metrics(
+                self.train_metrics, self.train_best_acc, epoch
             )
-
-    def confusion_matrix(self, epoch):
-        """log confusion matrix"""
-        if (
-            epoch == self.epochs - 1
-            and (config.KFOLD != 0 and self.kfold == config.KFOLD - 1)
-            or (config.KFOLD == 0)
-        ):
-            cocpit.metrics.log_confusion_matrix(self.val_metrics)
-
-    def classification_report(self, epoch):
-        """save classification report"""
-        if epoch == self.epochs - 1:
-            cocpit.metrics.sklearn_report(
-                self.val_metrics,
-                self.kfold,
-                self.model_name,
+        else:
+            (
+                self.val_best_acc,
+                self.val_metrics.epoch_acc,
+            ) = self.val_metrics.log_epoch_metrics(
+                self.val_metrics, self.val_best_acc, epoch
             )
 
     def write_times(self, epoch, since_total):
@@ -193,11 +164,6 @@ class Train:
         """reduce learning rate upon plateau in epoch validation accuracy"""
         self.scheduler.step(self.val_metrics.epoch_acc)
 
-    def reset_metrics(self):
-        """reset acc, loss, labels, and predictions for each epoch and each phase"""
-        self.train_metrics = cocpit.metrics.Metrics()
-        self.val_metrics = cocpit.metrics.Metrics()
-
     def iterate_phase(self, epoch, norm_values=False):
         print("-" * 20)
         self.determine_phases()
@@ -212,8 +178,8 @@ class Train:
             self.iterate_batches()
             self.epoch_metrics(epoch)
             if self.phase == "val":
-                self.confusion_matrix(epoch)
-                self.classification_report(epoch)
+                self.val_metrics.confusion_matrix(epoch)
+                self.val_metrics.classification_report(epoch)
 
     def train_model(self):
         """calls above methods to train across epochs and batches"""

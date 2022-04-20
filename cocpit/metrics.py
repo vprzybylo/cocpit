@@ -9,196 +9,199 @@
 
 import csv
 import itertools
+import os
 
 import numpy as np
 import pandas as pd
 import torch
 from sklearn.metrics import classification_report
 
+import cocpit
 import cocpit.config as config  # isort:split
 import cocpit.plotting_scripts.plot_metrics as plot_metrics
-from cocpit.auto_str import auto_str
+from dataclasses import dataclass
+from typing import List
 
 
-@auto_str
-class Metrics:
+@dataclass
+class Metrics(cocpit.train_model.Train):
     """
     calculates batch and epoch metrics for
     training and validation datasets
     """
 
-    def __init__(self):
-        self.totals = 0.0
-        self.running_loss = 0.0
-        self.running_corrects = 0.0
-        self.batch_loss = 0.0
-        self.batch_corrects = 0.0
-        self.epoch_loss = 0.0
-        self.epoch_acc = 0.0
-        # validation preds and labels only
-        self.all_preds = []
-        self.all_labels = []
+    totals: float = 0.0
+    running_loss: float = 0.0
+    running_corrects: float = 0.0
+    batch_loss: float = 0.0
+    batch_corrects: float = 0.0
+    epoch_loss: float = 0.0
+    epoch_acc: float = 0.0
+    # validation preds and labels only
+    all_preds = List[int]
+    all_labels = List[int]
 
-    def update_batch_metrics(self, loss, inputs, preds, labels):
+    def update_batch_metrics(self):
         """
         Calculate loss and accuracy for each batch in dataloader
         """
         # Batch accuracy and loss statistics
-        self.batch_loss = loss.item() * inputs.size(0)
-        self.batch_corrects = torch.sum(preds == labels.data)
+        self.batch_loss = self.loss.item() * self.inputs.size(0)
+        self.batch_corrects = torch.sum(self.preds == self.labels.data)
 
         # for accuracy and loss statistics overall
-        self.running_loss += loss.item() * inputs.size(0)
-        self.running_corrects += torch.sum(preds == labels.data)
-        self.totals += labels.size(0)
+        self.running_loss += self.loss.item() * self.inputs.size(0)
+        self.running_corrects += torch.sum(self.preds == self.labels.data)
+        self.totals += self.labels.size(0)
 
-    def print_batch_metrics(self, labels, batch, phase, dataloaders):
+    def print_batch_metrics(self):
         """
         outputs batch iteration, loss, and accuracy to terminal or log file
         """
 
-        loss = self.batch_loss / labels.size(0)
-        acc = float(self.batch_corrects) / labels.size(0)
+        loss = self.batch_loss / self.labels.size(0)
+        acc = float(self.batch_corrects) / self.labels.size(0)
 
         print(
-            f"{phase}, Batch {batch + 1}/{len(dataloaders[phase])},\
+            f"{self.phase}, Batch {self.batch + 1}/{len(self.dataloaders[self.phase])},\
             Loss: {loss:.3f}, Accuracy: {acc:.3f}"
         )
 
-    def epoch_metrics(self):
+    def calculate_epoch_metrics(self):
         """
         Calculate loss and accuracy after each epoch (iteration across all batches)
         """
         self.epoch_loss = self.running_loss / self.totals
         self.epoch_acc = self.running_corrects.double() / self.totals
 
-    def print_epoch_metrics(self, epoch, epochs, phase):
+    def print_epoch_metrics(self, epoch):
         """
         outputs epoch iteration, loss, and accuracy to terminal or log file
         """
 
         print(
-            f"{phase} Epoch {epoch + 1}/{epochs},\
+            f"{self.phase} Epoch {epoch + 1}/{self.epochs},\
             Loss: {self.epoch_loss:.3f},\
             Accuracy: {self.epoch_acc:.3f}"
         )
 
+    def log_epoch_metrics(self, metrics, best_acc, epoch):
+        """log epoch metrics to comet and write to file
+        also saves model if acc improves"""
 
-##############
-
-
-def log_metrics(
-    metric_instance,
-    kfold,
-    batch_size,
-    model_name,
-    epoch,
-    epochs,
-    phase,
-):
-    """
-    calculate the accuracy and loss per epoch for validation data
-    log the results to comet
-    write the accuracy and loss metrics to file and print to console
-    """
-
-    # calculate acc and loss for validation data
-    metric_instance.epoch_metrics()
-
-    # log to comet
-    if config.LOG_EXP:
-        config.experiment.log_metric(
-            f"epoch_acc_{phase}", metric_instance.epoch_acc * 100
-        )
-        config.experiment.log_metric(f"epoch_loss_{phase}", metric_instance.epoch_loss)
-
-    # write acc and loss to file within epoch iteration
-    acc_savename = (
-        config.ACC_SAVENAME_VAL if phase == "val" else config.ACC_SAVENAME_TRAIN
-    )
-    if config.SAVE_ACC:
-        with open(acc_savename, "a", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow(
-                [
-                    model_name,
-                    epoch,
-                    kfold,
-                    batch_size,
-                    metric_instance.epoch_acc.cpu().numpy(),
-                    metric_instance.epoch_loss,
-                ]
+        # log to comet
+        if config.LOG_EXP:
+            config.experiment.log_metric(
+                f"epoch_acc_{self.phase}", self.epoch_acc * 100
             )
-            file.close()
+            config.experiment.log_metric(f"epoch_loss_{self.phase}", self.epoch_loss)
 
-    # print output
-    metric_instance.print_epoch_metrics(epoch, epochs, phase)
-
-
-def sklearn_report(val_metrics, fold, model_name):
-    """
-    create classification report from sklearn
-    add model name and fold iteration to the report
-
-    Params
-    - fold (int): kfold iteration
-    - model_name (str): name of model being trained (e.g., VGG-16)
-    """
-    all_labels = np.asarray(list(itertools.chain(*val_metrics.all_labels)))
-    all_preds = np.asarray(list(itertools.chain(*val_metrics.all_preds)))
-    clf_report = classification_report(
-        all_labels,
-        all_preds,
-        digits=3,
-        target_names=config.CLASS_NAMES,
-        output_dict=True,
-    )
-
-    # transpose classes as columns and convert to df
-    clf_report = pd.DataFrame(clf_report).iloc[:-1, :].T
-
-    # add fold iteration and model name
-    clf_report["fold"] = fold
-    clf_report["model"] = model_name
-
-    if config.SAVE_ACC:
-        clf_report.to_csv(config.METRICS_SAVENAME, mode="a")
-
-
-def log_confusion_matrix(val_metrics):
-    """
-    log a confusion matrix to comet ml after the last epoch
-    found under the graphics tab
-    if using kfold, it will concatenate all validation dataloaders
-    if not using kfold, it will only plot the validation dataset (e.g, 20%)
-    """
-    all_labels = np.asarray(list(itertools.chain(*val_metrics.all_labels)))
-    all_preds = np.asarray(list(itertools.chain(*val_metrics.all_preds)))
-
-    plot_metrics.conf_matrix(
-        all_labels,
-        all_preds,
-        save_name=config.CONF_MATRIX_SAVENAME,
-        save_fig=True,
-    )
-
-    # log to comet
-    if config.LOG_EXP:
-        config.experiment.log_image(
-            config.CONF_MATRIX_SAVENAME, name="confusion matrix", image_format="pdf"
+        # write acc and loss to file within epoch iteration
+        acc_savename = (
+            config.ACC_SAVENAME_VAL
+            if self.phase == "val"
+            else config.ACC_SAVENAME_TRAIN
         )
+        if config.SAVE_ACC:
+            with open(acc_savename, "a", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerow(
+                    [
+                        self.model_name,
+                        self.epoch,
+                        self.kfold,
+                        self.batch_size,
+                        self.epoch_acc.cpu().numpy(),
+                        self.epoch_loss,
+                    ]
+                )
+                file.close()
 
-    # unnormalized matrix
-    plot_metrics.conf_matrix(
-        all_labels,
-        all_preds,
-        norm=None,
-        save_name=config.CONF_MATRIX_SAVENAME,
-        save_fig=True,
-    )
+        # print output
+        self.print_epoch_metrics(epoch)
 
-    # log to comet
-    if config.LOG_EXP:
-        config.experiment.log_image(
-            config.CONF_MATRIX_SAVENAME, name="confusion matrix", image_format="pdf"
-        )
+        if metrics.epoch_acc > best_acc and config.SAVE_MODEL:
+            best_acc = metrics.epoch_acc
+            # save/load best model weights
+            if not os.path.exists(config.MODEL_SAVE_DIR):
+                os.makedirs(config.MODEL_SAVE_DIR)
+            torch.save(self.model, config.MODEL_SAVENAME)
+        return best_acc, metrics.epoch_acc
+
+    def confusion_matrix(self, epoch):
+        """
+        log a confusion matrix to comet ml after the last epoch
+        found under the graphics tab
+        if using kfold, it will concatenate all validation dataloaders
+        if not using kfold, it will only plot the validation dataset (e.g, 20%)
+        """
+
+        if (
+            epoch == self.epochs - 1
+            and (config.KFOLD != 0 and self.kfold == config.KFOLD - 1)
+            or (config.KFOLD == 0)
+        ):
+            all_labels = np.asarray(list(itertools.chain(*self.val_metrics.all_labels)))
+            all_preds = np.asarray(list(itertools.chain(*self.val_metrics.all_preds)))
+
+            plot_metrics.conf_matrix(
+                all_labels,
+                all_preds,
+                save_name=config.CONF_MATRIX_SAVENAME,
+                save_fig=True,
+            )
+
+            # log to comet
+            if config.LOG_EXP:
+                config.experiment.log_image(
+                    config.CONF_MATRIX_SAVENAME,
+                    name="confusion matrix",
+                    image_format="pdf",
+                )
+
+            # unnormalized matrix
+            plot_metrics.conf_matrix(
+                all_labels,
+                all_preds,
+                norm=None,
+                save_name=config.CONF_MATRIX_SAVENAME,
+                save_fig=True,
+            )
+
+            # log to comet
+            if config.LOG_EXP:
+                config.experiment.log_image(
+                    config.CONF_MATRIX_SAVENAME,
+                    name="confusion matrix",
+                    image_format="pdf",
+                )
+
+    def classification_report(self, epoch):
+        """
+        create classification report from sklearn
+        add model name and fold iteration to the report
+
+        Params
+        - fold (int): kfold iteration
+        - model_name (str): name of model being trained (e.g., VGG-16)
+        """
+        if epoch == self.epochs - 1:
+            all_labels = np.asarray(list(itertools.chain(*self.val_metrics.all_labels)))
+            all_preds = np.asarray(list(itertools.chain(*self.val_metrics.all_preds)))
+            clf_report = classification_report(
+                all_labels,
+                all_preds,
+                digits=3,
+                target_names=config.CLASS_NAMES,
+                output_dict=True,
+            )
+
+            # transpose classes as columns and convert to df
+            clf_report = pd.DataFrame(clf_report).iloc[:-1, :].T
+
+            # add fold iteration and model name
+            clf_report["fold"] = self.fold
+            clf_report["model"] = self.model_name
+
+            if config.SAVE_ACC:
+                clf_report.to_csv(config.METRICS_SAVENAME, mode="a")
