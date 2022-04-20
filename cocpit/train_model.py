@@ -8,31 +8,26 @@ import time
 
 import numpy as np
 import torch
-from torch import nn, optim
+from torch import optim, nn
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-
+from dataclasses import dataclass, field
+from typing import Any, List
 import cocpit
 import cocpit.config as config  # isort:split
 
 
+@dataclass
 class Train:
-    def __init__(self, kfold, batch_size, model_name, model, epochs):
-        self.kfold = kfold
-        self.batch_size = batch_size
-        self.model_name = model_name
-        self.model = model
-        self.epochs = epochs
 
-        self.optimizer = None
-        self.criterion = None
-        self.scheduler = None
-        self.phases = None  # train/val
-        self.phase = None
-        self.loss = None
-        self.preds = None
-        self.labels = None
-        self.inputs = None
-        self.batch = None
+    loss: Any = field(init=False)
+    preds: Any = field(init=False)
+    labels: Any = field(init=False)
+    inputs: Any = field(init=False)
+    batch: int = field(init=False)
+    train_best_acc: float = field(default=0.0, init=False)
+    val_best_acc: float = field(default=0.0, init=False)
+    phases: List[str] = field(default_factory=list, init=False)
+    phase: str = field(default="train", init=False)
 
     def model_config(self):
         """model configurations"""
@@ -93,7 +88,7 @@ class Train:
                 self.loss.backward()  # compute updates for each parameter
                 self.optimizer.step()  # make the updates for each parameter
 
-    def batch_metrics(self, dataloaders_dict):
+    def batch_metrics(self):
         """calculate and log batch metrics"""
         if self.phase == "train" or config.VALID_SIZE < 0.01:
 
@@ -103,7 +98,7 @@ class Train:
             # print train batch metrics
             if (self.batch + 1) % 5 == 0:
                 self.train_metrics.print_batch_metrics(
-                    self.labels, self.batch, self.phase, dataloaders_dict
+                    self.labels, self.batch, self.phase, self.dataloaders
                 )
 
         else:
@@ -113,18 +108,18 @@ class Train:
             # print val batch metrics
             if (self.batch + 1) % 5 == 0:
                 self.val_metrics.print_batch_metrics(
-                    self.labels, self.batch, self.phase, dataloaders_dict
+                    self.labels, self.batch, self.phase, self.dataloaders
                 )
                 # append batch prediction and labels for plots
                 self.val_metrics.all_preds.append(self.preds.cpu().numpy())
                 self.val_metrics.all_labels.append(self.labels.cpu().numpy())
 
-    def iterate_batches(self, dataloaders_dict, print_label_count=False):
+    def iterate_batches(self, print_label_count=False):
         """iterate over a batch in a dataloader and train or evaluate"""
 
         label_cnts_total = np.zeros(len(config.CLASS_NAMES))
         for self.batch, ((inputs, labels, paths), index) in enumerate(
-            dataloaders_dict[self.phase]
+            self.dataloaders[self.phase]
         ):
             if print_label_count:
                 self.print_label_count(label_cnts_total, index, labels)
@@ -135,7 +130,7 @@ class Train:
             # zero the parameter gradients
             self.optimizer.zero_grad()
             self.forward()
-            self.batch_metrics(dataloaders_dict)
+            self.batch_metrics()
 
     def epoch_metrics(self, epoch):
         """call epoch metrics"""
@@ -198,39 +193,38 @@ class Train:
         """reduce learning rate upon plateau in epoch validation accuracy"""
         self.scheduler.step(self.val_metrics.epoch_acc)
 
-    def train_model(self, dataloaders_dict, norm_values=False):
+    def reset_metrics(self):
+        """reset acc, loss, labels, and predictions for each epoch and each phase"""
+        self.train_metrics = cocpit.metrics.Metrics()
+        self.val_metrics = cocpit.metrics.Metrics()
+
+    def iterate_phase(self, epoch, norm_values=False):
+        print("-" * 20)
+        self.determine_phases()
+        for self.phase in self.phases:
+            print(f"Phase: {self.phase}")
+            self.model.train() if self.phase == "train" else self.model.eval()
+            self.reset_metrics()
+            # get transformation normalization values per channel
+            if norm_values:
+                mean, std = cocpit.model_config.normalization_values(self.phase)
+
+            self.iterate_batches()
+            self.epoch_metrics(epoch)
+            if self.phase == "val":
+                self.confusion_matrix(epoch)
+                self.classification_report(epoch)
+
+    def train_model(self):
         """calls above methods to train across epochs and batches"""
+
         self.train_best_acc = 0.0
         self.val_best_acc = 0.0
         since_total = time.time()
 
         for epoch in range(self.epochs):
             since_epoch = time.time()
-            print("-" * 20)
-
-            self.determine_phases()
-            for self.phase in self.phases:
-                print("Phase: {}".format(self.phase))
-                if self.phase == "train":
-                    self.model.train()
-                else:
-                    self.model.eval()
-
-                # reset acc, loss, labels, and predictions for each epoch and each phase
-                self.train_metrics = cocpit.metrics.Metrics()
-                self.val_metrics = cocpit.metrics.Metrics()
-
-                # get transformation normalization values per channel
-                if norm_values:
-                    mean, std = cocpit.model_config.normalization_values(
-                        dataloaders_dict, self.phase
-                    )
-
-                self.iterate_batches(dataloaders_dict)
-                self.epoch_metrics(epoch)
-                if self.phase == "val":
-                    self.confusion_matrix(epoch)
-                    self.classification_report(epoch)
+            self.iterate_phase(epoch)
             self.reduce_lr()
             self.print_time_one_epoch(since_epoch)
         self.print_time_all_epochs(since_total)

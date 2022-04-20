@@ -17,17 +17,24 @@ from collections import Counter
 
 from sklearn.model_selection import StratifiedKFold, train_test_split
 
-from cocpit.auto_str import auto_str
+from dataclasses import dataclass, field
+from typing import Any
 
 
-@auto_str
+@dataclass
 class Runner(cocpit.train_model.Train):
-    def __init__(
-        self, train_data, val_data, kfold, batch_size, model_name, model, epochs
-    ):
-        super().__init__(kfold, batch_size, model_name, model, epochs)
-        self.train_data = train_data
-        self.val_data = val_data
+    kfold: int
+    batch_size: int
+    model_name: str
+    model: Any  # torch.nn.parallel.data_parallel.DataParallel
+    epochs: int
+    train_data: Any  # torch.utils.data.Subset
+    val_data: Any  # torch.utils.data.Subset
+    train_labels: Any  # List[int]
+
+    dataloaders: Any = field(
+        default_factory=dict, init=False
+    )  # torch.utils.data.DataLoader
 
     def update_save_names(self):
         """update save names for model and dataloader so that each fold gets saved"""
@@ -45,11 +52,13 @@ class Runner(cocpit.train_model.Train):
             f"_{len(config.MODEL_NAMES)}model(s).pt"
         )
 
-    def create_dataloaders(self, train_labels, balance_weights: bool = True):
+    def create_dataloaders(self, balance_weights: bool = True):
         """create dataloaders based on split from StratifiedKFold"""
 
         sampler = (
-            data_loaders.balanced_sampler(train_labels) if balance_weights else None
+            data_loaders.balanced_sampler(self.train_labels)
+            if balance_weights
+            else None
         )
         train_loader = data_loaders.create_loader(
             self.train_data, batch_size=self.batch_size, sampler=sampler
@@ -66,8 +75,13 @@ class Runner(cocpit.train_model.Train):
             if config.SAVE_MODEL:
                 data_loaders.save_valloader(self.val_data)
 
-        dataloaders_dict = {"train": train_loader, "val": val_loader}
-        return dataloaders_dict
+        self.dataloaders = {"train": train_loader, "val": val_loader}
+
+    def run(self):
+        self.update_save_names()
+        self.create_dataloaders()
+        self.model_config()
+        self.train_model()
 
 
 #############
@@ -115,23 +129,29 @@ def kfold_training(batch_size, model_name, model, epochs):
 
         # apply appropriate transformations for training and validation sets
         train_data, val_data, train_labels = data_setup(train_indices, val_indices)
-        execute = Runner(
-            train_data, val_data, kfold, batch_size, model_name, model, epochs
+
+        r = Runner(
+            kfold,
+            batch_size,
+            model_name,
+            model,
+            epochs,
+            train_data,
+            val_data,
+            train_labels,
         )
-        execute.model_config()
-        execute.update_save_names()
-        dataloaders_dict = execute.create_dataloaders(train_labels)
-        execute.model_config()
-        execute.train_model(dataloaders_dict)
+
+        r.run()
 
 
 def nofold_indices():
     """
     if not applying cross-fold validation, split training dataset
     based on config.VALID_SIZE
-    shuffle first and then split dataset"""
+    shuffle first and then split dataset
+    """
 
-    total_files = sum([len(files) for r, d, files in os.walk(config.DATA_DIR)])
+    total_files = sum(len(files) for r, d, files in os.walk(config.DATA_DIR))
     print(f"len files {total_files}")
 
     # randomly split indices for training and validation indices according to valid_size
@@ -154,11 +174,10 @@ def nofold_training(batch_size, model_name, model, epochs, kfold=0):
     """
     train_indices, val_indices = nofold_indices()
     train_data, val_data, train_labels = data_setup(train_indices, val_indices)
-    execute = Runner(train_data, val_data, kfold, batch_size, model_name, model, epochs)
-    execute.model_config()
-    execute.update_save_names()
-    dataloaders_dict = execute.create_dataloaders(train_labels)
-    execute.train_model(dataloaders_dict)
+    r = Runner(
+        kfold, batch_size, model_name, model, epochs, train_data, val_data, train_labels
+    )
+    r.run()
 
 
 def main(batch_size, model_name, epochs):

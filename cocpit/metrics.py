@@ -28,7 +28,6 @@ class Metrics:
     """
 
     def __init__(self):
-        self.loss = 0.0
         self.totals = 0.0
         self.running_loss = 0.0
         self.running_corrects = 0.0
@@ -53,7 +52,7 @@ class Metrics:
         self.running_corrects += torch.sum(preds == labels.data)
         self.totals += labels.size(0)
 
-    def print_batch_metrics(self, labels, batch, phase, dataloaders_dict):
+    def print_batch_metrics(self, labels, batch, phase, dataloaders):
         """
         outputs batch iteration, loss, and accuracy to terminal or log file
         """
@@ -62,7 +61,7 @@ class Metrics:
         acc = float(self.batch_corrects) / labels.size(0)
 
         print(
-            f"{phase}, Batch {batch + 1}/{len(dataloaders_dict[phase])},\
+            f"{phase}, Batch {batch + 1}/{len(dataloaders[phase])},\
             Loss: {loss:.3f}, Accuracy: {acc:.3f}"
         )
 
