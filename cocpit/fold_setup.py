@@ -1,5 +1,6 @@
 """
-train model with k folds for cross validation across samples
+setup training and validation indices for labels
+and data based on k-fold cross validation
 called in __main__.py
 """
 import os
@@ -23,9 +24,12 @@ from typing import Any
 
 @dataclass
 class FoldSetup:
+    """
+    setup training and validation indices for labels
+    and data based on k-fold cross validation
+    """
+
     batch_size: int
-    model_name: str
-    model: Any
     epochs: int
     kfold: int = 0
 
@@ -68,9 +72,10 @@ class FoldSetup:
         print("val counts")
         print(Counter(self.val_labels))
 
-    def data_setup(self, composition: bool = True):
-        """apply different transforms to train and
-        validation datasets from ImageFolder"""
+    def split_data(self, composition: bool = True):
+        """
+        Create subset of data and labels for train and val based on indices
+        """
         data = data_loaders.get_data("train")
         self.train_labels = list(map(data.targets.__getitem__, self.train_indices))
         self.train_data = torch.utils.data.Subset(data, self.train_indices)
@@ -81,36 +86,6 @@ class FoldSetup:
 
         if composition:
             self.print_composition()
-
-    def kfold_training(self):
-        """
-        1. split dataset into folds
-            preserve the percentage of samples for each class with stratified
-        2. create dataloaders
-        3. initialize and train model
-        """
-        skf = StratifiedKFold(n_splits=config.KFOLD, shuffle=True, random_state=42)
-        # datasets based on phase get called again in data_setup
-        # needed here to initialize for skf.split
-        data = data_loaders.get_data("val")
-        for self.kfold, (self.train_indices, self.val_indices) in enumerate(
-            skf.split(data.imgs, data.targets)
-        ):
-            print("KFOLD iteration: ", self.kfold)
-
-            # apply appropriate transformations for training and validation sets
-            self.data_setup()
-
-            r = Runner(self.batch_size, self.model_name, self.model, self.epochs)
-            r.run()
-
-
-@dataclass
-class Runner(FoldSetup, cocpit.train_model.Train):
-
-    dataloaders: Any = field(
-        default_factory=dict, init=False
-    )  # torch.utils.data.DataLoader
 
     def update_save_names(self):
         """update save names for model and dataloader so that each fold gets saved"""
@@ -128,18 +103,46 @@ class Runner(FoldSetup, cocpit.train_model.Train):
             f"_{len(config.MODEL_NAMES)}model(s).pt"
         )
 
-    def create_dataloaders(self, balance_weights: bool = True):
-        """create dataloaders based on split from StratifiedKFold"""
+    def kfold_training(self):
+        """
+        Split dataset into folds
+        Preserve the percentage of samples for each class with stratified
+        Create dataloaders for each fold
+        """
+        skf = StratifiedKFold(n_splits=config.KFOLD, shuffle=True, random_state=42)
+        # datasets based on phase get called again in split_data
+        # needed here to initialize for skf.split
+        data = data_loaders.get_data("val")
+        for self.kfold, (self.train_indices, self.val_indices) in enumerate(
+            skf.split(data.imgs, data.targets)
+        ):
+            print("KFOLD iteration: ", self.kfold)
 
+            # apply appropriate transformations for training and validation sets
+            self.split_data()
+            self.update_save_names()
+            self.create_dataloaders()
+
+    def train_loader(self, balance_weights: bool = True):
+        """
+        Create train loader that iterates images in batches
+        Option to balance the distribution of sampled images
+            if there is class imbalance
+        """
         sampler = (
             data_loaders.balanced_sampler(self.train_labels)
             if balance_weights
             else None
         )
-        train_loader = data_loaders.create_loader(
+        return data_loaders.create_loader(
             self.train_data, batch_size=self.batch_size, sampler=sampler
         )
 
+    def val_loader(self):
+        """
+        Create validation loader to be iterated in batches
+        Option to use the entire labeled dataset if VALID_SIZE small
+        """
         if config.VALID_SIZE < 0.01:
             # use all data for training - no val loader
             val_loader = None
@@ -150,25 +153,18 @@ class Runner(FoldSetup, cocpit.train_model.Train):
             )
             if config.SAVE_MODEL:
                 data_loaders.save_valloader(self.val_data)
+        return val_loader
 
-        self.dataloaders = {"train": train_loader, "val": val_loader}
-
-    def run(self):
-        self.update_save_names()
-        self.create_dataloaders()
-        self.model_config()
-        self.train_model()
+    def create_dataloaders(self):
+        """create dict of train/val dataloaders based on split and sampler from StratifiedKFold"""
+        self.dataloaders = {"train": self.train_loader(), "val": self.val_loader()}
 
 
-def main(batch_size, model_name, epochs):
-
-    model = cocpit.models.initialize_model(model_name)
-    model = cocpit.model_config.to_device(model)
-    f = FoldSetup(batch_size, model_name, model, epochs)
+def main(batch_size, epochs):
+    f = FoldSetup(batch_size, epochs)
     if config.KFOLD != 0:
         f.kfold_training()
     else:
         f.nofold_indices()
-        f.data_setup()
-        r = Runner(f.batch_size, f.model_name, f.model, f.epochs)
-        r.run()
+        f.split_data()
+        f.create_dataloaders()
