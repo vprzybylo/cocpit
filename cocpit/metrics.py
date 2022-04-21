@@ -1,7 +1,6 @@
 """
 - holds epoch and batch metrics for both the training and validation datasets
 - called in train_model.py
-- updates and resets totals within training loop
 - logs metrics to console and/or comet-ml interface (see config.py to turn on)
 - writes metrics to csv's defined in config.py
 - creates a sklearn classification report using the metrics
@@ -20,26 +19,26 @@ import cocpit
 import cocpit.config as config  # isort:split
 import cocpit.plotting_scripts.plot_metrics as plot_metrics
 from dataclasses import dataclass
-from typing import List
+from typing import List, Any
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Metrics(cocpit.train_model.Train):
     """
     calculates batch and epoch metrics for
     training and validation datasets
     """
 
-    totals: float = 0.0
-    running_loss: float = 0.0
-    running_corrects: float = 0.0
-    batch_loss: float = 0.0
-    batch_corrects: float = 0.0
-    epoch_loss: float = 0.0
-    epoch_acc: float = 0.0
     # validation preds and labels only
     all_preds = List[int]
     all_labels = List[int]
+    totals: float = 0.0
+    running_loss: Any = 0.0
+    running_corrects: Any = 0.0
+    batch_loss: Any = 0.0
+    batch_corrects: Any = 0.0
+    epoch_loss: Any = 0.0
+    epoch_acc: Any = 0.0
 
     def update_batch_metrics(self):
         """
@@ -74,18 +73,18 @@ class Metrics(cocpit.train_model.Train):
         self.epoch_loss = self.running_loss / self.totals
         self.epoch_acc = self.running_corrects.double() / self.totals
 
-    def print_epoch_metrics(self, epoch):
+    def print_epoch_metrics(self):
         """
         outputs epoch iteration, loss, and accuracy to terminal or log file
         """
 
         print(
-            f"{self.phase} Epoch {epoch + 1}/{self.epochs},\
+            f"{self.phase} Epoch {self.epoch + 1}/{self.epochs},\
             Loss: {self.epoch_loss:.3f},\
             Accuracy: {self.epoch_acc:.3f}"
         )
 
-    def log_epoch_metrics(self, metrics, best_acc, epoch):
+    def log_epoch_metrics(self, metrics, best_acc):
         """log epoch metrics to comet and write to file
         also saves model if acc improves"""
 
@@ -118,7 +117,7 @@ class Metrics(cocpit.train_model.Train):
                 file.close()
 
         # print output
-        self.print_epoch_metrics(epoch)
+        self.print_epoch_metrics(self.epoch)
 
         if metrics.epoch_acc > best_acc and config.SAVE_MODEL:
             best_acc = metrics.epoch_acc
@@ -128,7 +127,7 @@ class Metrics(cocpit.train_model.Train):
             torch.save(self.model, config.MODEL_SAVENAME)
         return best_acc, metrics.epoch_acc
 
-    def confusion_matrix(self, epoch):
+    def confusion_matrix(self):
         """
         log a confusion matrix to comet ml after the last epoch
         found under the graphics tab
@@ -137,7 +136,7 @@ class Metrics(cocpit.train_model.Train):
         """
 
         if (
-            epoch == self.epochs - 1
+            self.epoch == self.epochs - 1
             and (config.KFOLD != 0 and self.kfold == config.KFOLD - 1)
             or (config.KFOLD == 0)
         ):
@@ -176,7 +175,7 @@ class Metrics(cocpit.train_model.Train):
                     image_format="pdf",
                 )
 
-    def classification_report(self, epoch):
+    def classification_report(self):
         """
         create classification report from sklearn
         add model name and fold iteration to the report
@@ -185,7 +184,7 @@ class Metrics(cocpit.train_model.Train):
         - fold (int): kfold iteration
         - model_name (str): name of model being trained (e.g., VGG-16)
         """
-        if epoch == self.epochs - 1:
+        if self.epoch == self.epochs - 1:
             all_labels = np.asarray(list(itertools.chain(*self.val_metrics.all_labels)))
             all_preds = np.asarray(list(itertools.chain(*self.val_metrics.all_preds)))
             clf_report = classification_report(

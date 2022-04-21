@@ -1,32 +1,38 @@
 """
 train the CNN model(s)
 """
-import csv
+
 import operator
-import os
 import time
 
 import numpy as np
 import torch
-from torch import optim, nn
+from torch import nn
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+
 from dataclasses import dataclass, field
 from typing import Any, List
 import cocpit
 import cocpit.config as config  # isort:split
+import collections
+import collections.abc
 
 
 @dataclass
 class Train:
-    loss: Any = field(init=False)
-    preds: Any = field(init=False)
-    labels: Any = field(init=False)
-    inputs: Any = field(init=False)
-    batch: int = field(init=False)
-    train_best_acc: float = field(default=0.0, init=False)
-    val_best_acc: float = field(default=0.0, init=False)
+    dataloaders: Any = field(default=None)
+    optimizer: Any = field(default=None)
+    model: Any = field(default=None)
+    loss: Any = field(default=None, init=False)
+    preds: Any = field(default=None, init=False)
+    labels: Any = field(default=None, init=False)
+    inputs: Any = field(default=None, init=False)
+    batch: int = field(default_factory=int, init=False)
     phases: List[str] = field(default_factory=list, init=False)
-    phase: str = field(default="train", init=False)
+    train_best_acc: float = 0.0
+    val_best_acc: float = 0.0
+    criterion: Any = nn.CrossEntropyLoss()
+    phase: str = "train"
 
     # train_metrics: cocpit.metrics.Metrics = field(
     #     default_factory=cocpit.metrics.Metrics, init=False
@@ -35,31 +41,27 @@ class Train:
     #     default_factory=cocpit.metrics.Metrics, init=False
     # )
 
-    def model_config(self):
-        """model configurations"""
-        params_to_update = cocpit.model_config.update_params(self.model)
-        self.optimizer = optim.SGD(
-            params_to_update, lr=0.01, momentum=0.9, nesterov=True
-        )
-        self.criterion = nn.CrossEntropyLoss()  # Loss function
-        self.scheduler = ReduceLROnPlateau(
-            self.optimizer, mode="max", factor=0.5, patience=0, verbose=True, eps=1e-04
-        )
-
     def determine_phases(self):
         """determine if there is both a training and validation phase"""
-        if config.VALID_SIZE < 0.1:
-            self.phases = ["train"]
-        else:
-            self.phases = ["train", "val"]
+        self.phases = ["train"] if config.VALID_SIZE < 0.1 else ["train", "val"]
+
+    def label_counts(self, i, label_cnts, labels):
+        """
+        Calculate the # of labels per batch to ensure
+        weighted random sampler is correct
+        """
+
+        for n, _ in enumerate(config.CLASS_NAMES):
+            label_cnts[n] += len(np.where(labels.numpy() == n)[0])
+        print("LABEL COUNT = ", label_cnts)
+
+        return label_cnts
 
     def print_label_count(self, label_cnts_total, index, labels):
         """print cumulative sum of images per class, per batch to
         ensure weighted sampler is working properly"""
         if self.phase == "train":
-            label_cnts = cocpit.model_config.label_counts(
-                index, label_cnts_total, labels
-            )
+            label_cnts = self.label_counts(index, label_cnts_total, labels)
             label_cnts_total = list(map(operator.add, label_cnts, label_cnts_total))
 
     def forward(self):
@@ -114,7 +116,7 @@ class Train:
         self.train_metrics = cocpit.metrics.Metrics()
         self.val_metrics = cocpit.metrics.Metrics()
 
-    def epoch_metrics(self, epoch):
+    def epoch_metrics(self):
         """call epoch metrics"""
         if self.phase == "train" or config.VALID_SIZE < 0.01:
             # calculate acc and loss for validation data
@@ -123,48 +125,42 @@ class Train:
                 self.train_best_acc,
                 self.train_metrics.epoch_acc,
             ) = self.train_metrics.log_epoch_metrics(
-                self.train_metrics, self.train_best_acc, epoch
+                self.train_metrics, self.train_best_acc
             )
         else:
             (
                 self.val_best_acc,
                 self.val_metrics.epoch_acc,
-            ) = self.val_metrics.log_epoch_metrics(
-                self.val_metrics, self.val_best_acc, epoch
-            )
-
-    def write_times(self, epoch, since_total):
-        """write out time to train to file"""
-        time_elapsed = time.time() - since_total
-        with open(
-            "/data/data/saved_timings/model_timing_only_cpu.csv", "a", newline=""
-        ) as file:
-            writer = csv.writer(file)
-            writer.writerow([self.model_name, epoch, self.kfold, time_elapsed])
-
-    def print_time_all_epochs(self, since_total):
-        """print time it took for all epochs to train"""
-        time_elapsed = time.time() - since_total
-        print(
-            "All epochs comlete in {:.0f}m {:.0f}s".format(
-                time_elapsed // 60, time_elapsed % 60
-            )
-        )
-
-    def print_time_one_epoch(self, since_epoch):
-        """print time for one epoch"""
-        time_elapsed = time.time() - since_epoch
-        print(
-            "Epoch complete in {:.0f}m {:.0f}s".format(
-                time_elapsed // 60, time_elapsed % 60
-            )
-        )
+            ) = self.val_metrics.log_epoch_metrics(self.val_metrics, self.val_best_acc)
 
     def reduce_lr(self):
         """reduce learning rate upon plateau in epoch validation accuracy"""
-        self.scheduler.step(self.val_metrics.epoch_acc)
+        scheduler = ReduceLROnPlateau(
+            self.optimizer, mode="max", factor=0.5, patience=0, verbose=True, eps=1e-04
+        )
+        scheduler.step(self.val_metrics.epoch_acc)
 
-    def iterate_phase(self, epoch, norm_values=False):
+    def normalization_values(self, phase):
+        """
+        Get mean and standard deviation of pixel values
+        across all batches
+        """
+        mean = 0.0
+        std = 0.0
+        nb_samples = 0.0
+        for ((inputs, labels, paths), index) in self.dataloaders_dict[phase]:
+            batch_samples = inputs.size(0)
+            data = inputs.view(batch_samples, inputs.size(1), -1)
+            mean += data.mean(2).sum(0)
+            std += data.std(2).sum(0)
+            nb_samples += batch_samples
+
+        mean /= nb_samples
+        std /= nb_samples
+        print(mean, std)
+        return mean, std
+
+    def iterate_phase(self, norm_values=False):
         print("-" * 20)
         self.determine_phases()
         for self.phase in self.phases:
@@ -173,25 +169,24 @@ class Train:
             self.reset_metrics()
             # get transformation normalization values per channel
             if norm_values:
-                mean, std = cocpit.model_config.normalization_values(self.phase)
+                mean, std = self.normalization_values(self.phase)
 
             self.iterate_batches()
-            self.epoch_metrics(epoch)
+            self.epoch_metrics()
             if self.phase == "val":
-                self.val_metrics.confusion_matrix(epoch)
-                self.val_metrics.classification_report(epoch)
+                self.val_metrics.confusion_matrix()
+                self.val_metrics.classification_report()
 
-    def train_model(self):
-        """calls above methods to train across epochs and batches"""
 
-        self.train_best_acc = 0.0
-        self.val_best_acc = 0.0
-        since_total = time.time()
-
-        for epoch in range(self.epochs):
-            since_epoch = time.time()
-            self.iterate_phase(epoch)
-            self.reduce_lr()
-            self.print_time_one_epoch(since_epoch)
-        self.print_time_all_epochs(since_total)
-        self.write_times(epoch, since_total)
+def main(dataloaders, epochs, optimizer, model):
+    """calls above methods to train across epochs and batches"""
+    since_total = time.time()
+    t = Train(dataloaders, optimizer, model)
+    for epoch in range(epochs):
+        since_epoch = time.time()
+        t.iterate_phase()
+        t.reduce_lr()
+        timing = cocpit.timing.Time(epoch, since_total, since_epoch)
+        timing.print_time_one_epoch(since_epoch)
+    timing.print_time_all_epochs()
+    timing.write_times(epoch)

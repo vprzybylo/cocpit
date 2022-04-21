@@ -29,6 +29,7 @@ class FoldSetup:
     and data based on k-fold cross validation
     """
 
+    model_name: str
     batch_size: int
     epochs: int
     kfold: int = 0
@@ -39,26 +40,6 @@ class FoldSetup:
     val_labels: Any = field(default=None, init=False)
     train_indices: Any = field(default=None, init=False)
     val_indices: Any = field(default=None, init=False)
-
-    def nofold_indices(self):
-        """
-        if not applying cross-fold validation, split training dataset
-        based on config.VALID_SIZE
-        shuffle first and then split dataset
-        """
-
-        total_files = sum(len(files) for r, d, files in os.walk(config.DATA_DIR))
-        print(f"len files {total_files}")
-
-        # randomly split indices for training and validation indices according to valid_size
-        if config.VALID_SIZE < 0.01:
-            # use all of the data
-            self.train_indices = np.arange(0, total_files)
-            random.shuffle(self.train_indices)
-        else:
-            self.train_indices, self.val_indices = train_test_split(
-                list(range(total_files)), test_size=config.VALID_SIZE
-            )
 
     def print_composition(self):
         """prints length of train and test data based on validation %"""
@@ -103,26 +84,6 @@ class FoldSetup:
             f"_{len(config.MODEL_NAMES)}model(s).pt"
         )
 
-    def kfold_training(self):
-        """
-        Split dataset into folds
-        Preserve the percentage of samples for each class with stratified
-        Create dataloaders for each fold
-        """
-        skf = StratifiedKFold(n_splits=config.KFOLD, shuffle=True, random_state=42)
-        # datasets based on phase get called again in split_data
-        # needed here to initialize for skf.split
-        data = data_loaders.get_data("val")
-        for self.kfold, (self.train_indices, self.val_indices) in enumerate(
-            skf.split(data.imgs, data.targets)
-        ):
-            print("KFOLD iteration: ", self.kfold)
-
-            # apply appropriate transformations for training and validation sets
-            self.split_data()
-            self.update_save_names()
-            self.create_dataloaders()
-
     def train_loader(self, balance_weights: bool = True):
         """
         Create train loader that iterates images in batches
@@ -159,12 +120,44 @@ class FoldSetup:
         """create dict of train/val dataloaders based on split and sampler from StratifiedKFold"""
         self.dataloaders = {"train": self.train_loader(), "val": self.val_loader()}
 
+    def kfold_training(self):
+        """
+        Split dataset into folds
+        Preserve the percentage of samples for each class with stratified
+        Create dataloaders for each fold
+        """
+        skf = StratifiedKFold(n_splits=config.KFOLD, shuffle=True, random_state=42)
+        # datasets based on phase get called again in split_data
+        # needed here to initialize for skf.split
+        data = data_loaders.get_data("val")
+        for self.kfold, (self.train_indices, self.val_indices) in enumerate(
+            skf.split(data.imgs, data.targets)
+        ):
+            print("KFOLD iteration: ", self.kfold)
 
-def main(batch_size, epochs):
-    f = FoldSetup(batch_size, epochs)
-    if config.KFOLD != 0:
-        f.kfold_training()
-    else:
-        f.nofold_indices()
-        f.split_data()
-        f.create_dataloaders()
+            # apply appropriate transformations for training and validation sets
+            self.split_data()
+            self.update_save_names()
+            self.create_dataloaders()
+            optimizer, model = cocpit.model_config.main(self.model_name)
+            cocpit.train_model.main(self.dataloaders, self.epochs, optimizer, model)
+
+    def nofold_indices(self):
+        """
+        if not applying cross-fold validation, split training dataset
+        based on config.VALID_SIZE
+        shuffle first and then split dataset
+        """
+
+        total_files = sum(len(files) for r, d, files in os.walk(config.DATA_DIR))
+        print(f"len files {total_files}")
+
+        # randomly split indices for training and validation indices according to valid_size
+        if config.VALID_SIZE < 0.01:
+            # use all of the data
+            self.train_indices = np.arange(0, total_files)
+            random.shuffle(self.train_indices)
+        else:
+            self.train_indices, self.val_indices = train_test_split(
+                list(range(total_files)), test_size=config.VALID_SIZE
+            )
