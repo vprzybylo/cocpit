@@ -6,32 +6,26 @@
 - creates a sklearn classification report using the metrics
 """
 
-import csv
 import itertools
-import os
-
 import numpy as np
 import pandas as pd
 import torch
 from sklearn.metrics import classification_report
-
 import cocpit
 import cocpit.config as config  # isort:split
 import cocpit.plotting_scripts.plot_metrics as plot_metrics
 from dataclasses import dataclass
-from typing import List, Any
+from typing import Any
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 
-@dataclass(kw_only=True)
-class Metrics(cocpit.train_model.Train):
+@dataclass
+class Metrics(cocpit.train.Train, cocpit.validate.Validation):
     """
     calculates batch and epoch metrics for
     training and validation datasets
     """
 
-    # validation preds and labels only
-    all_preds = List[int]
-    all_labels = List[int]
     totals: float = 0.0
     running_loss: Any = 0.0
     running_corrects: Any = 0.0
@@ -39,8 +33,16 @@ class Metrics(cocpit.train_model.Train):
     batch_corrects: Any = 0.0
     epoch_loss: Any = 0.0
     epoch_acc: Any = 0.0
+    val_best_acc: float = 0.0
 
-    def update_batch_metrics(self):
+    def reduce_lr(self):
+        """reduce learning rate upon plateau in epoch validation accuracy"""
+        scheduler = ReduceLROnPlateau(
+            self.optimizer, mode="max", factor=0.5, patience=0, verbose=True, eps=1e-04
+        )
+        scheduler.step(self.epoch_acc)
+
+    def calculate_batch_metrics(self) -> None:
         """
         Calculate loss and accuracy for each batch in dataloader
         """
@@ -52,8 +54,10 @@ class Metrics(cocpit.train_model.Train):
         self.running_loss += self.loss.item() * self.inputs.size(0)
         self.running_corrects += torch.sum(self.preds == self.labels.data)
         self.totals += self.labels.size(0)
+        if (self.batch + 1) % 5 == 0:
+            self.print_batch_metrics()
 
-    def print_batch_metrics(self):
+    def print_batch_metrics(self) -> None:
         """
         outputs batch iteration, loss, and accuracy to terminal or log file
         """
@@ -62,7 +66,7 @@ class Metrics(cocpit.train_model.Train):
         acc = float(self.batch_corrects) / self.labels.size(0)
 
         print(
-            f"{self.phase}, Batch {self.batch + 1}/{len(self.dataloaders[self.phase])},\
+            f"Validation, Batch {self.batch + 1}/{len(self.dataloaders['val'])},\
             Loss: {loss:.3f}, Accuracy: {acc:.3f}"
         )
 
@@ -73,61 +77,7 @@ class Metrics(cocpit.train_model.Train):
         self.epoch_loss = self.running_loss / self.totals
         self.epoch_acc = self.running_corrects.double() / self.totals
 
-    def print_epoch_metrics(self):
-        """
-        outputs epoch iteration, loss, and accuracy to terminal or log file
-        """
-
-        print(
-            f"{self.phase} Epoch {self.epoch + 1}/{self.epochs},\
-            Loss: {self.epoch_loss:.3f},\
-            Accuracy: {self.epoch_acc:.3f}"
-        )
-
-    def log_epoch_metrics(self, metrics, best_acc):
-        """log epoch metrics to comet and write to file
-        also saves model if acc improves"""
-
-        # log to comet
-        if config.LOG_EXP:
-            config.experiment.log_metric(
-                f"epoch_acc_{self.phase}", self.epoch_acc * 100
-            )
-            config.experiment.log_metric(f"epoch_loss_{self.phase}", self.epoch_loss)
-
-        # write acc and loss to file within epoch iteration
-        acc_savename = (
-            config.ACC_SAVENAME_VAL
-            if self.phase == "val"
-            else config.ACC_SAVENAME_TRAIN
-        )
-        if config.SAVE_ACC:
-            with open(acc_savename, "a", newline="") as file:
-                writer = csv.writer(file)
-                writer.writerow(
-                    [
-                        self.model_name,
-                        self.epoch,
-                        self.kfold,
-                        self.batch_size,
-                        self.epoch_acc.cpu().numpy(),
-                        self.epoch_loss,
-                    ]
-                )
-                file.close()
-
-        # print output
-        self.print_epoch_metrics(self.epoch)
-
-        if metrics.epoch_acc > best_acc and config.SAVE_MODEL:
-            best_acc = metrics.epoch_acc
-            # save/load best model weights
-            if not os.path.exists(config.MODEL_SAVE_DIR):
-                os.makedirs(config.MODEL_SAVE_DIR)
-            torch.save(self.model, config.MODEL_SAVENAME)
-        return best_acc, metrics.epoch_acc
-
-    def confusion_matrix(self):
+    def confusion_matrix(self, norm=None):
         """
         log a confusion matrix to comet ml after the last epoch
         found under the graphics tab
@@ -140,29 +90,10 @@ class Metrics(cocpit.train_model.Train):
             and (config.KFOLD != 0 and self.kfold == config.KFOLD - 1)
             or (config.KFOLD == 0)
         ):
-            all_labels = np.asarray(list(itertools.chain(*self.val_metrics.all_labels)))
-            all_preds = np.asarray(list(itertools.chain(*self.val_metrics.all_preds)))
-
             plot_metrics.conf_matrix(
-                all_labels,
-                all_preds,
-                save_name=config.CONF_MATRIX_SAVENAME,
-                save_fig=True,
-            )
-
-            # log to comet
-            if config.LOG_EXP:
-                config.experiment.log_image(
-                    config.CONF_MATRIX_SAVENAME,
-                    name="confusion matrix",
-                    image_format="pdf",
-                )
-
-            # unnormalized matrix
-            plot_metrics.conf_matrix(
-                all_labels,
-                all_preds,
-                norm=None,
+                np.asarray(list(itertools.chain(*self.val_metrics.all_labels))),
+                np.asarray(list(itertools.chain(*self.val_metrics.all_preds))),
+                norm=norm,
                 save_name=config.CONF_MATRIX_SAVENAME,
                 save_fig=True,
             )
@@ -185,11 +116,9 @@ class Metrics(cocpit.train_model.Train):
         - model_name (str): name of model being trained (e.g., VGG-16)
         """
         if self.epoch == self.epochs - 1:
-            all_labels = np.asarray(list(itertools.chain(*self.val_metrics.all_labels)))
-            all_preds = np.asarray(list(itertools.chain(*self.val_metrics.all_preds)))
             clf_report = classification_report(
-                all_labels,
-                all_preds,
+                np.asarray(list(itertools.chain(*self.all_labels))),
+                np.asarray(list(itertools.chain(*self.all_preds))),
                 digits=3,
                 target_names=config.CLASS_NAMES,
                 output_dict=True,

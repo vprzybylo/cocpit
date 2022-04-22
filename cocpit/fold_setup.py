@@ -140,7 +140,15 @@ class FoldSetup:
             self.update_save_names()
             self.create_dataloaders()
             optimizer, model = cocpit.model_config.main(self.model_name)
-            cocpit.train_model.main(self.dataloaders, self.epochs, optimizer, model)
+            cocpit.runner.main(
+                self.dataloaders,
+                self.epochs,
+                optimizer,
+                model,
+                self.model_name,
+                self.batch_size,
+                self.kfold,
+            )
 
     def nofold_indices(self):
         """
