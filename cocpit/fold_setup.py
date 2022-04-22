@@ -140,7 +140,7 @@ class FoldSetup:
             self.update_save_names()
             self.create_dataloaders()
             optimizer, model = cocpit.model_config.main(self.model_name)
-            cocpit.runner.main(
+            cocpit.train_runner.main(
                 self.dataloaders,
                 self.epochs,
                 optimizer,

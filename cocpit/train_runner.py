@@ -5,26 +5,28 @@ import time
 import csv
 import cocpit
 import cocpit.config as config  # isort:split
+from typing import Any, List
 
 
-def model_eval(model, phase):
+def model_eval(model, phase: str) -> None:
     """put model in evaluation mode if predicting on validation data"""
     model.train() if phase == "train" else model.eval()
 
 
-def determine_phases():
+def determine_phases() -> List[str]:
     """determine if there is both a training and validation phase"""
     return ["train"] if config.VALID_SIZE < 0.1 else ["train", "val"]
 
 
-def log_epoch_metrics(acc_name, loss_name, epoch_acc, epoch_loss):
-    """log epoch metrics to comet"""
-    if config.LOG_EXP:
-        config.experiment.log_metric(acc_name, epoch_acc * 100)
-        config.experiment.log_metric(loss_name, epoch_loss)
-
-
-def write_output(filename, model_name, epoch, kfold, batch_size, epoch_acc, epoch_loss):
+def write_output(
+    filename: str,
+    model_name: str,
+    epoch: int,
+    kfold: int,
+    batch_size: int,
+    epoch_acc: float,
+    epoch_loss: float,
+) -> None:
     """write acc and loss to file within epoch iteration"""
     if config.SAVE_ACC:
         with open(filename, "a", newline="") as file:
@@ -43,15 +45,23 @@ def write_output(filename, model_name, epoch, kfold, batch_size, epoch_acc, epoc
 
 
 def run_train(
-    dataloaders, optimizer, model, model_name, epoch, epochs, kfold, batch_size
-):
+    dataloaders,
+    optimizer,
+    model,
+    model_name: str,
+    epoch: int,
+    epochs: int,
+    kfold: int,
+    batch_size: int,
+) -> None:
     """reset acc, loss, labels, and predictions for each epoch and each phase
     call methods in train.py"""
     t = cocpit.train.Train(dataloaders, optimizer, model)
     t.iterate_batches()
-    t.calculate_batch_metrics()
-    t.calculate_epoch_metrics()
-    log_epoch_metrics("epoch_acc_train", "epoch_loss_train", t.epoch_acc, t.epoch_loss)
+    t.epoch_metrics()
+    t.log_epoch_metrics(
+        "epoch_acc_train", "epoch_loss_train", t.epoch_acc, t.epoch_loss
+    )
     print(
         f"Train Epoch {epoch + 1}/{epochs},\
         Loss: {t.epoch_loss:.3f},\
@@ -69,24 +79,43 @@ def run_train(
 
 
 def run_val(
-    dataloaders, optimizer, model, model_name, epoch, epochs, kfold, batch_size
-):
+    dataloaders,
+    optimizer,
+    model,
+    model_name: str,
+    epoch: int,
+    epochs: int,
+    kfold: int,
+    batch_size: int,
+) -> None:
     """reset acc, loss, labels, and predictions for each epoch and each phase
     call methods in validate.py"""
     v = cocpit.validate.Validation(dataloaders, optimizer, model)
     v.iterate_batches()
-    v.calculate_batch_metrics()
-    v.calculate_epoch_metrics()
+    v.epoch_metrics()
     v.reduce_lr()
     v.save_model()
-    # v.confusion_matrix()
-    # v.classification_report()
-    log_epoch_metrics("epoch_acc_val", "epoch_loss_val", v.epoch_acc, v.epoch_loss)
+
+    # make confusion matrix
+    if (
+        epoch == epochs - 1
+        and (config.KFOLD != 0 and kfold == config.KFOLD - 1)
+        or (config.KFOLD == 0)
+    ):
+        v.confusion_matrix()
+
+    # make classification report
+    if epoch == epochs - 1:
+        v.classification_report(kfold, model_name)
+
+    v.log_epoch_metrics("epoch_acc_val", "epoch_loss_val", v.epoch_acc, v.epoch_loss)
     print(
         f"Validation Epoch {epoch + 1}/{epochs},\
         Loss: {v.epoch_loss:.3f},\
         Accuracy: {v.epoch_acc:.3f}"
     )
+
+    # output results to file for each model, epoch, fold, etc.
     write_output(
         config.ACC_SAVENAME_VAL,
         model_name,
