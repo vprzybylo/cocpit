@@ -3,17 +3,20 @@ import torch
 import itertools
 import numpy as np
 from cocpit.plotting_scripts import plot_metrics as plot_metrics
-from sklearn import classification_report
+from sklearn.metrics import classification_report
 import pandas as pd
 from cocpit.performance_metrics import Metrics
+from cocpit.runner import Runner
 from cocpit import config as config
 from dataclasses import dataclass, field
-from typing import Any, List
+from typing import Any, List, Optional
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 
 @dataclass
 class Validation(Metrics):
+    """Perform validation methods on batched dataset"""
+
     all_preds = []  # validation preds for 1 epoch for plotting
     all_labels = []  # validation labels for 1 epoch for plotting
 
@@ -46,7 +49,7 @@ class Validation(Metrics):
                 os.makedirs(config.MODEL_SAVE_DIR)
             torch.save(self.model, config.MODEL_SAVENAME)
 
-    def reduce_lr(self):
+    def reduce_lr(self) -> None:
         """reduce learning rate upon plateau in epoch validation accuracy"""
         scheduler = ReduceLROnPlateau(
             self.optimizer, mode="max", factor=0.5, patience=0, verbose=True, eps=1e-04
@@ -67,12 +70,18 @@ class Validation(Metrics):
             self.print_batch_metrics()
             self.append_preds()
 
-    def confusion_matrix(self, norm=None):
+    def confusion_matrix(self, norm: Optional[str] = None) -> None:
         """
         log a confusion matrix to comet ml after the last epoch
-        found under the graphics tab
+            - found under the graphics tab
         if using kfold, it will concatenate all validation dataloaders
         if not using kfold, it will only plot the validation dataset (e.g, 20%)
+
+        Args:
+           norm (str): 'true', 'pred', or None.
+                Normalizes confusion matrix over the true (rows),
+                predicted (columns) conditions or all the population.
+                If None, confusion matrix will not be normalized.
         """
 
         plot_metrics.conf_matrix(
@@ -95,6 +104,10 @@ class Validation(Metrics):
         """
         create classification report from sklearn
         add model name and fold iteration to the report
+
+        Args:
+            fold (int): which fold to use in resampling procedure
+            model_name (str): name of the models
         """
 
         clf_report = classification_report(
