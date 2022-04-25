@@ -1,4 +1,3 @@
-import operator
 import numpy as np
 import torch
 from cocpit.performance_metrics import Metrics
@@ -33,16 +32,7 @@ class Train(Metrics):
             self.loss.backward()  # compute updates for each parameter
             self.optimizer.step()  # make the updates for each parameter
 
-    def print_batch_metrics(self) -> None:
-        """
-        outputs batch iteration, loss, and accuracy
-        """
-        print(
-            f"Training, Batch {self.batch + 1}/{len(self.dataloaders['train'])},\
-            Loss: {self.loss.item():.3f}, Accuracy: {self.batch_acc:.3f}"
-        )
-
-    def iterate_batches(self, print_label_count: bool = True) -> None:
+    def iterate_batches(self, print_label_count: bool = False) -> None:
         """iterate over a batch in a dataloader and train
 
         Args:
@@ -63,4 +53,5 @@ class Train(Metrics):
             self.optimizer.zero_grad()
             self.forward()
             self.batch_metrics()
-            self.print_batch_metrics()
+            if self.batch % 5:
+                self.print_batch_metrics("train")

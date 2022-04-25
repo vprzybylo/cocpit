@@ -26,15 +26,6 @@ class Validation(Metrics):
         self.loss = self.criterion(outputs, self.labels)
         _, self.preds = torch.max(outputs, 1)
 
-    def print_batch_metrics(self) -> None:
-        """
-        outputs batch iteration, loss, and accuracy
-        """
-        print(
-            f"Validation, Batch {self.batch + 1}/{len(self.dataloaders['val'])},\
-            Loss: {self.loss.item():.3f}, Accuracy: {self.batch_acc:.3f}"
-        )
-
     def append_preds(self) -> None:
         """save each batch prediction and labels for plots"""
         self.all_preds.append(self.preds.cpu().numpy())
@@ -67,8 +58,9 @@ class Validation(Metrics):
             self.optimizer.zero_grad()
             self.predict()
             self.batch_metrics()
-            self.print_batch_metrics()
             self.append_preds()
+            if self.batch % 5:
+                self.print_batch_metrics("Val")
 
     def confusion_matrix(self, norm: Optional[str] = None) -> None:
         """
