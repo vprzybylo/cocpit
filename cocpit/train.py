@@ -6,24 +6,26 @@ from cocpit import config as config
 
 
 class Train(Metrics):
-    def label_counts(self, label_cnts, labels):
+    """Perform training methods on batched dataset"""
+
+    def label_counts(self, label_cnts: np.ndarray, labels: torch.Tensor):
         """
-        Calculate the # of labels per batch to ensure
-        weighted random sampler is correct
+        Calculate the # of labels per batch to ensure weighted random sampler is correct
+
+        Args:
+            label_cnts (np.ndarray): number of labels per class from all batches before
+            labels (torch.Tensor): class/label names
+        Return:
+            label_cnts (List[int]): sum of label counts from prior batches plus current batch
         """
+
         for n, _ in enumerate(config.CLASS_NAMES):
             label_cnts[n] += len(np.where(labels.numpy() == n)[0])
         print("LABEL COUNT = ", label_cnts)
         return label_cnts
 
-    def print_label_count(self, label_cnts_total, labels) -> None:
-        """print cumulative sum of images per class, per batch to
-        ensure weighted sampler is working properly"""
-        label_cnts = self.label_counts(label_cnts_total, labels)
-        label_cnts_total = list(map(operator.add, label_cnts, label_cnts_total))
-
     def forward(self) -> None:
-        """perform forward operator"""
+        """perform forward operator and make predictions"""
         with torch.set_grad_enabled(True):
             outputs = self.model(self.inputs)
             self.loss = self.criterion(outputs, self.labels)
@@ -40,15 +42,19 @@ class Train(Metrics):
             Loss: {self.loss.item():.3f}, Accuracy: {self.batch_acc:.3f}"
         )
 
-    def iterate_batches(self, print_label_count: bool = False) -> None:
-        """iterate over a batch in a dataloader and train"""
+    def iterate_batches(self, print_label_count: bool = True) -> None:
+        """iterate over a batch in a dataloader and train
+
+        Args:
+            print_label_count (bool): if True print class counts when iterating batches
+        """
 
         label_cnts_total = np.zeros(len(config.CLASS_NAMES))
         for self.batch, ((inputs, labels, _), _) in enumerate(
             self.dataloaders["train"]
         ):
             if print_label_count:
-                self.print_label_count(label_cnts_total, labels)
+                self.label_counts(label_cnts_total, labels)
 
             self.inputs = inputs.to(config.DEVICE)
             self.labels = labels.to(config.DEVICE)
