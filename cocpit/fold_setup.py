@@ -25,17 +25,15 @@ from typing import Any
 @dataclass
 class FoldSetup:
     """
-    setup training and validation indices for labels
-    and data based on k-fold cross validation
+    setup training and validation indices for labels and data based on k-fold cross validation
     """
 
     model_name: str
     batch_size: int
     epochs: int
-    kfold: int = 0
 
-    train_data: Any = field(default=None, init=False)  # torch.utils.data.Subset
-    val_data: Any = field(default=None, init=False)  # torch.utils.data.Subset
+    train_data: torch.utils.data.Subset = field(default=None, init=False)
+    val_data: torch.utils.data.Subset = field(default=None, init=False)
     train_labels: Any = field(default=None, init=False)  # List[int]
     val_labels: Any = field(default=None, init=False)
     train_indices: Any = field(default=None, init=False)
@@ -84,7 +82,7 @@ class FoldSetup:
             f"_{len(config.MODEL_NAMES)}model(s).pt"
         )
 
-    def train_loader(self, balance_weights: bool = True):
+    def train_loader(self, balance_weights: bool = True) -> torch.utils.data.DataLoader:
         """
         Create train loader that iterates images in batches
         Option to balance the distribution of sampled images
@@ -99,7 +97,7 @@ class FoldSetup:
             self.train_data, batch_size=self.batch_size, sampler=sampler
         )
 
-    def val_loader(self):
+    def val_loader(self) -> None:
         """
         Create validation loader to be iterated in batches
         Option to use the entire labeled dataset if VALID_SIZE small
@@ -116,11 +114,31 @@ class FoldSetup:
                 data_loaders.save_valloader(self.val_data)
         return val_loader
 
-    def create_dataloaders(self):
+    def create_dataloaders(self) -> None:
         """create dict of train/val dataloaders based on split and sampler from StratifiedKFold"""
         self.dataloaders = {"train": self.train_loader(), "val": self.val_loader()}
 
-    def kfold_training(self):
+    def nofold_indices(self) -> None:
+        """
+        if not applying cross-fold validation, split training dataset
+        based on config.VALID_SIZE
+        shuffle first and then split dataset
+        """
+
+        total_files = sum(len(files) for r, d, files in os.walk(config.DATA_DIR))
+        print(f"len files {total_files}")
+
+        # randomly split indices for training and validation indices according to valid_size
+        if config.VALID_SIZE < 0.01:
+            # use all of the data
+            self.train_indices = np.arange(0, total_files)
+            random.shuffle(self.train_indices)
+        else:
+            self.train_indices, self.val_indices = train_test_split(
+                list(range(total_files)), test_size=config.VALID_SIZE
+            )
+
+    def kfold_training(self) -> None:
         """
         Split dataset into folds
         Preserve the percentage of samples for each class with stratified
@@ -140,32 +158,12 @@ class FoldSetup:
             self.update_save_names()
             self.create_dataloaders()
             optimizer, model = cocpit.model_config.main(self.model_name)
-            cocpit.train_runner.main(
+            cocpit.runner.main(
                 self.dataloaders,
-                self.epochs,
                 optimizer,
                 model,
+                self.epochs,
                 self.model_name,
                 self.batch_size,
                 self.kfold,
-            )
-
-    def nofold_indices(self):
-        """
-        if not applying cross-fold validation, split training dataset
-        based on config.VALID_SIZE
-        shuffle first and then split dataset
-        """
-
-        total_files = sum(len(files) for r, d, files in os.walk(config.DATA_DIR))
-        print(f"len files {total_files}")
-
-        # randomly split indices for training and validation indices according to valid_size
-        if config.VALID_SIZE < 0.01:
-            # use all of the data
-            self.train_indices = np.arange(0, total_files)
-            random.shuffle(self.train_indices)
-        else:
-            self.train_indices, self.val_indices = train_test_split(
-                list(range(total_files)), test_size=config.VALID_SIZE
             )
