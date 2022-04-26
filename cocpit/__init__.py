@@ -30,34 +30,32 @@ data_loaders:
     - includes weighted and unweighted sampling
     - modified to append path to image (including class folder)
 
+fold_setup:
+    - setup training and validation indices for labels and data based on k-fold cross validation
+
 geometric_attributes:
     - calculates particle geometric properties from pic.py
     - e.g., area ratio, roundness, aspect ratio
     - length and width of particle calculated in process_sheets.py before resizing
 
-gui.py
-    - An ipywidget interface for ensuring training dataset labels are correct
-    - incorrect predictions on a validation dataloader is iterated over
-    - images are displayed with model predictions and human label
-    - if a label is incorrect a user can move the image within the labeled dataset using a dropdown menu
-    - called in notebooks/gui_move_wrong_predictions.ipynb
-
-gui_label.py
-    - An ipywidget interface for creating a training dataset
+gui_label:
+    - an ipywidget interface for creating a training dataset
     - buttons to choose a label and move an image into that dir
     - called in notebooks/label.ipynb
+
+gui_wrong:
+    - an ipywidget interface for labeling incorrect predictions from a validation dataloader
+    - should the model be right, images are moved within the training dataset
+    - called in notebooks/move_wrong_predictions.ipynb
+
+gui:
+    - an ipywidget interface for nested classification that separates images within a class
+    - used on the entire training dataset
+    - called in notebooks/gui_check_dataset_one_class.ipynb
 
 image_stats:
     - find the #/% of cutoff particles after removing blurry, fragmented, and spherical drops
     - used as a separate script (external - not being called in __main__.py)
-
-metrics:
-    - holds epoch and batch metrics for both the training and validation datasets
-    - called in train_model.py
-    - updates and resets loss and acc totals within training loop
-    - logs metrics to console and/or comet-ml interface (see config.py to turn on)
-    - writes metrics to csv's defined in config.py
-    - creates a sklearn classification report using the metrics
 
 model_config:
     - model configurations for:
@@ -70,8 +68,11 @@ model_config:
 models:
     - defines torchvision models
 
-no_fold_training:
-    - train model without folds for cross validation
+performance_metrics:
+    - holds epoch and batch metrics for both the training and validation datasets
+    - inherited by train and validation classes
+    - logs metrics to console and/or comet-ml interface (see config.py to turn on)
+    - writes metrics to csv's defined in config.py
 
 pic: 'particle image classification'
     - holds the main Image class for image manipulation using opencv
@@ -90,16 +91,24 @@ run_model:
     was presaved or built in build_ML_model
     -transforms, makes predictions, and appends classification to dataframe
 
+runner:
+    - iterates over epochs, batch sizes, and phases and calls training methods
+    and validation methods
+
+timing:
+    - time one epoch, all epochs, and write to csv
+
 setup_training:
     - train model with k folds for cross validation across samples called in __main__.py
     - runner class to get dataloaders and set up cross validation
 
-train_model:
-    - houses the execution of training the model for all epochs and batches
-    - iterates through training and validation phases for specified CNN
-    - called in run_ML model
-    - writes accuracy and loss logs for each dataset (training and validation)
-    - returns classification report
+train:
+    - execution of running a model across batches for training set only
+    - outputs performance metrics during training
+
+validate:
+    - execution of running a model across batches for validation set only
+    - outputs performance metrics and saves confusion matrix and classification report
 
 """
 from comet_ml import Experiment  # isort:split
