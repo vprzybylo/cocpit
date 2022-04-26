@@ -1,109 +1,24 @@
 """
 calculation and plotting functions for reporting performance metrics
 """
-import copy
 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import numpy as np
+
 import pandas as pd
 import seaborn as sns
-from sklearn.metrics import confusion_matrix
+
 import cocpit.plotting_scripts.grid_shader as grid_shader
-import cocpit.config as config  # isort: split
+from typing import Dict, Optional
 
 
-def conf_matrix(all_labels, all_preds, save_name, norm="true", save_fig=False):
+def manipulate_df(df: pd.DataFrame, avg: Optional[str]):
     """
-    Plot and save a confusion matrix from a saved validation dataloader
-    Params
-    ------
-    - all_labels (list): actual labels (correctly hand labeled)
-    - all_preds (list): list of predictions from the model for all batches
-    - norm (str): 'true', 'pred', or None.
-                Normalizes confusion matrix over the true (rows),
-                predicted (columns) conditions or all the population.
-                If None, confusion matrix will not be normalized.
-    - save_name (str): plot filename to save as
-    - save_fig (bool): save the conf matrix to file
+    Eliminate some metrics based on averaging
+
+    Args:
+        df (pd.DataFrame): df holding classification report
+        avg (Optional[str]): how to average - across folds, classes, or none
     """
-
-    fig, ax = plt.subplots(figsize=(10, 7))
-    # all_preds[all_preds == 0] = np.nan
-    # all_labels[all_labels == 0] = np.nan
-    cm = confusion_matrix(all_labels, all_preds)
-
-    cmap = copy.copy(mpl.cm.get_cmap("Reds"))
-    cmap.set_bad(color="white")
-
-    if norm is not None:
-        cm = confusion_matrix(all_labels, all_preds, normalize=norm)
-        cm[cm < 0.005] = np.nan
-
-        heat = sns.heatmap(
-            cm,
-            annot=True,
-            fmt=".2f",
-            linewidths=1,
-            linecolor="k",
-            xticklabels=config.CLASS_NAMES,
-            yticklabels=config.CLASS_NAMES,
-            cmap=cmap,
-            annot_kws={"size": 16},
-        )
-
-        plt.title("Normalized", fontsize=18)
-    else:
-        # cm = np.ma.masked_where(cm < 0.01, cm)
-        cm = cm.astype(float)
-        cm[cm < 0.005] = np.nan
-
-        heat = sns.heatmap(
-            cm,
-            annot=True,
-            linewidths=1,
-            linecolor="k",
-            xticklabels=config.CLASS_NAMES,
-            yticklabels=config.CLASS_NAMES,
-            cmap=cmap,
-            fmt=".0f",
-            annot_kws={"size": 18},
-        )
-        plt.title("Unweighted", fontsize=18)
-
-    cbar = heat.collections[0].colorbar
-    cbar.ax.tick_params(labelsize=20)
-    plt.xlabel("Predicted Labels", fontsize=22)
-    plt.ylabel("Actual Labels", fontsize=22)
-    heat.set_xticklabels(heat.get_xticklabels(), rotation=90, fontsize=20)
-    heat.set_yticklabels(heat.get_xticklabels(), rotation=0, fontsize=20)
-    if save_fig:
-        plt.savefig(save_name, bbox_inches="tight")
-    return cm
-
-
-def model_metric_folds(
-    metric_filename, convert_names, save_name, avg="folds", save_fig=False
-):
-    """
-    Plot each model w.r.t. precision, recall, and f1-score
-    Params
-    ------
-    metric_filename (str): holds the csv file of metric scores per fold and model
-    convert_names (dict): keys: model names used during training,
-                    values: model names used for publication (capitalized and hyphenated)
-    avg (str): 'classes': plot variability across folds (avg across classes)
-                'folds': plot variability across classes (avg across folds)
-                'none': plot variability including all folds and classes
-    - save_name (str): plot filename to save as
-    - save_fig (bool): save the figure to file
-    """
-
-    fig, ax = plt.subplots(figsize=(9, 6))
-    df = pd.read_csv(metric_filename)
-    df.columns.values[0] = "class"
-    df.replace(convert_names, inplace=True)
-
     if avg == "classes":
         # average across classes, include all folds
         df = df[(df["class"] == "macro avg")]
@@ -127,6 +42,35 @@ def model_metric_folds(
             & (df["class"] != "weighted avg")
         ]
         title = "No Averaging \n Variation in Folds and Classes"
+    return df, title
+
+
+def model_metric_folds(
+    metric_filename: str,
+    convert_names: Dict[str, str],
+    save_name: str,
+    avg: str = "folds",
+    save_fig: bool = False,
+) -> None:
+    """
+    Plot each model w.r.t. precision, recall, and f1-score
+
+    Args:
+        metric_filename (str): holds the csv file of metric scores per fold and model
+        convert_names (Dict[str, str]): keys: model names used during training,
+                    values: model names used for publication (capitalized and hyphenated)
+        avg (str): 'classes': plot variability across folds (avg across classes)
+                'folds': plot variability across classes (avg across folds)
+                'none': plot variability including all folds and classes
+        save_name (str): plot filename to save as
+        save_fig (bool): save the figure to file
+    """
+
+    _, ax = plt.subplots(figsize=(9, 6))
+    df = pd.read_csv(metric_filename)
+    df.columns.values[0] = "class"
+    df.replace(convert_names, inplace=True)
+    df, title = manipulate_df(df, avg=avg)
 
     dd = pd.melt(
         df,
@@ -140,7 +84,22 @@ def model_metric_folds(
         "recall": "Recall",
     }
     dd = dd.replace(convert_metric_names).sort_values(["model", "Metric"])
+    plot_dd(ax, dd, title, save_name, save_fig)
 
+
+def plot_dd(
+    ax: plt.Axes, dd: pd.DataFrame, title: str, save_name: str, save_fig: bool = False
+):
+    """
+    Plot model with respect to F1-score, precision, and recall
+
+    Args:
+        ax (plt.Axes): axes to plot
+        dd (pd.DataFrame): dataframe holding model and performance metrics
+        title (str): title for figure based on averaging
+        save_name (str): name of the file to save
+        save_fig (bool): whether to save the figure
+    """
     g = sns.boxplot(x="model", y="value", data=dd, hue="Metric")
     grid_shader.GridShader(ax, facecolor="lightgrey", first=False, alpha=0.7)
     g.set_xticklabels(g.get_xticklabels(), rotation=90)
@@ -157,20 +116,19 @@ def model_metric_folds(
         plt.savefig(save_name, dpi=300, bbox_inches="tight")
 
 
-def classification_report_classes(clf_report, save_name, save_fig=False):
+def classification_report_classes(clf_report, save_name, save_fig=False) -> None:
     """
     plot precision, recall, and f1-score for each class from 1 model
     average across folds
     also includes accuracy, macro avg, and weighted avg total
 
-    Params
-    ------
-    - clf_report: classification report from sklearn
+    Args:
+        clf_report: classification report from sklearn
         or from metrics_report() above
-    - save_name (str): plot filename to save as
-    - save_fig (bool): save the figure to file
+        save_name (str): plot filename to save as
+        save_fig (bool): whether to save the figure
     """
-    fig, ax = plt.subplots(figsize=(9, 7))
+    _, ax = plt.subplots(figsize=(9, 7))
     # .iloc[:-1, :] to exclude support
     clf_report = pd.DataFrame(clf_report).iloc[:-1, :]
 
