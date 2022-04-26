@@ -6,7 +6,6 @@ from sklearn.metrics import confusion_matrix
 import cocpit.config as config  # isort: split
 import seaborn as sns
 import matplotlib.pyplot as plt
-from typing import List
 
 
 def mask_cm_small_values(cm, value=0.005):
@@ -39,32 +38,32 @@ def heatmap(cm: sklearn.metrics.confusion_matrix) -> sns.heatmap:
         linecolor="k",
         xticklabels=config.CLASS_NAMES,
         yticklabels=config.CLASS_NAMES,
-        cmap=cmap(),
+        cmap=change_cmap(),
         annot_kws={"size": 16},
     )
 
 
-def cmap() -> mpl.cm:
+def change_cmap() -> mpl.cm:
     """Color map from matplotlib
 
     Return:
         mpl.cm: masking out nans to white on red colormap
     """
-    cmap = copy.copy(mpl.cm.get_cmap("Reds"))
-    return cmap.set_bad(color="white")
+    return copy.copy(mpl.cm.get_cmap("Reds"))
 
 
-def heatmap_axes(hm: sns.heatmap) -> None:
+def heatmap_axes(hm: sns.heatmap, ax: plt.Axes) -> None:
     """
     Confusion matrix axis labels, colorbar, and tick marks
 
     Args:
         hm (sns.heatmap): heatmap of confusion matrix
+        ax (plt.Axes): conf matrix axis
     """
     cbar = hm.collections[0].colorbar
     cbar.ax.tick_params(labelsize=20)
-    plt.xlabel("Predicted Labels", fontsize=22)
-    plt.ylabel("Actual Labels", fontsize=22)
+    ax.set_xlabel("Predicted Labels", fontsize=22)
+    ax.set_ylabel("Actual Labels", fontsize=22)
     hm.set_xticklabels(hm.get_xticklabels(), rotation=90, fontsize=20)
     hm.set_yticklabels(hm.get_xticklabels(), rotation=0, fontsize=20)
 
@@ -72,9 +71,8 @@ def heatmap_axes(hm: sns.heatmap) -> None:
 def conf_matrix(
     all_labels: np.ndarray,
     all_preds: np.ndarray,
-    save_name: str,
     norm=None,
-    save_fig=False,
+    save_fig=True,
 ) -> sklearn.metrics.confusion_matrix:
     """
     Plot and save a confusion matrix from a saved validation dataloader
@@ -86,18 +84,18 @@ def conf_matrix(
                 Normalizes confusion matrix over the true (rows),
                 predicted (columns) conditions or all the population.
                 If None, confusion matrix will not be normalized.
-        save_name (str): plot filename to save as
         save_fig (bool): save the conf matrix to file
     """
+    fig, ax = plt.subplots()
     cm = confusion_matrix(all_labels, all_preds, normalize=norm)
     cm = mask_cm_small_values(cm)
     hm = heatmap(cm)
-    heatmap_axes(hm)
+    heatmap_axes(hm, ax)
     if norm:
-        plt.title("Normalized", fontsize=18)
+        ax.set_title("Normalized", fontsize=18)
     else:
-        plt.title("Unweighted", fontsize=18)
+        ax.set_title("Unweighted", fontsize=18)
 
     if save_fig:
-        plt.savefig(save_name, bbox_inches="tight")
+        fig.savefig(config.CONF_MATRIX_SAVENAME, bbox_inches="tight")
     return cm
