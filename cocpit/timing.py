@@ -2,7 +2,9 @@ import csv
 import time
 
 
-class Time:
+class EpochTime:
+    """time one epoch, all epochs, and write to csv"""
+
     def __init__(self, since_total, since_epoch):
         self.since_total = since_total  # time.time() object
         self.since_epoch = since_epoch

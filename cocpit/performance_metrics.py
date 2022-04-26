@@ -4,11 +4,12 @@ Logs metrics to console and/or comet-ml interface (see config.py to turn on)
 """
 
 import torch
-from torch import nn
+
 from dataclasses import dataclass, field
 from cocpit import config as config
 from typing import Dict
 import csv
+from torch import nn
 
 
 @dataclass
@@ -33,12 +34,12 @@ class Metrics:
         running_corrects:(torch.Tensor): cumulative accuracy over batches
         epoch_loss: (float): loss at the end of an epoch
         epoch_acc: (float): accuracy at the end of an epoch
-        val_best_acc: (float): best validation accuracy of the model up to the given batch
+
     """
 
     dataloaders: Dict[str, torch.utils.data.DataLoader]
     optimizer: torch.optim.SGD
-    model: torch.nn.parallel.DataParallel
+    model: torch.nn.parallel.DataParallel = field(repr=False)
 
     # used in runner.py
     model_name: str
@@ -46,36 +47,24 @@ class Metrics:
     epochs: int
     kfold: int
     batch_size: int
-
-    totals: int = field(init=False, default=0)
-    running_loss: float = field(init=False, default=0.0)
-    running_corrects: torch.Tensor = field(
-        init=False, default=torch.tensor([0], device=config.DEVICE)
-    )
-    batch_acc: float = field(init=False, default=0.0)
-    epoch_loss: float = field(init=False, default=0.0)
-    epoch_acc: torch.Tensor = field(
-        init=False, default=torch.tensor([0], device=config.DEVICE)
-    )
-    val_best_acc: torch.Tensor = field(
-        init=False, default=torch.tensor([0], device=config.DEVICE)
-    )
-
-    # calculated in train.py and validate.py
-    loss: torch.Tensor = field(
-        init=False, default=torch.tensor([0], device=config.DEVICE)
-    )
-    preds: torch.Tensor = field(
-        init=False, default=torch.tensor([0], device=config.DEVICE)
-    )
-    inputs: torch.Tensor = field(
-        init=False, default=torch.tensor([0], device=config.DEVICE)
-    )
-    labels: torch.Tensor = field(
-        init=False, default=torch.tensor([0], device=config.DEVICE)
-    )
-    batch: int = field(init=False, default=0)
     criterion: nn.CrossEntropyLoss = nn.CrossEntropyLoss()
+
+    def __init__(self):
+
+        default_torch_type = torch.tensor([0.0], device=config.DEVICE)
+        self.loss: torch.Tensor = default_torch_type
+        self.preds: torch.Tensor = default_torch_type
+        self.inputs: torch.Tensor = default_torch_type
+        self.labels: torch.Tensor = default_torch_type
+        self.batch: int = 0
+        self.val_best_acc: torch.Tensor = default_torch_type
+
+        self.totals: int = 0
+        self.running_loss: float = 0.0
+        self.running_corrects: torch.Tensor = default_torch_type
+        self.batch_acc: float = 0.0
+        self.epoch_loss: float = 0.0
+        self.epoch_acc: torch.Tensor = default_torch_type
 
     def batch_metrics(self) -> None:
         """
@@ -126,15 +115,13 @@ class Metrics:
         Print epoch loss and accuracy based on phase
 
         Args:
-            phase (str): "Train" or "Validation"
+            phase (str): "train" or "val"
         """
-
-        print(self.epoch_acc, self.epoch_acc.cpu().numpy(), self.epoch_loss)
 
         print(
             f"{phase} Epoch {self.epoch + 1}/{self.epochs},\
                 Loss: {self.epoch_loss:.3f},\
-                Accuracy: {self.epoch_acc.cpu().numpy(),:.3f}"
+                Accuracy: {self.epoch_acc.cpu().item():.3f}"
         )
 
     def write_output(self, filename: str) -> None:

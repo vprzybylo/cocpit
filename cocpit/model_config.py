@@ -51,7 +51,7 @@ class ModelConfig:
     def optimizer(self):
         return optim.SGD(self.update_params(), lr=0.01, momentum=0.9, nesterov=True)
 
-    def set_dropout(self, drop_rate=0.1):
+    def set_dropout(self, drop_rate: float = 0.1):
         """
         technique to fight overfitting and improve neural network generalization
         """

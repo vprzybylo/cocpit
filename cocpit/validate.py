@@ -6,25 +6,34 @@ from cocpit.plotting_scripts import plot_metrics as plot_metrics
 from sklearn.metrics import classification_report
 import pandas as pd
 from cocpit.performance_metrics import Metrics
-from cocpit.runner import Runner
 from cocpit import config as config
 from dataclasses import dataclass, field
-from typing import Any, List, Optional
+from typing import Any, Dict, Optional
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch import nn
 
 
 @dataclass
 class Validation(Metrics):
-    """Perform validation methods on batched dataset"""
+    """Perform validation methods on batched dataset
+
+    Args:
+        val_best_acc: (float): best validation accuracy of the model up to the given batch
+    """
 
     all_preds = []  # validation preds for 1 epoch for plotting
     all_labels = []  # validation labels for 1 epoch for plotting
 
+    def __post_init__(self):
+        super().__init__()
+
     def predict(self) -> None:
         """make predictions"""
-        outputs = self.model(self.inputs)
-        self.loss = self.criterion(outputs, self.labels)
-        _, self.preds = torch.max(outputs, 1)
+
+        with torch.no_grad():
+            outputs = self.model(self.inputs)
+            self.loss = self.criterion(outputs, self.labels)
+            _, self.preds = torch.max(outputs, 1)
 
     def append_preds(self) -> None:
         """save each batch prediction and labels for plots"""
@@ -59,8 +68,8 @@ class Validation(Metrics):
             self.predict()
             self.batch_metrics()
             self.append_preds()
-            if self.batch % 5:
-                self.print_batch_metrics("Val")
+            if (self.batch + 1) % 5 == 0:
+                self.print_batch_metrics("val")
 
     def confusion_matrix(self, norm: Optional[str] = None) -> None:
         """
@@ -119,3 +128,29 @@ class Validation(Metrics):
 
         if config.SAVE_ACC:
             clf_report.to_csv(config.METRICS_SAVENAME, mode="a")
+
+    def run(self) -> None:
+        """
+        Run model on validation data and calculate metrics
+        Reset acc, loss, labels, and predictions for each epoch, model, phase, and fold
+        """
+        self.iterate_batches()
+        self.epoch_metrics()
+        self.reduce_lr()
+        self.save_model()
+
+        # confusion matrix
+        # if (
+        #     self.epoch == self.epochs - 1
+        #     and (config.KFOLD != 0 and self.kfold == config.KFOLD - 1)
+        #     or (config.KFOLD == 0)
+        # ):
+        #     self.confusion_matrix()
+
+        # classification report
+        # if self.epoch == self.epochs - 1:
+        #     self.classification_report(self.kfold, self.model_name)
+
+        self.log_epoch_metrics("epoch_acc_val", "epoch_loss_val")
+        self.print_epoch_metrics("Validation")
+        self.write_output(config.ACC_SAVENAME_VAL)

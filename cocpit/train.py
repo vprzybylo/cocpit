@@ -1,11 +1,18 @@
 import numpy as np
 import torch
 from cocpit.performance_metrics import Metrics
+from dataclasses import dataclass, field
 from cocpit import config as config
+from torch import nn
+from typing import Dict
 
 
+@dataclass
 class Train(Metrics):
     """Perform training methods on batched dataset"""
+
+    def __post_init__(self):
+        super().__init__()
 
     def label_counts(self, label_cnts: np.ndarray, labels: torch.Tensor):
         """
@@ -53,5 +60,12 @@ class Train(Metrics):
             self.optimizer.zero_grad()
             self.forward()
             self.batch_metrics()
-            if self.batch % 5:
+            if (self.batch + 1) % 5 == 0:
                 self.print_batch_metrics("train")
+
+    def run(self):
+        self.iterate_batches()
+        self.epoch_metrics()
+        self.log_epoch_metrics("epoch_acc_train", "epoch_loss_train")
+        self.print_epoch_metrics("Train")
+        self.write_output(config.ACC_SAVENAME_TRAIN)
