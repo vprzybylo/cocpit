@@ -21,10 +21,10 @@ import sys
 TAG = "v1.4.0"
 
 # extract each image from sheet of images
-PREPROCESS_SHEETS = True
+PREPROCESS_SHEETS = False
 
 # create and save CNN
-BUILD_MODEL = False
+BUILD_MODEL = True
 
 # run the category classification on quality images of ice particles
 ICE_CLASSIFICATION = True
@@ -34,6 +34,29 @@ GEOMETRIC_ATTRIBUTES = True
 
 # adds a column for the date from the filename
 ADD_DATE = True
+
+# only run once in loop if building model
+# arbitrary campaign name used
+CAMPAIGNS = (
+    ["OLYMPEX"]
+    if BUILD_MODEL
+    else [
+        "MACPEX",
+        "ATTREX",
+        "ISDAC",
+        "CRYSTAL_FACE_UND",
+        "AIRS_II",
+        "ARM",
+        "CRYSTAL_FACE_NASA",
+        "ICE_L",
+        "IPHEX",
+        "MC3E",
+        "MIDCIX",
+        "MPACE",
+        "OLYMPEX",
+        "POSIDON",
+    ]
+)
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -161,7 +184,7 @@ METRICS_SAVENAME = (
     f"{len(MODEL_NAMES)}model(s).csv"
 )
 
-CONF_MATRIX_SAVENAME = "{BASE_DIR}/plots/conf_matrix.png"
+CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
 
 # where to save final databases to
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
