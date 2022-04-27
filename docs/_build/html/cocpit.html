@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cocpit package &mdash; COCPIT 2.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cocpit.dash_app package" href="cocpit.dash_app.html" />
+    <link rel="prev" title="data" href="modules.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> COCPIT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">data</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cocpit package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.html">cocpit.dash_app package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.plotting_scripts.html">cocpit.plotting_scripts package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.add_date">cocpit.add_date module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.auto_str">cocpit.auto_str module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.check_classifications">cocpit.check_classifications module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cocpit-config-sample-module">cocpit.config-sample module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.config">cocpit.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.config_cocpit">cocpit.config_cocpit module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.data_loaders">cocpit.data_loaders module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.fold_setup">cocpit.fold_setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.geometric_attributes">cocpit.geometric_attributes module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.gui">cocpit.gui module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.gui_label">cocpit.gui_label module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.gui_wrong">cocpit.gui_wrong module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.image_stats">cocpit.image_stats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.model_config">cocpit.model_config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.models">cocpit.models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.performance_metrics">cocpit.performance_metrics module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.pic">cocpit.pic module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.predictions">cocpit.predictions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.process_sheets">cocpit.process_sheets module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.run_model">cocpit.run_model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.runner">cocpit.runner module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.timing">cocpit.timing module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.train">cocpit.train module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit.validate">cocpit.validate module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cocpit">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#modules">modules:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">COCPIT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">data</a> &raquo;</li>
+      <li>cocpit package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/cocpit.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <section id="cocpit-package">
+<h1>cocpit package<a class="headerlink" href="#cocpit-package" title="Permalink to this headline"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cocpit.dash_app.html">cocpit.dash_app package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cocpit.dash_app.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.dash_app.callbacks.html">cocpit.dash_app.callbacks package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.callbacks.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.callbacks.html#cocpit-dash-app-callbacks-environment-module">cocpit.dash_app.callbacks.environment module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.callbacks.html#cocpit-dash-app-callbacks-geometric-module">cocpit.dash_app.callbacks.geometric module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.callbacks.html#cocpit-dash-app-callbacks-navbar-module">cocpit.dash_app.callbacks.navbar module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.callbacks.html#module-cocpit.dash_app.callbacks.topo_flat">cocpit.dash_app.callbacks.topo_flat module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.callbacks.html#module-cocpit.dash_app.callbacks.topo_map">cocpit.dash_app.callbacks.topo_map module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.callbacks.html#cocpit-dash-app-callbacks-topographic-module">cocpit.dash_app.callbacks.topographic module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.callbacks.html#module-cocpit.dash_app.callbacks">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.dash_app.layout.html">cocpit.dash_app.layout package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.layout.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.layout.html#cocpit-dash-app-layout-banners-module">cocpit.dash_app.layout.banners module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.layout.html#cocpit-dash-app-layout-content-module">cocpit.dash_app.layout.content module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.layout.html#module-cocpit.dash_app.layout.filters">cocpit.dash_app.layout.filters module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.layout.html#cocpit-dash-app-layout-header-module">cocpit.dash_app.layout.header module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.layout.html#cocpit-dash-app-layout-legend-module">cocpit.dash_app.layout.legend module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.layout.html#cocpit-dash-app-layout-navbar-collapse-module">cocpit.dash_app.layout.navbar_collapse module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.layout.html#cocpit-dash-app-layout-sidebar-module">cocpit.dash_app.layout.sidebar module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.dash_app.layout.html#module-cocpit.dash_app.layout">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cocpit.dash_app.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cocpit.dash_app.html#cocpit-dash-app-app-module">cocpit.dash_app.app module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cocpit.dash_app.html#module-cocpit.dash_app.globals">cocpit.dash_app.globals module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cocpit.dash_app.html#module-cocpit.dash_app">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cocpit.plotting_scripts.html">cocpit.plotting_scripts package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cocpit.plotting_scripts.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cocpit.plotting_scripts.html#module-cocpit.plotting_scripts.confusion_matrix">cocpit.plotting_scripts.confusion_matrix module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cocpit.plotting_scripts.html#module-cocpit.plotting_scripts.grid_shader">cocpit.plotting_scripts.grid_shader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cocpit.plotting_scripts.html#module-cocpit.plotting_scripts.plot">cocpit.plotting_scripts.plot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cocpit.plotting_scripts.html#module-cocpit.plotting_scripts.plot_metrics">cocpit.plotting_scripts.plot_metrics module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cocpit.plotting_scripts.html#module-cocpit.plotting_scripts.plot_timing">cocpit.plotting_scripts.plot_timing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cocpit.plotting_scripts.html#module-cocpit.plotting_scripts.saliency">cocpit.plotting_scripts.saliency module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cocpit.plotting_scripts.html#module-cocpit.plotting_scripts">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-cocpit.add_date">
+<span id="cocpit-add-date-module"></span><h2>cocpit.add_date module<a class="headerlink" href="#module-cocpit.add_date" title="Permalink to this headline"></a></h2>
+<p>add a column for the date from the filename</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.add_date.main">
+<span class="sig-prename descclassname"><span class="pre">cocpit.add_date.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.add_date.main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-cocpit.auto_str">
+<span id="cocpit-auto-str-module"></span><h2>cocpit.auto_str module<a class="headerlink" href="#module-cocpit.auto_str" title="Permalink to this headline"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.auto_str.auto_str">
+<span class="sig-prename descclassname"><span class="pre">cocpit.auto_str.</span></span><span class="sig-name descname"><span class="pre">auto_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.auto_str.auto_str" title="Permalink to this definition"></a></dt>
+<dd><p>automatically implements a string representation for classes
+instead of memory id
+finds all attributes of the class
+called with str(instance)</p>
+</dd></dl>
+
+</section>
+<section id="module-cocpit.check_classifications">
+<span id="cocpit-check-classifications-module"></span><h2>cocpit.check_classifications module<a class="headerlink" href="#module-cocpit.check_classifications" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>check predictions from a saved CNN</p></li>
+<li><p>called in check_classifications.ipynb for bar chart plot</p></li>
+</ul>
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.check_classifications.Classification">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.check_classifications.</span></span><span class="sig-name descname"><span class="pre">Classification</span></span><a class="headerlink" href="#cocpit.check_classifications.Classification" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.check_classifications.Classification.open_image">
+<span class="sig-name descname"><span class="pre">open_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.check_classifications.Classification.open_image" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.check_classifications.Classification.predict_probability">
+<span class="sig-name descname"><span class="pre">predict_probability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.check_classifications.Classification.predict_probability" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>[</em><em>type</em><em>]</em>) – [description]</p></li>
+<li><p><strong>device</strong> (<em>[</em><em>type</em><em>]</em>) – [description]</p></li>
+<li><p><strong>model</strong> (<em>[</em><em>type</em><em>]</em>) – [description]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>[description]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>[type]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.check_classifications.Classification.process_image">
+<span class="sig-name descname"><span class="pre">process_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.check_classifications.Classification.process_image" title="Permalink to this definition"></a></dt>
+<dd><p>apply transformation to image</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>image</strong> (<em>[</em><em>]</em>) – one image to transform</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>transformed image</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>[type]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.check_classifications.Classification.top_k_predictions">
+<span class="sig-name descname"><span class="pre">top_k_predictions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.check_classifications.Classification.top_k_predictions" title="Permalink to this definition"></a></dt>
+<dd><p>top k predictions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>topk</strong> (<em>int</em><em>, </em><em>optional</em>) – top k predictions included in bar chart. Defaults to 9.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>top k probabilities in order of highest predicted class to lowest</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>[list]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.check_classifications.Classification.view_classification">
+<span class="sig-name descname"><span class="pre">view_classification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">im</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crystal_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savefig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.check_classifications.Classification.view_classification" title="Permalink to this definition"></a></dt>
+<dd><p>Function for viewing an image and it’s predicted classes.
+Horizontal bar chart with image above predictions</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="cocpit-config-sample-module">
+<h2>cocpit.config-sample module<a class="headerlink" href="#cocpit-config-sample-module" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-cocpit.config">
+<span id="cocpit-config-module"></span><h2>cocpit.config module<a class="headerlink" href="#module-cocpit.config" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>THIS FILE SHOUlD BE ALTERED AND RENAMED config.py FOR EACH USER</p></li>
+<li><p>config.py in .gitignore to avoid version changes upon specifications</p></li>
+<li><p>holds all user-defined variables</p></li>
+<li><p>treated as global variables that do not change in any module</p></li>
+<li><p>used in each module through ‘import config as config’</p></li>
+<li><p>call using config.VARIABLE_NAME</p></li>
+</ul>
+<p>isort:skip_file</p>
+</section>
+<section id="module-cocpit.config_cocpit">
+<span id="cocpit-config-cocpit-module"></span><h2>cocpit.config_cocpit module<a class="headerlink" href="#module-cocpit.config_cocpit" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>THIS FILE SHOUlD BE ALTERED AND RENAMED config.py FOR EACH USER</p></li>
+<li><p>config.py in .gitignore to avoid version changes upon specifications</p></li>
+<li><p>holds all user-defined variables</p></li>
+<li><p>treated as global variables that do not change in any module</p></li>
+<li><p>used in each module through ‘import cocpit.config as config’</p></li>
+<li><p>call using config.VARIABLE_NAME</p></li>
+<li><p>flags for what module of cocpit to run is found in the main directory in __main__.py (e.g., preprocess_sheets, build_model, ice_classification, geometric_attributes, add_date..)</p></li>
+</ul>
+<p>isort:skip_file</p>
+</section>
+<section id="module-cocpit.data_loaders">
+<span id="cocpit-data-loaders-module"></span><h2>cocpit.data_loaders module<a class="headerlink" href="#module-cocpit.data_loaders" title="Permalink to this headline"></a></h2>
+<p>Retrives data loaders from Pytorch for training and validation data</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.data_loaders.ImageFolderWithPaths">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.data_loaders.</span></span><span class="sig-name descname"><span class="pre">ImageFolderWithPaths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_transform=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loader=&lt;function</span> <span class="pre">default_loader&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_valid_file=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.data_loaders.ImageFolderWithPaths" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torchvision.datasets.folder.ImageFolder</span></code></p>
+<p>Custom dataset that includes image file paths. Extends
+torchvision.datasets.ImageFolder</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.data_loaders.TestDataSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.data_loaders.</span></span><span class="sig-name descname"><span class="pre">TestDataSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">open_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.data_loaders.TestDataSet" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
+<p>dataloader for new unseen data</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.data_loaders.balanced_sampler">
+<span class="sig-prename descclassname"><span class="pre">cocpit.data_loaders.</span></span><span class="sig-name descname"><span class="pre">balanced_sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_labels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.data_loaders.balanced_sampler" title="Permalink to this definition"></a></dt>
+<dd><p>create a training dataloader for unbalanced class counts</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.data_loaders.create_loader">
+<span class="sig-prename descclassname"><span class="pre">cocpit.data_loaders.</span></span><span class="sig-name descname"><span class="pre">create_loader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pin_memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.data_loaders.create_loader" title="Permalink to this definition"></a></dt>
+<dd><p>Make an iterable of batches across either
+the training or validation dataset</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.data_loaders.get_data">
+<span class="sig-prename descclassname"><span class="pre">cocpit.data_loaders.</span></span><span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.data_loaders.get_data" title="Permalink to this definition"></a></dt>
+<dd><p>Use the Pytorch ImageFolder class to read in root directory
+that holds subfolders of each class for training data
+Applies transforms
+Params
+——
+data_dir (str): root dir for training data
+:returns: <strong>data (tuple)</strong>
+:rtype: (image, label, path)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.data_loaders.make_weights_for_balanced_classes">
+<span class="sig-prename descclassname"><span class="pre">cocpit.data_loaders.</span></span><span class="sig-name descname"><span class="pre">make_weights_for_balanced_classes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_labels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.data_loaders.make_weights_for_balanced_classes" title="Permalink to this definition"></a></dt>
+<dd><p>creates weights for each class for sampler such that lower count classes
+are sampled more frequently and higher count classes are sampled less
+:returns: * <strong>- class_sample_counts (list)</strong> (<em># of samples per class</em>)</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>- train_samples_weights (list)</strong> (<em>weights for each class for sampling</em>)</p></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.data_loaders.save_valloader">
+<span class="sig-prename descclassname"><span class="pre">cocpit.data_loaders.</span></span><span class="sig-name descname"><span class="pre">save_valloader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.data_loaders.save_valloader" title="Permalink to this definition"></a></dt>
+<dd><p>save validation dataloader based on paths in config.py</p>
+</dd></dl>
+
+</section>
+<section id="module-cocpit.fold_setup">
+<span id="cocpit-fold-setup-module"></span><h2>cocpit.fold_setup module<a class="headerlink" href="#module-cocpit.fold_setup" title="Permalink to this headline"></a></h2>
+<p>setup training and validation indices for labels
+and data based on k-fold cross validation
+called in __main__.py</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.fold_setup.</span></span><span class="sig-name descname"><span class="pre">FoldSetup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.fold_setup.FoldSetup" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>setup training and validation indices for labels and data based on k-fold cross validation</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.batch_size">
+<span class="sig-name descname"><span class="pre">batch_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.batch_size" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.create_dataloaders">
+<span class="sig-name descname"><span class="pre">create_dataloaders</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.create_dataloaders" title="Permalink to this definition"></a></dt>
+<dd><p>create dict of train/val dataloaders based on split and sampler from StratifiedKFold</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.epochs">
+<span class="sig-name descname"><span class="pre">epochs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.epochs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.kfold_training">
+<span class="sig-name descname"><span class="pre">kfold_training</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.kfold_training" title="Permalink to this definition"></a></dt>
+<dd><p>Split dataset into folds
+Preserve the percentage of samples for each class with stratified
+Create dataloaders for each fold</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.model_name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.nofold_indices">
+<span class="sig-name descname"><span class="pre">nofold_indices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.nofold_indices" title="Permalink to this definition"></a></dt>
+<dd><p>if not applying cross-fold validation, split training dataset
+based on config.VALID_SIZE
+shuffle first and then split dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.print_composition">
+<span class="sig-name descname"><span class="pre">print_composition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.print_composition" title="Permalink to this definition"></a></dt>
+<dd><p>prints length of train and test data based on validation %</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.split_data">
+<span class="sig-name descname"><span class="pre">split_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.split_data" title="Permalink to this definition"></a></dt>
+<dd><p>Create subset of data and labels for train and val based on indices</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.train_data">
+<span class="sig-name descname"><span class="pre">train_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.utils.data.dataset.Subset</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.train_data" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.train_indices">
+<span class="sig-name descname"><span class="pre">train_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.train_indices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.train_labels">
+<span class="sig-name descname"><span class="pre">train_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.train_labels" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.train_loader">
+<span class="sig-name descname"><span class="pre">train_loader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">balance_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.train_loader" title="Permalink to this definition"></a></dt>
+<dd><p>Create train loader that iterates images in batches
+Option to balance the distribution of sampled images</p>
+<blockquote>
+<div><p>if there is class imbalance</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.update_save_names">
+<span class="sig-name descname"><span class="pre">update_save_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.update_save_names" title="Permalink to this definition"></a></dt>
+<dd><p>update save names for model and dataloader so that each fold gets saved</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.val_data">
+<span class="sig-name descname"><span class="pre">val_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.utils.data.dataset.Subset</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.val_data" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.val_indices">
+<span class="sig-name descname"><span class="pre">val_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.val_indices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.val_labels">
+<span class="sig-name descname"><span class="pre">val_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.val_labels" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.val_loader">
+<span class="sig-name descname"><span class="pre">val_loader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.val_loader" title="Permalink to this definition"></a></dt>
+<dd><p>Create validation loader to be iterated in batches
+Option to use the entire labeled dataset if VALID_SIZE small</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-cocpit.geometric_attributes">
+<span id="cocpit-geometric-attributes-module"></span><h2>cocpit.geometric_attributes module<a class="headerlink" href="#module-cocpit.geometric_attributes" title="Permalink to this headline"></a></h2>
+<p>calculates particle geometric properties</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.geometric_attributes.get_attributes">
+<span class="sig-prename descclassname"><span class="pre">cocpit.geometric_attributes.</span></span><span class="sig-name descname"><span class="pre">get_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">open_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.geometric_attributes.get_attributes" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.geometric_attributes.main">
+<span class="sig-prename descclassname"><span class="pre">cocpit.geometric_attributes.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">open_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.geometric_attributes.main" title="Permalink to this definition"></a></dt>
+<dd><p>reads in dataframe for a campaign after ice classification and
+calculates particle geometric properties using the cocpit.pic module</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>df (pd.DataFrame)</strong></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dataframe with image attributes appended</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-cocpit.gui">
+<span id="cocpit-gui-module"></span><h2>cocpit.gui module<a class="headerlink" href="#module-cocpit.gui" title="Permalink to this headline"></a></h2>
+<p>Holds the class for ipywidget buttons to
+label incorrect predictions from a dataloader.
+The dataloader, model, and all class variables
+are initialized in notebooks/move_wrong_predictions.ipynb</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.gui.GUI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.gui.</span></span><span class="sig-name descname"><span class="pre">GUI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wrong</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui.GUI" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>creates buttons in notebooks/move_wrong_predictions.ipynb
+and notebooks/gui_check_dataset_one_class.ipynb
+to label predictions</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui.GUI.bar_chart">
+<span class="sig-name descname"><span class="pre">bar_chart</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui.GUI.bar_chart" title="Permalink to this definition"></a></dt>
+<dd><p>use the human and model labels and classes to
+create a bar chart with the top k predictions
+from the image at the current index</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui.GUI.make_buttons">
+<span class="sig-name descname"><span class="pre">make_buttons</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui.GUI.make_buttons" title="Permalink to this definition"></a></dt>
+<dd><p>use ipywidgets to create a box for the image, bar chart, dropdown,
+and next button</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui.GUI.on_button_next">
+<span class="sig-name descname"><span class="pre">on_button_next</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui.GUI.on_button_next" title="Permalink to this definition"></a></dt>
+<dd><p>when the next button is clicked, make a new image and bar chart appear
+by updating the index within the wrong predictions by 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui.GUI.on_change">
+<span class="sig-name descname"><span class="pre">on_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">change</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui.GUI.on_change" title="Permalink to this definition"></a></dt>
+<dd><p>when a class in the dropdown is selected, move the image and save
+it to the specified class</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui.GUI.open_image">
+<span class="sig-name descname"><span class="pre">open_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui.GUI.open_image" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui.GUI.save_image">
+<span class="sig-name descname"><span class="pre">save_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">change</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui.GUI.save_image" title="Permalink to this definition"></a></dt>
+<dd><p>move the image based on dropdown selection</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui.GUI.view_classifications">
+<span class="sig-name descname"><span class="pre">view_classifications</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui.GUI.view_classifications" title="Permalink to this definition"></a></dt>
+<dd><p>show image</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui.GUI.view_classifications_wrong">
+<span class="sig-name descname"><span class="pre">view_classifications_wrong</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">probs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crystal_names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui.GUI.view_classifications_wrong" title="Permalink to this definition"></a></dt>
+<dd><p>create barchart that outputs top k predictions for a given image</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-cocpit.gui_label">
+<span id="cocpit-gui-label-module"></span><h2>cocpit.gui_label module<a class="headerlink" href="#module-cocpit.gui_label" title="Permalink to this headline"></a></h2>
+<p>Holds the class for ipywidget buttons to
+label from a folder of images.
+Run in notebooks/label.ipynb</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.gui_label.GUI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.gui_label.</span></span><span class="sig-name descname"><span class="pre">GUI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_dest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_label.GUI" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>view and label images in notebooks/label.ipynb</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui_label.GUI.align_buttons">
+<span class="sig-name descname"><span class="pre">align_buttons</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_label.GUI.align_buttons" title="Permalink to this definition"></a></dt>
+<dd><p>alter layout based on # of classes</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui_label.GUI.cp_to_dir">
+<span class="sig-name descname"><span class="pre">cp_to_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_label.GUI.cp_to_dir" title="Permalink to this definition"></a></dt>
+<dd><p>copy from original dir to new directory with class label
+:param b: button instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui_label.GUI.display_image">
+<span class="sig-name descname"><span class="pre">display_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_label.GUI.display_image" title="Permalink to this definition"></a></dt>
+<dd><p>show image</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui_label.GUI.make_buttons">
+<span class="sig-name descname"><span class="pre">make_buttons</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_label.GUI.make_buttons" title="Permalink to this definition"></a></dt>
+<dd><p>buttons for each category and undo button</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui_label.GUI.open_image">
+<span class="sig-name descname"><span class="pre">open_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_label.GUI.open_image" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui_label.GUI.undo">
+<span class="sig-name descname"><span class="pre">undo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_label.GUI.undo" title="Permalink to this definition"></a></dt>
+<dd><p>undo moving image into folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-cocpit.gui_wrong">
+<span id="cocpit-gui-wrong-module"></span><h2>cocpit.gui_wrong module<a class="headerlink" href="#module-cocpit.gui_wrong" title="Permalink to this headline"></a></h2>
+<p>Holds the class for ipywidget buttons to
+label incorrect predictions from a dataloader.
+The dataloader, model, and all class variables
+are initialized in notebooks/move_wrong_predictions.ipynb</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.gui_wrong.GUI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.gui_wrong.</span></span><span class="sig-name descname"><span class="pre">GUI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrong_trunc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_topk_probs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_topk_classes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_wrong.GUI" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>create widgets</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui_wrong.GUI.align_buttons">
+<span class="sig-name descname"><span class="pre">align_buttons</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_wrong.GUI.align_buttons" title="Permalink to this definition"></a></dt>
+<dd><p>alter layout based on # of classes</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui_wrong.GUI.bar_chart">
+<span class="sig-name descname"><span class="pre">bar_chart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_wrong.GUI.bar_chart" title="Permalink to this definition"></a></dt>
+<dd><p>create barchart that outputs top k predictions for a given image</p>
+<dl class="simple">
+<dt>Args</dt><dd><p>ax2 (plt.Axes): subplot axis</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui_wrong.GUI.init_fig">
+<span class="sig-name descname"><span class="pre">init_fig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_wrong.GUI.init_fig" title="Permalink to this definition"></a></dt>
+<dd><p>display the raw image</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>PIL.Image.Image</em>) – opened image</p></li>
+<li><p><strong>ax1</strong> (<em>plt.Axes</em>) – subplot axis</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui_wrong.GUI.make_buttons">
+<span class="sig-name descname"><span class="pre">make_buttons</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_wrong.GUI.make_buttons" title="Permalink to this definition"></a></dt>
+<dd><p>buttons for each category</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui_wrong.GUI.on_button_next">
+<span class="sig-name descname"><span class="pre">on_button_next</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_wrong.GUI.on_button_next" title="Permalink to this definition"></a></dt>
+<dd><p>when the next button is clicked, make a new image and bar chart appear
+by updating the index within the wrong predictions by 1</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>b</strong> – button instance</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui_wrong.GUI.open_image">
+<span class="sig-name descname"><span class="pre">open_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_wrong.GUI.open_image" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui_wrong.GUI.plot_saliency">
+<span class="sig-name descname"><span class="pre">plot_saliency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">224</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_wrong.GUI.plot_saliency" title="Permalink to this definition"></a></dt>
+<dd><p>create saliency map for image in test dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>PIL.Image.Image</em>) – opened image</p></li>
+<li><p><strong>ax2</strong> (<em>plt.Axes</em>) – subplot axis</p></li>
+<li><p><strong>size</strong> (<em>int</em>) – image size for transformation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui_wrong.GUI.save_image">
+<span class="sig-name descname"><span class="pre">save_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_wrong.GUI.save_image" title="Permalink to this definition"></a></dt>
+<dd><p>move the image based on dropdown selection</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>change</strong> (<em>button dropdown instance</em>) – new class label</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.gui_wrong.GUI.visualizations">
+<span class="sig-name descname"><span class="pre">visualizations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_wrong.GUI.visualizations" title="Permalink to this definition"></a></dt>
+<dd><p>use the human and model labels and classes to
+create a bar chart with the top k predictions
+from the image at the current index</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-cocpit.image_stats">
+<span id="cocpit-image-stats-module"></span><h2>cocpit.image_stats module<a class="headerlink" href="#module-cocpit.image_stats" title="Permalink to this headline"></a></h2>
+<p>find the #/% of cutoff particles after removing blurry, fragmented, and spherical drops</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.image_stats.main">
+<span class="sig-prename descclassname"><span class="pre">cocpit.image_stats.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.image_stats.main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-cocpit.model_config">
+<span id="cocpit-model-config-module"></span><h2>cocpit.model_config module<a class="headerlink" href="#module-cocpit.model_config" title="Permalink to this headline"></a></h2>
+<dl class="simple">
+<dt>model configurations for:</dt><dd><ul class="simple">
+<li><p>dropout</p></li>
+<li><p>optimizer</p></li>
+<li><p>device settings (cpu/gpu)</p></li>
+<li><p>parameters to update</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.model_config.ModelConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.model_config.</span></span><span class="sig-name descname"><span class="pre">ModelConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.model_config.ModelConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Model Configurations</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.model_config.ModelConfig.count_parameters">
+<span class="sig-name descname"><span class="pre">count_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.model_config.ModelConfig.count_parameters" title="Permalink to this definition"></a></dt>
+<dd><p>number of model parameters to update</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.model_config.ModelConfig.optimizer">
+<span class="sig-name descname"><span class="pre">optimizer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.model_config.ModelConfig.optimizer" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.model_config.ModelConfig.set_dropout">
+<span class="sig-name descname"><span class="pre">set_dropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">drop_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.model_config.ModelConfig.set_dropout" title="Permalink to this definition"></a></dt>
+<dd><p>technique to fight overfitting and improve neural network generalization</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.model_config.ModelConfig.to_device">
+<span class="sig-name descname"><span class="pre">to_device</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.model_config.ModelConfig.to_device" title="Permalink to this definition"></a></dt>
+<dd><p>push model to gpu(s) if available</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.model_config.ModelConfig.update_params">
+<span class="sig-name descname"><span class="pre">update_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_extract</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.model_config.ModelConfig.update_params" title="Permalink to this definition"></a></dt>
+<dd><p>When feature extracting, we only want to update the parameters
+of the last layer, or in other words, we only want to update the
+parameters for the layer(s) we are reshaping. Therefore, we do
+not need to compute the gradients of the parameters that we are
+not changing, so for efficiency we set the .requires_grad attribute
+to False. This is important because by default, this attribute is
+set to True. Then, when we initialize the new layer and by default
+the new parameters have .requires_grad=True so only the new layer’s
+parameters will be updated. When we are finetuning we can leave all
+of the .required_grad’s set to the default of True.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.model_config.main">
+<span class="sig-prename descclassname"><span class="pre">cocpit.model_config.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.model_config.main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-cocpit.models">
+<span id="cocpit-models-module"></span><h2>cocpit.models module<a class="headerlink" href="#module-cocpit.models" title="Permalink to this headline"></a></h2>
+<p>torchvision models
+all pretrained on the 1000-class Imagenet dataset
+we update all weights but use this model architecture</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.models.initialize_model">
+<span class="sig-prename descclassname"><span class="pre">cocpit.models.</span></span><span class="sig-name descname"><span class="pre">initialize_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_extract</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pretrained</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.models.initialize_model" title="Permalink to this definition"></a></dt>
+<dd><p>model_name: name of the model to train
+num_classes: number of classes
+feature_extract: default = False; start with a pretrained model and only</p>
+<blockquote>
+<div><p>update the final layer weights from which we derive predictions</p>
+</div></blockquote>
+<dl class="simple">
+<dt>use_pretrained: default = False; update all of the model’s</dt><dd><p>parameters for our new task (retrain)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.models.set_parameter_requires_grad">
+<span class="sig-prename descclassname"><span class="pre">cocpit.models.</span></span><span class="sig-name descname"><span class="pre">set_parameter_requires_grad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_extract</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.models.set_parameter_requires_grad" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Flag for feature extracting</dt><dd><p>when False, finetune the whole model,
+when True, only update the reshaped layer params</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-cocpit.performance_metrics">
+<span id="cocpit-performance-metrics-module"></span><h2>cocpit.performance_metrics module<a class="headerlink" href="#module-cocpit.performance_metrics" title="Permalink to this headline"></a></h2>
+<p>Holds epoch and batch metrics for both the training and validation datasets
+Logs metrics to console and/or comet-ml interface (see config.py to turn on)</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.performance_metrics.</span></span><span class="sig-name descname"><span class="pre">Metrics</span></span><a class="headerlink" href="#cocpit.performance_metrics.Metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Calculate batch and epoch metrics for training and validation datasets
+Inherited in train and validate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataloaders</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>torch.utils.data.DataLoader</em><em>]</em>) – training and validation dict that loads images with sampling procedure</p></li>
+<li><p><strong>optimizer</strong> (<em>torch.optim.sgd.SGD</em>) – an algorithm that modifies the attributes of the neural network</p></li>
+<li><p><strong>model</strong> (<em>torch.nn.parallel.data_parallel.DataParallel</em>) – saved and loaded model</p></li>
+<li><p><strong>model_name</strong> (<em>str</em>) – name of model architecture</p></li>
+<li><p><strong>epoch</strong> (<em>int</em>) – epoch index in training loop</p></li>
+<li><p><strong>epochs</strong> (<em>int</em>) – max epochs</p></li>
+<li><p><strong>kfold</strong> (<em>int</em>) – number of k-folds used in resampling procedure</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – number of images read into memory at a time</p></li>
+<li><p><strong>totals</strong> – (float): number of images seen</p></li>
+<li><p><strong>running_loss</strong> – (float): cumulative penalties for bad predictions</p></li>
+<li><p><strong>running_corrects</strong> – (torch.Tensor): cumulative accuracy over batches</p></li>
+<li><p><strong>epoch_loss</strong> – (float): loss at the end of an epoch</p></li>
+<li><p><strong>epoch_acc</strong> – (float): accuracy at the end of an epoch</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics.batch_metrics">
+<span class="sig-name descname"><span class="pre">batch_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.performance_metrics.Metrics.batch_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate loss and accuracy for each batch in dataloader</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics.batch_size">
+<span class="sig-name descname"><span class="pre">batch_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.performance_metrics.Metrics.batch_size" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics.criterion">
+<span class="sig-name descname"><span class="pre">criterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.nn.modules.loss.CrossEntropyLoss</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">CrossEntropyLoss()</span></em><a class="headerlink" href="#cocpit.performance_metrics.Metrics.criterion" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics.dataloaders">
+<span class="sig-name descname"><span class="pre">dataloaders</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.utils.data.dataloader.DataLoader</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cocpit.performance_metrics.Metrics.dataloaders" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics.epoch">
+<span class="sig-name descname"><span class="pre">epoch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.performance_metrics.Metrics.epoch" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics.epoch_metrics">
+<span class="sig-name descname"><span class="pre">epoch_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.performance_metrics.Metrics.epoch_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate loss and accuracy after each epoch (iteration across all batches)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics.epochs">
+<span class="sig-name descname"><span class="pre">epochs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.performance_metrics.Metrics.epochs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics.kfold">
+<span class="sig-name descname"><span class="pre">kfold</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.performance_metrics.Metrics.kfold" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics.log_epoch_metrics">
+<span class="sig-name descname"><span class="pre">log_epoch_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acc_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.performance_metrics.Metrics.log_epoch_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Log epoch metrics to comet</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>acc_name</strong> (<em>str</em>) – name to log for accuracy (e.g., “epoch_acc_val”)</p></li>
+<li><p><strong>loss_name</strong> (<em>str</em>) – name to log for loss (e.g., “epoch_loss_val”)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics.model">
+<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.nn.parallel.data_parallel.DataParallel</span></em><a class="headerlink" href="#cocpit.performance_metrics.Metrics.model" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#cocpit.performance_metrics.Metrics.model_name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics.optimizer">
+<span class="sig-name descname"><span class="pre">optimizer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.optim.sgd.SGD</span></em><a class="headerlink" href="#cocpit.performance_metrics.Metrics.optimizer" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics.print_batch_metrics">
+<span class="sig-name descname"><span class="pre">print_batch_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.performance_metrics.Metrics.print_batch_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Outputs batch iteration, loss, and accuracy
+:type phase: <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>
+:param phase: “Train” or “Validation”
+:type phase: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics.print_epoch_metrics">
+<span class="sig-name descname"><span class="pre">print_epoch_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.performance_metrics.Metrics.print_epoch_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Print epoch loss and accuracy based on phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>phase</strong> (<em>str</em>) – “train” or “val”</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics.write_output">
+<span class="sig-name descname"><span class="pre">write_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.performance_metrics.Metrics.write_output" title="Permalink to this definition"></a></dt>
+<dd><p>Write acc and loss to csv file within model, epoch, kfold iteration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – config.ACC_SAVENAME_TRAIN or config.ACC_SAVENAME_VAL depending on phase</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-cocpit.pic">
+<span id="cocpit-pic-module"></span><h2>cocpit.pic module<a class="headerlink" href="#module-cocpit.pic" title="Permalink to this headline"></a></h2>
+<p>Particle Image Classifier (PIC)</p>
+<p>Opens image and calculates geormetric parameters using opencv</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.pic.Image">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.pic.</span></span><span class="sig-name descname"><span class="pre">Image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">open_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Opens an image file (png) and processes the image</p>
+<blockquote>
+<div><dl class="simple">
+<dt>open_dir (str):</dt><dd><p>directory to be opened</p>
+</dd>
+<dt>filename (str):</dt><dd><p>file to be opened in the directory</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.calculate_area">
+<span class="sig-name descname"><span class="pre">calculate_area</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.calculate_area" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.calculate_hull_area">
+<span class="sig-name descname"><span class="pre">calculate_hull_area</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.calculate_hull_area" title="Permalink to this definition"></a></dt>
+<dd><p>area of a convex hull surrounding the largest contour</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.calculate_largest_contour">
+<span class="sig-name descname"><span class="pre">calculate_largest_contour</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.calculate_largest_contour" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.calculate_perim">
+<span class="sig-name descname"><span class="pre">calculate_perim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.calculate_perim" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.circularity">
+<span class="sig-name descname"><span class="pre">circularity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.circularity" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.complexity">
+<span class="sig-name descname"><span class="pre">complexity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.complexity" title="Permalink to this definition"></a></dt>
+<dd><p>how intricate &amp; complicated the particle is</p>
+<dl class="simple">
+<dt>see:</dt><dd><p>Schmitt, C. G., and A. J. Heymsfield (2014),
+Observational quantification of the separation of
+simple and complex atmospheric ice particles,
+Geophys. Res. Lett., 41, 1301–1307, doi:10.1002/ 2013GL058781.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.contrast">
+<span class="sig-name descname"><span class="pre">contrast</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.contrast" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the standard deviation of the image pixel values -
+higher std has more contrast</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.convex_perim">
+<span class="sig-name descname"><span class="pre">convex_perim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">closed_cnt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.convex_perim" title="Permalink to this definition"></a></dt>
+<dd><p>returns the perimeter of the convex hull of the
+largest contour</p>
+<dl class="simple">
+<dt>closed_cnt (boolean):</dt><dd><p>perimeter must be of a closed contour</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.convexity">
+<span class="sig-name descname"><span class="pre">convexity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.convexity" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.create_ellipse">
+<span class="sig-name descname"><span class="pre">create_ellipse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.create_ellipse" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.edges">
+<span class="sig-name descname"><span class="pre">edges</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.edges" title="Permalink to this definition"></a></dt>
+<dd><p>finds edges in the input image image and marks
+them in the output map edges using the Canny algorithm.
+The smallest value between threshold1 and threshold2 is used
+for edge linking. The largest value is used to find initial
+segments of strong edges.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.equiv_d">
+<span class="sig-name descname"><span class="pre">equiv_d</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.equiv_d" title="Permalink to this definition"></a></dt>
+<dd><p>equivalent diameter of a circle with the
+same area as the largest contour</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.extreme_points">
+<span class="sig-name descname"><span class="pre">extreme_points</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.extreme_points" title="Permalink to this definition"></a></dt>
+<dd><p>computes how separated the outer most points are on the largest contour
+higher std. deviation = more spread out</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.filled_circular_area_ratio">
+<span class="sig-name descname"><span class="pre">filled_circular_area_ratio</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.filled_circular_area_ratio" title="Permalink to this definition"></a></dt>
+<dd><p>returns the area of the largest contour divided by the area of
+an encompassing circle - useful for spheres that have reflection
+spots that are not captured by the largest contour and leave a horseshoe pattern</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.find_contours">
+<span class="sig-name descname"><span class="pre">find_contours</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.find_contours" title="Permalink to this definition"></a></dt>
+<dd><p>Finds contours in a binary image</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.flip_imgs">
+<span class="sig-name descname"><span class="pre">flip_imgs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.flip_imgs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.laplacian">
+<span class="sig-name descname"><span class="pre">laplacian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.laplacian" title="Permalink to this definition"></a></dt>
+<dd><p>computes the variance (i.e. standard deviation squared)
+of a convolved 3 x 3 kernel.  The Laplacian highlights regions
+of an image containing rapid intensity changes. If the variance falls
+below a pre-defined threshold, then the image is considered blurry;
+otherwise, the image is not blurry.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.mask_background">
+<span class="sig-name descname"><span class="pre">mask_background</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.mask_background" title="Permalink to this definition"></a></dt>
+<dd><p>Keeps the background all white surrounding the largest conotour.
+Places the largest contour on an array of all the same color</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.morph_contours">
+<span class="sig-name descname"><span class="pre">morph_contours</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.morph_contours" title="Permalink to this definition"></a></dt>
+<dd><p>Perform advanced morphological transformations using erosion and dilation.
+Combines nearby gaps in contours</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.perim_area_ratio">
+<span class="sig-name descname"><span class="pre">perim_area_ratio</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.perim_area_ratio" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.phi">
+<span class="sig-name descname"><span class="pre">phi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.phi" title="Permalink to this definition"></a></dt>
+<dd><p>calculate aspect ratio from rectangle</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.resize_stretch">
+<span class="sig-name descname"><span class="pre">resize_stretch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">desired_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.resize_stretch" title="Permalink to this definition"></a></dt>
+<dd><p>resized the image to the desired size while stretching the image instead of
+adding paddding or borders</p>
+<dl class="simple">
+<dt>desired_size (int):</dt><dd><p>the images are resized as a square according to desired_size</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.rotate">
+<span class="sig-name descname"><span class="pre">rotate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.rotate" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.roundness">
+<span class="sig-name descname"><span class="pre">roundness</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.roundness" title="Permalink to this definition"></a></dt>
+<dd><p>similar to circularity but divided by the perimeter
+that surrounds the largest contour squared instead of the
+actual convoluted perimeter</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.save_image">
+<span class="sig-name descname"><span class="pre">save_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.save_image" title="Permalink to this definition"></a></dt>
+<dd><p>saves image to directory</p>
+<blockquote>
+<div><dl class="simple">
+<dt>save_dir (str):</dt><dd><p>directory to be saved</p>
+</dd>
+<dt>flip (boolean): False</dt><dd><p>whether or not to duplicate the image by
+flipping it and saving it in multiple orientations
+(up, down, left, right)</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.show_image">
+<span class="sig-name descname"><span class="pre">show_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.show_image" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.pic.Image.solidity">
+<span class="sig-name descname"><span class="pre">solidity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.Image.solidity" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.pic.auto_str">
+<span class="sig-prename descclassname"><span class="pre">cocpit.pic.</span></span><span class="sig-name descname"><span class="pre">auto_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.pic.auto_str" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-cocpit.predictions">
+<span id="cocpit-predictions-module"></span><h2>cocpit.predictions module<a class="headerlink" href="#module-cocpit.predictions" title="Permalink to this headline"></a></h2>
+<p>Predict on a batch of images.
+Find incorrect predictions from validation dataloader.
+To be used with gui.py in notebooks/gui_move_wrong_predictions.ipynb</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.predictions.BatchPredictions">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.predictions.</span></span><span class="sig-name descname"><span class="pre">BatchPredictions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.BatchPredictions" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>finds predictions for a given batch of test data (no label)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.predictions.BatchPredictions.find_logits">
+<span class="sig-name descname"><span class="pre">find_logits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.BatchPredictions.find_logits" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.predictions.BatchPredictions.find_max_preds">
+<span class="sig-name descname"><span class="pre">find_max_preds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.BatchPredictions.find_max_preds" title="Permalink to this definition"></a></dt>
+<dd><p>find the class with the highest probability
+across all images in the batch</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.predictions.BatchPredictions.preds_softmax">
+<span class="sig-name descname"><span class="pre">preds_softmax</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.BatchPredictions.preds_softmax" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.predictions.BatchPredictions.top_k_preds">
+<span class="sig-name descname"><span class="pre">top_k_preds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">top_k_preds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.BatchPredictions.top_k_preds" title="Permalink to this definition"></a></dt>
+<dd><p>get top k predictions for each index in the batch for bar chart</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.predictions.LoaderPredictions">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.predictions.</span></span><span class="sig-name descname"><span class="pre">LoaderPredictions</span></span><a class="headerlink" href="#cocpit.predictions.LoaderPredictions" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>In gui.py, use a model and validation dataloader to check predictions.
+Loops through all validation loader predictions but only saves incorrect predictions.
+The incorrect predictions are loaded into a gui so that a user can decide
+whether the label is wrong upon second look (i.e., the model is right).
+The image is automatically moved upon choosing a class from the dropdown menu.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.predictions.LoaderPredictions.concat">
+<span class="sig-name descname"><span class="pre">concat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.LoaderPredictions.concat" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.predictions.LoaderPredictions.concatenate_loader_vars">
+<span class="sig-name descname"><span class="pre">concatenate_loader_vars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.LoaderPredictions.concatenate_loader_vars" title="Permalink to this definition"></a></dt>
+<dd><p>flatten arrays from appending in batches</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.predictions.LoaderPredictions.find_wrong_indices">
+<span class="sig-name descname"><span class="pre">find_wrong_indices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.LoaderPredictions.find_wrong_indices" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.predictions.LoaderPredictions.hone_incorrect_predictions">
+<span class="sig-name descname"><span class="pre">hone_incorrect_predictions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">human_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_label</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.LoaderPredictions.hone_incorrect_predictions" title="Permalink to this definition"></a></dt>
+<dd><p>find indices where human labeled as one thing and model labeled as another</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label_list</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – dictionary of class labels mapped to integers</p></li>
+<li><p><strong>human_label</strong> (<em>int</em>) – category of the human label</p></li>
+<li><p><strong>model_label</strong> (<em>int</em>) – category of the model label</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.predictions.LoaderPredictions.load_model">
+<span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fold</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.LoaderPredictions.load_model" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.predictions.LoaderPredictions.load_val_loader">
+<span class="sig-name descname"><span class="pre">load_val_loader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fold</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.LoaderPredictions.load_val_loader" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.predictions.LoaderPredictions.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">top_k_preds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.LoaderPredictions.predict" title="Permalink to this definition"></a></dt>
+<dd><p>loop over folds and find incorrect predictions across all possible validation
+datasets if k-folds used (i.e., not just 20% at once)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>top_k_preds</strong> (<em>int</em>) – the top k predictions will be displayed in bar chart
+must be &lt; number of classes</p></li>
+<li><p><strong>folds</strong> (<em>int</em>) – number of k-folds used in resampling procedure
+if kfold cross validation was not used, keep as 1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.predictions.LoaderPredictions.predict_test_loader">
+<span class="sig-name descname"><span class="pre">predict_test_loader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k_preds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.LoaderPredictions.predict_test_loader" title="Permalink to this definition"></a></dt>
+<dd><p>loop over folds and find incorrect predictions across all possible validation
+datasets if k-folds used (i.e., not just 20% at once)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_loader</strong> (<em>pytorch DataLoader</em>) – dataloader holding test set</p></li>
+<li><p><strong>top_k_preds</strong> (<em>int</em>) – the top k predictions will be displayed in bar chart
+must be &lt; number of classes</p></li>
+<li><p><strong>fold</strong> (<em>int</em>) – number of k-folds used in resampling procedure
+if kfold cross validation was not used, keep as 0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>converted image to gray scale</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-cocpit.process_sheets">
+<span id="cocpit-process-sheets-module"></span><h2>cocpit.process_sheets module<a class="headerlink" href="#module-cocpit.process_sheets" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.process_sheets.Image">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.process_sheets.</span></span><span class="sig-name descname"><span class="pre">Image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">open_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.process_sheets.Image" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Reads, extracts, and performs morphological processing on png sheets of CPI images</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.process_sheets.Image.file">
+<span class="sig-name descname"><span class="pre">file</span></span><a class="headerlink" href="#cocpit.process_sheets.Image.file" title="Permalink to this definition"></a></dt>
+<dd><p>file [including path] to sheet with cpi images</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.process_sheets.Image.cutoff">
+<span class="sig-name descname"><span class="pre">cutoff</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.process_sheets.Image.cutoff" title="Permalink to this definition"></a></dt>
+<dd><p>Determines the % of pixels that intersect
+the border or perimeter of the image</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.process_sheets.Image.dilate">
+<span class="sig-name descname"><span class="pre">dilate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_dilate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.process_sheets.Image.dilate" title="Permalink to this definition"></a></dt>
+<dd><p>Increases the object area and useful in joining broken parts of an image.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.process_sheets.Image.extract_contours">
+<span class="sig-name descname"><span class="pre">extract_contours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_cropped</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.process_sheets.Image.extract_contours" title="Permalink to this definition"></a></dt>
+<dd><p>Finds, extracts and saves ROIs from sheets
+Saves filename, width, height, and cutoff to lists for a df</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>show_cropped</strong> (<em>bool</em>) – whether to show the ROI regions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.process_sheets.Image.find_sheet_contours">
+<span class="sig-name descname"><span class="pre">find_sheet_contours</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.process_sheets.Image.find_sheet_contours" title="Permalink to this definition"></a></dt>
+<dd><p>find all contours on sheet and convert to b/w</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.process_sheets.Image.largest_contour">
+<span class="sig-name descname"><span class="pre">largest_contour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cnts</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.process_sheets.Image.largest_contour" title="Permalink to this definition"></a></dt>
+<dd><p>Find largest contour out of list of contours on image</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cnts</strong> (<em>list</em>) – list of contours</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.process_sheets.Image.particle_dimensions">
+<span class="sig-name descname"><span class="pre">particle_dimensions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.process_sheets.Image.particle_dimensions" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the length and width of particles in microns
+from a rectangular bounding box
+CPI probe: 1 px = 2.3 microns</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.process_sheets.Image.read_image">
+<span class="sig-name descname"><span class="pre">read_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_original</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.process_sheets.Image.read_image" title="Permalink to this definition"></a></dt>
+<dd><p>Reads sheet into memory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>show_original</strong> (<em>bool</em>) – whether to show the original sheet in an opencv window</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.process_sheets.Image.remove_text">
+<span class="sig-name descname"><span class="pre">remove_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cnts</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.process_sheets.Image.remove_text" title="Permalink to this definition"></a></dt>
+<dd><p>Removes text such as date/time stamp by drawing over small contours in white.
+If the text is on the particle itself and connected to the largest contour, it stays
+Should a very small particle be &lt; 200 px^2, it is also masked</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.process_sheets.Image.save_image">
+<span class="sig-name descname"><span class="pre">save_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cropped</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.process_sheets.Image.save_image" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.process_sheets.main">
+<span class="sig-prename descclassname"><span class="pre">cocpit.process_sheets.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sheet_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_original</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_dilate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_cropped</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.process_sheets.main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.process_sheets.make_df">
+<span class="sig-prename descclassname"><span class="pre">cocpit.process_sheets.</span></span><span class="sig-name descname"><span class="pre">make_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">particle_widths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">particle_heights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.process_sheets.make_df" title="Permalink to this definition"></a></dt>
+<dd><p>creates df with original image and particle widths, heights, and % cutoff
+writes to csv file for each campaign</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.process_sheets.run">
+<span class="sig-prename descclassname"><span class="pre">cocpit.process_sheets.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">open_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_original</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_dilate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_cropped</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.process_sheets.run" title="Permalink to this definition"></a></dt>
+<dd><p>main method calls</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.process_sheets.send_message">
+<span class="sig-prename descclassname"><span class="pre">cocpit.process_sheets.</span></span><span class="sig-name descname"><span class="pre">send_message</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.process_sheets.send_message" title="Permalink to this definition"></a></dt>
+<dd><p>use twilio to receive a text when the processing has finished!
+register for an account and then:
+add ACCOUNT_SID, AUTH_TOKEN, and PHONE_NUMBER to a .env file</p>
+</dd></dl>
+
+</section>
+<section id="module-cocpit.run_model">
+<span id="cocpit-run-model-module"></span><h2>cocpit.run_model module<a class="headerlink" href="#module-cocpit.run_model" title="Permalink to this headline"></a></h2>
+<p>classifies unseen images:
+transforms, makes predictions, and appends classification to dataframe</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.run_model.append_classifications">
+<span class="sig-prename descclassname"><span class="pre">cocpit.run_model.</span></span><span class="sig-name descname"><span class="pre">append_classifications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_class</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.run_model.append_classifications" title="Permalink to this definition"></a></dt>
+<dd><p>append the top class</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.run_model.campaign_predictions">
+<span class="sig-prename descclassname"><span class="pre">cocpit.run_model.</span></span><span class="sig-name descname"><span class="pre">campaign_predictions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.run_model.campaign_predictions" title="Permalink to this definition"></a></dt>
+<dd><p>make predictions from test_loader</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.run_model.main">
+<span class="sig-prename descclassname"><span class="pre">cocpit.run_model.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">open_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.run_model.main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.run_model.percent_category">
+<span class="sig-prename descclassname"><span class="pre">cocpit.run_model.</span></span><span class="sig-name descname"><span class="pre">percent_category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.run_model.percent_category" title="Permalink to this definition"></a></dt>
+<dd><p>find # and % of a class out of all images for a campaign</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.run_model.send_message">
+<span class="sig-prename descclassname"><span class="pre">cocpit.run_model.</span></span><span class="sig-name descname"><span class="pre">send_message</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.run_model.send_message" title="Permalink to this definition"></a></dt>
+<dd><p>use twilio to receive a text when the model has finished running!
+register for an account and then:
+add ACCOUNT_SID, AUTH_TOKEN, and PHONE_NUMBER to a .env file</p>
+</dd></dl>
+
+</section>
+<section id="module-cocpit.runner">
+<span id="cocpit-runner-module"></span><h2>cocpit.runner module<a class="headerlink" href="#module-cocpit.runner" title="Permalink to this headline"></a></h2>
+<p>train the CNN model(s)</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.runner.determine_phases">
+<span class="sig-prename descclassname"><span class="pre">cocpit.runner.</span></span><span class="sig-name descname"><span class="pre">determine_phases</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.runner.determine_phases" title="Permalink to this definition"></a></dt>
+<dd><p>determine if there is both a training and validation phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>either training or training and validation phase</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.runner.main">
+<span class="sig-prename descclassname"><span class="pre">cocpit.runner.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kfold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.runner.main" title="Permalink to this definition"></a></dt>
+<dd><p>Trains and validates a model across epochs, phases, and batches</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataloaders</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>torch.utils.data.DataLoader</em><em>]</em>) – training and validation dict that loads images with sampling procedure</p></li>
+<li><p><strong>optimizer</strong> (<em>torch.optim.SGD</em>) – an algorithm that modifies the attributes of the neural network</p></li>
+<li><p><strong>model</strong> (<em>torch.nn.parallel.data_parallel.DataParallel</em>) – saved and loaded model</p></li>
+<li><p><strong>epochs</strong> (<em>int</em>) – max number of epochs to train and validate</p></li>
+<li><p><strong>model_name</strong> (<em>str</em>) – name of model architecture</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – number of images read into memory at a time</p></li>
+<li><p><strong>kfold</strong> (<em>int</em>) – number of k-folds used in resampling procedure</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-cocpit.timing">
+<span id="cocpit-timing-module"></span><h2>cocpit.timing module<a class="headerlink" href="#module-cocpit.timing" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.timing.EpochTime">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.timing.</span></span><span class="sig-name descname"><span class="pre">EpochTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">since_total</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">since_epoch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.timing.EpochTime" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>time one epoch, all epochs, and write to csv</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.timing.EpochTime.print_time_all_epochs">
+<span class="sig-name descname"><span class="pre">print_time_all_epochs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.timing.EpochTime.print_time_all_epochs" title="Permalink to this definition"></a></dt>
+<dd><p>print time it took for all epochs to train</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.timing.EpochTime.print_time_one_epoch">
+<span class="sig-name descname"><span class="pre">print_time_one_epoch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.timing.EpochTime.print_time_one_epoch" title="Permalink to this definition"></a></dt>
+<dd><p>print time it took for one epoch to complete</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.timing.EpochTime.write_times">
+<span class="sig-name descname"><span class="pre">write_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kfold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.timing.EpochTime.write_times" title="Permalink to this definition"></a></dt>
+<dd><p>write time to train with respective modelname, epoch, and kfold to file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-cocpit.train">
+<span id="cocpit-train-module"></span><h2>cocpit.train module<a class="headerlink" href="#module-cocpit.train" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.train.Train">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.train.</span></span><span class="sig-name descname"><span class="pre">Train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kfold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criterion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CrossEntropyLoss()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.train.Train" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cocpit.performance_metrics.Metrics" title="cocpit.performance_metrics.Metrics"><code class="xref py py-class docutils literal notranslate"><span class="pre">cocpit.performance_metrics.Metrics</span></code></a></p>
+<p>Perform training methods on batched dataset</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.batch">
+<span class="sig-name descname"><span class="pre">batch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.train.Train.batch" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.batch_acc">
+<span class="sig-name descname"><span class="pre">batch_acc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.train.Train.batch_acc" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.batch_size">
+<span class="sig-name descname"><span class="pre">batch_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.train.Train.batch_size" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.dataloaders">
+<span class="sig-name descname"><span class="pre">dataloaders</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.utils.data.dataloader.DataLoader</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cocpit.train.Train.dataloaders" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.epoch">
+<span class="sig-name descname"><span class="pre">epoch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.train.Train.epoch" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.epoch_acc">
+<span class="sig-name descname"><span class="pre">epoch_acc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.Tensor</span></em><a class="headerlink" href="#cocpit.train.Train.epoch_acc" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.epoch_loss">
+<span class="sig-name descname"><span class="pre">epoch_loss</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.train.Train.epoch_loss" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.epochs">
+<span class="sig-name descname"><span class="pre">epochs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.train.Train.epochs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.train.Train.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.train.Train.forward" title="Permalink to this definition"></a></dt>
+<dd><p>perform forward operator and make predictions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.inputs">
+<span class="sig-name descname"><span class="pre">inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.Tensor</span></em><a class="headerlink" href="#cocpit.train.Train.inputs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.train.Train.iterate_batches">
+<span class="sig-name descname"><span class="pre">iterate_batches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">print_label_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.train.Train.iterate_batches" title="Permalink to this definition"></a></dt>
+<dd><p>iterate over a batch in a dataloader and train</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>print_label_count</strong> (<em>bool</em>) – if True print class counts when iterating batches</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.kfold">
+<span class="sig-name descname"><span class="pre">kfold</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.train.Train.kfold" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.train.Train.label_counts">
+<span class="sig-name descname"><span class="pre">label_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label_cnts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.train.Train.label_counts" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the # of labels per batch to ensure weighted random sampler is correct</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label_cnts</strong> (<em>np.ndarray</em>) – number of labels per class from all batches before</p></li>
+<li><p><strong>labels</strong> (<em>torch.Tensor</em>) – class/label names</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sum of label counts from prior batches plus current batch</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>label_cnts (List[int])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.labels">
+<span class="sig-name descname"><span class="pre">labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.Tensor</span></em><a class="headerlink" href="#cocpit.train.Train.labels" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.loss">
+<span class="sig-name descname"><span class="pre">loss</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.Tensor</span></em><a class="headerlink" href="#cocpit.train.Train.loss" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.model">
+<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.nn.parallel.data_parallel.DataParallel</span></em><a class="headerlink" href="#cocpit.train.Train.model" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#cocpit.train.Train.model_name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.optimizer">
+<span class="sig-name descname"><span class="pre">optimizer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.optim.sgd.SGD</span></em><a class="headerlink" href="#cocpit.train.Train.optimizer" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.preds">
+<span class="sig-name descname"><span class="pre">preds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.Tensor</span></em><a class="headerlink" href="#cocpit.train.Train.preds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.train.Train.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.train.Train.run" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.running_corrects">
+<span class="sig-name descname"><span class="pre">running_corrects</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.Tensor</span></em><a class="headerlink" href="#cocpit.train.Train.running_corrects" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.running_loss">
+<span class="sig-name descname"><span class="pre">running_loss</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.train.Train.running_loss" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.totals">
+<span class="sig-name descname"><span class="pre">totals</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.train.Train.totals" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.train.Train.val_best_acc">
+<span class="sig-name descname"><span class="pre">val_best_acc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.Tensor</span></em><a class="headerlink" href="#cocpit.train.Train.val_best_acc" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-cocpit.validate">
+<span id="cocpit-validate-module"></span><h2>cocpit.validate module<a class="headerlink" href="#module-cocpit.validate" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.validate.Validation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.validate.</span></span><span class="sig-name descname"><span class="pre">Validation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kfold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criterion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CrossEntropyLoss()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.validate.Validation" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cocpit.performance_metrics.Metrics" title="cocpit.performance_metrics.Metrics"><code class="xref py py-class docutils literal notranslate"><span class="pre">cocpit.performance_metrics.Metrics</span></code></a></p>
+<p>Perform validation methods on batched dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>val_best_acc</strong> – (float): best validation accuracy of the model up to the given batch</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.all_labels">
+<span class="sig-name descname"><span class="pre">all_labels</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#cocpit.validate.Validation.all_labels" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.all_preds">
+<span class="sig-name descname"><span class="pre">all_preds</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#cocpit.validate.Validation.all_preds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.append_preds">
+<span class="sig-name descname"><span class="pre">append_preds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.validate.Validation.append_preds" title="Permalink to this definition"></a></dt>
+<dd><p>save each batch prediction and labels for plots</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.batch">
+<span class="sig-name descname"><span class="pre">batch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.validate.Validation.batch" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.batch_acc">
+<span class="sig-name descname"><span class="pre">batch_acc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.validate.Validation.batch_acc" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.batch_size">
+<span class="sig-name descname"><span class="pre">batch_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.validate.Validation.batch_size" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.classification_report">
+<span class="sig-name descname"><span class="pre">classification_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.validate.Validation.classification_report" title="Permalink to this definition"></a></dt>
+<dd><p>create classification report from sklearn
+add model name and fold iteration to the report</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fold</strong> (<em>int</em>) – which fold to use in resampling procedure</p></li>
+<li><p><strong>model_name</strong> (<em>str</em>) – name of the models</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.confusion_matrix">
+<span class="sig-name descname"><span class="pre">confusion_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.validate.Validation.confusion_matrix" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>log a confusion matrix to comet ml after the last epoch</dt><dd><ul class="simple">
+<li><p>found under the graphics tab</p></li>
+</ul>
+</dd>
+</dl>
+<p>if using kfold, it will concatenate all validation dataloaders
+if not using kfold, it will only plot the validation dataset (e.g, 20%)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>norm</strong> (<em>str</em>) – ‘true’, ‘pred’, or None.
+Normalizes confusion matrix over the true (rows),
+predicted (columns) conditions or all the population.
+If None, confusion matrix will not be normalized.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.dataloaders">
+<span class="sig-name descname"><span class="pre">dataloaders</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.utils.data.dataloader.DataLoader</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cocpit.validate.Validation.dataloaders" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.epoch">
+<span class="sig-name descname"><span class="pre">epoch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.validate.Validation.epoch" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.epoch_acc">
+<span class="sig-name descname"><span class="pre">epoch_acc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.Tensor</span></em><a class="headerlink" href="#cocpit.validate.Validation.epoch_acc" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.epoch_loss">
+<span class="sig-name descname"><span class="pre">epoch_loss</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.validate.Validation.epoch_loss" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.epochs">
+<span class="sig-name descname"><span class="pre">epochs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.validate.Validation.epochs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.inputs">
+<span class="sig-name descname"><span class="pre">inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.Tensor</span></em><a class="headerlink" href="#cocpit.validate.Validation.inputs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.iterate_batches">
+<span class="sig-name descname"><span class="pre">iterate_batches</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.validate.Validation.iterate_batches" title="Permalink to this definition"></a></dt>
+<dd><p>iterate over a batch in a dataloader and make predictions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.kfold">
+<span class="sig-name descname"><span class="pre">kfold</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.validate.Validation.kfold" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.labels">
+<span class="sig-name descname"><span class="pre">labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.Tensor</span></em><a class="headerlink" href="#cocpit.validate.Validation.labels" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.loss">
+<span class="sig-name descname"><span class="pre">loss</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.Tensor</span></em><a class="headerlink" href="#cocpit.validate.Validation.loss" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.model">
+<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.nn.parallel.data_parallel.DataParallel</span></em><a class="headerlink" href="#cocpit.validate.Validation.model" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#cocpit.validate.Validation.model_name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.optimizer">
+<span class="sig-name descname"><span class="pre">optimizer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.optim.sgd.SGD</span></em><a class="headerlink" href="#cocpit.validate.Validation.optimizer" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.validate.Validation.predict" title="Permalink to this definition"></a></dt>
+<dd><p>make predictions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.preds">
+<span class="sig-name descname"><span class="pre">preds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.Tensor</span></em><a class="headerlink" href="#cocpit.validate.Validation.preds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.reduce_lr">
+<span class="sig-name descname"><span class="pre">reduce_lr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.validate.Validation.reduce_lr" title="Permalink to this definition"></a></dt>
+<dd><p>reduce learning rate upon plateau in epoch validation accuracy</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.validate.Validation.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run model on validation data and calculate metrics
+Reset acc, loss, labels, and predictions for each epoch, model, phase, and fold</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.running_corrects">
+<span class="sig-name descname"><span class="pre">running_corrects</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.Tensor</span></em><a class="headerlink" href="#cocpit.validate.Validation.running_corrects" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.running_loss">
+<span class="sig-name descname"><span class="pre">running_loss</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.validate.Validation.running_loss" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.save_model">
+<span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.validate.Validation.save_model" title="Permalink to this definition"></a></dt>
+<dd><p>save/load best model weights after improvement in val accuracy</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.totals">
+<span class="sig-name descname"><span class="pre">totals</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.validate.Validation.totals" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.val_best_acc">
+<span class="sig-name descname"><span class="pre">val_best_acc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.Tensor</span></em><a class="headerlink" href="#cocpit.validate.Validation.val_best_acc" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-cocpit">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cocpit" title="Permalink to this headline"></a></h2>
+<p>COCPIT package:</p>
+<p>Classification of Cloud Particle Imagery and Thermodynamics</p>
+<section id="modules">
+<h3>modules:<a class="headerlink" href="#modules" title="Permalink to this headline"></a></h3>
+<dl>
+<dt>add_date:</dt><dd><ul class="simple">
+<li><p>add a column to the dataframes for the date from the filename</p></li>
+</ul>
+</dd>
+<dt>auto_str:</dt><dd><ul class="simple">
+<li><p>automatically implements a string representation for classes</p></li>
+</ul>
+<p>instead of memory id
+- finds all attributes of the class
+- called with str(instance)</p>
+</dd>
+<dt>check_classifications:</dt><dd><ul class="simple">
+<li><p>check predictions from a saved CNN</p></li>
+<li><p>called in check_classifications.ipynb for bar chart plot</p></li>
+</ul>
+</dd>
+<dt>config-sample:</dt><dd><ul class="simple">
+<li><p>holds all user-defined variables</p></li>
+<li><p>treated as global and used across modules</p></li>
+<li><p>paths are to be modified for each user</p></li>
+<li><p>rename config-sample to config.py when running code</p></li>
+</ul>
+</dd>
+<dt>data_loaders:</dt><dd><ul class="simple">
+<li><p>retrives data loaders from Pytorch for training and validation data</p></li>
+<li><p>includes weighted and unweighted sampling</p></li>
+<li><p>modified to append path to image (including class folder)</p></li>
+</ul>
+</dd>
+<dt>fold_setup:</dt><dd><ul class="simple">
+<li><p>setup training and validation indices for labels and data based on k-fold cross validation</p></li>
+</ul>
+</dd>
+<dt>geometric_attributes:</dt><dd><ul class="simple">
+<li><p>calculates particle geometric properties from pic.py</p></li>
+<li><p>e.g., area ratio, roundness, aspect ratio</p></li>
+<li><p>length and width of particle calculated in process_sheets.py before resizing</p></li>
+</ul>
+</dd>
+<dt>gui_label:</dt><dd><ul class="simple">
+<li><p>an ipywidget interface for creating a training dataset</p></li>
+<li><p>buttons to choose a label and move an image into that dir</p></li>
+<li><p>called in notebooks/label.ipynb</p></li>
+</ul>
+</dd>
+<dt>gui_wrong:</dt><dd><ul class="simple">
+<li><p>an ipywidget interface for labeling incorrect predictions from a validation dataloader</p></li>
+<li><p>should the model be right, images are moved within the training dataset</p></li>
+<li><p>called in notebooks/move_wrong_predictions.ipynb</p></li>
+</ul>
+</dd>
+<dt>gui:</dt><dd><ul class="simple">
+<li><p>an ipywidget interface for nested classification that separates images within a class</p></li>
+<li><p>used on the entire training dataset</p></li>
+<li><p>called in notebooks/gui_check_dataset_one_class.ipynb</p></li>
+</ul>
+</dd>
+<dt>image_stats:</dt><dd><ul class="simple">
+<li><p>find the #/% of cutoff particles after removing blurry, fragmented, and spherical drops</p></li>
+<li><p>used as a separate script (external - not being called in __main__.py)</p></li>
+</ul>
+</dd>
+<dt>model_config:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>model configurations for:</dt><dd><ul>
+<li><p>dropout</p></li>
+<li><p>device settings</p></li>
+<li><p>parameters to update</p></li>
+<li><p>checking label counts within a batch</p></li>
+<li><p>normalization values for transformations</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>models:</dt><dd><ul class="simple">
+<li><p>defines torchvision models</p></li>
+</ul>
+</dd>
+<dt>performance_metrics:</dt><dd><ul class="simple">
+<li><p>holds epoch and batch metrics for both the training and validation datasets</p></li>
+<li><p>inherited by train and validation classes</p></li>
+<li><p>logs metrics to console and/or comet-ml interface (see config.py to turn on)</p></li>
+<li><p>writes metrics to csv’s defined in config.py</p></li>
+</ul>
+</dd>
+<dt>pic: ‘particle image classification’</dt><dd><ul class="simple">
+<li><p>holds the main Image class for image manipulation using opencv</p></li>
+<li><p>calculates particle geometrical attributes</p></li>
+</ul>
+</dd>
+<dt>predictions:</dt><dd><ul class="simple">
+<li><p>holds methods regarding making model predictions</p></li>
+<li><p>for confusion matrices and running the model on new data</p></li>
+</ul>
+</dd>
+<dt>process_sheets:</dt><dd><ul class="simple">
+<li><p>extracts single images from the muliple images per frame or sheet</p></li>
+<li><p>saves single images to a directory for later creation of the database</p></li>
+</ul>
+</dd>
+<dt>run_model:</dt><dd><p>-classifies good ice images through a convolutional neural network that
+was presaved or built in build_ML_model
+-transforms, makes predictions, and appends classification to dataframe</p>
+</dd>
+<dt>runner:</dt><dd><ul class="simple">
+<li><p>iterates over epochs, batch sizes, and phases and calls training methods</p></li>
+</ul>
+<p>and validation methods</p>
+</dd>
+<dt>timing:</dt><dd><ul class="simple">
+<li><p>time one epoch, all epochs, and write to csv</p></li>
+</ul>
+</dd>
+<dt>setup_training:</dt><dd><ul class="simple">
+<li><p>train model with k folds for cross validation across samples called in __main__.py</p></li>
+<li><p>runner class to get dataloaders and set up cross validation</p></li>
+</ul>
+</dd>
+<dt>train:</dt><dd><ul class="simple">
+<li><p>execution of running a model across batches for training set only</p></li>
+<li><p>outputs performance metrics during training</p></li>
+</ul>
+</dd>
+<dt>validate:</dt><dd><ul class="simple">
+<li><p>execution of running a model across batches for validation set only</p></li>
+<li><p>outputs performance metrics and saves confusion matrix and classification report</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cocpit.dash_app.html" class="btn btn-neutral float-right" title="cocpit.dash_app package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vanessa Przybylo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>

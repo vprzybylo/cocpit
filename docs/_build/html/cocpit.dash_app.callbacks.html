@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cocpit.dash_app.callbacks package &mdash; COCPIT 2.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cocpit.dash_app.layout package" href="cocpit.dash_app.layout.html" />
+    <link rel="prev" title="cocpit.dash_app package" href="cocpit.dash_app.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> COCPIT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">data</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="cocpit.html">cocpit package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cocpit.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="cocpit.dash_app.html">cocpit.dash_app package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cocpit.plotting_scripts.html">cocpit.plotting_scripts package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.add_date">cocpit.add_date module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.auto_str">cocpit.auto_str module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.check_classifications">cocpit.check_classifications module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#cocpit-config-sample-module">cocpit.config-sample module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.config">cocpit.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.config_cocpit">cocpit.config_cocpit module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.data_loaders">cocpit.data_loaders module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.fold_setup">cocpit.fold_setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.geometric_attributes">cocpit.geometric_attributes module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.gui">cocpit.gui module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.gui_label">cocpit.gui_label module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.gui_wrong">cocpit.gui_wrong module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.image_stats">cocpit.image_stats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.model_config">cocpit.model_config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.models">cocpit.models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.performance_metrics">cocpit.performance_metrics module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.pic">cocpit.pic module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.predictions">cocpit.predictions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.process_sheets">cocpit.process_sheets module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.run_model">cocpit.run_model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.runner">cocpit.runner module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.timing">cocpit.timing module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.train">cocpit.train module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.validate">cocpit.validate module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">COCPIT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">data</a> &raquo;</li>
+          <li><a href="cocpit.html">cocpit package</a> &raquo;</li>
+          <li><a href="cocpit.dash_app.html">cocpit.dash_app package</a> &raquo;</li>
+      <li>cocpit.dash_app.callbacks package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/cocpit.dash_app.callbacks.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <section id="cocpit-dash-app-callbacks-package">
+<h1>cocpit.dash_app.callbacks package<a class="headerlink" href="#cocpit-dash-app-callbacks-package" title="Permalink to this headline"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+</section>
+<section id="cocpit-dash-app-callbacks-environment-module">
+<h2>cocpit.dash_app.callbacks.environment module<a class="headerlink" href="#cocpit-dash-app-callbacks-environment-module" title="Permalink to this headline"></a></h2>
+</section>
+<section id="cocpit-dash-app-callbacks-geometric-module">
+<h2>cocpit.dash_app.callbacks.geometric module<a class="headerlink" href="#cocpit-dash-app-callbacks-geometric-module" title="Permalink to this headline"></a></h2>
+</section>
+<section id="cocpit-dash-app-callbacks-navbar-module">
+<h2>cocpit.dash_app.callbacks.navbar module<a class="headerlink" href="#cocpit-dash-app-callbacks-navbar-module" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-cocpit.dash_app.callbacks.topo_flat">
+<span id="cocpit-dash-app-callbacks-topo-flat-module"></span><h2>cocpit.dash_app.callbacks.topo_flat module<a class="headerlink" href="#module-cocpit.dash_app.callbacks.topo_flat" title="Permalink to this headline"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_flat.Etopo">
+<span class="sig-prename descclassname"><span class="pre">cocpit.dash_app.callbacks.topo_flat.</span></span><span class="sig-name descname"><span class="pre">Etopo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon_area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_flat.Etopo" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-cocpit.dash_app.callbacks.topo_map">
+<span id="cocpit-dash-app-callbacks-topo-map-module"></span><h2>cocpit.dash_app.callbacks.topo_map module<a class="headerlink" href="#module-cocpit.dash_app.callbacks.topo_map" title="Permalink to this headline"></a></h2>
+<p>create interactive topographic globe using plotly</p>
+<p>closely follows:
+<a class="reference external" href="https://towardsdatascience.com/create-interactive-globe-earthquake-plot-in-python-b0b52b646f27">https://towardsdatascience.com/create-interactive-globe-earthquake-plot-in-python-b0b52b646f27</a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.dash_app.callbacks.topo_map.</span></span><span class="sig-name descname"><span class="pre">TopoMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resolution=1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_area=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_area=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.convert_2D">
+<span class="sig-name descname"><span class="pre">convert_2D</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.convert_2D" title="Permalink to this definition"></a></dt>
+<dd><p>Convert 2D again after selecting range</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lat">
+<span class="sig-name descname"><span class="pre">lat</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lat" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lat_area">
+<span class="sig-name descname"><span class="pre">lat_area</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lat_area" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lat_num">
+<span class="sig-name descname"><span class="pre">lat_num</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lat_num" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lat_range">
+<span class="sig-name descname"><span class="pre">lat_range</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lat_range" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lon">
+<span class="sig-name descname"><span class="pre">lon</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lon" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lon_area">
+<span class="sig-name descname"><span class="pre">lon_area</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lon_area" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lon_num">
+<span class="sig-name descname"><span class="pre">lon_num</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lon_num" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lon_range">
+<span class="sig-name descname"><span class="pre">lon_range</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lon_range" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.mesh_grid">
+<span class="sig-name descname"><span class="pre">mesh_grid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.mesh_grid" title="Permalink to this definition"></a></dt>
+<dd><p>create 2D array</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.read_netCDF_globe">
+<span class="sig-name descname"><span class="pre">read_netCDF_globe</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.read_netCDF_globe" title="Permalink to this definition"></a></dt>
+<dd><p>Read NetCDF data downloaded from <a class="reference external" href="https://www.ngdc.noaa.gov/mgg/global/">https://www.ngdc.noaa.gov/mgg/global/</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.reshape">
+<span class="sig-name descname"><span class="pre">reshape</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.reshape" title="Permalink to this definition"></a></dt>
+<dd><p>Convert 2D array from 1D array for z value</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.resolution">
+<span class="sig-name descname"><span class="pre">resolution</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.resolution" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.select_range">
+<span class="sig-name descname"><span class="pre">select_range</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.select_range" title="Permalink to this definition"></a></dt>
+<dd><p>Select the range of map</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.skip_for_resolution">
+<span class="sig-name descname"><span class="pre">skip_for_resolution</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.skip_for_resolution" title="Permalink to this definition"></a></dt>
+<dd><p>Skip the data for resolution</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.spacing">
+<span class="sig-name descname"><span class="pre">spacing</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.spacing" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.topo">
+<span class="sig-name descname"><span class="pre">topo</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.topo" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.z">
+<span class="sig-name descname"><span class="pre">z</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.z" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.degree2radians">
+<span class="sig-prename descclassname"><span class="pre">cocpit.dash_app.callbacks.topo_map.</span></span><span class="sig-name descname"><span class="pre">degree2radians</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">degree</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.degree2radians" title="Permalink to this definition"></a></dt>
+<dd><p>convert degrees to radians</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.mapping_map_to_sphere">
+<span class="sig-prename descclassname"><span class="pre">cocpit.dash_app.callbacks.topo_map.</span></span><span class="sig-name descname"><span class="pre">mapping_map_to_sphere</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.mapping_map_to_sphere" title="Permalink to this definition"></a></dt>
+<dd><p>maps the points of coords (lon, lat)
+to points onto the sphere of radius radius</p>
+</dd></dl>
+
+</section>
+<section id="cocpit-dash-app-callbacks-topographic-module">
+<h2>cocpit.dash_app.callbacks.topographic module<a class="headerlink" href="#cocpit-dash-app-callbacks-topographic-module" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-cocpit.dash_app.callbacks">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cocpit.dash_app.callbacks" title="Permalink to this headline"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cocpit.dash_app.html" class="btn btn-neutral float-left" title="cocpit.dash_app package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cocpit.dash_app.layout.html" class="btn btn-neutral float-right" title="cocpit.dash_app.layout package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vanessa Przybylo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>
