@@ -2,8 +2,6 @@
 """COCPIT package for classifying ice crystal images from the CPI probe
 Usage:
 ------
-    $ pipenv run python ./__main__.py
-    OR
     $ python ./__main__.py
 
 Contact:
@@ -11,7 +9,7 @@ Contact:
 -Vanessa Przybylo
 - vprzybylo@albany.edu
 More information is available at:
-- https://vprzybylo.github.io/COCPIT/
+- https://github.com/vprzybylo/cocpit
 """
 import cocpit
 
@@ -23,10 +21,10 @@ import pandas as pd
 import torch
 
 
-def _preprocess_sheets():
+def _preprocess_sheets(df_path: str, campaign: str) -> None:
     """
-    separate individual images from sheets of images to be saved
-    text can be on the sheet
+    - Separate individual images from sheets of images to be saved
+    - Text can be on the sheet
     """
     start_time = time.time()
 
@@ -36,8 +34,10 @@ def _preprocess_sheets():
     # where the sheets of images for each campaign live
     # if sheets were processed using rois in IDL, change 'sheets' to 'ROI_PNGS'
     # sheet_dir and save_dir can't go in config since using campaign var
-    sheet_dir = f"{config.BASE_DIR}/campaigns/{campaign}/sheets/"
-    save_dir = f"{config.BASE_DIR}/campaigns/{campaign}/single_imgs_{config.TAG}/"
+    sheet_dir = f"{config.BASE_DIR}/cpi_data/campaigns/{campaign}/sheets/"
+    save_dir = (
+        f"{config.BASE_DIR}/cpi_data/campaigns/{campaign}/single_imgs_{config.TAG}/"
+    )
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
@@ -53,14 +53,41 @@ def _preprocess_sheets():
     print("time to preprocess sheets: %.2f" % (time.time() - start_time))
 
 
-def _build_model():
+def nofold_training(model_name: str, batch_size: int, epochs: int) -> None:
     """
-    train ML models
+    Create training and validation indices when k-fold cross validation
+    not initialized (config.KFOLD=0)
+
+    Args:
+        model_name (str): name of model architecture
+        batch_size (int): number of images read into memory at a time
+        epochs (int): number of iterations on dataset
     """
+    f = cocpit.fold_setup.FoldSetup(model_name, batch_size, epochs)
+    f.nofold_indices()
+    f.split_data()
+    f.create_dataloaders()
+    optimizer, model = cocpit.model_config.main(model_name)
+    cocpit.runner.main(f.dataloaders, optimizer, model, epochs, model_name, batch_size)
 
-    # data = cocpit.data_loaders.get_data()
 
-    # loop through batch sizes, models, epochs, and/or folds
+def fold_training(model_name: str, batch_size: int, epochs: int) -> None:
+    """
+    Setup k-fold cross validation to labeled dataset
+
+    Args:
+        model_name (str): name of model architecture
+        batch_size (int): number of images read into memory at a time
+        epochs (int): number of iterations on dataset
+    """
+    f = cocpit.fold_setup.FoldSetup(model_name, batch_size, epochs)
+    f.kfold_training()  # model config and calls to training happen in here
+
+
+def _train_models() -> None:
+    """
+    Train ML models by looping through all batch sizes, models, epochs, and/or folds
+    """
     for batch_size in config.BATCH_SIZE:
         print("BATCH SIZE: ", batch_size)
         for model_name in config.MODEL_NAMES:
@@ -68,19 +95,16 @@ def _build_model():
             for epochs in config.MAX_EPOCHS:
                 print("MAX EPOCH: ", epochs)
 
-                cocpit.setup_training.main(
-                    batch_size,
-                    model_name,
-                    epochs,
-                )
+                if config.KFOLD != 0:
+                    fold_training(model_name, batch_size, epochs)
+                else:
+                    nofold_training(model_name, batch_size, epochs)
 
 
-def _ice_classification():
+def _ice_classification(df_path: str, open_dir: str) -> None:
     """
-    classify good quality ice particles using the ML model
+    Classify quality ice particles using a trained ML model
     """
-    print("running ML model to classify ice...")
-
     start_time = time.time()
 
     # load ML model for predictions
@@ -95,11 +119,11 @@ def _ice_classification():
     print("time to classify ice = %.2f seconds" % (time.time() - start_time))
 
 
-def _geometric_attributes():
+def _geometric_attributes(df_path: str, open_dir: str):
     """
-    calculates geometric particle properties and appends to the databases
-    e.g., roundness, aspect ratio, area ratio, etc.
-    see cocpit/geometric_attributes.py, which calls pic.py for calculations
+    Calculates geometric particle properties and appends to the databases
+     - e.g., roundness, aspect ratio, area ratio, etc.
+     - see cocpit/geometric_attributes.py, which calls cocpit/pic.py for calculations
     """
 
     # load df of quality ice particles to append particle attributes
@@ -108,66 +132,53 @@ def _geometric_attributes():
     df.to_csv(df_path, index=False)
 
 
-def _add_date():
+def _add_date(df_path: str):
     """
-    add a column for the date from the filename
+    Add a column for the date from the filename
+
+    Args:
+        df_path
     """
     df = pd.read_csv(df_path)
-    df = cocpit.add_date.main(df)
-    df.to_csv(df_path, index=False)
+    d = cocpit.add_date.Date(df)
+    d.date_column()
+    d.convert_date_format()
+    d.move_to_front()
+    d.df.to_csv(df_path, index=False)
 
 
-if __name__ == "__main__":
-
-    print(
-        "num workers in loader = {}".format(config.NUM_WORKERS)
-    ) if config.ICE_CLASSIFICATION or config.BUILD_MODEL else print(
-        "num cpus for parallelization = {}".format(config.NUM_WORKERS)
-    )
-
-    # only run once in loop if building model
-    # arbitrary
-    campaigns = (
-        ["OLYMPEX"]
-        if config.BUILD_MODEL
-        else [
-            #             "MACPEX",
-            #             "ATTREX",
-            #             "ISDAC",
-            #             "CRYSTAL_FACE_UND",
-            #             "AIRS_II",
-            #            "ARM",
-            #            "CRYSTAL_FACE_NASA",
-            "ICE_L",
-            #            "IPHEX",
-            #             "MC3E",
-            #             "MIDCIX",
-            #             "MPACE",
-            #             "OLYMPEX",
-            #            "POSIDON",
-        ]
-    )
-    for campaign in campaigns:
+def main() -> None:
+    """
+    Main pipeline which invokes action based on user defined configs for:
+        - preprocessing raw cpi sheets of images
+        - training models
+        - using a trained model to make new predictions
+        - calculating geometric attributes on images
+        - adding dates from filename timestamps
+    """
+    for campaign in config.CAMPAIGNS:
         print("campaign: ", campaign)
         # directory where the individual images live for each campaign
         open_dir = f"cpi_data/campaigns/{campaign}/single_imgs_v1.4.0/"
 
         # create dir for final databases
-        outname = campaign + ".csv"
-
-        df_path = os.path.join(config.FINAL_DIR, outname)
+        df_path = os.path.join(config.FINAL_DIR, f"{campaign}.csv")
 
         if config.PREPROCESS_SHEETS:
-            _preprocess_sheets()
+            _preprocess_sheets(df_path, campaign)
 
         if config.BUILD_MODEL:
-            _build_model()
+            _train_models()
 
         if config.ICE_CLASSIFICATION:
-            _ice_classification()
+            _ice_classification(df_path, open_dir)
 
         if config.GEOMETRIC_ATTRIBUTES:
-            _geometric_attributes()
+            _geometric_attributes(df_path, open_dir)
 
         if config.ADD_DATE:
-            _add_date()
+            _add_date(df_path)
+
+
+if __name__ == "__main__":
+    main()
