@@ -1,102 +1,120 @@
-'''
-torchvision models
-all pretrained on the 1000-class Imagenet dataset
-we update all weights but use this model architecture
-'''
+import torchvision
 from efficientnet_pytorch import EfficientNet
 from torch import nn
-from torchvision import models
 
 import cocpit.config as config  # isort:split
 
 
-def set_parameter_requires_grad(model, feature_extract):
+class Model:
     """
-    Flag for feature extracting
-        when False, finetune the whole model,
-        when True, only update the reshaped layer params
+    Model initializations from torchvision. We always train from scratch.
+
+    Args:
+        feature_extract (bool): update only the last layer parameters. Default False
+        use_pretrained (bool): use a pre-trained model to extract meaningful features from new samples. Default False.
     """
-    if feature_extract:
-        for param in model.parameters():
+
+    def __init__(
+        self,
+        feature_extract: bool = False,
+        use_pretrained: bool = False,
+    ):
+        self.feature_extract = feature_extract
+        self.use_pretrained = use_pretrained
+        self.num_classes = len(config.CLASS_NAMES)
+        self.model: torchvision.models = None
+
+    def set_parameter_requires_grad(self) -> None:
+        """
+        Finetune the whole model when feature_extract is True, else only update the reshaped layer params
+        """
+        for param in self.model.parameters():
             param.requires_grad = False
 
+    def resnet_classifier(self) -> None:
+        """
+        create linear output layer equal to number of classes
+        """
+        self.set_parameter_requires_grad() if self.feature_extract else None
+        num_ftrs = self.model.fc.in_features
+        self.model.fc = nn.Linear(num_ftrs, self.num_classes)
 
-def initialize_model(model_name, feature_extract=False, use_pretrained=False):
+    def vgg_classifier(self) -> None:
+        """
+        create linear output layer equal to number of classes
+        """
+        self.set_parameter_requires_grad() if self.feature_extract else None
+        num_ftrs = self.model.classifier[6].in_features
+        self.model.classifier[6] = nn.Linear(num_ftrs, self.num_classes)
 
-    '''
-    params:
-    -------
-    model_name: name of the model to train
-    num_classes: number of classes
-    feature_extract: default = False; start with a pretrained model and only
-                    update the final layer weights from which we derive predictions
-    use_pretrained: default = False; update all of the model’s
-                    parameters for our new task (retrain)
-    '''
+    def densenet_classifier(self) -> None:
+        """
+        create linear output layer equal to number of classes
+        """
+        self.set_parameter_requires_grad() if self.feature_extract else None
+        num_ftrs = self.model.classifier.in_features
+        self.model.classifier = nn.Linear(num_ftrs, self.num_classes)
 
-    num_classes = len(config.CLASS_NAMES)
+    def resnet18(self) -> None:
+        """resnet 18 architecture"""
+        self.model = torchvision.models.resnet18(pretrained=self.use_pretrained)
+        self.resnet_classifier()
 
-    # all input size of 224
-    if model_name == "resnet18":
-        model_ft = models.resnet18(pretrained=use_pretrained)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        num_ftrs = model_ft.fc.in_features
-        model_ft.fc = nn.Linear(num_ftrs, num_classes)
+    def resnet34(self) -> None:
+        """resnet 34 architecture"""
+        self.model = torchvision.models.resnet34(pretrained=self.use_pretrained)
+        self.resnet_classifier()
 
-    elif model_name == "resnet34":
-        model_ft = models.resnet34(pretrained=use_pretrained)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        num_ftrs = model_ft.fc.in_features
-        model_ft.fc = nn.Linear(num_ftrs, num_classes)
+    def resnet152(self) -> None:
+        """resnet 152 architecture"""
+        self.model = torchvision.models.resnet152(pretrained=self.use_pretrained)
+        self.resnet_classifier()
 
-    elif model_name == "resnet152":
-        model_ft = models.resnet152(pretrained=use_pretrained)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        num_ftrs = model_ft.fc.in_features
-        model_ft.fc = nn.Linear(num_ftrs, num_classes)
+    def alexnet(self) -> None:
+        """alexnet architecture"""
+        self.model = torchvision.models.alexnet(pretrained=self.use_pretrained)
+        self.vgg_classifier()
 
-    elif model_name == "alexnet":
-        model_ft = models.alexnet(pretrained=use_pretrained)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        num_ftrs = model_ft.classifier[6].in_features
-        model_ft.classifier[6] = nn.Linear(num_ftrs, num_classes)
+    def vgg16(self) -> None:
+        """VGG 16 architecture"""
+        self.model = torchvision.models.vgg16_bn(pretrained=self.use_pretrained)
+        self.vgg_classifier()
+        print(self.model)
 
-    elif model_name == "vgg16":
-        model_ft = models.vgg16_bn(pretrained=use_pretrained)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        num_ftrs = model_ft.classifier[6].in_features
-        model_ft.classifier[6] = nn.Linear(num_ftrs, num_classes)
+    def vgg19(self) -> None:
+        """VGG 19 architecture"""
+        self.model = torchvision.models.vgg19_bn(pretrained=self.use_pretrained)
+        self.vgg_classifier()
 
-    elif model_name == "vgg19":
-        model_ft = models.vgg19_bn(pretrained=use_pretrained)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        num_ftrs = model_ft.classifier[6].in_features
-        model_ft.classifier[6] = nn.Linear(num_ftrs, num_classes)
+    def densenet169(self) -> None:
+        """Densenet 169 architecture"""
+        self.model = torchvision.models.densenet169(pretrained=self.use_pretrained)
+        self.densenet_classifier()
 
-    elif model_name == "squeezenet":
-        model_ft = models.squeezenet1_1(pretrained=use_pretrained)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        model_ft.classifier[1] = nn.Conv2d(
-            512, num_classes, kernel_size=(7, 7), stride=(2, 2)
-        )
-        # model_ft.num_classes = num_classes
+    def densenet201(self) -> None:
+        """Densenet 201 architecture"""
+        self.model = torchvision.models.densenet201(pretrained=self.use_pretrained)
+        self.densenet_classifier()
 
-    elif model_name == "densenet169":
-        model_ft = models.densenet169(pretrained=use_pretrained)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        num_ftrs = model_ft.classifier.in_features
-        model_ft.classifier = nn.Linear(num_ftrs, num_classes)
+    def efficient(self) -> None:
+        """EfficientNet-b0 architecture"""
+        self.model = EfficientNet.from_name("efficientnet-b0")
 
-    elif model_name == "densenet201":
-        model_ft = models.densenet201(pretrained=use_pretrained)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        num_ftrs = model_ft.classifier.in_features
-        model_ft.classifier = nn.Linear(num_ftrs, num_classes)
 
-    elif model_name == "efficient":
-        model_ft = EfficientNet.from_name("efficientnet-b0")
-    else:
-        print("Invalid model name, exiting...")
-        exit()
+def initialize_model(
+    model_name: str, feature_extract: bool = False, use_pretrained: bool = False
+) -> torchvision.models:
+    """
+    Set up model architectures. All input size of 224
 
-    return model_ft
+    Args:
+        feature_extract (bool): Start with a pretrained model and only
+                                update the final layer weights from which we derive predictions
+        use_pretrained (bool): Update all of the model’s parameters (retrain). Default = False
+    """
+
+    m = Model(feature_extract, use_pretrained)
+    # call method based on str model name
+    method = getattr(Model, model_name)
+    method(m)
+    return m.model

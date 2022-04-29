@@ -3,13 +3,14 @@ Holds epoch and batch metrics for both the training and validation datasets
 Logs metrics to console and/or comet-ml interface (see config.py to turn on)
 """
 
-import torch
-
-from dataclasses import dataclass, field
-from cocpit import config as config
-from typing import Dict
 import csv
+from dataclasses import dataclass, field
+from typing import Dict
+
+import torch
 from torch import nn
+
+from cocpit import config as config
 
 
 @dataclass
@@ -102,6 +103,7 @@ class Metrics:
     def print_batch_metrics(self, phase: str) -> None:
         """
         Outputs batch iteration, loss, and accuracy
+
         Args:
             phase (str): "Train" or "Validation"
         """

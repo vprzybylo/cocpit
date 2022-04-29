@@ -48,13 +48,15 @@
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.add_date">cocpit.add_date module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.auto_str">cocpit.auto_str module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.check_classifications">cocpit.check_classifications module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#cocpit-check-classifications-module">cocpit.check_classifications module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#cocpit-config-sample-module">cocpit.config-sample module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.config">cocpit.config module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.config_cocpit">cocpit.config_cocpit module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#cocpit-config-cocpit-module">cocpit.config_cocpit module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.data_loaders">cocpit.data_loaders module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.geometry">cocpit.geometry module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#cocpit-geometry-runner-module">cocpit.geometry_runner module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.fold_setup">cocpit.fold_setup module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.geometric_attributes">cocpit.geometric_attributes module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#cocpit-geometric-attributes-module">cocpit.geometric_attributes module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.gui">cocpit.gui module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.gui_label">cocpit.gui_label module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.gui_wrong">cocpit.gui_wrong module</a></li>
@@ -62,7 +64,6 @@
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.model_config">cocpit.model_config module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.models">cocpit.models module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.performance_metrics">cocpit.performance_metrics module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.pic">cocpit.pic module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.predictions">cocpit.predictions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.process_sheets">cocpit.process_sheets module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.run_model">cocpit.run_model module</a></li>
@@ -111,37 +112,18 @@
 <section id="module-cocpit.plotting_scripts.confusion_matrix">
 <span id="cocpit-plotting-scripts-confusion-matrix-module"></span><h2>cocpit.plotting_scripts.confusion_matrix module<a class="headerlink" href="#module-cocpit.plotting_scripts.confusion_matrix" title="Permalink to this headline"></a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="cocpit.plotting_scripts.confusion_matrix.change_cmap">
-<span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.confusion_matrix.</span></span><span class="sig-name descname"><span class="pre">change_cmap</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.confusion_matrix.change_cmap" title="Permalink to this definition"></a></dt>
-<dd><p>Color map from matplotlib</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>masking out nans to white on red colormap</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>mpl.cm</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="cocpit.plotting_scripts.confusion_matrix.conf_matrix">
-<span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.confusion_matrix.</span></span><span class="sig-name descname"><span class="pre">conf_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.confusion_matrix.conf_matrix" title="Permalink to this definition"></a></dt>
-<dd><p>Plot and save a confusion matrix from a saved validation dataloader</p>
+<dt class="sig sig-object py" id="cocpit.plotting_scripts.confusion_matrix.mask_cm_small_values">
+<span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.confusion_matrix.</span></span><span class="sig-name descname"><span class="pre">mask_cm_small_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.confusion_matrix.mask_cm_small_values" title="Permalink to this definition"></a></dt>
+<dd><p>Mask small values to plot white</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>all_labels</strong> (<em>np.ndarray</em>) – actual labels (correctly hand labeled)</p></li>
-<li><p><strong>all_preds</strong> (<em>np.ndarray</em>) – list of predictions from the model for all batches</p></li>
-<li><p><strong>norm</strong> (<em>str</em>) – ‘true’, ‘pred’, or None.
-Normalizes confusion matrix over the true (rows),
-predicted (columns) conditions or all the population.
-If None, confusion matrix will not be normalized.</p></li>
-<li><p><strong>save_fig</strong> (<em>bool</em>) – save the conf matrix to file</p></li>
-</ul>
+<dd class="field-odd"><p><strong>value</strong> (<em>float</em>) – value to mask below</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">confusion_matrix</span></code></p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>masked cm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>cm (sklearn.metrics.confusion_matrix)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -164,6 +146,20 @@ If None, confusion matrix will not be normalized.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="cocpit.plotting_scripts.confusion_matrix.change_cmap">
+<span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.confusion_matrix.</span></span><span class="sig-name descname"><span class="pre">change_cmap</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.confusion_matrix.change_cmap" title="Permalink to this definition"></a></dt>
+<dd><p>Color map from matplotlib</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>masking out nans to white on red colormap</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>mpl.cm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="cocpit.plotting_scripts.confusion_matrix.heatmap_axes">
 <span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.confusion_matrix.</span></span><span class="sig-name descname"><span class="pre">heatmap_axes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.confusion_matrix.heatmap_axes" title="Permalink to this definition"></a></dt>
 <dd><p>Confusion matrix axis labels, colorbar, and tick marks</p>
@@ -181,18 +177,23 @@ If None, confusion matrix will not be normalized.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="cocpit.plotting_scripts.confusion_matrix.mask_cm_small_values">
-<span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.confusion_matrix.</span></span><span class="sig-name descname"><span class="pre">mask_cm_small_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.confusion_matrix.mask_cm_small_values" title="Permalink to this definition"></a></dt>
-<dd><p>Mask small values to plot white</p>
+<dt class="sig sig-object py" id="cocpit.plotting_scripts.confusion_matrix.conf_matrix">
+<span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.confusion_matrix.</span></span><span class="sig-name descname"><span class="pre">conf_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.confusion_matrix.conf_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Plot and save a confusion matrix from a saved validation dataloader</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<em>float</em>) – value to mask below</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>all_labels</strong> (<em>np.ndarray</em>) – actual labels (correctly hand labeled)</p></li>
+<li><p><strong>all_preds</strong> (<em>np.ndarray</em>) – list of predictions from the model for all batches</p></li>
+<li><p><strong>norm</strong> (<em>str</em>) – ‘true’, ‘pred’, or None.
+Normalizes confusion matrix over the true (rows),
+predicted (columns) conditions or all the population.
+If None, confusion matrix will not be normalized.</p></li>
+<li><p><strong>save_fig</strong> (<em>bool</em>) – save the conf matrix to file</p></li>
+</ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>masked cm</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>cm (sklearn.metrics.confusion_matrix)</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">confusion_matrix</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -222,11 +223,6 @@ If None, confusion matrix will not be normalized.</p></li>
 <span id="cocpit-plotting-scripts-plot-module"></span><h2>cocpit.plotting_scripts.plot module<a class="headerlink" href="#module-cocpit.plotting_scripts.plot" title="Permalink to this headline"></a></h2>
 <p>plotting functions called in /notebooks/make_plots.ipynb</p>
 <dl class="py function">
-<dt class="sig sig-object py" id="cocpit.plotting_scripts.plot.balance_diff_accuracy">
-<span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.plot.</span></span><span class="sig-name descname"><span class="pre">balance_diff_accuracy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_val_unbalanced</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_train_unbalanced</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.plot.balance_diff_accuracy" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="cocpit.plotting_scripts.plot.batch_size_accuracy_bar">
 <span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.plot.</span></span><span class="sig-name descname"><span class="pre">batch_size_accuracy_bar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val_csv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.plot.batch_size_accuracy_bar" title="Permalink to this definition"></a></dt>
 <dd><p>plot batch size vs max accuracy (20 epochs)
@@ -239,16 +235,21 @@ val_csv (str): filename holding validation accuracies</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="cocpit.plotting_scripts.plot.sorted_colors">
-<span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.plot.</span></span><span class="sig-name descname"><span class="pre">sorted_colors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.plot.sorted_colors" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="cocpit.plotting_scripts.plot.train_val_acc_loss">
 <span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.plot.</span></span><span class="sig-name descname"><span class="pre">train_val_acc_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_accs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_accs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.plot.train_val_acc_loss" title="Permalink to this definition"></a></dt>
 <dd><p>training and validation accuracy and loss for each model
 4 scatter subplots</p>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.plotting_scripts.plot.balance_diff_accuracy">
+<span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.plot.</span></span><span class="sig-name descname"><span class="pre">balance_diff_accuracy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_val_unbalanced</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_train_unbalanced</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.plot.balance_diff_accuracy" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.plotting_scripts.plot.sorted_colors">
+<span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.plot.</span></span><span class="sig-name descname"><span class="pre">sorted_colors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.plot.sorted_colors" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cocpit.plotting_scripts.plot.val_acc_fold_bar">
@@ -259,27 +260,6 @@ val_csv (str): filename holding validation accuracies</p>
 <section id="module-cocpit.plotting_scripts.plot_metrics">
 <span id="cocpit-plotting-scripts-plot-metrics-module"></span><h2>cocpit.plotting_scripts.plot_metrics module<a class="headerlink" href="#module-cocpit.plotting_scripts.plot_metrics" title="Permalink to this headline"></a></h2>
 <p>calculation and plotting functions for reporting performance metrics</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="cocpit.plotting_scripts.plot_metrics.classification_report_classes">
-<span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.plot_metrics.</span></span><span class="sig-name descname"><span class="pre">classification_report_classes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clf_report</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.plot_metrics.classification_report_classes" title="Permalink to this definition"></a></dt>
-<dd><p>plot precision, recall, and f1-score for each class from 1 model
-average across folds
-also includes accuracy, macro avg, and weighted avg total</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>clf_report</strong> – classification report from sklearn</p></li>
-<li><p><strong>above</strong> (<em>or from metrics_report</em><em>(</em><em>)</em>) – </p></li>
-<li><p><strong>save_name</strong> (<em>str</em>) – plot filename to save as</p></li>
-<li><p><strong>save_fig</strong> (<em>bool</em>) – whether to save the figure</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py function">
 <dt class="sig sig-object py" id="cocpit.plotting_scripts.plot_metrics.manipulate_df">
 <span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.plot_metrics.</span></span><span class="sig-name descname"><span class="pre">manipulate_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.plot_metrics.manipulate_df" title="Permalink to this definition"></a></dt>
@@ -334,10 +314,37 @@ values: model names used for publication (capitalized and hyphenated)</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.plotting_scripts.plot_metrics.classification_report_classes">
+<span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.plot_metrics.</span></span><span class="sig-name descname"><span class="pre">classification_report_classes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clf_report</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.plot_metrics.classification_report_classes" title="Permalink to this definition"></a></dt>
+<dd><p>plot precision, recall, and f1-score for each class from 1 model
+average across folds
+also includes accuracy, macro avg, and weighted avg total</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clf_report</strong> – classification report from sklearn</p></li>
+<li><p><strong>above</strong> (<em>or from metrics_report</em><em>(</em><em>)</em>) – </p></li>
+<li><p><strong>save_name</strong> (<em>str</em>) – plot filename to save as</p></li>
+<li><p><strong>save_fig</strong> (<em>bool</em>) – whether to save the figure</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-cocpit.plotting_scripts.plot_timing">
 <span id="cocpit-plotting-scripts-plot-timing-module"></span><h2>cocpit.plotting_scripts.plot_timing module<a class="headerlink" href="#module-cocpit.plotting_scripts.plot_timing" title="Permalink to this headline"></a></h2>
 <p>plot the efficiency of the model and how long it takes to make predictions from .csv during training</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.plotting_scripts.plot_timing.time_samples">
+<span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.plot_timing.</span></span><span class="sig-name descname"><span class="pre">time_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_csv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.plot_timing.time_samples" title="Permalink to this definition"></a></dt>
+<dd><p>model vs time it takes to process 100, 1,000, and 10,000 samples</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="cocpit.plotting_scripts.plot_timing.efficiency_samples">
 <span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.plot_timing.</span></span><span class="sig-name descname"><span class="pre">efficiency_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_csv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.plot_timing.efficiency_samples" title="Permalink to this definition"></a></dt>
@@ -350,22 +357,11 @@ values: model names used for publication (capitalized and hyphenated)</p></li>
 <dd><p>model vs time it took to train</p>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="cocpit.plotting_scripts.plot_timing.time_samples">
-<span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.plot_timing.</span></span><span class="sig-name descname"><span class="pre">time_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_csv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.plot_timing.time_samples" title="Permalink to this definition"></a></dt>
-<dd><p>model vs time it takes to process 100, 1,000, and 10,000 samples</p>
-</dd></dl>
-
 </section>
 <section id="module-cocpit.plotting_scripts.saliency">
 <span id="cocpit-plotting-scripts-saliency-module"></span><h2>cocpit.plotting_scripts.saliency module<a class="headerlink" href="#module-cocpit.plotting_scripts.saliency" title="Permalink to this headline"></a></h2>
 <p>plots saliency maps of images to determine
 which pixels most contriute to the final output</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="cocpit.plotting_scripts.saliency.get_saliency">
-<span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.saliency.</span></span><span class="sig-name descname"><span class="pre">get_saliency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.saliency.get_saliency" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
 <dl class="py function">
 <dt class="sig sig-object py" id="cocpit.plotting_scripts.saliency.plot_image">
 <span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.saliency.</span></span><span class="sig-name descname"><span class="pre">plot_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.saliency.plot_image" title="Permalink to this definition"></a></dt>
@@ -382,6 +378,11 @@ which pixels most contriute to the final output</p>
 <dd><p>Preprocess the image, convert to tensor, normalize,
 and convert to correct shape</p>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cocpit.plotting_scripts.saliency.get_saliency">
+<span class="sig-prename descclassname"><span class="pre">cocpit.plotting_scripts.saliency.</span></span><span class="sig-name descname"><span class="pre">get_saliency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.plotting_scripts.saliency.get_saliency" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cocpit.plotting_scripts.saliency.saliency_runner">

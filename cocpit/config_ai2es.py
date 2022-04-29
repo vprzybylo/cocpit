@@ -54,7 +54,8 @@ NUM_WORKERS = 5
 
 # how many folds used in training (cross-validation)
 # kold = 0 turns this off and splits the data according to valid_size
-KFOLD = 0
+# cannot = 1
+KFOLD = 5
 
 # percent of the training dataset to use as validation
 VALID_SIZE = 0.20
@@ -63,7 +64,7 @@ VALID_SIZE = 0.20
 BATCH_SIZE = [64]
 
 # number of epochs to train model
-MAX_EPOCHS = [20]
+MAX_EPOCHS = [2]
 
 # names of each ice crystal class
 CLASS_NAMES = ["no precipitation", "obstructed", "precipitation"]
@@ -77,22 +78,23 @@ CLASS_NAME_MAP = {
 
 # models to train
 MODEL_NAMES = [
-    "efficient",
     "resnet18",
-    "resnet34",
-    "resnet152",
-    "alexnet",
-    "vgg16",
-    "vgg19",
-    "densenet169",
-    "densenet201",
+    # "efficient",
+    # "resnet34",
+    # "resnet152",
+    # "alexnet",
+    # "vgg16",
+    # "vgg19",
+    # "densenet169",
+    # "densenet201",
 ]
 
 # directory that holds the training data
 DATA_DIR = f"{BASE_DIR}/night_precip_hand_labeled/2017/"
+# DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # whether to save the model
-SAVE_MODEL = True
+SAVE_MODEL = False
 
 # directory to save the trained model to
 MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
@@ -119,7 +121,7 @@ VAL_LOADER_SAVENAME = (
 )
 
 # write training loss and accuracy to csv
-SAVE_ACC = True
+SAVE_ACC = False
 
 # directory for saving training accuracy and loss csv's
 ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"
@@ -149,7 +151,7 @@ CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
 
 # log experiment to comet for tracking?
-LOG_EXP = True
+LOG_EXP = False
 if os.path.basename(sys.argv[0]) == "__main__.py":
     NOTEBOOK = False
 else:

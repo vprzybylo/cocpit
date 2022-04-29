@@ -1,27 +1,15 @@
-"""
-find the #/% of cutoff particles after removing blurry, fragmented, and spherical drops
-"""
+from cocpit import config as config
 import pandas as pd
 
 
-def main():
-    campaigns = [
-        "AIRS_II",
-        "ARM",
-        "ATTREX",
-        "CRYSTAL_FACE_NASA",
-        "CRYSTAL_FACE_UND",
-        "ICE_L",
-        "MACPEX",
-        "MC3E",
-        "MIDCIX",
-        "MPACE",
-        "OLYMPEX",
-        "POSIDON",
-    ]
+def main(cutoff: float = 10.0) -> None:
+    """
+    Print the #/% of cutoff particles after removing blurry, fragmented, and spherical drops
 
-    cutoff = 10.0
-    for campaign in campaigns:
+    Args:
+        cutoff (float): Percent of particle that can intersect the border
+    """
+    for campaign in config.CAMPAIGNS:
         df = pd.read_csv("/data/data/final_databases/vgg19/" + campaign + ".csv")
         len_df_less_cutoff = len(df[df["cutoff"] >= cutoff])
         print(
@@ -33,5 +21,5 @@ def main():
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,19 +1,12 @@
-"""
-Holds the class for ipywidget buttons to
-label incorrect predictions from a dataloader.
-The dataloader, model, and all class variables
-are initialized in notebooks/move_wrong_predictions.ipynb
-"""
 import shutil
 
 import ipywidgets
 import matplotlib.pyplot as plt
 import numpy as np
 from IPython.display import clear_output
-from ipywidgets import Button, Layout
-import PIL
-from typing import Optional
-
+from ipywidgets import Button
+from PIL import Image
+from typing import List, Optional
 from cocpit.auto_str import auto_str
 import cocpit
 
@@ -30,15 +23,25 @@ plt.rcParams.update(plt_params)
 
 @auto_str
 class GUI:
-    """create widgets"""
+    """
+    - ipywidget buttons to label incorrect predictions from a dataloader.
+    - The dataloader, model, and all class variables are initialized in notebooks/move_wrong_predictions.ipynb
+
+    Args:
+        wrong_trunc (List[int]): indices where the model predictions are wrong
+        all_labels (np.ndarray[int]): image labels
+        all_paths (np.ndarray[str]): image paths
+        all_topk_props (np.ndarray[float]): top predicted probabilites
+        all_topk_classes (np.ndarray[int]): classes related to the top predicted probabilites
+    """
 
     def __init__(
         self,
-        wrong_trunc,
-        all_labels,
-        all_paths,
-        all_topk_probs,
-        all_topk_classes,
+        wrong_trunc: List[int],
+        all_labels: np.ndarray,
+        all_paths: np.ndarray,
+        all_topk_probs: np.ndarray,
+        all_topk_classes: np.ndarray,
     ):
 
         self.index = 0
@@ -60,16 +63,24 @@ class GUI:
         self.count = 0  # number of moved images
         self.center = ipywidgets.Output()  # center image with predictions
 
-    def open_image(self) -> Optional[PIL.Image.Image]:
-        # try:
-        print(PIL.Image.open(self.all_paths[self.index]))
-        return PIL.Image.open(self.all_paths[self.index])
-        # except FileNotFoundError:
-        #    print("The file cannot be found.")
-        #    return
+    def open_image(self) -> Optional[Image.Image]:
+        """
+        Open an image from a path at a given index
+
+        Returns:
+            Union[Image.Image, None]: opened PIL image or None if no image is opened
+
+        Raises:
+            FileNotFoundError: File already moved and cannot be opened
+        """
+
+        try:
+            return Image.open(self.all_paths[self.index])
+        except FileNotFoundError:
+            print("This file cannot be found.")
 
     def make_buttons(self) -> None:
-        """buttons for each category"""
+        """Make buttons for each category"""
 
         for idx, label in enumerate(cocpit.config.CLASS_NAMES):
             self.buttons.append(
@@ -82,11 +93,8 @@ class GUI:
 
     def on_button_next(self, b) -> None:
         """
-        when the next button is clicked, make a new image and bar chart appear
+        When the next button is clicked, make a new image and bar chart appear
         by updating the index within the wrong predictions by 1
-
-        Args:
-            b: button instance
         """
 
         self.index = self.index + 1
@@ -94,7 +102,7 @@ class GUI:
 
     def align_buttons(self):
         """
-        alter layout based on # of classes
+        Alter layout based on # of classes
         """
         with self.center:
             if len(cocpit.config.CLASS_NAMES) > 5:
@@ -108,12 +116,12 @@ class GUI:
                     [self.buttons[i] for i in range(len(cocpit.config.CLASS_NAMES))],
                 )
 
-    def init_fig(self, image: PIL.Image.Image, ax1: plt.Axes) -> None:
+    def init_fig(self, image: Image.Image, ax1: plt.Axes) -> None:
         """
-        display the raw image
+        Display the raw image
 
         Args:
-            image (PIL.Image.Image): opened image
+            image (Image.Image): opened image
             ax1 (plt.Axes): subplot axis
         """
         clear_output()  # so that the next fig doesnt display below
@@ -126,9 +134,9 @@ class GUI:
 
     def bar_chart(self, ax2) -> None:
         """
-        create barchart that outputs top k predictions for a given image
+        Create barchart that outputs top k predictions for a given image
 
-        Args
+        Args:
             ax2 (plt.Axes): subplot axis
         """
 
@@ -142,10 +150,8 @@ class GUI:
         ax2.invert_yaxis()  # labels read top-to-bottom
         ax2.set_title("Class Probability")
 
-    def plot_saliency(
-        self, image: PIL.Image.Image, ax2: plt.Axes, size: int = 224
-    ) -> None:
-        """create saliency map for image in test dataset
+    def plot_saliency(self, image: Image.Image, ax2: plt.Axes, size: int = 224) -> None:
+        """Create saliency map for image in test dataset
 
         Args:
             image (PIL.Image.Image): opened image
@@ -160,20 +166,11 @@ class GUI:
 
     def save_image(self, b) -> None:
         """
-        move the image based on dropdown selection
-
-        Args:
-            change (button dropdown instance): new class label
+        Move the image based on dropdown selection
         """
 
         filename = self.all_paths[self.index].split("/")[-1]
 
-        print(
-            f"{cocpit.config.DATA_DIR}{cocpit.config.CLASS_NAME_MAP[cocpit.config.CLASS_NAMES[self.all_labels[self.index]]]}/{filename}"
-        )
-        print(
-            f"{cocpit.config.DATA_DIR}{cocpit.config.CLASS_NAME_MAP[b.description]}/{filename}"
-        )
         try:
             shutil.move(
                 f"{cocpit.config.DATA_DIR}{cocpit.config.CLASS_NAME_MAP[cocpit.config.CLASS_NAMES[self.all_labels[self.index]]]}/{filename}",
@@ -188,7 +185,7 @@ class GUI:
 
     def visualizations(self) -> None:
         """
-        use the human and model labels and classes to
+        Use the human and model labels and classes to
         create a bar chart with the top k predictions
         from the image at the current index
         """
@@ -202,8 +199,9 @@ class GUI:
                 _, (ax1, ax2, ax3) = plt.subplots(
                     constrained_layout=True, figsize=(19, 5), ncols=3, nrows=1
                 )
-                self.init_fig(image, ax1)
-                self.plot_saliency(image, ax2)
-                self.bar_chart(ax3)
-                plt.show()
-                # fig.savefig(f"/ai2es/plots/wrong_preds{self.index}.pdf")
+                if image:
+                    self.init_fig(image, ax1)
+                    self.plot_saliency(image, ax2)
+                    self.bar_chart(ax3)
+                    plt.show()
+                    # fig.savefig(f"/ai2es/plots/wrong_preds{self.index}.pdf")

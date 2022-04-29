@@ -49,13 +49,14 @@
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.add_date">cocpit.add_date module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.auto_str">cocpit.auto_str module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.check_classifications">cocpit.check_classifications module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#cocpit-check-classifications-module">cocpit.check_classifications module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#cocpit-config-sample-module">cocpit.config-sample module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.config">cocpit.config module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.config_cocpit">cocpit.config_cocpit module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#cocpit-config-cocpit-module">cocpit.config_cocpit module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.data_loaders">cocpit.data_loaders module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.geometry">cocpit.geometry module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cocpit.html#cocpit-geometry-runner-module">cocpit.geometry_runner module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.fold_setup">cocpit.fold_setup module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.geometric_attributes">cocpit.geometric_attributes module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.gui">cocpit.gui module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.gui_label">cocpit.gui_label module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.gui_wrong">cocpit.gui_wrong module</a></li>
@@ -63,7 +64,6 @@
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.model_config">cocpit.model_config module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.models">cocpit.models module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.performance_metrics">cocpit.performance_metrics module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.pic">cocpit.pic module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.predictions">cocpit.predictions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.process_sheets">cocpit.process_sheets module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cocpit.html#module-cocpit.run_model">cocpit.run_model module</a></li>
@@ -136,35 +136,9 @@
 <dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.dash_app.callbacks.topo_map.</span></span><span class="sig-name descname"><span class="pre">TopoMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resolution=1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_area=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_area=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.convert_2D">
-<span class="sig-name descname"><span class="pre">convert_2D</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.convert_2D" title="Permalink to this definition"></a></dt>
-<dd><p>Convert 2D again after selecting range</p>
-</dd></dl>
-
 <dl class="py attribute">
-<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lat">
-<span class="sig-name descname"><span class="pre">lat</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lat" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lat_area">
-<span class="sig-name descname"><span class="pre">lat_area</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lat_area" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lat_num">
-<span class="sig-name descname"><span class="pre">lat_num</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lat_num" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lat_range">
-<span class="sig-name descname"><span class="pre">lat_range</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lat_range" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lon">
-<span class="sig-name descname"><span class="pre">lon</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lon" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.resolution">
+<span class="sig-name descname"><span class="pre">resolution</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.resolution" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -173,8 +147,8 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lon_num">
-<span class="sig-name descname"><span class="pre">lon_num</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lon_num" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lat_area">
+<span class="sig-name descname"><span class="pre">lat_area</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lat_area" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -182,11 +156,45 @@
 <span class="sig-name descname"><span class="pre">lon_range</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lon_range" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.mesh_grid">
-<span class="sig-name descname"><span class="pre">mesh_grid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.mesh_grid" title="Permalink to this definition"></a></dt>
-<dd><p>create 2D array</p>
-</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lat_range">
+<span class="sig-name descname"><span class="pre">lat_range</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lat_range" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.spacing">
+<span class="sig-name descname"><span class="pre">spacing</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.spacing" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.z">
+<span class="sig-name descname"><span class="pre">z</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.z" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lon_num">
+<span class="sig-name descname"><span class="pre">lon_num</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lon_num" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lat_num">
+<span class="sig-name descname"><span class="pre">lat_num</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lat_num" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lat">
+<span class="sig-name descname"><span class="pre">lat</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lat" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.lon">
+<span class="sig-name descname"><span class="pre">lon</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.lon" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.topo">
+<span class="sig-name descname"><span class="pre">topo</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.topo" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.read_netCDF_globe">
@@ -195,20 +203,15 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.mesh_grid">
+<span class="sig-name descname"><span class="pre">mesh_grid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.mesh_grid" title="Permalink to this definition"></a></dt>
+<dd><p>create 2D array</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.reshape">
 <span class="sig-name descname"><span class="pre">reshape</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.reshape" title="Permalink to this definition"></a></dt>
 <dd><p>Convert 2D array from 1D array for z value</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.resolution">
-<span class="sig-name descname"><span class="pre">resolution</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.resolution" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.select_range">
-<span class="sig-name descname"><span class="pre">select_range</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.select_range" title="Permalink to this definition"></a></dt>
-<dd><p>Select the range of map</p>
 </dd></dl>
 
 <dl class="py method">
@@ -217,20 +220,17 @@
 <dd><p>Skip the data for resolution</p>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.spacing">
-<span class="sig-name descname"><span class="pre">spacing</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.spacing" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.select_range">
+<span class="sig-name descname"><span class="pre">select_range</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.select_range" title="Permalink to this definition"></a></dt>
+<dd><p>Select the range of map</p>
+</dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.topo">
-<span class="sig-name descname"><span class="pre">topo</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.topo" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.z">
-<span class="sig-name descname"><span class="pre">z</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.z" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.dash_app.callbacks.topo_map.TopoMap.convert_2D">
+<span class="sig-name descname"><span class="pre">convert_2D</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.dash_app.callbacks.topo_map.TopoMap.convert_2D" title="Permalink to this definition"></a></dt>
+<dd><p>Convert 2D again after selecting range</p>
+</dd></dl>
 
 </dd></dl>
 

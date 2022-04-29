@@ -19,6 +19,7 @@ cocpit.add\_date module
     :members:
     :undoc-members:
     :show-inheritance:
+    :exclude-members: df
 
 cocpit.auto\_str module
 -----------------------
@@ -68,6 +69,22 @@ cocpit.data\_loaders module
     :undoc-members:
     :show-inheritance:
 
+cocpit.geometry module
+---------------------------
+
+.. automodule:: cocpit.geometry
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cocpit.geometry\_runner module
+---------------------------
+
+.. automodule:: cocpit.geometry_runner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cocpit.fold\_setup module
 -------------------------
 
@@ -75,14 +92,17 @@ cocpit.fold\_setup module
     :members:
     :undoc-members:
     :show-inheritance:
+    :exclude-members:
+        model_name,
+        batch_size,
+        epochs,
+        train_data,
+        val_data,
+        train_labels,
+        val_labels,
+        train_indices,
+        val_indices,
 
-cocpit.geometric\_attributes module
------------------------------------
-
-.. automodule:: cocpit.geometric_attributes
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 cocpit.gui module
 -----------------
@@ -91,6 +111,12 @@ cocpit.gui module
     :members:
     :undoc-members:
     :show-inheritance:
+    :exclude-members:
+        index,
+        count,
+        center,
+        menu,
+        forward
 
 cocpit.gui\_label module
 ------------------------
@@ -139,14 +165,29 @@ cocpit.performance\_metrics module
     :members:
     :undoc-members:
     :show-inheritance:
+    :exclude-members:
+        dataloaders,
+        optimizer,
+        model,
+        model_name,
+        epoch,
+        epochs,
+        kfold,
+        batch_size,
+        totals,
+        running_loss,
+        running_corrects,
+        batch_acc,
+        epoch_loss,
+        epoch_acc,
+        val_best_acc,
+        batch,
+        labels,
+        inputs,
+        preds,
+        loss,
+        criterion
 
-cocpit.pic module
------------------
-
-.. automodule:: cocpit.pic
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 cocpit.predictions module
 -------------------------

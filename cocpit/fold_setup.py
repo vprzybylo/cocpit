@@ -1,8 +1,3 @@
-"""
-setup training and validation indices for labels
-and data based on k-fold cross validation
-called in __main__.py
-"""
 import os
 import random
 
@@ -19,28 +14,37 @@ from collections import Counter
 from sklearn.model_selection import StratifiedKFold, train_test_split
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import List
 
 
 @dataclass
 class FoldSetup:
     """
-    setup training and validation indices for labels and data based on k-fold cross validation
+    - Setup training and validation indices for labels and data based on k-fold cross validation
+    - Called in __main__.py
+
+    Args:
+        model_name (str): name of model architecture
+        batch_size (int): number of images read into memory at a time
+        epochs (int): number of iterations on dataset
     """
 
     model_name: str
     batch_size: int
     epochs: int
 
-    train_data: torch.utils.data.Subset = field(default=None, init=False)
-    val_data: torch.utils.data.Subset = field(default=None, init=False)
-    train_labels: Any = field(default=None, init=False)  # List[int]
-    val_labels: Any = field(default=None, init=False)
-    train_indices: Any = field(default=None, init=False)
-    val_indices: Any = field(default=None, init=False)
+    train_data: torch.utils.data.Subset = field(init=False)
+    val_data: torch.utils.data.Subset = field(init=False)
+    train_labels: List[int] = field(init=False)  # List[int]
+    val_labels: List[int] = field(init=False)
+    train_indices: List[int] = field(init=False)
+    val_indices: List[int] = field(init=False)
 
-    def print_composition(self):
-        """prints length of train and test data based on validation %"""
+    def print_composition(self) -> None:
+        """
+        Prints length of train and test data based on validation %
+        defined in config.py
+        """
         print(
             len(self.train_labels),
             len(self.val_labels),
@@ -51,13 +55,17 @@ class FoldSetup:
         print("val counts")
         print(Counter(self.val_labels))
 
-    def split_data(self, composition: bool = True):
+    def split_data(self, composition: bool = False) -> None:
         """
-        Create subset of data and labels for train and val based on indices
+        Create a subset of data and labels for training
+        and validation based on indices
+
+        Args:
+            composition (bool): whether to print the class totals for each dataset
         """
         data = data_loaders.get_data("train")
-        self.train_labels = list(map(data.targets.__getitem__, self.train_indices))
         self.train_data = torch.utils.data.Subset(data, self.train_indices)
+        self.train_labels = list(map(data.targets.__getitem__, self.train_indices))
 
         data = data_loaders.get_data("val")
         self.val_data = torch.utils.data.Subset(data, self.val_indices)
@@ -66,8 +74,10 @@ class FoldSetup:
         if composition:
             self.print_composition()
 
-    def update_save_names(self):
-        """update save names for model and dataloader so that each fold gets saved"""
+    def update_save_names(self) -> None:
+        """
+        Update config save names for model and validation dataloader
+        so that each fold gets saved"""
         config.VAL_LOADER_SAVENAME = (
             f"{config.VAL_LOADER_SAVE_DIR}e{config.MAX_EPOCHS}"
             f"_val_loader20_bs{config.BATCH_SIZE}"
@@ -84,9 +94,13 @@ class FoldSetup:
 
     def train_loader(self, balance_weights: bool = True) -> torch.utils.data.DataLoader:
         """
-        Create train loader that iterates images in batches
-        Option to balance the distribution of sampled images
-            if there is class imbalance
+        - Create train loader that iterates images in batches
+        - Balance the distribution of sampled images given imbalance
+
+        Args:
+            balance_weights (bool): pull from training dataset evenly among classes
+        Returns:
+            torch.utils.data.DataLoader: an iterable dataloader for training
         """
         sampler = (
             data_loaders.balanced_sampler(self.train_labels)
@@ -99,8 +113,8 @@ class FoldSetup:
 
     def val_loader(self) -> None:
         """
-        Create validation loader to be iterated in batches
-        Option to use the entire labeled dataset if VALID_SIZE small
+        - Create validation loader to be iterated in batches
+        - Option to use the entire labeled dataset if config.VALID_SIZE small
         """
         if config.VALID_SIZE < 0.01:
             # use all data for training - no val loader
@@ -115,14 +129,14 @@ class FoldSetup:
         return val_loader
 
     def create_dataloaders(self) -> None:
-        """create dict of train/val dataloaders based on split and sampler from StratifiedKFold"""
+        """Create dict of train/val dataloaders based on split and sampler from StratifiedKFold"""
         self.dataloaders = {"train": self.train_loader(), "val": self.val_loader()}
 
     def nofold_indices(self) -> None:
         """
-        if not applying cross-fold validation, split training dataset
+        - If not applying cross-fold validation, split training dataset
         based on config.VALID_SIZE
-        shuffle first and then split dataset
+        - Shuffle first and then split dataset
         """
 
         total_files = sum(len(files) for r, d, files in os.walk(config.DATA_DIR))
@@ -140,9 +154,10 @@ class FoldSetup:
 
     def kfold_training(self) -> None:
         """
-        Split dataset into folds
-        Preserve the percentage of samples for each class with stratified
-        Create dataloaders for each fold
+        - Split dataset into folds
+        - Preserve the percentage of samples for each class with stratified
+        - Create dataloaders for each fold
+        - Train and validate the model on each fold
         """
         skf = StratifiedKFold(n_splits=config.KFOLD, shuffle=True, random_state=42)
         # datasets based on phase get called again in split_data

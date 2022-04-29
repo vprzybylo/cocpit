@@ -4,6 +4,8 @@ WORKDIR /data/data
 RUN apt-get -y update && apt-get install -y --no-install-recommends \
 	git \
 	vim \
+	make \
+	python3-sphinx \
         && apt-get clean all && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -o -g 1001 vanessa \

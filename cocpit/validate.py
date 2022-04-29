@@ -2,15 +2,14 @@ import os
 import torch
 import itertools
 import numpy as np
-from cocpit.plotting_scripts import plot_metrics as plot_metrics
+from cocpit.plotting_scripts import confusion_matrix as confusion_matrix
 from sklearn.metrics import classification_report
 import pandas as pd
 from cocpit.performance_metrics import Metrics
 from cocpit import config as config
-from dataclasses import dataclass, field
-from typing import Any, Dict, Optional
+from dataclasses import dataclass
+from typing import Optional
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from torch import nn
 
 
 @dataclass
@@ -84,12 +83,10 @@ class Validation(Metrics):
                 predicted (columns) conditions or all the population.
                 If None, confusion matrix will not be normalized.
         """
-
-        plot_metrics.conf_matrix(
+        _ = confusion_matrix.conf_matrix(
             np.asarray(list(itertools.chain(*self.all_labels))),
             np.asarray(list(itertools.chain(*self.all_preds))),
             norm=norm,
-            save_name=config.CONF_MATRIX_SAVENAME,
             save_fig=True,
         )
 
@@ -140,16 +137,16 @@ class Validation(Metrics):
         self.save_model()
 
         # confusion matrix
-        # if (
-        #     self.epoch == self.epochs - 1
-        #     and (config.KFOLD != 0 and self.kfold == config.KFOLD - 1)
-        #     or (config.KFOLD == 0)
-        # ):
-        #     self.confusion_matrix()
+        if (
+            self.epoch == self.epochs - 1
+            and (config.KFOLD != 0 and self.kfold == config.KFOLD - 1)
+            or (config.KFOLD == 0)
+        ):
+            self.confusion_matrix()
 
         # classification report
-        # if self.epoch == self.epochs - 1:
-        #     self.classification_report(self.kfold, self.model_name)
+        if self.epoch == self.epochs - 1:
+            self.classification_report(self.kfold, self.model_name)
 
         self.log_epoch_metrics("epoch_acc_val", "epoch_loss_val")
         self.print_epoch_metrics("Validation")

@@ -9,7 +9,10 @@ import torch
 
 
 def determine_phases() -> List[str]:
-    """determine if there is both a training and validation phase"""
+    """determine if there is both a training and validation phase
+
+    Returns:
+        List[str]: either training or training and validation phase"""
     return ["train"] if config.VALID_SIZE < 0.1 else ["train", "val"]
 
 
@@ -23,7 +26,7 @@ def main(
     kfold: int = 0,
 ) -> None:
     """
-    Calls above methods to train and validate across epochs and batches
+    Trains and validates a model across epochs, phases, and batches
 
     Args:
         dataloaders (Dict[str, torch.utils.data.DataLoader]): training and validation dict that loads images with sampling procedure

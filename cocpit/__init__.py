@@ -15,10 +15,6 @@ auto_str:
     - finds all attributes of the class
     - called with str(instance)
 
-check_classifications:
-    - check predictions from a saved CNN
-    - called in check_classifications.ipynb for bar chart plot
-
 config-sample:
     - holds all user-defined variables
     - treated as global and used across modules
@@ -33,10 +29,11 @@ data_loaders:
 fold_setup:
     - setup training and validation indices for labels and data based on k-fold cross validation
 
-geometric_attributes:
-    - calculates particle geometric properties from pic.py
-    - e.g., area ratio, roundness, aspect ratio
-    - length and width of particle calculated in process_sheets.py before resizing
+geometry:
+    - calculates particle geometrical attributes
+
+geometry_runner:
+    - holds the main Image class for image manipulation using opencv
 
 gui_label:
     - an ipywidget interface for creating a training dataset
@@ -74,10 +71,6 @@ performance_metrics:
     - logs metrics to console and/or comet-ml interface (see config.py to turn on)
     - writes metrics to csv's defined in config.py
 
-pic: 'particle image classification'
-    - holds the main Image class for image manipulation using opencv
-    - calculates particle geometrical attributes
-
 predictions:
     - holds methods regarding making model predictions
     - for confusion matrices and running the model on new data
@@ -111,9 +104,10 @@ validate:
     - outputs performance metrics and saves confusion matrix and classification report
 
 """
-from comet_ml import Experiment  # isort:split
 import glob
 from os.path import basename, dirname, isfile, join
+
+from comet_ml import Experiment  # isort:split
 
 modules = glob.glob(join(dirname(__file__), "*.py"))
 __all__ = [

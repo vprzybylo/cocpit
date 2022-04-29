@@ -1,10 +1,8 @@
 import numpy as np
 import torch
 from cocpit.performance_metrics import Metrics
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from cocpit import config as config
-from torch import nn
-from typing import Dict
 
 
 @dataclass
@@ -21,7 +19,7 @@ class Train(Metrics):
         Args:
             label_cnts (np.ndarray): number of labels per class from all batches before
             labels (torch.Tensor): class/label names
-        Return:
+        Returns:
             label_cnts (List[int]): sum of label counts from prior batches plus current batch
         """
 

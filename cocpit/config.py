@@ -24,10 +24,10 @@ TAG = "v1.4.0"
 PREPROCESS_SHEETS = False
 
 # create and save CNN
-BUILD_MODEL = True
+BUILD_MODEL = False
 
 # run the category classification on quality images of ice particles
-ICE_CLASSIFICATION = True
+ICE_CLASSIFICATION = False
 
 # calculates geometric particle properties and appends to databases
 GEOMETRIC_ATTRIBUTES = True

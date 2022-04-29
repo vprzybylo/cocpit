@@ -128,7 +128,7 @@ def _geometric_attributes(df_path: str, open_dir: str):
 
     # load df of quality ice particles to append particle attributes
     df = pd.read_csv(df_path)
-    df = cocpit.geometric_attributes.main(df, open_dir)
+    df = cocpit.geometry_runner.main(df, open_dir)
     df.to_csv(df_path, index=False)
 
 

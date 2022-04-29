@@ -63,6 +63,8 @@ regex==2022.1.18
 scipy==1.8.0
 seaborn==0.11.1
 six==1.16.0
+sphinx-rtd-theme==1.0.0
+sphinx-autodoc-typehints==1.18.1
 tenacity==8.0.1
 toml==0.10.2
 tomli==1.2.3

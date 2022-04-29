@@ -1,13 +1,8 @@
-"""
-Holds the class for ipywidget buttons to
-label from a folder of images.
-Run in notebooks/label.ipynb
-"""
 import ipywidgets
 import matplotlib.pyplot as plt
 from IPython.display import clear_output
 from ipywidgets import Button
-import PIL
+from PIL import Image
 from shutil import copyfile
 import os
 from typing import Union, List
@@ -17,7 +12,12 @@ import pandas as pd
 
 class GUI:
     """
-    view and label images in notebooks/label.ipynb
+    View and label images in notebooks/label.ipynb
+
+    Args:
+        all_paths (List[str]): paths to images
+        folder_dest (str): where to save images to
+        precip (pd.core.series.Series): corresponding precipitation measurements to images
     """
 
     def __init__(
@@ -35,25 +35,32 @@ class GUI:
         self.undo_btn = Button(description="Undo")
         self.buttons = []
 
-    def open_image(self) -> Union[PIL.Image.Image, None]:
-        try:
-            return PIL.Image.open(self.all_paths[self.index])
+    def open_image(self) -> Union[Image.Image, None]:
+        """
+        Open an image from a path at a given index
 
+        Returns:
+            Union[Image.Image, None]: opened PIL image or None if no image is opened
+
+        Raises:
+            FileNotFoundError: File already moved and cannot be opened
+        """
+        try:
+            return Image.open(self.all_paths[self.index])
         except FileNotFoundError:
             print("This file was already moved and cannot be found. Please hit Next.")
+            return
 
     def make_buttons(self) -> None:
-        """buttons for each category and undo button"""
+        """Make buttons for each class and an undo button"""
         self.undo_btn.on_click(self.undo)
 
         for idx, label in enumerate(config.CLASS_NAMES):
             self.buttons.append(Button(description=label))
             self.buttons[idx].on_click(self.cp_to_dir)
 
-    def align_buttons(self):
-        """
-        alter layout based on # of classes
-        """
+    def align_buttons(self) -> None:
+        """Alter layout based on number of classes"""
         if len(config.CLASS_NAMES) > 5:
             # align buttons vertically
             self.label_btns = ipywidgets.VBox(
@@ -68,9 +75,7 @@ class GUI:
 
     def cp_to_dir(self, b) -> None:
         """
-        copy from original dir to new directory with class label
-        Args:
-            b: button instance
+        Copy from original dir to new directory based on selected class label
         """
         # split path from filename if paths coming from ai2es project
         self.filename = self.all_paths[self.index].split("/")[-1]
@@ -84,7 +89,10 @@ class GUI:
 
     def undo(self, b) -> None:
         """
-        undo moving image into folder
+        Undo moving image into folder
+
+        Raises:
+            FileNotFoundError: file already moved or not found
         """
 
         self.index = self.index - 1
@@ -92,6 +100,7 @@ class GUI:
 
         # split path from filename if paths coming from ai2es project
         self.filename = self.all_paths[self.index].split("/")[-1]
+
         # undo the move and remove file
         for label in config.CLASS_NAMES:
             if self.filename in os.listdir(
@@ -112,7 +121,7 @@ class GUI:
 
     def display_image(self) -> None:
         """
-        show image
+        Show image
         """
         with self.center:
             clear_output()  # so that the next fig doesnt display below

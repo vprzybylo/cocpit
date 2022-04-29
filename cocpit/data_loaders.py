@@ -1,5 +1,5 @@
 """
-Retrives data loaders from Pytorch for training and validation data
+Retrives data loaders from Pytorch
 """
 
 import cocpit.config as config  # isort: split
@@ -9,8 +9,9 @@ import torch.utils.data.sampler as sampler
 from PIL import Image, ImageFile
 from torch.utils.data import Dataset
 from torchvision import datasets, transforms
-
+from typing import List
 from cocpit.auto_str import auto_str
+import numpy as np
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -18,8 +19,9 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 @auto_str
 class ImageFolderWithPaths(datasets.ImageFolder):
     """
-    Custom dataset that includes image file paths. Extends
-    torchvision.datasets.ImageFolder
+    - Custom dataset that includes image file paths.
+    - Used in get_data in this module
+
     """
 
     # override the __getitem__ method. this is the method that dataloader calls
@@ -36,10 +38,16 @@ class ImageFolderWithPaths(datasets.ImageFolder):
 @auto_str
 class TestDataSet(Dataset):
     """
-    dataloader for new unseen data
+    - Create dataloader for new or unseen testing data
+    - Used in notenooks/check_classifications.ipynb for example instantiation
+    - Applies transformations such as resizing and normalization
+
+    Args:
+        open_dir (str): directory holding the data to open
+        file_list (List[str]): list of filenames
     """
 
-    def __init__(self, open_dir, file_list):
+    def __init__(self, open_dir: str, file_list: List[str]):
 
         self.open_dir = open_dir
         self.file_list = list(file_list)
@@ -61,17 +69,16 @@ class TestDataSet(Dataset):
         return (tensor_image, self.path)
 
 
-def get_data(phase):
+def get_data(phase: str) -> ImageFolderWithPaths:
     """
-    Use the Pytorch ImageFolder class to read in root directory
-    that holds subfolders of each class for training data
-    Applies transforms
-    Params
-    ------
-    data_dir (str): root dir for training data
-    Returns
-    -------
-    data (tuple): (image, label, path)
+    - Use the Pytorch ImageFolder class to read in training data
+    - Training data needs to be organized all in one folder with subfolders for each class
+    - Applies transforms and data augmentation
+
+    Args:
+        phase (str): 'train' or 'val'
+    Returns:
+        data (tuple): (image, label, path)
     """
 
     transform_dict = {
@@ -100,17 +107,19 @@ def get_data(phase):
     return ImageFolderWithPaths(root=config.DATA_DIR, transform=transform_dict[phase])
 
 
-def make_weights_for_balanced_classes(train_labels):
+def balanced_sampler(train_labels: List[int]) -> sampler.WeightedRandomSampler:
     """
-    creates weights for each class for sampler such that lower count classes
-    are sampled more frequently and higher count classes are sampled less
-    Returns
-    -------
-    - class_sample_counts (list): # of samples per class
-    - train_samples_weights (list): weights for each class for sampling
-    """
+    - Creates weights for each class for use in the dataloader sampler argument
+    - Lower count classes are sampled more frequently and higher count classes are sampled less frequently
+    - Only used in the training dataloader
 
-    # only weight the training dataset
+    Args:
+        train_labels (List[int]): numerically labeled classes for training dataset
+
+    Returns:
+        class_sample_counts (List): number of samples per class
+        train_samples_weights (torch.DoubleTensor): weights for each class for sampling
+    """
     class_sample_counts = [0] * len(config.CLASS_NAMES)
     for target in train_labels:
         class_sample_counts[target] += 1
@@ -118,27 +127,31 @@ def make_weights_for_balanced_classes(train_labels):
 
     class_weights = 1.0 / torch.Tensor(class_sample_counts)
     train_samples_weights = [class_weights[class_id] for class_id in train_labels]
-
-    return class_sample_counts, torch.DoubleTensor(train_samples_weights)
-
-
-def balanced_sampler(train_labels):
-    """create a training dataloader for unbalanced class counts"""
-
-    # For an unbalanced dataset create a weighted sampler
-    class_counts, train_samples_weights = make_weights_for_balanced_classes(
-        train_labels
-    )
-
-    # Make a sampler to undersample classes with the highest counts
     return sampler.WeightedRandomSampler(
         train_samples_weights, len(train_samples_weights), replacement=True
     )
 
 
-def create_loader(data, batch_size, sampler, pin_memory=True):
-    """Make an iterable of batches across either
-    the training or validation dataset"""
+def create_loader(
+    data: torch.utils.data.Subset,
+    batch_size: int,
+    sampler: torch.utils.data.Sampler,
+    pin_memory: bool = True,
+) -> torch.utils.data.DataLoader:
+    """
+    Make an iterable of batches across a dataset
+
+    Args:
+        data (torch.utils.data.Subset): the dataset to load
+        batch_size (int): number of images to be read into memory at a time
+        sampler (torch.utils.data.Sampler): the method used to iterate over indices of dataset (e.g., random shuffle)
+        pin_memory (bool): For data loading, passing pin_memory=True to a DataLoader will automatically
+                           put the fetched data Tensors in pinned memory, and thus enables faster data
+                           transfer to CUDA-enabled GPUs.
+    Returns:
+        torch.utils.data.DataLoader: a dataset to be iterated over using sampling strategy
+
+    """
     return torch.utils.data.DataLoader(
         data,
         batch_size=batch_size,
@@ -148,8 +161,13 @@ def create_loader(data, batch_size, sampler, pin_memory=True):
     )
 
 
-def save_valloader(val_data):
-    """save validation dataloader based on paths in config.py"""
+def save_valloader(val_data: torch.utils.data.Subset) -> None:
+    """
+    Save validation dataloader based on paths in config.py
+
+    Args:
+        val_data (torch.utils.data.Subset): the validation dataset
+    """
     if not os.path.exists(config.VAL_LOADER_SAVE_DIR):
         os.makedirs(config.VAL_LOADER_SAVE_DIR)
     torch.save(val_data, config.VAL_LOADER_SAVENAME)

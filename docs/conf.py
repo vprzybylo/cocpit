@@ -38,6 +38,13 @@ extensions = [
     "sphinx_autodoc_typehints",
 ]
 
+autodoc_default_options = {
+    "member-order": "bysource",
+    "show-inheritance": False,
+    "members": True,
+    "undoc-members": False,
+}
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
