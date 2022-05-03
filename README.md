@@ -31,8 +31,9 @@
   <p align="center">
     Classification of Cloud Particle Imagery and Thermodynamics
     <br />
-    <a href="https://vprzybylo.gitbook.io/cocpit/"><strong>Explore the docs »</strong></a>
+    <a href="http://169.226.59.67:8081/cocpit.html#module-cocpit.models"><strong>Explore the docs »</strong></a>
     <br />
+    <a href="https://journals.ametsoc.org/view/journals/atot/39/4/JTECH-D-21-0094.1.xml"><strong>Read our paper »</strong></a>
     <br />
     ·
     <a href="https://github.com/vprzybylo/cocpit/issues">
@@ -55,7 +56,7 @@
 
 A tool for the characterization of cloud particle images from the (<a href="http://www.specinc.com/cloud-particle-imager">CPI</a>) probe using convolutional neural networks.  Ice particles are also collocated spatio-temporally with environmental properties from aircraft probes to gain an understanding of particle geometric, geographic, and environmental relationships.
 
-A user interface located at _____ allows users to instantly evaluate and filter the database classifications for multiple field campaigns without accompanying image storage or computational hardware needs.
+A web interface to be released soon will allow users to instantly evaluate and filter the database classifications for multiple field campaigns without accompanying image storage or computational hardware needs.
 
 Cloud probe images are classified into 9 categories, but further development may extend these classes:
 
