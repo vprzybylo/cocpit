@@ -12,6 +12,8 @@ class Model:
     Args:
         feature_extract (bool): update only the last layer parameters. Default False
         use_pretrained (bool): use a pre-trained model to extract meaningful features from new samples. Default False.
+        num_classes (int): number of classes
+        model (torchvision.models): a torchvision.models instance
     """
 
     def __init__(

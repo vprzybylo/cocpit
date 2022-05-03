@@ -2,7 +2,7 @@ import copy
 import os
 from functools import partial
 from multiprocessing import Pool
-
+from typing import List, Tuple
 import cv2
 import numpy as np
 import pandas as pd
@@ -18,26 +18,34 @@ class Image:
     """
     Reads, extracts, and performs morphological processing on png sheets of CPI images
 
-    Attributes:
+    Args:
+        open_dir (str): the path where the files are located
         file (str): file [including path] to sheet with cpi images
+        save_dir (str): the path where the files are saved
+        self.files (str): list of files to be processed
+        self.widths (List[float]): width of rectangular roi frame
+        self.heights (List[float]): height of rectangular roi frame
+        self.particle_heights (List[float]): particle heights
+        self.particle_widths (List[float]): particle widths
+        self.cutoffs (List[float]): percent of particle intersecting border
     """
 
-    def __init__(self, open_dir, file, save_dir):
+    def __init__(self, open_dir: str, file: str, save_dir: str):
         self.open_dir = open_dir
         self.file = file
         self.save_dir = save_dir
-        self.files = []
-        self.widths = []
-        self.heights = []
-        self.particle_heights = []
-        self.particle_widths = []
-        self.cutoffs = []
+        self.files: List[str] = []
+        self.widths: List[float] = []
+        self.heights: List[float] = []
+        self.particle_heights: List[float] = []
+        self.particle_widths: List[float] = []
+        self.cutoffs: List[float] = []
 
-    def read_image(self, show_original):
+    def read_image(self, show_original: bool) -> None:
         """
         Reads sheet into memory
 
-        Parameters:
+        Args:
             show_original (bool): whether to show the original sheet in an opencv window
         """
         print(self.open_dir + self.file)
@@ -53,7 +61,7 @@ class Image:
             cv2.imshow("original", self.image_og)
             cv2.waitKey(0)
 
-    def dilate(self, show_dilate):
+    def dilate(self, show_dilate: bool) -> None:
         """
         Increases the object area and useful in joining broken parts of an image.
         """
@@ -63,9 +71,12 @@ class Image:
             cv2.imshow("Image", self.image)
             cv2.waitKey(0)
 
-    def find_sheet_contours(self):
+    def find_sheet_contours(self) -> List[int]:
         """
-        find all contours on sheet and convert to b/w
+        Find all contours on sheet and convert to b/w
+
+        Returns:
+            cnts (List[int]): contours from cv2.findContours
         """
         gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
         # threshold the binary sheet
@@ -76,15 +87,19 @@ class Image:
         )
         return cnts
 
-    def remove_text(self, cnts):
+    def remove_text(self, cnts: List[int], small_thresh: float = 200) -> None:
         """
         Removes text such as date/time stamp by drawing over small contours in white.
         If the text is on the particle itself and connected to the largest contour, it stays
         Should a very small particle be < 200 px^2, it is also masked
+
+        Args:
+            cnts (List[int]): list of contours
+            small_thresh (float): mask areas in px smaller than this threshold
         """
         # only mask contours with small area (aka the text)
-        for i, c in enumerate(cnts):
-            if cv2.contourArea(c) < 200:
+        for c in cnts:
+            if cv2.contourArea(c) < small_thresh:
                 cv2.drawContours(
                     self.thresh, [c], 0, (255, 255, 255), -1
                 )  # -1 fills contour
@@ -93,19 +108,19 @@ class Image:
         """
         Find largest contour out of list of contours on image
 
-        Parameters:
+        Args:
             cnts (list): list of contours
         """
         self.largest_cnt = sorted(cnts, key=cv2.contourArea, reverse=True)[0]
 
-    def particle_dimensions(self):
+    def particle_dimensions(self) -> Tuple[float, float]:
         """
         Calculate the length and width of particles in microns
         from a rectangular bounding box
         CPI probe: 1 px = 2.3 microns
         """
         rect = cv2.minAreaRect(self.largest_cnt)
-        (x, y), (width, height), angle = rect
+        (_, _), (width, height), _ = rect
         return width * 2.3, height * 2.3
 
     def cutoff(self):

@@ -22,9 +22,12 @@ class ImageFolderWithPaths(datasets.ImageFolder):
     - Custom dataset that includes image file paths.
     - Used in get_data in this module
 
+    Args:
+        root (str): data directory
+        transform (transforms.Compose): transformations based on train, val, or test
     """
 
-    # override the __getitem__ method. this is the method that dataloader calls
+    # Override the __getitem__ method. This is the method that dataloader calls
     def __getitem__(self, index):
         # this is what ImageFolder normally returns
         original_tuple = super(ImageFolderWithPaths, self).__getitem__(index)

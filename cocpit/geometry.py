@@ -2,7 +2,7 @@ from typing import Optional
 
 import cv2
 import numpy as np
-
+import matplotlib.pyplot as plt
 from cocpit import image
 
 
@@ -13,15 +13,10 @@ class Geometry(image.Image):
     Args:
         phi (float): aspect ratio from rectangle
         extreme_points (float): computes how separated the outer most points are on the largest contour. Higher std. deviation = more spread out
-        edges (): finds edges in the input image image and marks them in the output map edges using the Canny algorithm.
-                    The smallest value between threshold1 and threshold2 is used
-                    for edge linking. The largest value is used to find initial
-                    segments of strong edges.
-
         area (float): area of largest contour
         perim (float): perimeter of largest contour
         complexity (float): how intricate & complicated the particle is
-        hull (): a convex hull around the largest contour
+        hull (np.ndarray): a convex hull around the largest contour
         convex_perim (float): perimeter of the convex hull of the largest contour
         hull_area (float): area of a convex hull surrounding the largest contour
         filled_circular_area_ratio (float):  area of the largest contour divided by the area of
@@ -47,34 +42,21 @@ class Geometry(image.Image):
         self.largest_contour = sorted(self.contours, key=cv2.contourArea, reverse=True)[
             0
         ]
-        self.phi = self.calc_phi()
-        self.extreme_points = self.calc_extreme_points()
-        self.edges = self.calc_edges()
+        self.calc_phi()
+        self.calc_extreme_points()
         self.area = cv2.contourArea(self.largest_contour)
         self.perim = cv2.arcLength(self.largest_contour, False)
-        self.complexity = self.calc_complexity()
+        self.calc_complexity()
         self.hull = cv2.convexHull(self.largest_contour)
         self.convex_perim = cv2.arcLength(self.hull, True)
         self.hull_area = cv2.contourArea(self.hull)
-        self.filled_circular_area_ratio = self.calc_filled_circular_area_ratio()
+        self.calc_filled_circular_area_ratio()
         self.laplacian = cv2.Laplacian(self.gray, cv2.CV_64F).var()
         self.circularity = (4.0 * np.pi * self.area) / self.perim ** 2
         self.roundness = (4.0 * np.pi * self.area) / (self.convex_perim ** 2)
         self.perim_area_ratio = self.perim / self.area
         self.solidity = self.area / self.hull_area
         self.equiv_d = np.sqrt(4 * self.area / np.pi)
-
-    def calc_edges(self) -> None:
-        """
-        Finds edges in the input image image and marks
-        them in the output map edges using the Canny algorithm.
-        The smallest value between threshold1 and threshold2 is used
-        for edge linking. The largest value is used to find initial
-        segments of strong edges.
-        """
-        min_threshold = 0.66 * np.mean(self.im)
-        max_threshold = 1.33 * np.mean(self.im)
-        self.edges = np.count_nonzero(cv2.Canny(self.im, min_threshold, max_threshold))
 
     def calc_phi(self) -> None:
         """Calculate aspect ratio from rectangle"""

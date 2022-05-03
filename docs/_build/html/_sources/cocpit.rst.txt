@@ -1,13 +1,6 @@
 cocpit package
 ==============
 
-Subpackages
------------
-
-.. toctree::
-
-    cocpit.dash_app
-    cocpit.plotting_scripts
 
 Submodules
 ----------
@@ -29,37 +22,6 @@ cocpit.auto\_str module
     :undoc-members:
     :show-inheritance:
 
-cocpit.check\_classifications module
-------------------------------------
-
-.. automodule:: cocpit.check_classifications
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-cocpit.config\-sample module
-----------------------------
-
-.. automodule:: cocpit.config-sample
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-cocpit.config module
---------------------
-
-.. automodule:: cocpit.config
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-cocpit.config\_cocpit module
-----------------------------
-
-.. automodule:: cocpit.config_cocpit
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 cocpit.data\_loaders module
 ---------------------------

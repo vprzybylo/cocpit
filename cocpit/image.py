@@ -92,8 +92,8 @@ class Image:
 
     def mask_background(self) -> None:
         """
-        Keeps the background all white surrounding the largest conotour.
-        Places the largest contour on an array of all the same color
+        - Keeps the background all white surrounding the largest conotour.
+        - Places the largest contour on an array of all the same color
         """
         mask = np.zeros(self.im.shape[:2], dtype="uint8")
         # draw = cv2.drawContours(mask, [self.largest_contour], 0, (255,255,255), -1)
@@ -114,7 +114,7 @@ class Image:
 
     def save_image(self, save_dir: str, flip: bool = False) -> None:
         """
-        saves image to directory
+        Saves image to directory with option to flip image
 
         Args:
             save_dir (str): directory to be saved

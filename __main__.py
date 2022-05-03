@@ -159,7 +159,7 @@ def main() -> None:
     for campaign in config.CAMPAIGNS:
         print("campaign: ", campaign)
         # directory where the individual images live for each campaign
-        open_dir = f"cpi_data/campaigns/{campaign}/single_imgs_v1.4.0/"
+        open_dir = f"/data/data/cpi_data/campaigns/{campaign}/single_imgs_v1.4.0/"
 
         # create dir for final databases
         df_path = os.path.join(config.FINAL_DIR, f"{campaign}.csv")

@@ -81,7 +81,6 @@ class ModelConfig:
 
 def main(model_name: str) -> Tuple[torch.optim.SGD, torch.nn.parallel.DataParallel]:
     model = cocpit.models.initialize_model(model_name)
-    print(model)
     m = ModelConfig(model)
     m.to_device()
     return m.optimizer(), m.model

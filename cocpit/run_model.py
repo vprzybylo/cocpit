@@ -1,7 +1,3 @@
-"""
-classifies unseen images:
-transforms, makes predictions, and appends classification to dataframe
-"""
 import os
 from collections import defaultdict
 
@@ -10,20 +6,47 @@ import pandas as pd
 import torch
 from dotenv import load_dotenv
 from twilio.rest import Client
-
+from cocpit import config as config
 import cocpit.data_loaders as data_loaders
 import cocpit.predictions as predictions
+from typing import Tuple, List, DefaultDict
 
 torch.cuda.empty_cache()
 
 
-def campaign_predictions(loader, model):
-    """make predictions from test_loader"""
+def test_loader(open_dir, df):
+    """
+    Create test dataloader
+
+    Args:
+        open_dir (str): path to the image directory
+        df (pd.DataFrame): df with file names
+
+    Returns:
+
+    """
+    file_list = df["filename"]
+    test_data = data_loaders.TestDataSet(open_dir, file_list)
+    return data_loaders.create_loader(test_data, batch_size=100, sampler=None)
+
+
+def test_predictions(loader, model) -> Tuple[DefaultDict[str, List[float]], List[str]]:
+    """
+    Make predictions from loader
+
+    Args:
+        loader (torch.loader.Loader): test loader
+        model (torch.model.Model): model used to make predictions
+
+    Returns:
+        class_probs (DefaultDict[str, List[float]): list of class probabilities for all images
+        top_class (List[str]): highest class probability for all images
+    """
     # defaultdict will "default" to an empty list if that key has not been set yet
     class_probs = defaultdict(list)
     top_class = []
-    for batch_idx, (imgs, paths) in enumerate(loader):
-        p = predictions.BatchPredictions(imgs, paths, model)
+    for imgs, _ in loader:
+        p = predictions.BatchPredictions(imgs, model)
         with torch.no_grad():
             batch_output = p.preds_softmax().cpu().numpy() * 100
             for pred in batch_output:
@@ -32,12 +55,17 @@ def campaign_predictions(loader, model):
                     for c, _ in enumerate(config.CLASS_NAMES)
                 ]
                 top_class.append(config.CLASS_NAMES[np.argmax(pred)])
-    return class_probs, top_class
+
+    return (class_probs, top_class)
 
 
-def percent_category(df, category):
+def percent_category(df, category) -> None:
     """
-    find # and % of a class out of all images for a campaign
+    Find # and % of a class out of all images
+
+    Args:
+        df (pdf.DataFrame): dataframe of predictions
+        category (str): the class to be considered
     """
 
     len_category = len(df[df["classification"] == category])
@@ -47,23 +75,10 @@ def percent_category(df, category):
     print(f"#/% {category}: ", len_category, perc_category)
 
 
-def append_classifications(df, top_class):
-    """append the top class"""
-
-    df["classification"] = top_class
-
-    percent_category(df, category="fragment")
-    percent_category(df, category="sphere")
-
-    # don't include fragments or sphere classifications in dataframes
-    return df[(df["classification"] != "fragment") & (df["classification"] != "sphere")]
-
-
-def send_message():
+def send_message() -> None:
     """
-    use twilio to receive a text when the model has finished running!
-    register for an account and then:
-    add ACCOUNT_SID, AUTH_TOKEN, and PHONE_NUMBER to a .env file
+    - Use twilio to receive a text when the model has finished running
+    - Add ACCOUNT_SID, AUTH_TOKEN, and PHONE_NUMBER to a .env file
     """
     load_dotenv()
     account_sid = os.getenv("ACCOUNT_SID")
@@ -72,27 +87,36 @@ def send_message():
     message = client.messages.create(
         body="ML predictions completed!",
         from_="+19285175160",  # Provided phone number
-        to=os.getenv("PHONE_NUMBER"),
-    )  # Your phone number
+        to=os.getenv("PHONE_NUMBER"),  # Your phone number
+    )
     message.sid
 
 
-def main(df, open_dir, model):
+def main(df, open_dir, model) -> pd.DataFrame:
+    """
+    Classifies unseen images and appends classification to dataframe
 
+    Args:
+        df (pd.DataFrame): df of filenames
+        open_dir (str): directory where the test images live
+        model (torch.model.Model): model to be used for classification
+    Returns:
+        df (pd.DataFrame): df with predictions
+    """
     pd.options.mode.chained_assignment = None  # default='warn'
-
-    file_list = df["filename"]
-    test_data = data_loaders.TestDataSet(open_dir, file_list)
-    loader = data_loaders.create_loader(test_data, batch_size=100, sampler=None)
-
-    class_probs, top_class = campaign_predictions(loader, model)
-
+    loader = test_loader(open_dir, df)
+    class_probs, top_class = test_predictions(loader, model)
     for column in sorted(class_probs.keys()):
-        df[column] = df[column]
+        df[column] = class_probs[column]
 
-    # append predictions to dataframe for a campaign
-    df = append_classifications(df, top_class)
+    # append predictions to dataframe
+    df["classification"] = top_class
+    percent_category(df, category="fragment")
+    percent_category(df, category="sphere")
 
-    send_message()
+    # don't include fragments or sphere classifications in dataframes
+    df[(df["classification"] != "fragment") & (df["classification"] != "sphere")]
+
+    # send_message()
 
     return df

@@ -23,7 +23,6 @@ def keys() -> List[str]:
         "convex_perim",
         "blur",
         "contours",
-        "edges",
         "contrast",
         "cnt_area",
         "circularity",
@@ -51,7 +50,7 @@ def properties_null() -> List[int]:
 
 def properties(img: geometry.Geometry) -> List[float]:
     """
-    Calculated properties as defined in cocpit.pic.py
+    Calculated properties
 
     Args:
         image (geometry.Image): Loaded PIL image
@@ -67,7 +66,6 @@ def properties(img: geometry.Geometry) -> List[float]:
         img.convex_perim,
         img.laplacian,
         len(img.contours),
-        img.edges,
         img.im.std(),
         img.area,
         img.circularity,
@@ -84,7 +82,7 @@ def properties(img: geometry.Geometry) -> List[float]:
 
 def get_attributes(filename: str, open_dir: str) -> pd.DataFrame:
     """
-    Calculates particle geometric properties
+    Create df of particle geometric properties
 
     Args:
         filename (str): filename of the image to load
@@ -112,7 +110,7 @@ def main(df: pd.DataFrame, open_dir: str) -> pd.DataFrame:
     files = df["filename"]
     start = time.time()
 
-    with multiprocessing.Pool(config.NUM_CPUS) as p:
+    with multiprocessing.Pool(1) as p:
         properties = p.map(partial(get_attributes, open_dir=open_dir), files)
     p.close()
 
