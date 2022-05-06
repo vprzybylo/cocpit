@@ -73,7 +73,7 @@ def get_saliency(image):
     note that VGG model doesn't perform softmax at the end
     we also don't need softmax, just need scores
     """
-    scores = model(image)
+    scores = model(image.to(config.DEVICE))
     # turn scores into probabilty
     probs = F.softmax(scores, dim=1).cpu()
 
