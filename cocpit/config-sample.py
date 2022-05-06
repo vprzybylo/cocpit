@@ -1,4 +1,4 @@
-'''
+"""
 - THIS FILE SHOUlD BE ALTERED AND RENAMED config.py FOR EACH USER
 - config.py in .gitignore to avoid version changes upon specifications
 - holds all user-defined variables
@@ -8,7 +8,7 @@
 - flags for what module of cocpit to run is found in the main directory in __main__.py (e.g., preprocess_sheets, build_model, ice_classification, geometric_attributes, add_date..)
 
 isort:skip_file
-'''
+"""
 
 from comet_ml import Experiment  # isort:split
 
@@ -18,10 +18,10 @@ import torch
 import sys
 
 # cocpit version used in docker and git
-TAG = 'v1.4.0'
+TAG = "v1.4.0"
 
 # extract each image from sheet of images
-PREPROCESS_SHEETS = True
+PREPROCESS_SHEETS = False
 
 # create and save CNN
 BUILD_MODEL = False
@@ -30,15 +30,39 @@ BUILD_MODEL = False
 ICE_CLASSIFICATION = True
 
 # calculates geometric particle properties and appends to databases
-GEOMETRIC_ATTRIBUTES = True
+GEOMETRIC_ATTRIBUTES = False
 
 # adds a column for the date from the filename
 ADD_DATE = True
 
+# only run once in loop if building model
+# arbitrary campaign name used
+CAMPAIGNS = (
+    ["OLYMPEX"]
+    if BUILD_MODEL
+    else [
+        "MACPEX",
+        "ATTREX",
+        "ISDAC",
+        "CRYSTAL_FACE_UND",
+        "AIRS_II",
+        "ARM",
+        "CRYSTAL_FACE_NASA",
+        "ICE_L",
+        "IPHEX",
+        "MC3E",
+        "MIDCIX",
+        "MPACE",
+        "OLYMPEX",
+        "POSIDON",
+    ]
+)
+
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Absolute path to to folder where the data and models live
-BASE_DIR = '/Volumes/TOSHIBA EXT/raid/data/cpi_data'
+# BASE_DIR = '/Volumes/TOSHIBA EXT/raid/data/cpi_data'
+BASE_DIR = "/data/data"
 
 # model to load
 MODEL_PATH = f"{BASE_DIR}/saved_models/no_mask/{TAG}/e[15]_bs[64]_k0_vgg16.pt"
@@ -47,7 +71,7 @@ MODEL_PATH = f"{BASE_DIR}/saved_models/no_mask/{TAG}/e[15]_bs[64]_k0_vgg16.pt"
 NUM_CPUS = 10
 
 # number of cpus used to load data in pytorch dataloaders
-NUM_WORKERS = 5
+NUM_WORKERS = 10
 
 # whether to save the individual extracted images
 # used in process_png_sheets_with_text.py
@@ -64,23 +88,36 @@ KFOLD = 0
 VALID_SIZE = 0.20
 
 # images read into memory at a time during training
-BATCH_SIZE = [28]
+BATCH_SIZE = [64]
 
 # number of epochs to train model
 MAX_EPOCHS = [15]
 
 # names of each ice crystal class
 CLASS_NAMES = [
-    "agg",
-    "budding",
-    "bullet",
+    "aggregate",
+    "budding rosette",
+    "bullet rosette",
     "column",
-    "compact_irreg",
+    "compact irregular",
     "fragment",
-    "planar_polycrystal",
+    "planar polycrystal",
     "rimed",
     "sphere",
 ]
+
+# any abbreviations in folder names where the data lives for each class
+CLASS_NAME_MAP = {
+    "aggregate": "agg",
+    "budding rosette": "budding",
+    "bullet rosette": "bullet",
+    "column": "column",
+    "compact irregular": "compact_irreg",
+    "fragment": "fragment",
+    "planar polycrystal": "planar_polycrystal",
+    "rimed": "rimed",
+    "sphere": "sphere",
+}
 
 # models to train
 MODEL_NAMES = [
@@ -99,7 +136,7 @@ MODEL_NAMES = [
 MODEL_PATH = f"/data/data/saved_models/no_mask/{TAG}/e[15]_bs[64]_k1_vgg16.pt"
 
 # directory that holds the training data
-DATA_DIR = f"{BASE_DIR}/training_datasets/hand_labeled_resized_{TAG}_sideplanes/"
+DATA_DIR = f"{BASE_DIR}/cpi_data/training_datasets/hand_labeled_{TAG}_noaug/"
 
 # whether to save the model
 SAVE_MODEL = True
@@ -112,15 +149,14 @@ MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/no_mask/{TAG}/"
 VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/no_mask/{TAG}/"
 
 MODEL_SAVENAME = (
-    f"{MODEL_SAVE_DIR}e{max(MAX_EPOCHS)}_"
-    f"bs{max(BATCH_SIZE)}_"
-    f"{len(MODEL_NAMES)}model(s).pt"
+    f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_" f"bs{BATCH_SIZE}_k{KFOLD}_" f"vgg16.pt"
 )
 
 VAL_LOADER_SAVENAME = (
-    f"{VAL_LOADER_SAVE_DIR}e{max(MAX_EPOCHS)}_"
-    f"bs{max(BATCH_SIZE)}_"
-    f"{len(MODEL_NAMES)}model(s).pt"
+    f"{VAL_LOADER_SAVE_DIR}e{MAX_EPOCHS}_"
+    f"val_loader20_"
+    f"bs{BATCH_SIZE}_k{KFOLD}_"
+    f"vgg16.pt"
 )
 
 # write training loss and accuracy to csv
@@ -148,7 +184,7 @@ METRICS_SAVENAME = (
     f"{len(MODEL_NAMES)}model(s).csv"
 )
 
-CONF_MATRIX_SAVENAME = "{BASE_DIR}/plots/conf_matrix.png"
+CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
 
 # where to save final databases to
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
@@ -162,7 +198,7 @@ else:
 
 load_dotenv()  # loading sensitive keys from .env file
 if LOG_EXP and NOTEBOOK is False and BUILD_MODEL:
-    print('logging to comet ml...')
+    print("logging to comet ml...")
     API_KEY = os.getenv("API_KEY")
     WORKSPACE = os.getenv("WORKSPACE")
     PROJECT_NAME = os.getenv("PROJECT_NAME")
