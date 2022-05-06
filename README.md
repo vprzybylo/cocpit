@@ -31,7 +31,7 @@
   <p align="center">
     Classification of Cloud Particle Imagery and Thermodynamics
     <br />
-    <a href="http://169.226.59.67:8081/cocpit.html#module-cocpit.models"><strong>Explore the docs »</strong></a>
+    <a href="http://169.226.59.67:8081/cocpit.html"><strong>Explore the docs »</strong></a>
     <br />
     <a href="https://journals.ametsoc.org/view/journals/atot/39/4/JTECH-D-21-0094.1.xml"><strong>Read our paper »</strong></a>
     <br />
