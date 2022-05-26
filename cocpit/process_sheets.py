@@ -324,7 +324,3 @@ def main(
 
     make_df(save_df, files, widths, heights, particle_widths, particle_heights, cutoffs)
     # send_message()
-
-
-if __name__ == "__main__":
-    main()

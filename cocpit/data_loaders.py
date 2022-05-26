@@ -5,11 +5,12 @@ Retrives data loaders from Pytorch
 import cocpit.config as config  # isort: split
 import os
 import torch
+import torch.utils.data
 import torch.utils.data.sampler as sampler
 from PIL import Image, ImageFile
 from torch.utils.data import Dataset
 from torchvision import datasets, transforms
-from typing import List
+from typing import List, Optional
 from cocpit.auto_str import auto_str
 import numpy as np
 
@@ -129,7 +130,9 @@ def balanced_sampler(train_labels: List[int]) -> sampler.WeightedRandomSampler:
     print("counts per class in training data (before sampler): ", class_sample_counts)
 
     class_weights = 1.0 / torch.Tensor(class_sample_counts)
-    train_samples_weights = [class_weights[class_id] for class_id in train_labels]
+    train_samples_weights = [
+        float(class_weights[class_id]) for class_id in train_labels
+    ]
     return sampler.WeightedRandomSampler(
         train_samples_weights, len(train_samples_weights), replacement=True
     )
@@ -138,7 +141,7 @@ def balanced_sampler(train_labels: List[int]) -> sampler.WeightedRandomSampler:
 def create_loader(
     data: torch.utils.data.Subset,
     batch_size: int,
-    sampler: torch.utils.data.Sampler,
+    sampler: Optional[torch.utils.data.Sampler],
     pin_memory: bool = True,
 ) -> torch.utils.data.DataLoader:
     """
