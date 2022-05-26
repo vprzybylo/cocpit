@@ -5,12 +5,14 @@ To be used with gui.py in notebooks/gui_move_wrong_predictions.ipynb
 """
 
 import numpy as np
+
 import torch
 from cocpit import data_loaders
 import cocpit.config as config
 from cocpit.auto_str import auto_str
-from typing import Any
+from typing import Any, List
 import torch.nn.functional as F
+import torch.utils.data.dataloader
 import itertools
 
 
@@ -29,15 +31,15 @@ class BatchPredictions:
 
     def __init__(
         self,
-        imgs,
+        imgs: torch.Tensor,
         model,
     ):
 
         self.imgs = imgs.to(config.DEVICE)
         self.model = model.to(config.DEVICE)
-        self.max_preds = None
-        self.probs = None
-        self.classes = None
+        self.max_preds: List[float] = []
+        self.probs: List[float] = []
+        self.classes: List[int] = []
 
     def find_logits(self) -> torch.Tensor:
         """
@@ -83,25 +85,23 @@ class LoaderPredictions:
     The image is automatically moved upon choosing a class from the dropdown menu.
 
     Args:
-        self.all_labels (List[int]): list of labels across all batches
-        self.all_paths (List[str]): list of paths across all batches
-        self.all_topk_probs (List[float]): list of topk probabilities across all batches
-        self.all_topk_classes (List[int]): list of topk classes across all batches
-        self.all_max_preds (List[float]): list of max predictions across all batches
+        self.labels (List[int]): list of labels across all batches
+        self.paths (List[str]): list of paths across all batches
+        self.topk_probs (List[float]): list of topk probabilities across all batches
+        self.topk_classes (List[int]): list of topk classes across all batches
+        self.max_preds (List[float]): list of max predictions across all batches
         self.wrong_trunc (List[int]): indices of wrong predictions
         self.wrong_idx (List[int]): all indices where the model incorrectly predicted
-        self.labels (bool): True if labels are provided (i.e., validation not test)
     """
 
     def __init__(self):
-        self.all_labels = []
-        self.all_paths = []
-        self.all_topk_probs = []
-        self.all_topk_classes = []
-        self.all_max_preds = []
-        self.wrong_trunc = []
-        self.wrong_idx = []
-        self.labels = True
+        self.labels: List[int] = []
+        self.paths: List[str] = []
+        self.topk_probs: List[List[float]] = []
+        self.topk_classes: List[List[int]] = []
+        self.max_preds: List[List[float]] = []
+        self.wrong_trunc: List[int] = []
+        self.wrong_idx: List[int] = []
 
     def load_model(self, fold: int):  # -> torch.nn.parallel.data_parallel.DataParallel:
         # model = torch.load(
@@ -121,43 +121,44 @@ class LoaderPredictions:
         val_data = torch.load(config.VAL_LOADER_SAVENAME)
         return data_loaders.create_loader(val_data, batch_size=100, sampler=None)
 
-    def concat(self, var: Any) -> np.ndarray:
+    def concat(self, var: Any) -> List[Any]:
         """
         Flatten a variable across batches
         """
-        return np.asarray(list(itertools.chain(*var)))
+        return list(itertools.chain(*var))
 
     def concatenate_loader_vars(self) -> None:
         """
         Flatten arrays from appending in batches
         """
-        if self.labels is None:
+        if self.labels:
             pred_list = [
-                self.all_paths,
-                self.all_topk_probs,
-                self.all_topk_classes,
-                self.all_max_preds,
+                self.labels,
+                self.paths,
+                self.topk_probs,
+                self.topk_classes,
+                self.max_preds,
             ]
             (
-                self.all_paths,
-                self.all_topk_probs,
-                self.all_topk_classes,
-                self.all_max_preds,
+                self.labels,
+                self.paths,
+                self.topk_probs,
+                self.topk_classes,
+                self.max_preds,
             ) = map(self.concat, pred_list)
+
         else:
             pred_list = [
-                self.all_labels,
-                self.all_paths,
-                self.all_topk_probs,
-                self.all_topk_classes,
-                self.all_max_preds,
+                self.paths,
+                self.topk_probs,
+                self.topk_classes,
+                self.max_preds,
             ]
             (
-                self.all_labels,
-                self.all_paths,
-                self.all_topk_probs,
-                self.all_topk_classes,
-                self.all_max_preds,
+                self.paths,
+                self.topk_probs,
+                self.topk_classes,
+                self.max_preds,
             ) = map(self.concat, pred_list)
 
     def find_wrong_indices(self) -> None:
@@ -166,8 +167,8 @@ class LoaderPredictions:
         """
         self.wrong_idx = [
             index
-            for index, elem in enumerate(self.all_max_preds)
-            if elem != self.all_labels[index]
+            for index, elem in enumerate(self.max_preds)
+            if elem != self.labels[index]
         ]
 
     def predict(self, top_k_preds: int = 3, folds: int = 1) -> None:
@@ -179,16 +180,17 @@ class LoaderPredictions:
             folds (int): number of k-folds used in resampling procedure
                          if kfold cross validation was not used, keep as 1
         """
-        for fold in range(folds):
-            for ((imgs, labels, paths), _) in self.load_val_loader(fold):
-                b = BatchPredictions(imgs, self.load_model(fold))
-                b.find_max_preds()
-                b.top_k_preds(top_k_preds)
-                self.all_topk_probs.append(b.probs)
-                self.all_topk_classes.append(b.classes)
-                self.all_max_preds.append(b.max_preds)
-                self.all_labels.append(labels)
-                self.all_paths.append(paths)
+        with torch.no_grad():
+            for fold in range(folds):
+                for ((imgs, labels, paths), _) in self.load_val_loader(fold):
+                    b = BatchPredictions(imgs, self.load_model(fold))
+                    b.find_max_preds()
+                    b.top_k_preds(top_k_preds)
+                    self.topk_probs.append(b.probs)
+                    self.topk_classes.append(b.classes)
+                    self.max_preds.append(b.max_preds)
+                    self.labels.append(labels)
+                    self.paths.append(paths)
 
     def predict_test_loader(
         self,
@@ -210,10 +212,10 @@ class LoaderPredictions:
             b = BatchPredictions(imgs, self.load_model(fold))
             b.find_max_preds()
             b.top_k_preds(top_k_preds)
-            self.all_topk_probs.append(b.probs)
-            self.all_topk_classes.append(b.classes)
-            self.all_max_preds.append(b.max_preds)
-            self.all_paths.append(paths)
+            self.topk_probs.append(b.probs)
+            self.topk_classes.append(b.classes)
+            self.max_preds.append(b.max_preds)
+            self.paths.append(paths)
 
     def hone_incorrect_predictions(
         self, label_list: dict[str, int], human_label: int, model_label: int
@@ -226,13 +228,16 @@ class LoaderPredictions:
             human_label (int): category of the human label
             model_label (int): category of the model label
         """
-        idx_human = np.where(self.all_labels == human_label)
+        idx_human = np.where(self.labels == human_label)
 
         [
             self.wrong_trunc.append(i)
             for i in idx_human[0]
-            if self.all_max_preds[i] == model_label
+            if self.max_preds[i] == model_label
         ]
         cat1 = list(label_list.keys())[list(label_list.values()).index(human_label)]
         cat2 = list(label_list.keys())[list(label_list.values()).index(model_label)]
-        print(f"{len(self.wrong_trunc)} wrong predictions between {cat1} and {cat2}")
+        if self.wrong_trunc:
+            print(
+                f"{len(self.wrong_trunc)} wrong predictions between {cat1} and {cat2}"
+            )
