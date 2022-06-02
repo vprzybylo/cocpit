@@ -4,6 +4,9 @@
 [![MIT License][license-shield]][license-url]
 [![PyPI download month][download-shield]][download-url]
 [![GitHub release][release-shield]][release-url]
+[![pre-commit enabled][pre-commit-shield]][pre-commit project]
+[![Black codestyle][black-shield]][black project]
+[![Read the documentation][readthedocs-shield]][readthedocs page]
 
 [download-shield]:https://img.shields.io/github/downloads/vprzybylo/cocpit/total?style=plastic
 [download-url]: https://github.com/vprzybylo/cocpit/downloads
@@ -17,7 +20,12 @@
 [issues-url]: https://github.com/vprzybylo/cocpit/issues
 [license-shield]: https://img.shields.io/github/license/vprzybylo/COCPIT?style=plastic
 [license-url]: https://github.com/vprzybylo/cocpit/blob/master/LICENSE.md
-
+[readthedocs-shield]: https://img.shields.io/readthedocs/thapbi-pict.svg?logo=readthedocs?style=plastic
+[readthedocs page]: http://169.226.59.67:8081/cocpit.html
+[pre-commit-shield]: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white?style=plastic
+[pre-commit project]: https://pre-commit.com/
+[black-shield]: https://img.shields.io/badge/code%20style-black-black?style=plastic
+[black project]: https://github.com/psf/black
 
 <br />
 <p align="center">
