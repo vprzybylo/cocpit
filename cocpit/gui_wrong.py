@@ -29,28 +29,27 @@ class GUI:
 
     Args:
         wrong_trunc (List[int]): indices where the model predictions are wrong
-        all_labels (np.ndarray[int]): image labels
-        all_paths (np.ndarray[str]): image paths
-        all_topk_props (np.ndarray[float]): top predicted probabilites
-        all_topk_classes (np.ndarray[int]): classes related to the top predicted probabilites
+        labels (np.ndarray[int]): image labels
+        paths (np.ndarray[str]): image paths
+        topk_props (np.ndarray[float]): top predicted probabilites
+        topk_classes (np.ndarray[int]): classes related to the top predicted probabilites
     """
 
     def __init__(
         self,
         wrong_trunc: List[int],
-        all_labels: np.ndarray,
-        all_paths: np.ndarray,
-        all_topk_probs: np.ndarray,
-        all_topk_classes: np.ndarray,
+        labels: np.ndarray,
+        paths: np.ndarray,
+        topk_probs: np.ndarray,
+        topk_classes: np.ndarray,
     ):
-
         self.index = 0
-        self.all_labels = all_labels[wrong_trunc]
-        self.all_paths = all_paths[wrong_trunc]
-        self.all_topk_probs = all_topk_probs[wrong_trunc]
-        self.all_topk_classes = all_topk_classes[wrong_trunc]
+        self.labels = np.array(labels)[wrong_trunc]
+        self.paths = np.array(paths)[wrong_trunc]
+        self.topk_probs = np.array(topk_probs)[wrong_trunc]
+        self.topk_classes = np.array(topk_classes)[wrong_trunc]
 
-        self.label = self.all_labels[self.index]
+        self.label = np.array(self.labels)[self.index]
         self.next_btn = Button(
             description="Next",
             style=dict(
@@ -75,7 +74,7 @@ class GUI:
         """
 
         try:
-            return Image.open(self.all_paths[self.index])
+            return Image.open(self.paths[self.index])
         except FileNotFoundError:
             print("This file cannot be found.")
 
@@ -127,8 +126,8 @@ class GUI:
         clear_output()  # so that the next fig doesnt display below
         ax1.imshow(image, aspect="auto")
         ax1.set_title(
-            f"Human Labeled as: {cocpit.config.CLASS_NAMES[self.all_labels[self.index]]}\n"
-            f"Model Labeled as: {[cocpit.config.CLASS_NAMES[e] for e in self.all_topk_classes[self.index]][0]}\n"
+            f"Human Labeled as: {cocpit.config.CLASS_NAMES[self.labels[self.index]]}\n"
+            f"Model Labeled as: {[cocpit.config.CLASS_NAMES[e] for e in self.topk_classes[self.index]][0]}\n"
         )
         ax1.axis("off")
 
@@ -140,11 +139,11 @@ class GUI:
             ax2 (plt.Axes): subplot axis
         """
 
-        y_pos = np.arange(len(self.all_topk_probs[self.index]))
-        ax2.barh(y_pos, self.all_topk_probs[self.index])
+        y_pos = np.arange(len(self.topk_probs[self.index]))
+        ax2.barh(y_pos, self.topk_probs[self.index])
         ax2.set_yticks(y_pos)
         ax2.set_yticklabels(
-            [cocpit.config.CLASS_NAMES[e] for e in self.all_topk_classes[self.index]]
+            [cocpit.config.CLASS_NAMES[e] for e in self.topk_classes[self.index]]
         )
         ax2.tick_params(axis="y", rotation=45)
         ax2.invert_yaxis()  # labels read top-to-bottom
@@ -169,7 +168,7 @@ class GUI:
         Move the image based on dropdown selection
         """
 
-        filename = self.all_paths[self.index].split("/")[-1]
+        filename = self.paths[self.index].split("/")[-1]
 
         try:
             shutil.move(
@@ -180,7 +179,7 @@ class GUI:
             print(f"moved {self.count} images")
 
         except FileNotFoundError:
-            print(self.all_paths[self.index])
+            print(self.paths[self.index])
             print("File not found or directory does not exist. Not moving.")
 
     def visualizations(self) -> None:
@@ -191,7 +190,7 @@ class GUI:
         """
         # add chart to ipywidgets.Output()
         with self.center:
-            if self.index == len(self.all_topk_probs):
+            if self.index == len(self.topk_probs):
                 print("You have completed looking at all incorrect predictions!")
                 return
             else:

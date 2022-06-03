@@ -109,9 +109,9 @@ class GradCAM(_BaseWrapper):
 
 
 def preprocess(image):
+    image = cv2.resize(image, (224,) * 2)
     transform = transforms.Compose(
         [
-            transforms.Resize((224)),
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
         ]
@@ -129,11 +129,10 @@ def runner(image):
     model.eval()
 
     target_class = 0
-
     transformed_image = preprocess(image).to(config.DEVICE)
 
     gcam = GradCAM(model=model)
-    probs, ids = gcam.forward(transformed_image)
+    _, _ = gcam.forward(transformed_image)
     ids_ = torch.LongTensor([[target_class]]).to(config.DEVICE)
     gcam.backward(ids=ids_)
 

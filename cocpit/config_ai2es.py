@@ -3,10 +3,8 @@
 - config.py in .gitignore to avoid version changes upon specifications
 - holds all user-defined variables
 - treated as global variables that do not change in any module
-- used in each module through 'import cocpit.config as config'
+- used in each module through 'import config as config'
 - call using config.VARIABLE_NAME
-- flags for what module of cocpit to run is found in the main directory in __main__.py (e.g., preprocess_sheets, build_model, ice_classification, geometric_attributes, add_date..)
-
 isort:skip_file
 """
 
@@ -17,71 +15,46 @@ from dotenv import load_dotenv
 import torch
 import sys
 
-# cocpit version used in docker and git
-TAG = "v1.4.0"
+# Absolute path to to folder where the data and models live
+# BASE_DIR = '/Volumes/TOSHIBA EXT/raid/data/cpi_data'
+BASE_DIR = "/ai2es"
 
-# extract each image from sheet of images
-PREPROCESS_SHEETS = False
+# /raid/NYSM/archive/nysm/netcdf/proc/ on hulk
+nc_file_dir = f"{BASE_DIR}/5_min_obs"
+
+# /raid/lgaudet/precip/Precip/NYSM_1min_data on hulk
+csv_file_dir = f"{BASE_DIR}/1_min_obs"
+
+# where to write time  matched data
+write_path = f"{BASE_DIR}/matched_parquet/"
+
+# root dir to raw images (before each year subdir)
+photo_dir = f"{BASE_DIR}/cam_photos/"
+
+# where the mesonet obs live in parquet format
+# output from nysm_obs_to_parquet
+parquet_dir = f"{BASE_DIR}/mesonet_parquet_1M"
+
+# ai2es version used in docker and git
+TAG = "v0.0.0"
 
 # create and save CNN
 BUILD_MODEL = True
 
-# run the category classification on quality images of ice particles
-ICE_CLASSIFICATION = True
-
-# calculates geometric particle properties and appends to databases
-GEOMETRIC_ATTRIBUTES = False
-
-# adds a column for the date from the filename
-ADD_DATE = True
-
-# only run once in loop if building model
-# arbitrary campaign name used
-CAMPAIGNS = (
-    ["OLYMPEX"]
-    if BUILD_MODEL
-    else [
-        "MACPEX",
-        "ATTREX",
-        "ISDAC",
-        "CRYSTAL_FACE_UND",
-        "AIRS_II",
-        "ARM",
-        "CRYSTAL_FACE_NASA",
-        "ICE_L",
-        "IPHEX",
-        "MC3E",
-        "MIDCIX",
-        "MPACE",
-        "OLYMPEX",
-        "POSIDON",
-    ]
-)
+# classify images on new data?
+CLASSIFICATION = False
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Absolute path to to folder where the data and models live
-# BASE_DIR = '/Volumes/TOSHIBA EXT/raid/data/cpi_data'
-BASE_DIR = "/data/data"
-
-# model to load
-MODEL_PATH = f"{BASE_DIR}/saved_models/no_mask/{TAG}/e[15]_bs[64]_k0_vgg16.pt"
-
 # workers for parallelization
-NUM_CPUS = 10
+NUM_CPUS = 5
 
 # number of cpus used to load data in pytorch dataloaders
 NUM_WORKERS = 10
 
-# whether to save the individual extracted images
-# used in process_png_sheets_with_text.py
-SAVE_IMAGES = True
-
-# percent of image that can intersect the border
-CUTOFF = 10
-
 # how many folds used in training (cross-validation)
 # kold = 0 turns this off and splits the data according to valid_size
+# cannot = 1
 KFOLD = 0
 
 # percent of the training dataset to use as validation
@@ -91,72 +64,60 @@ VALID_SIZE = 0.20
 BATCH_SIZE = [64]
 
 # number of epochs to train model
-MAX_EPOCHS = [15]
+MAX_EPOCHS = [30]
 
 # names of each ice crystal class
-CLASS_NAMES = [
-    "aggregate",
-    "budding rosette",
-    "bullet rosette",
-    "column",
-    "compact irregular",
-    "fragment",
-    "planar polycrystal",
-    "rimed",
-    "sphere",
-]
+CLASS_NAMES = ["no precipitation", "obstructed", "precipitation"]
 
 # any abbreviations in folder names where the data lives for each class
 CLASS_NAME_MAP = {
-    "aggregate": "agg",
-    "budding rosette": "budding",
-    "bullet rosette": "bullet",
-    "column": "column",
-    "compact irregular": "compact_irreg",
-    "fragment": "fragment",
-    "planar polycrystal": "planar_polycrystal",
-    "rimed": "rimed",
-    "sphere": "sphere",
+    "no precipitation": "no_precip",
+    "obstructed": "obstructed",
+    "precipitation": "precip",
 }
 
 # models to train
 MODEL_NAMES = [
-    #     "efficient",
-    #     "resnet18",
-    #     "resnet34",
-    #     "resnet152",
-    #     "alexnet",
+    # "resnet18",
+    # "efficient",
+    # "resnet34",
+    # "resnet152",
+    # "alexnet",
     "vgg16",
-    #      "vgg19",
-    #     "densenet169",
-    #     "densenet201",
+    # "vgg19",
+    # "densenet169",
+    # "densenet201",
 ]
 
-# model to load
-MODEL_PATH = f"/data/data/saved_models/no_mask/{TAG}/e[15]_bs[64]_k1_vgg16.pt"
-
 # directory that holds the training data
-DATA_DIR = f"{BASE_DIR}/cpi_data/training_datasets/hand_labeled_{TAG}_noaug/"
+DATA_DIR = f"{BASE_DIR}/codebook_dataset/combined/"
+# DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # whether to save the model
 SAVE_MODEL = True
-# directory to save the trained model to
 
-MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/no_mask/{TAG}/"
+# directory to save the trained model to
+MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
 
 # directory to save validation data to
 # for later inspection of predictions
-VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/no_mask/{TAG}/"
+VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/{TAG}/"
+
+# model to load
+MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[30]_bs[64]_k0_1model(s).pt"
 
 MODEL_SAVENAME = (
-    f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_" f"bs{BATCH_SIZE}_k{KFOLD}_" f"vgg16.pt"
+    f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_"
+    f"bs{BATCH_SIZE}_"
+    f"k{KFOLD}_"
+    f"{len(MODEL_NAMES)}model(s).pt"
 )
 
 VAL_LOADER_SAVENAME = (
-    f"{VAL_LOADER_SAVE_DIR}e{MAX_EPOCHS}_"
-    f"val_loader20_"
-    f"bs{BATCH_SIZE}_k{KFOLD}_"
-    f"vgg16.pt"
+    f"{VAL_LOADER_SAVE_DIR}e{MAX_EPOCHS}_val_loader20_"
+    f"bs{BATCH_SIZE}_"
+    f"k{KFOLD}_"
+    f"{len(MODEL_NAMES)}model(s).pt"
 )
 
 # write training loss and accuracy to csv
@@ -190,7 +151,7 @@ CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
 
 # log experiment to comet for tracking?
-LOG_EXP = False
+LOG_EXP = True
 if os.path.basename(sys.argv[0]) == "__main__.py":
     NOTEBOOK = False
 else:
@@ -218,6 +179,7 @@ if LOG_EXP and NOTEBOOK is False and BUILD_MODEL:
         "VALID_SIZE",
         "MODEL_NAMES",
         "DATA_DIR",
+        "SAVE_MODEL",
         "MODEL_SAVE_DIR",
         "VAL_LOADER_SAVE_DIR",
         "SAVE_ACC",
@@ -234,3 +196,131 @@ if LOG_EXP and NOTEBOOK is False and BUILD_MODEL:
     experiment.add_tag(TAG)
 else:
     experiment = None
+
+stnid = [
+    "ADDI",
+    "ANDE",
+    "BATA",
+    "BEAC",
+    "BELD",
+    "BELL",
+    "BELM",
+    "BERK",
+    "BING",
+    "BKLN",
+    "BRAN",
+    "BREW",
+    "BROC",
+    "BRON",
+    "BROO",
+    "BSPA",
+    "BUFF",
+    "BURD",
+    "BURT",
+    "CAMD",
+    "CAPE",
+    "CHAZ",
+    "CHES",
+    "CINC",
+    "CLAR",
+    "CLIF",
+    "CLYM",
+    "COBL",
+    "COHO",
+    "COLD",
+    "COPA",
+    "COPE",
+    "CROG",
+    "CSQR",
+    "DELE",
+    "DEPO",
+    "DOVE",
+    "DUAN",
+    "EAUR",
+    "EDIN",
+    "EDWA",
+    "ELDR",
+    "ELLE",
+    "ELMI",
+    "ESSX",
+    "FAYE",
+    "FRED",
+    "GABR",
+    "GFAL",
+    "GFLD",
+    "GROT",
+    "GROV",
+    "HAMM",
+    "HARP",
+    "HARR",
+    "HART",
+    "HERK",
+    "HFAL",
+    "ILAK",
+    "JOHN",
+    "JORD",
+    "KIND",
+    "LAUR",
+    "LOUI",
+    "MALO",
+    "MANH",
+    "MEDI",
+    "MEDU",
+    "MORR",
+    "NBRA",
+    "NEWC",
+    "NHUD",
+    "OLDF",
+    "OLEA",
+    "ONTA",
+    "OPPE",
+    "OSCE",
+    "OSWE",
+    "OTIS",
+    "OWEG",
+    "PENN",
+    "PHIL",
+    "PISE",
+    "POTS",
+    "QUEE",
+    "RAND",
+    "RAQU",
+    "REDF",
+    "REDH",
+    "ROXB",
+    "RUSH",
+    "SARA",
+    "SBRI",
+    "SCHA",
+    "SCHO",
+    "SCHU",
+    "SCIP",
+    "SHER",
+    "SOME",
+    "SOUT",
+    "SPRA",
+    "SPRI",
+    "STAT",
+    "STEP",
+    "SUFF",
+    "TANN",
+    "TICO",
+    "TULL",
+    "TUPP",
+    "TYRO",
+    "VOOR",
+    "WALL",
+    "WALT",
+    "WANT",
+    "WARS",
+    "WARW",
+    "WATE",
+    "WBOU",
+    "WELL",
+    "WEST",
+    "WFMB",
+    "WGAT",
+    "WHIT",
+    "WOLC",
+    "YORK",
+]

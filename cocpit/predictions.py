@@ -109,7 +109,7 @@ class LoaderPredictions:
         #     f"_bs{config.BATCH_SIZE}"
         #     f"_k{fold}_vgg16.pt"
         # ).cuda()
-        model = torch.load(f"{config.MODEL_SAVE_DIR}e[30]_bs[64]_k0_1model(s).pt")
+        model = torch.load(f"{config.MODEL_SAVE_DIR}e[30]_bs[64]_k0_vgg16.pt")
         # model = torch.load(config.MODEL_SAVENAME)
         model.eval()
         return model
@@ -118,7 +118,6 @@ class LoaderPredictions:
         # val_data = torch.load(
         #     f"{config.VAL_LOADER_SAVE_DIR}e{config.MAX_EPOCHS}_val_loader{int(config.VALID_SIZE*100)}_bs{config.BATCH_SIZE}_k{fold}_vgg16.pt"
         # )
-
         val_data = torch.load(config.VAL_LOADER_SAVENAME)
         return data_loaders.create_loader(val_data, batch_size=100, sampler=None)
 
@@ -132,7 +131,7 @@ class LoaderPredictions:
         """
         Flatten arrays from appending in batches
         """
-        if self.labels:
+        if self.labels is not None:
             pred_list = [
                 self.labels,
                 self.paths,
@@ -162,6 +161,25 @@ class LoaderPredictions:
                 self.max_preds,
             ) = map(self.concat, pred_list)
 
+    def append_batch(
+        self, b: BatchPredictions, paths: List[str], labels: torch.tensor = None
+    ) -> None:
+        """
+        Append batch predictions across all possible validation datasets (including k-folds)
+
+        Args:
+            b (BatchPredictions): instance of batch predictions class
+            paths (List[str]): batch paths
+            labels (List[int]): batch labels
+
+        """
+        self.topk_probs.append(b.probs)
+        self.topk_classes.append(b.classes)
+        self.max_preds.append(b.max_preds)
+        self.paths.append(paths)
+        if self.labels is not None:
+            self.labels.append(labels)
+
     def find_wrong_indices(self) -> None:
         """
         Find all indices where the model incorrectly predicted
@@ -171,52 +189,6 @@ class LoaderPredictions:
             for index, elem in enumerate(self.max_preds)
             if elem != self.labels[index]
         ]
-
-    def predict(self, top_k_preds: int = 3, folds: int = 1) -> None:
-        """
-        Make predictions across all possible validation datasets (including k-folds)
-
-        Args:
-            top_k_preds (int):  the top k classes will be displayed in bar chart
-            folds (int): number of k-folds used in resampling procedure
-                         if kfold cross validation was not used, keep as 1
-        """
-        with torch.no_grad():
-            for fold in range(folds):
-                for ((imgs, labels, paths), _) in self.load_val_loader(fold):
-                    b = BatchPredictions(imgs, self.load_model(fold))
-                    b.find_max_preds()
-                    b.top_k_preds(top_k_preds)
-                    self.topk_probs.append(b.probs)
-                    self.topk_classes.append(b.classes)
-                    self.max_preds.append(b.max_preds)
-                    self.labels.append(labels)
-                    self.paths.append(paths)
-
-    def predict_test_loader(
-        self,
-        test_loader: torch.utils.data.dataloader.DataLoader,
-        top_k_preds: int = 3,
-        fold: int = 0,
-    ) -> None:
-        """
-        Predict on test data loader
-
-        Args:
-            test_loader (torch.utils.data.dataloader.DataLoader): dataloader holding test set
-            top_k_preds (int):  the top k predictions will be displayed in bar chart
-                                must be < number of classes
-            fold (int): number of k-folds used in resampling procedure
-                        if kfold cross validation was not used, keep as 0
-        """
-        for (imgs, paths) in test_loader:
-            b = BatchPredictions(imgs, self.load_model(fold))
-            b.find_max_preds()
-            b.top_k_preds(top_k_preds)
-            self.topk_probs.append(b.probs)
-            self.topk_classes.append(b.classes)
-            self.max_preds.append(b.max_preds)
-            self.paths.append(paths)
 
     def hone_incorrect_predictions(
         self, label_list: dict[str, int], human_label: int, model_label: int
