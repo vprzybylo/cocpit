@@ -3,14 +3,13 @@ Holds epoch and batch metrics for both the training and validation datasets
 Logs metrics to console and/or comet-ml interface (see config.py to turn on)
 """
 
-import csv
 from dataclasses import dataclass, field
 from typing import Dict
 
 import torch
-from torch import nn
 
 from cocpit import config as config
+import cocpit
 
 
 class Metrics:
@@ -19,16 +18,9 @@ class Metrics:
     Inherited in train and validate
 
     Args:
-        dataloaders (dict[str, torch.utils.data.DataLoader]): training and validation dict that loads images with sampling procedure
-        optimizer (torch.optim.sgd.SGD): an algorithm that modifies the attributes of the neural network
-        model (torch.nn.parallel.data_parallel.DataParallel): saved and loaded model
-
-        model_name (str): name of model architecture
+        f (cocpit.fold_setup.FoldSetup): instance of FoldSetup class
         epoch (int): epoch index in training loop
-        epochs (int): max epochs
-        kfold (int): number of k-folds used in resampling procedure
-        batch_size (int): number of images read into memory at a time
-        criterion (nn.CrossEntropyLoss): computes the cross entropy loss between input and target
+        epochs (int): total epochs for training loop
 
         loss (torch.Tensor): penalty for a bad prediction or a number indicating how bad the model's prediction was on a single example
         preds (torch.Tensor): probabilities for each class
@@ -44,28 +36,12 @@ class Metrics:
         epoch_acc (torch.Tensor): accuracy at the end of an epoch
     """
 
-    def __init__(
-        self,
-        dataloaders,
-        optimizer,
-        model,
-        model_name,
-        epoch,
-        epochs,
-        kfold,
-        batch_size,
-    ):
-        self.dataloaders: Dict[str, torch.utils.data.DataLoader] = dataloaders
-        self.optimizer: torch.optim.SGD = optimizer
-        self.model: torch.nn.parallel.DataParallel = model
-
+    def __init__(self, f, epoch, epochs):
         # used in runner.py
-        self.model_name: str = model_name
+        self.f: cocpit.fold_setup.FoldSetup = f
+
         self.epoch: int = epoch
         self.epochs: int = epochs
-        self.kfold: int = kfold
-        self.batch_size: int = batch_size
-        self.criterion: nn.CrossEntropyLoss = nn.CrossEntropyLoss()
 
         default_torch_type = torch.tensor([0.0], device=config.DEVICE)
         self.loss: torch.Tensor = default_torch_type
@@ -122,7 +98,7 @@ class Metrics:
             phase (str): "Train" or "Validation"
         """
         print(
-            f"{phase}, Batch {self.batch + 1}/{len(self.dataloaders[phase])},\
+            f"{phase}, Batch {self.batch + 1}/{len(self.f.dataloaders[phase])},\
             Loss: {self.loss.item():.3f}, Accuracy: {self.batch_acc:.3f}"
         )
 
@@ -139,25 +115,3 @@ class Metrics:
                 Loss: {self.epoch_loss:.3f},\
                 Accuracy: {self.epoch_acc.cpu().item():.3f}"
         )
-
-    def write_output(self, filename: str) -> None:
-        """
-        Write acc and loss to csv file within model, epoch, kfold iteration
-
-        Args:
-            filename: config.ACC_SAVENAME_TRAIN or config.ACC_SAVENAME_VAL depending on phase
-        """
-        if config.SAVE_ACC:
-            with open(filename, "a", newline="") as file:
-                writer = csv.writer(file)
-                writer.writerow(
-                    [
-                        self.model_name,
-                        self.epoch,
-                        self.kfold,
-                        self.batch_size,
-                        self.epoch_acc.cpu().numpy(),
-                        self.epoch_loss,
-                    ]
-                )
-                file.close()

@@ -9,29 +9,33 @@ from cocpit.performance_metrics import Metrics
 from cocpit import config as config
 from typing import Optional
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch import nn
 
 
 class Validation(Metrics):
-    """Perform validation methods on batched dataset"""
+    """Perform validation methods on batched dataset
+
+    Args:
+        f (cocpit.fold_setup.FoldSetup): instance of FoldSetup class
+        model_name (str): name of model architecture
+        epoch (int): epoch index in training loop
+        epochs (int): total epochs for training loop
+        val_best_acc (float): highest validation accuracy across epochs
+    """
 
     all_preds = []  # validation preds for 1 epoch for plotting
     all_labels = []  # validation labels for 1 epoch for plotting
 
     def __init__(
         self,
-        dataloaders,
-        optimizer,
-        model,
-        model_name,
+        f,
         epoch,
         epochs,
         kfold,
-        batch_size,
         val_best_acc,
     ):
-        super().__init__(
-            dataloaders, optimizer, model, model_name, epoch, epochs, kfold, batch_size
-        )
+        super().__init__(f, epoch, epochs)
+        self.kfold = kfold
         self.val_best_acc = val_best_acc
 
     def predict(self) -> None:
@@ -39,7 +43,7 @@ class Validation(Metrics):
 
         with torch.no_grad():
             outputs = self.model(self.inputs)
-            self.loss = self.criterion(outputs, self.labels)
+            self.loss = self.c.criterion(outputs, self.labels)
             _, self.preds = torch.max(outputs, 1)
 
     def append_preds(self) -> None:
@@ -70,7 +74,9 @@ class Validation(Metrics):
 
     def iterate_batches(self) -> None:
         """iterate over a batch in a dataloader and make predictions"""
-        for self.batch, ((inputs, labels, _), _) in enumerate(self.dataloaders["val"]):
+        for self.batch, ((inputs, labels, _), _) in enumerate(
+            self.f.dataloaders["val"]
+        ):
 
             self.inputs = inputs.to(config.DEVICE)
             self.labels = labels.to(config.DEVICE)

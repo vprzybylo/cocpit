@@ -13,7 +13,7 @@ More information is available at:
 """
 import cocpit
 
-import cocpit.config as config  # isort: split
+from cocpit import config as config
 import os
 import time
 
@@ -53,7 +53,13 @@ def _preprocess_sheets(df_path: str, campaign: str) -> None:
     print("time to preprocess sheets: %.2f" % (time.time() - start_time))
 
 
-def nofold_training(model_name: str, batch_size: int, epochs: int) -> None:
+def nofold_training(
+    model_name: str,
+    batch_size: int,
+    epochs: int,
+    feature_extract: bool = False,
+    use_pretrained: bool = False,
+) -> None:
     """
     Create training and validation indices when k-fold cross validation
     not initialized (config.KFOLD=0)
@@ -62,13 +68,25 @@ def nofold_training(model_name: str, batch_size: int, epochs: int) -> None:
         model_name (str): name of model architecture
         batch_size (int): number of images read into memory at a time
         epochs (int): number of iterations on dataset
+        feature_extract (bool): Start with a pretrained model and only
+                                update the final layer weights from which we derive predictions
+        use_pretrained (bool): Update all of the model’s parameters (retrain). Default = False
     """
-    f = cocpit.fold_setup.FoldSetup(model_name, batch_size, epochs)
+    f = cocpit.fold_setup.FoldSetup(batch_size)
     f.nofold_indices()
     f.split_data()
     f.create_dataloaders()
-    optimizer, model = cocpit.model_config.main(model_name)
-    cocpit.runner.main(f.dataloaders, optimizer, model, epochs, model_name, batch_size)
+
+    m = cocpit.models.Model(feature_extract, use_pretrained)
+    # call method based on str model name
+    method = getattr(cocpit.models.Model, model_name)
+    method(m)
+
+    c = cocpit.model_config.ModelConfig(m.model)
+    c.set_optimizer()
+    c.set_criterion()
+    c.to_device()
+    cocpit.runner.main(f, c, model_name, epochs)
 
 
 def fold_training(model_name: str, batch_size: int, epochs: int) -> None:

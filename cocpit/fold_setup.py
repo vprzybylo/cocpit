@@ -14,7 +14,7 @@ from collections import Counter
 from sklearn.model_selection import StratifiedKFold, train_test_split
 
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Dict
 
 
 @dataclass
@@ -24,14 +24,14 @@ class FoldSetup:
     - Called in __main__.py
 
     Args:
-        model_name (str): name of model architecture
         batch_size (int): number of images read into memory at a time
         epochs (int): number of iterations on dataset
+                dataloaders (dict[str, torch.utils.data.DataLoader]): training and validation dict that loads images with sampling procedure
+
     """
 
-    model_name: str
     batch_size: int
-    epochs: int
+    dataloaders: Dict[str, torch.utils.data.DataLoader] = field(init=False)
 
     train_data: torch.utils.data.Subset = field(init=False)
     val_data: torch.utils.data.Subset = field(init=False)

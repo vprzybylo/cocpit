@@ -27,13 +27,13 @@ PREPROCESS_SHEETS = False
 BUILD_MODEL = True
 
 # run the category classification on quality images of ice particles
-ICE_CLASSIFICATION = True
+ICE_CLASSIFICATION = False
 
 # calculates geometric particle properties and appends to databases
 GEOMETRIC_ATTRIBUTES = False
 
 # adds a column for the date from the filename
-ADD_DATE = True
+ADD_DATE = False
 
 # only run once in loop if building model
 # arbitrary campaign name used

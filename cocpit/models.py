@@ -81,7 +81,6 @@ class Model:
         """VGG 16 architecture"""
         self.model = torchvision.models.vgg16_bn(pretrained=self.use_pretrained)
         self.vgg_classifier()
-        print(self.model)
 
     def vgg19(self) -> None:
         """VGG 19 architecture"""
@@ -101,22 +100,3 @@ class Model:
     def efficient(self) -> None:
         """EfficientNet-b0 architecture"""
         self.model = EfficientNet.from_name("efficientnet-b0")
-
-
-def initialize_model(
-    model_name: str, feature_extract: bool = False, use_pretrained: bool = False
-) -> torchvision.models:
-    """
-    Set up model architectures. All input size of 224
-
-    Args:
-        feature_extract (bool): Start with a pretrained model and only
-                                update the final layer weights from which we derive predictions
-        use_pretrained (bool): Update all of the model’s parameters (retrain). Default = False
-    """
-
-    m = Model(feature_extract, use_pretrained)
-    # call method based on str model name
-    method = getattr(Model, model_name)
-    method(m)
-    return m.model

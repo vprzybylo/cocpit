@@ -17,25 +17,23 @@ def determine_phases() -> List[str]:
 
 
 def main(
-    dataloaders: Dict[str, torch.utils.data.DataLoader],
-    optimizer: torch.optim.SGD,
-    model: torch.nn.parallel.DataParallel,
-    epochs: int,
+    f: cocpit.fold_setup.FoldSetup,
+    c: cocpit.model_config.ModelConfig,
     model_name: str,
+    epochs: int,
+    kfold: int,
     batch_size: int,
-    kfold: int = 0,
 ) -> None:
     """
     Trains and validates a model across epochs, phases, and batches
 
     Args:
-        dataloaders (Dict[str, torch.utils.data.DataLoader]): training and validation dict that loads images with sampling procedure
-        optimizer (torch.optim.SGD): an algorithm that modifies the attributes of the neural network
-        model (torch.nn.parallel.data_parallel.DataParallel): saved and loaded model
-        epochs (int): max number of epochs to train and validate
+        f (cocpit.fold_setup.FoldSetup): instance of FoldSetup class
+        c (model_config.ModelConfig): instance of ModelConfig class
         model_name (str): name of model architecture
+        epochs (int): total epochs for training loop
         batch_size (int): number of images read into memory at a time
-        kfold (int): number of k-folds used in resampling procedure
+
     """
     since_total = time.time()
     val_best_acc = 0.0
@@ -44,35 +42,24 @@ def main(
         t = cocpit.timing.EpochTime(since_total, since_epoch)
         for phase in determine_phases():
             # put model in correct mode based on if training or validating
-            model = model.train() if phase == "train" else model.eval()
+            c.model.train() if phase == "train" else c.model.eval()
             if phase == "train":
                 train = cocpit.train.Train(
-                    dataloaders,
-                    optimizer,
-                    model,
-                    model_name,
-                    epoch,
-                    epochs,
-                    kfold,
-                    batch_size,
+                    f, epoch, epochs, model_name, kfold, batch_size, c
                 )
                 train.run()
             else:
                 val = cocpit.validate.Validation(
-                    dataloaders,
-                    optimizer,
-                    model,
-                    model_name,
+                    f,
                     epoch,
                     epochs,
                     kfold,
-                    batch_size,
                     val_best_acc,
                 )
                 val_best_acc = val.run()
             t.print_time_one_epoch()
     try:
         t.print_time_all_epochs()
-        t.write_times(model_name, kfold)
+        t.write_times(f.model_name, f.kfold)
     except NameError:
         print("Number of epochs needs to increase")

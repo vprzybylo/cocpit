@@ -15,10 +15,13 @@ class ModelConfig:
         - parameters to update
     Args:
         model (torchvision.models): loaded pytorch model object
+        optimizer (torch.optim.sgd.SGD): an algorithm that modifies the attributes of the neural network
+
     """
 
     def __init__(self, model: torchvision.models):
         self.model = model
+        self.optimizer: torchvision.optimizer = None
 
     def update_params(self, feature_extract: bool = False):
         """
@@ -56,9 +59,14 @@ class ModelConfig:
         """
         return sum(p.numel() for p in self.model.parameters() if p.requires_grad)
 
-    def optimizer(self) -> torch.optim.SGD:
+    def set_optimizer(self) -> None:
         """Model optimizer for stochastic gradient decent"""
-        return optim.SGD(self.update_params(), lr=0.01, momentum=0.9, nesterov=True)
+        self.optimizer = optim.SGD(
+            self.update_params(), lr=0.01, momentum=0.9, nesterov=True
+        )
+
+    def set_criterion(self) -> None:
+        self.criterion = nn.CrossEntropyLoss()
 
     def set_dropout(self, drop_rate: float = 0.1) -> None:
         """
@@ -77,10 +85,3 @@ class ModelConfig:
             print("Using", torch.cuda.device_count(), "GPUs!")
             self.model = nn.DataParallel(self.model)
         self.model = self.model.to(config.DEVICE)
-
-
-def main(model_name: str) -> Tuple[torch.optim.SGD, torch.nn.parallel.DataParallel]:
-    model = cocpit.models.initialize_model(model_name)
-    m = ModelConfig(model)
-    m.to_device()
-    return m.optimizer(), m.model
