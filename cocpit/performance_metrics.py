@@ -13,7 +13,6 @@ from torch import nn
 from cocpit import config as config
 
 
-@dataclass
 class Metrics:
     """
     Calculate batch and epoch metrics for training and validation datasets
@@ -29,28 +28,44 @@ class Metrics:
         epochs (int): max epochs
         kfold (int): number of k-folds used in resampling procedure
         batch_size (int): number of images read into memory at a time
+        criterion (nn.CrossEntropyLoss): computes the cross entropy loss between input and target
 
-        totals: (float): number of images seen
-        running_loss: (float): cumulative penalties for bad predictions
-        running_corrects:(torch.Tensor): cumulative accuracy over batches
-        epoch_loss: (float): loss at the end of an epoch
-        epoch_acc: (float): accuracy at the end of an epoch
+        loss (torch.Tensor): penalty for a bad prediction or a number indicating how bad the model's prediction was on a single example
+        preds (torch.Tensor): probabilities for each class
+        inputs (torch.Tensor): batch of images
+        labels (torch.Tensor): labels for a batch
+        batch (int): index of the batch of images
 
+        totals (int): number of images seen
+        running_loss (float): cumulative penalties for bad predictions
+        running_corrects (torch.Tensor): cumulative accuracy over batches
+        batch_acc (float): accuracy over a given batch
+        epoch_loss (float): loss at the end of an epoch
+        epoch_acc (torch.Tensor): accuracy at the end of an epoch
     """
 
-    dataloaders: Dict[str, torch.utils.data.DataLoader]
-    optimizer: torch.optim.SGD
-    model: torch.nn.parallel.DataParallel = field(repr=False)
+    def __init__(
+        self,
+        dataloaders,
+        optimizer,
+        model,
+        model_name,
+        epoch,
+        epochs,
+        kfold,
+        batch_size,
+    ):
+        self.dataloaders: Dict[str, torch.utils.data.DataLoader] = dataloaders
+        self.optimizer: torch.optim.SGD = optimizer
+        self.model: torch.nn.parallel.DataParallel = model
 
-    # used in runner.py
-    model_name: str
-    epoch: int
-    epochs: int
-    kfold: int
-    batch_size: int
-    criterion: nn.CrossEntropyLoss = nn.CrossEntropyLoss()
-
-    def __init__(self):
+        # used in runner.py
+        self.model_name: str = model_name
+        self.epoch: int = epoch
+        self.epochs: int = epochs
+        self.kfold: int = kfold
+        self.batch_size: int = batch_size
+        self.criterion: nn.CrossEntropyLoss = nn.CrossEntropyLoss()
 
         default_torch_type = torch.tensor([0.0], device=config.DEVICE)
         self.loss: torch.Tensor = default_torch_type
@@ -58,7 +73,6 @@ class Metrics:
         self.inputs: torch.Tensor = default_torch_type
         self.labels: torch.Tensor = default_torch_type
         self.batch: int = 0
-        self.val_best_acc: torch.Tensor = default_torch_type
 
         self.totals: int = 0
         self.running_loss: float = 0.0

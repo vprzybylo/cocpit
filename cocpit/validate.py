@@ -7,24 +7,32 @@ from sklearn.metrics import classification_report
 import pandas as pd
 from cocpit.performance_metrics import Metrics
 from cocpit import config as config
-from dataclasses import dataclass
 from typing import Optional
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 
-@dataclass
 class Validation(Metrics):
-    """Perform validation methods on batched dataset
-
-    Args:
-        val_best_acc: (float): best validation accuracy of the model up to the given batch
-    """
+    """Perform validation methods on batched dataset"""
 
     all_preds = []  # validation preds for 1 epoch for plotting
     all_labels = []  # validation labels for 1 epoch for plotting
 
-    def __post_init__(self):
-        super().__init__()
+    def __init__(
+        self,
+        dataloaders,
+        optimizer,
+        model,
+        model_name,
+        epoch,
+        epochs,
+        kfold,
+        batch_size,
+        val_best_acc,
+    ):
+        super().__init__(
+            dataloaders, optimizer, model, model_name, epoch, epochs, kfold, batch_size
+        )
+        self.val_best_acc = val_best_acc
 
     def predict(self) -> None:
         """make predictions"""
@@ -41,12 +49,17 @@ class Validation(Metrics):
 
     def save_model(self) -> None:
         """save/load best model weights after improvement in val accuracy"""
+        print(self.epoch_acc, self.val_best_acc)
         if self.epoch_acc > self.val_best_acc and config.SAVE_MODEL:
+            print(
+                f"Epoch acc:{self.epoch_acc} > best acc: {self.val_best_acc}. Saving model."
+            )
             self.val_best_acc = self.epoch_acc
 
             if not os.path.exists(config.MODEL_SAVE_DIR):
                 os.makedirs(config.MODEL_SAVE_DIR)
             torch.save(self.model, config.MODEL_SAVENAME)
+        return self.val_best_acc
 
     def reduce_lr(self) -> None:
         """reduce learning rate upon plateau in epoch validation accuracy"""
@@ -134,7 +147,7 @@ class Validation(Metrics):
         self.iterate_batches()
         self.epoch_metrics()
         self.reduce_lr()
-        self.save_model()
+        val_best_acc = self.save_model()
 
         # confusion matrix
         if (
@@ -151,3 +164,4 @@ class Validation(Metrics):
         self.log_epoch_metrics("epoch_acc_val", "epoch_loss_val")
         self.print_epoch_metrics("Validation")
         self.write_output(config.ACC_SAVENAME_VAL)
+        return val_best_acc

@@ -61,7 +61,8 @@ def preprocess(image, size):
 
 def get_saliency(image):
 
-    model = torch.load(config.MODEL_PATH)
+    # model = torch.load(config.MODEL_PATH)
+    model = torch.load(f"{config.MODEL_SAVE_DIR}e[30]_bs[64]_k0_1model(s).pt")
     model.eval()
 
     """find the gradient with respect to

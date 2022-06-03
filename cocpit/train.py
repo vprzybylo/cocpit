@@ -2,15 +2,38 @@ import numpy as np
 import torch
 from cocpit.performance_metrics import Metrics
 from dataclasses import dataclass
+from typing import Dict
 from cocpit import config as config
 
 
-@dataclass
 class Train(Metrics):
     """Perform training methods on batched dataset"""
 
-    def __post_init__(self):
-        super().__init__()
+    def __init__(
+        self,
+        dataloaders,
+        optimizer,
+        model,
+        model_name,
+        epoch,
+        epochs,
+        kfold,
+        batch_size,
+    ):
+
+        super().__init__(
+            dataloaders, optimizer, model, model_name, epoch, epochs, kfold, batch_size
+        )
+        self.dataloaders: Dict[str, torch.utils.data.DataLoader] = dataloaders
+        self.optimizer: torch.optim.SGD = optimizer
+        self.model: torch.nn.parallel.DataParallel = model
+
+        # used in runner.py
+        self.model_name: str = model_name
+        self.epoch: int = epoch
+        self.epochs: int = epochs
+        self.kfold: int = kfold
+        self.batch_size: int = batch_size
 
     def label_counts(self, label_cnts: np.ndarray, labels: torch.Tensor):
         """

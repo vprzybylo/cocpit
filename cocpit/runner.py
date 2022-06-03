@@ -38,6 +38,7 @@ def main(
         kfold (int): number of k-folds used in resampling procedure
     """
     since_total = time.time()
+    val_best_acc = 0.0
     for epoch in range(epochs):
         since_epoch = time.time()
         t = cocpit.timing.EpochTime(since_total, since_epoch)
@@ -66,8 +67,9 @@ def main(
                     epochs,
                     kfold,
                     batch_size,
+                    val_best_acc,
                 )
-                val.run()
+                val_best_acc = val.run()
             t.print_time_one_epoch()
     try:
         t.print_time_all_epochs()

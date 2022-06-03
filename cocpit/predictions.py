@@ -109,7 +109,8 @@ class LoaderPredictions:
         #     f"_bs{config.BATCH_SIZE}"
         #     f"_k{fold}_vgg16.pt"
         # ).cuda()
-        model = torch.load(config.MODEL_SAVENAME)
+        model = torch.load(f"{config.MODEL_SAVE_DIR}e[30]_bs[64]_k0_1model(s).pt")
+        # model = torch.load(config.MODEL_SAVENAME)
         model.eval()
         return model
 
