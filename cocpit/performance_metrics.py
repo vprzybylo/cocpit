@@ -39,7 +39,6 @@ class Metrics:
     def __init__(self, f, epoch, epochs):
         # used in runner.py
         self.f: cocpit.fold_setup.FoldSetup = f
-
         self.epoch: int = epoch
         self.epochs: int = epochs
 

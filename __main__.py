@@ -86,7 +86,14 @@ def nofold_training(
     c.set_optimizer()
     c.set_criterion()
     c.to_device()
-    cocpit.runner.main(f, c, model_name, epochs)
+    cocpit.runner.main(
+        f,
+        c,
+        model_name,
+        epochs,
+        batch_size,
+        kfold=0,
+    )
 
 
 def fold_training(model_name: str, batch_size: int, epochs: int) -> None:

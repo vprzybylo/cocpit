@@ -9,7 +9,7 @@ from cocpit.performance_metrics import Metrics
 from cocpit import config as config
 from typing import Optional
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from torch import nn
+import csv
 
 
 class Validation(Metrics):
@@ -17,32 +17,33 @@ class Validation(Metrics):
 
     Args:
         f (cocpit.fold_setup.FoldSetup): instance of FoldSetup class
-        model_name (str): name of model architecture
         epoch (int): epoch index in training loop
         epochs (int): total epochs for training loop
+        model_name (str): name of model architecture
+        kfold (int): number of folds use in k-fold cross validation
+        batch_size (int): number of images read into memory at a time
         val_best_acc (float): highest validation accuracy across epochs
+        c (model_config.ModelConfig): instance of ModelConfig class
     """
 
     all_preds = []  # validation preds for 1 epoch for plotting
     all_labels = []  # validation labels for 1 epoch for plotting
 
     def __init__(
-        self,
-        f,
-        epoch,
-        epochs,
-        kfold,
-        val_best_acc,
+        self, f, epoch, epochs, model_name, kfold, batch_size, val_best_acc, c
     ):
         super().__init__(f, epoch, epochs)
+        self.model_name = model_name
+        self.batch_size = batch_size
         self.kfold = kfold
         self.val_best_acc = val_best_acc
+        self.c = c
 
     def predict(self) -> None:
         """make predictions"""
 
         with torch.no_grad():
-            outputs = self.model(self.inputs)
+            outputs = self.c.model(self.inputs)
             self.loss = self.c.criterion(outputs, self.labels)
             _, self.preds = torch.max(outputs, 1)
 
@@ -62,13 +63,18 @@ class Validation(Metrics):
 
             if not os.path.exists(config.MODEL_SAVE_DIR):
                 os.makedirs(config.MODEL_SAVE_DIR)
-            torch.save(self.model, config.MODEL_SAVENAME)
+            torch.save(self.c.model, config.MODEL_SAVENAME)
         return self.val_best_acc
 
     def reduce_lr(self) -> None:
         """reduce learning rate upon plateau in epoch validation accuracy"""
         scheduler = ReduceLROnPlateau(
-            self.optimizer, mode="max", factor=0.5, patience=0, verbose=True, eps=1e-04
+            self.c.optimizer,
+            mode="max",
+            factor=0.5,
+            patience=0,
+            verbose=True,
+            eps=1e-04,
         )
         scheduler.step(self.epoch_acc)
 
@@ -82,7 +88,7 @@ class Validation(Metrics):
             self.labels = labels.to(config.DEVICE)
 
             # zero the parameter gradients
-            self.optimizer.zero_grad()
+            self.c.optimizer.zero_grad()
             self.predict()
             self.batch_metrics()
             self.append_preds()
@@ -117,14 +123,13 @@ class Validation(Metrics):
                 image_format="pdf",
             )
 
-    def classification_report(self, fold: int, model_name: str) -> None:
+    def classification_report(self, fold: int) -> None:
         """
         create classification report from sklearn
         add model name and fold iteration to the report
 
         Args:
             fold (int): which fold to use in resampling procedure
-            model_name (str): name of the models
         """
 
         clf_report = classification_report(
@@ -140,10 +145,32 @@ class Validation(Metrics):
 
         # add fold iteration and model name
         clf_report["fold"] = fold
-        clf_report["model"] = model_name
+        clf_report["model"] = self.model_name
 
         if config.SAVE_ACC:
             clf_report.to_csv(config.METRICS_SAVENAME, mode="a")
+
+    def write_output(self, filename: str) -> None:
+        """
+        Write acc and loss to csv file within model, epoch, kfold iteration
+
+        Args:
+            filename: config.ACC_SAVENAME_TRAIN or config.ACC_SAVENAME_VAL depending on phase
+        """
+        if config.SAVE_ACC:
+            with open(filename, "a", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerow(
+                    [
+                        self.model_name,
+                        self.epoch,
+                        self.kfold,
+                        self.batch_size,
+                        self.epoch_acc.cpu().numpy(),
+                        self.epoch_loss,
+                    ]
+                )
+                file.close()
 
     def run(self) -> None:
         """

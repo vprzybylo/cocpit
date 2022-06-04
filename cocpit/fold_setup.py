@@ -25,8 +25,7 @@ class FoldSetup:
 
     Args:
         batch_size (int): number of images read into memory at a time
-        epochs (int): number of iterations on dataset
-                dataloaders (dict[str, torch.utils.data.DataLoader]): training and validation dict that loads images with sampling procedure
+        dataloaders (dict[str, torch.utils.data.DataLoader]): training and validation dict that loads images with sampling procedure
 
     """
 

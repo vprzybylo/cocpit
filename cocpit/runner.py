@@ -5,7 +5,7 @@ import time
 import cocpit
 import cocpit.config as config  # isort:split
 from typing import List, Dict
-import torch
+import csv
 
 
 def determine_phases() -> List[str]:
@@ -21,8 +21,8 @@ def main(
     c: cocpit.model_config.ModelConfig,
     model_name: str,
     epochs: int,
-    kfold: int,
     batch_size: int,
+    kfold: int,
 ) -> None:
     """
     Trains and validates a model across epochs, phases, and batches
@@ -33,7 +33,7 @@ def main(
         model_name (str): name of model architecture
         epochs (int): total epochs for training loop
         batch_size (int): number of images read into memory at a time
-
+        kfold (int): number of folds use in k-fold cross validation
     """
     since_total = time.time()
     val_best_acc = 0.0
@@ -50,11 +50,7 @@ def main(
                 train.run()
             else:
                 val = cocpit.validate.Validation(
-                    f,
-                    epoch,
-                    epochs,
-                    kfold,
-                    val_best_acc,
+                    f, epoch, epochs, model_name, kfold, batch_size, val_best_acc, c
                 )
                 val_best_acc = val.run()
             t.print_time_one_epoch()

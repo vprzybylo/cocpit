@@ -12,10 +12,12 @@ class Train(Metrics):
 
     Args:
         f (cocpit.fold_setup.FoldSetup): instance of FoldSetup class
-        model_name (str): name of model architecture
-        c (model_config.ModelConfig): instance of ModelConfig class
         epoch (int): epoch index in training loop
         epochs (int): total epochs for training loop
+        model_name (str): name of model architecture
+        kfold (int): number of folds use in k-fold cross validation
+        batch_size (int): number of images read into memory at a time
+        c (model_config.ModelConfig): instance of ModelConfig class
     """
 
     def __init__(self, f, epoch, epochs, model_name, kfold, batch_size, c):
