@@ -16,7 +16,7 @@ import cocpit
 from cocpit import config as config
 import os
 import time
-
+from sklearn.model_selection import StratifiedKFold
 import pandas as pd
 import torch
 
@@ -25,6 +25,10 @@ def _preprocess_sheets(df_path: str, campaign: str) -> None:
     """
     - Separate individual images from sheets of images to be saved
     - Text can be on the sheet
+
+    Args:
+        df_path (str): path to save dataframe to
+        campaign (str): which campaign to process
     """
     start_time = time.time()
 
@@ -49,35 +53,46 @@ def _preprocess_sheets(df_path: str, campaign: str) -> None:
         show_dilate=False,
         show_cropped=False,
     )
-
     print("time to preprocess sheets: %.2f" % (time.time() - start_time))
 
 
-def nofold_training(
-    model_name: str,
-    batch_size: int,
-    epochs: int,
-    feature_extract: bool = False,
-    use_pretrained: bool = False,
-) -> None:
+def kfold_training(batch_size: int, model_name: str, epochs: int) -> None:
     """
-    Create training and validation indices when k-fold cross validation
-    not initialized (config.KFOLD=0)
+    - Split dataset into folds
+    - Preserve the percentage of samples for each class with stratified
+    - Create dataloaders for each fold
+
+    Args:
+        batch_size (int): number of images read into memory at a time
+        model_name (str): name of model architecture
+        epochs (int): number of iterations on dataset
+    """
+    skf = StratifiedKFold(n_splits=config.KFOLD, shuffle=True, random_state=42)
+    # datasets based on phase get called again in split_data
+    # needed here to initialize for skf.split
+    data = cocpit.data_loaders.get_data("val")
+    for kfold, (train_indices, val_indices) in enumerate(
+        skf.split(data.imgs, data.targets)
+    ):
+        print("KFOLD iteration: ", kfold)
+
+        # apply appropriate transformations for training and validation sets
+        f = cocpit.fold_setup.FoldSetup(batch_size, kfold, train_indices, val_indices)
+        f.split_data()
+        f.update_save_names()
+        f.create_dataloaders()
+        model_setup(f, model_name, epochs)
+
+
+def model_setup(f: cocpit.fold_setup.FoldSetup, model_name: str, epochs: int) -> None:
+    """
+    Create instances for model configurations and training/validation. Runs model.
 
     Args:
         model_name (str): name of model architecture
-        batch_size (int): number of images read into memory at a time
         epochs (int): number of iterations on dataset
-        feature_extract (bool): Start with a pretrained model and only
-                                update the final layer weights from which we derive predictions
-        use_pretrained (bool): Update all of the model’s parameters (retrain). Default = False
     """
-    f = cocpit.fold_setup.FoldSetup(batch_size)
-    f.nofold_indices()
-    f.split_data()
-    f.create_dataloaders()
-
-    m = cocpit.models.Model(feature_extract, use_pretrained)
+    m = cocpit.models.Model()
     # call method based on str model name
     method = getattr(cocpit.models.Model, model_name)
     method(m)
@@ -91,22 +106,8 @@ def nofold_training(
         c,
         model_name,
         epochs,
-        batch_size,
         kfold=0,
     )
-
-
-def fold_training(model_name: str, batch_size: int, epochs: int) -> None:
-    """
-    Setup k-fold cross validation to labeled dataset
-
-    Args:
-        model_name (str): name of model architecture
-        batch_size (int): number of images read into memory at a time
-        epochs (int): number of iterations on dataset
-    """
-    f = cocpit.fold_setup.FoldSetup(model_name, batch_size, epochs)
-    f.kfold_training()  # model config and calls to training happen in here
 
 
 def _train_models() -> None:
@@ -121,9 +122,14 @@ def _train_models() -> None:
                 print("MAX EPOCH: ", epochs)
 
                 if config.KFOLD != 0:
-                    fold_training(model_name, batch_size, epochs)
+                    # Setup k-fold cross validation on labeled dataset
+                    kfold_training(batch_size, model_name, epochs)
                 else:
-                    nofold_training(model_name, batch_size, epochs)
+                    f = cocpit.fold_setup.FoldSetup(batch_size, 0, [], [])
+                    f.nofold_indices()
+                    f.split_data()
+                    f.create_dataloaders()
+                    model_setup(f, model_name, epochs)
 
 
 def _ice_classification(df_path: str, open_dir: str) -> None:

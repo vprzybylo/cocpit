@@ -16,16 +16,14 @@ class Train(Metrics):
         epochs (int): total epochs for training loop
         model_name (str): name of model architecture
         kfold (int): number of folds use in k-fold cross validation
-        batch_size (int): number of images read into memory at a time
         c (model_config.ModelConfig): instance of ModelConfig class
     """
 
-    def __init__(self, f, epoch, epochs, model_name, kfold, batch_size, c):
+    def __init__(self, f, epoch, epochs, model_name, kfold, c):
 
         super().__init__(f, epoch, epochs)
         self.model_name: str = model_name
         self.kfold = kfold
-        self.batch_size = batch_size
         self.c = c
 
     def label_counts(self, label_cnts: np.ndarray, labels: torch.Tensor):
@@ -92,7 +90,7 @@ class Train(Metrics):
                         self.model_name,
                         self.epoch,
                         self.kfold,
-                        self.batch_size,
+                        self.f.batch_size,
                         self.epoch_acc.cpu().numpy(),
                         self.epoch_loss,
                     ]

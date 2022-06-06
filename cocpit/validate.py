@@ -21,7 +21,6 @@ class Validation(Metrics):
         epochs (int): total epochs for training loop
         model_name (str): name of model architecture
         kfold (int): number of folds use in k-fold cross validation
-        batch_size (int): number of images read into memory at a time
         val_best_acc (float): highest validation accuracy across epochs
         c (model_config.ModelConfig): instance of ModelConfig class
     """
@@ -29,12 +28,9 @@ class Validation(Metrics):
     all_preds = []  # validation preds for 1 epoch for plotting
     all_labels = []  # validation labels for 1 epoch for plotting
 
-    def __init__(
-        self, f, epoch, epochs, model_name, kfold, batch_size, val_best_acc, c
-    ):
+    def __init__(self, f, epoch, epochs, model_name, kfold, val_best_acc, c):
         super().__init__(f, epoch, epochs)
         self.model_name = model_name
-        self.batch_size = batch_size
         self.kfold = kfold
         self.val_best_acc = val_best_acc
         self.c = c
@@ -165,7 +161,7 @@ class Validation(Metrics):
                         self.model_name,
                         self.epoch,
                         self.kfold,
-                        self.batch_size,
+                        self.f.batch_size,
                         self.epoch_acc.cpu().numpy(),
                         self.epoch_loss,
                     ]
@@ -192,7 +188,7 @@ class Validation(Metrics):
 
         # classification report
         if self.epoch == self.epochs - 1:
-            self.classification_report(self.kfold, self.model_name)
+            self.classification_report(self.kfold)
 
         self.log_epoch_metrics("epoch_acc_val", "epoch_loss_val")
         self.print_epoch_metrics("Validation")

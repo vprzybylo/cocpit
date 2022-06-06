@@ -10,19 +10,15 @@ class Model:
     Model initializations from torchvision. We always train from scratch.
 
     Args:
-        feature_extract (bool): update only the last layer parameters. Default False
-        use_pretrained (bool): use a pre-trained model to extract meaningful features from new samples. Default False.
         num_classes (int): number of classes
         model (torchvision.models): a torchvision.models instance
     """
 
     def __init__(
         self,
-        feature_extract: bool = False,
-        use_pretrained: bool = False,
     ):
-        self.feature_extract = feature_extract
-        self.use_pretrained = use_pretrained
+        self.feature_extract = config.FEATURE_EXTRACT
+        self.use_pretrained = config.USE_PRETRAINED
         self.num_classes = len(config.CLASS_NAMES)
         self.model: torchvision.models = None
 

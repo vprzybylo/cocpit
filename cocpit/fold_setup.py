@@ -11,7 +11,7 @@ import cocpit.data_loaders as data_loaders
 import cocpit.config as config  # isort: split
 from collections import Counter
 
-from sklearn.model_selection import StratifiedKFold, train_test_split
+from sklearn.model_selection import train_test_split
 
 from dataclasses import dataclass, field
 from typing import List, Dict
@@ -20,24 +20,25 @@ from typing import List, Dict
 @dataclass
 class FoldSetup:
     """
-    - Setup training and validation indices for labels and data based on k-fold cross validation
-    - Called in __main__.py
+    Setup training and validation dataloaders based on k-fold cross validation. Called in __main__.py
 
     Args:
         batch_size (int): number of images read into memory at a time
         dataloaders (dict[str, torch.utils.data.DataLoader]): training and validation dict that loads images with sampling procedure
-
+        train_indices (List[int]): list of indices of data for training
+        val_indices (List[int]): list of indices of data for validation
     """
 
     batch_size: int
-    dataloaders: Dict[str, torch.utils.data.DataLoader] = field(init=False)
+    kfold: int
+    train_indices: List[int] = field(default_factory=list)
+    val_indices: List[int] = field(default_factory=list)
 
+    dataloaders: Dict[str, torch.utils.data.DataLoader] = field(init=False)
     train_data: torch.utils.data.Subset = field(init=False)
     val_data: torch.utils.data.Subset = field(init=False)
-    train_labels: List[int] = field(init=False)  # List[int]
+    train_labels: List[int] = field(init=False)
     val_labels: List[int] = field(init=False)
-    train_indices: List[int] = field(init=False)
-    val_indices: List[int] = field(init=False)
 
     def print_composition(self) -> None:
         """
@@ -149,35 +150,4 @@ class FoldSetup:
         else:
             self.train_indices, self.val_indices = train_test_split(
                 list(range(total_files)), test_size=config.VALID_SIZE
-            )
-
-    def kfold_training(self) -> None:
-        """
-        - Split dataset into folds
-        - Preserve the percentage of samples for each class with stratified
-        - Create dataloaders for each fold
-        - Train and validate the model on each fold
-        """
-        skf = StratifiedKFold(n_splits=config.KFOLD, shuffle=True, random_state=42)
-        # datasets based on phase get called again in split_data
-        # needed here to initialize for skf.split
-        data = data_loaders.get_data("val")
-        for self.kfold, (self.train_indices, self.val_indices) in enumerate(
-            skf.split(data.imgs, data.targets)
-        ):
-            print("KFOLD iteration: ", self.kfold)
-
-            # apply appropriate transformations for training and validation sets
-            self.split_data()
-            self.update_save_names()
-            self.create_dataloaders()
-            optimizer, model = cocpit.model_config.main(self.model_name)
-            cocpit.runner.main(
-                self.dataloaders,
-                optimizer,
-                model,
-                self.epochs,
-                self.model_name,
-                self.batch_size,
-                self.kfold,
             )

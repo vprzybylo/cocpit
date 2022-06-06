@@ -21,7 +21,6 @@ def main(
     c: cocpit.model_config.ModelConfig,
     model_name: str,
     epochs: int,
-    batch_size: int,
     kfold: int,
 ) -> None:
     """
@@ -44,18 +43,16 @@ def main(
             # put model in correct mode based on if training or validating
             c.model.train() if phase == "train" else c.model.eval()
             if phase == "train":
-                train = cocpit.train.Train(
-                    f, epoch, epochs, model_name, kfold, batch_size, c
-                )
+                train = cocpit.train.Train(f, epoch, epochs, model_name, kfold, c)
                 train.run()
             else:
                 val = cocpit.validate.Validation(
-                    f, epoch, epochs, model_name, kfold, batch_size, val_best_acc, c
+                    f, epoch, epochs, model_name, kfold, val_best_acc, c
                 )
                 val_best_acc = val.run()
             t.print_time_one_epoch()
     try:
         t.print_time_all_epochs()
-        t.write_times(f.model_name, f.kfold)
+        t.write_times(model_name, kfold)
     except NameError:
         print("Number of epochs needs to increase")
