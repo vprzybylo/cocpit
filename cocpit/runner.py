@@ -31,7 +31,6 @@ def main(
         c (model_config.ModelConfig): instance of ModelConfig class
         model_name (str): name of model architecture
         epochs (int): total epochs for training loop
-        batch_size (int): number of images read into memory at a time
         kfold (int): number of folds use in k-fold cross validation
     """
     since_total = time.time()

@@ -166,6 +166,9 @@ class GUI:
     def save_image(self, b) -> None:
         """
         Move the image based on dropdown selection
+
+        Args:
+            b: button instance
         """
 
         filename = self.paths[self.index].split("/")[-1]

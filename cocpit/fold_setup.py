@@ -24,7 +24,7 @@ class FoldSetup:
 
     Args:
         batch_size (int): number of images read into memory at a time
-        dataloaders (dict[str, torch.utils.data.DataLoader]): training and validation dict that loads images with sampling procedure
+        kfold (int): fold index in k-fold cross validation loop
         train_indices (List[int]): list of indices of data for training
         val_indices (List[int]): list of indices of data for validation
     """

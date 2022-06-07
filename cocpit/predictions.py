@@ -109,8 +109,8 @@ class LoaderPredictions:
         #     f"_bs{config.BATCH_SIZE}"
         #     f"_k{fold}_vgg16.pt"
         # ).cuda()
-        model = torch.load(f"{config.MODEL_SAVE_DIR}e[30]_bs[64]_k0_vgg16.pt")
-        # model = torch.load(config.MODEL_SAVENAME)
+        # model = torch.load(f"{config.MODEL_SAVE_DIR}e[30]_bs[64]_k0_.pt")
+        model = torch.load(config.MODEL_SAVENAME)
         model.eval()
         return model
 
@@ -177,7 +177,7 @@ class LoaderPredictions:
         self.topk_classes.append(b.classes)
         self.max_preds.append(b.max_preds)
         self.paths.append(paths)
-        if self.labels is not None:
+        if labels is not None:
             self.labels.append(labels)
 
     def find_wrong_indices(self) -> None:

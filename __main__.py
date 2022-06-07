@@ -89,6 +89,7 @@ def model_setup(f: cocpit.fold_setup.FoldSetup, model_name: str, epochs: int) ->
     Create instances for model configurations and training/validation. Runs model.
 
     Args:
+        f (cocpit.fold_setup.FoldSetup): instance of FoldSetup class
         model_name (str): name of model architecture
         epochs (int): number of iterations on dataset
     """
@@ -135,6 +136,10 @@ def _train_models() -> None:
 def _ice_classification(df_path: str, open_dir: str) -> None:
     """
     Classify quality ice particles using a trained ML model
+
+    Args:
+        df_path (str): path to save df to
+        open_dir (str): directory where the test images live
     """
     start_time = time.time()
 
@@ -150,11 +155,15 @@ def _ice_classification(df_path: str, open_dir: str) -> None:
     print("time to classify ice = %.2f seconds" % (time.time() - start_time))
 
 
-def _geometric_attributes(df_path: str, open_dir: str):
+def _geometric_attributes(df_path: str, open_dir: str) -> None:
     """
     Calculates geometric particle properties and appends to the databases
      - e.g., roundness, aspect ratio, area ratio, etc.
      - see cocpit/geometric_attributes.py, which calls cocpit/pic.py for calculations
+
+    Args:
+        df_path (str): path to save df to
+        open_dir (str): directory where the images live to process
     """
 
     # load df of quality ice particles to append particle attributes
@@ -163,12 +172,12 @@ def _geometric_attributes(df_path: str, open_dir: str):
     df.to_csv(df_path, index=False)
 
 
-def _add_date(df_path: str):
+def _add_date(df_path: str) -> None:
     """
     Add a column for the date from the filename
 
     Args:
-        df_path
+        df_path (str): path to save df to
     """
     df = pd.read_csv(df_path)
     d = cocpit.add_date.Date(df)

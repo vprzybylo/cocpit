@@ -1,9 +1,7 @@
-import cocpit
 import cocpit.config as config
 import torch
 from torch import nn, optim
 import torchvision
-from typing import Tuple
 
 
 class ModelConfig:
@@ -16,7 +14,6 @@ class ModelConfig:
     Args:
         model (torchvision.models): loaded pytorch model object
         optimizer (torch.optim.sgd.SGD): an algorithm that modifies the attributes of the neural network
-
     """
 
     def __init__(self, model: torchvision.models):
@@ -39,7 +36,7 @@ class ModelConfig:
         Args:
             feature_extract (bool): only update the weights of the last layer
         Returns:
-            params_to_update (generator):
+            params_to_update (generator): model parameters that get updated
         """
         params_to_update = self.model.parameters()
 
@@ -68,9 +65,12 @@ class ModelConfig:
     def set_criterion(self) -> None:
         self.criterion = nn.CrossEntropyLoss()
 
-    def set_dropout(self, drop_rate: float = 0.1) -> None:
+    def set_dropout(self, drop_rate: float = 0.3) -> None:
         """
         Apply dropout rate: a technique to fight overfitting and improve neural network generalization
+
+        Args:
+            drop_rate (float): probability of an element to be zeroed
         """
         for _, child in self.model.named_children():
             if isinstance(child, torch.nn.Dropout):

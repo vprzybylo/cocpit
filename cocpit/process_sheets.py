@@ -22,12 +22,12 @@ class Image:
         open_dir (str): the path where the files are located
         file (str): file [including path] to sheet with cpi images
         save_dir (str): the path where the files are saved
-        self.files (str): list of files to be processed
-        self.widths (List[float]): width of rectangular roi frame
-        self.heights (List[float]): height of rectangular roi frame
-        self.particle_heights (List[float]): particle heights
-        self.particle_widths (List[float]): particle widths
-        self.cutoffs (List[float]): percent of particle intersecting border
+        files (str): list of files to be processed
+        widths (List[float]): width of rectangular roi frame
+        heights (List[float]): height of rectangular roi frame
+        particle_heights (List[float]): particle heights
+        particle_widths (List[float]): particle widths
+        cutoffs (List[float]): percent of particle intersecting border
     """
 
     def __init__(self, open_dir: str, file: str, save_dir: str):

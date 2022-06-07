@@ -12,13 +12,6 @@ import numpy as np
 import torch.nn.functional as F
 from typing import Tuple
 
-plt_params = {
-    "axes.labelsize": "large",
-    "axes.titlesize": "large",
-}
-plt.rcParams["font.family"] = "serif"
-plt.rcParams.update(plt_params)
-
 
 def plot_image(ax, row, image, class_, file):
     if row == 0:
@@ -37,11 +30,9 @@ def plot_saliency(image, ax, row):
 
     # code to plot the saliency map as a heatmap
     ax[row, 1].imshow(saliency[0], cmap=plt.cm.hot, aspect="auto")
-    ax[row, 1].set_title(
-        f"Prediction: {config.CLASS_NAMES[pred]} \n Probability: {np.round(probs.detach().numpy().max()*100, 2)}%"
-    )
     ax[row, 1].axes.xaxis.set_ticks([])
     ax[row, 1].axes.yaxis.set_ticks([])
+    ax[row, 1].set_title("Saliency Map")
 
 
 def preprocess(image, size):

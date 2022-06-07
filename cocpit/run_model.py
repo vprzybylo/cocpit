@@ -23,7 +23,7 @@ def test_loader(open_dir, df):
         df (pd.DataFrame): df with file names
 
     Returns:
-
+        (torch.utils.data.DataLoader): a dataset to be iterated over using sampling strategy
     """
     file_list = df["filename"]
     test_data = data_loaders.TestDataSet(open_dir, file_list)
