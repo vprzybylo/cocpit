@@ -5,18 +5,16 @@ import cv2
 from torchvision import transforms
 import matplotlib.pyplot as plt
 
-from cocpit.grad_cam_pytorch.grad_cam import (
+from grad_cam_pytorch.grad_cam import (
     BackPropagation,
     Deconvnet,
     GradCAM,
     GuidedBackPropagation,
-    occlusion_sensitivity,
 )
 
-from cocpit.grad_cam_pytorch.save_image import (
+from grad_cam_pytorch.save_images import (
     save_gradient,
     save_gradcam,
-    save_sensitivity,
 )
 
 
