@@ -489,21 +489,29 @@ if the image area = 0</p>
 <span id="cocpit-fold-setup-module"></span><h2>cocpit.fold_setup module<a class="headerlink" href="#module-cocpit.fold_setup" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.fold_setup.</span></span><span class="sig-name descname"><span class="pre">FoldSetup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.fold_setup.FoldSetup" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.fold_setup.</span></span><span class="sig-name descname"><span class="pre">FoldSetup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kfold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_indices=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_indices=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.fold_setup.FoldSetup" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<ul class="simple">
-<li><p>Setup training and validation indices for labels and data based on k-fold cross validation</p></li>
-<li><p>Called in __main__.py</p></li>
-</ul>
+<p>Setup training and validation dataloaders based on k-fold cross validation. Called in __main__.py</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model_name</strong> (<em>str</em>) – name of model architecture</p></li>
 <li><p><strong>batch_size</strong> (<em>int</em>) – number of images read into memory at a time</p></li>
-<li><p><strong>epochs</strong> (<em>int</em>) – number of iterations on dataset</p></li>
+<li><p><strong>kfold</strong> (<em>int</em>) – fold index in k-fold cross validation loop</p></li>
+<li><p><strong>train_indices</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – list of indices of data for training</p></li>
+<li><p><strong>val_indices</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – list of indices of data for validation</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.kfold">
+<span class="sig-name descname"><span class="pre">kfold</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.kfold" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.dataloaders">
+<span class="sig-name descname"><span class="pre">dataloaders</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.utils.data.dataloader.DataLoader</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.dataloaders" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.print_composition">
 <span class="sig-name descname"><span class="pre">print_composition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.print_composition" title="Permalink to this definition"></a></dt>
@@ -596,22 +604,6 @@ so that each fold gets saved</p>
 </ul>
 <p>based on config.VALID_SIZE
 - Shuffle first and then split dataset</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cocpit.fold_setup.FoldSetup.kfold_training">
-<span class="sig-name descname"><span class="pre">kfold_training</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.fold_setup.FoldSetup.kfold_training" title="Permalink to this definition"></a></dt>
-<dd><ul class="simple">
-<li><p>Split dataset into folds</p></li>
-<li><p>Preserve the percentage of samples for each class with stratified</p></li>
-<li><p>Create dataloaders for each fold</p></li>
-<li><p>Train and validate the model on each fold</p></li>
-</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
@@ -806,7 +798,7 @@ and next button</p>
 <span id="cocpit-gui-wrong-module"></span><h2>cocpit.gui_wrong module<a class="headerlink" href="#module-cocpit.gui_wrong" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="cocpit.gui_wrong.GUI">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.gui_wrong.</span></span><span class="sig-name descname"><span class="pre">GUI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrong_trunc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_topk_probs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_topk_classes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_wrong.GUI" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.gui_wrong.</span></span><span class="sig-name descname"><span class="pre">GUI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrong_trunc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topk_probs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topk_classes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_wrong.GUI" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <ul class="simple">
 <li><p>ipywidget buttons to label incorrect predictions from a dataloader.</p></li>
@@ -816,10 +808,10 @@ and next button</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>wrong_trunc</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – indices where the model predictions are wrong</p></li>
-<li><p><strong>all_labels</strong> (<em>np.ndarray</em><em>[</em><em>int</em><em>]</em>) – image labels</p></li>
-<li><p><strong>all_paths</strong> (<em>np.ndarray</em><em>[</em><em>str</em><em>]</em>) – image paths</p></li>
-<li><p><strong>all_topk_props</strong> (<em>np.ndarray</em><em>[</em><em>float</em><em>]</em>) – top predicted probabilites</p></li>
-<li><p><strong>all_topk_classes</strong> (<em>np.ndarray</em><em>[</em><em>int</em><em>]</em>) – classes related to the top predicted probabilites</p></li>
+<li><p><strong>labels</strong> (<em>np.ndarray</em><em>[</em><em>int</em><em>]</em>) – image labels</p></li>
+<li><p><strong>paths</strong> (<em>np.ndarray</em><em>[</em><em>str</em><em>]</em>) – image paths</p></li>
+<li><p><strong>topk_props</strong> (<em>np.ndarray</em><em>[</em><em>float</em><em>]</em>) – top predicted probabilites</p></li>
+<li><p><strong>topk_classes</strong> (<em>np.ndarray</em><em>[</em><em>int</em><em>]</em>) – classes related to the top predicted probabilites</p></li>
 </ul>
 </dd>
 </dl>
@@ -923,8 +915,11 @@ by updating the index within the wrong predictions by 1</p>
 <span class="sig-name descname"><span class="pre">save_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.gui_wrong.GUI.save_image" title="Permalink to this definition"></a></dt>
 <dd><p>Move the image based on dropdown selection</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>b</strong> – button instance</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -979,7 +974,10 @@ from the image at the current index</p>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>model</strong> (<em>torchvision.models</em>) – loaded pytorch model object</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torchvision.models</em>) – loaded pytorch model object</p></li>
+<li><p><strong>optimizer</strong> (<em>torch.optim.sgd.SGD</em>) – an algorithm that modifies the attributes of the neural network</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">
@@ -999,8 +997,11 @@ of the .required_grad’s set to the default of True.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>feature_extract</strong> (<em>bool</em>) – only update the weights of the last layer</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>params_to_update (generator)</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>model parameters that get updated</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>params_to_update (generator)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1017,23 +1018,36 @@ of the .required_grad’s set to the default of True.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="cocpit.model_config.ModelConfig.optimizer">
-<span class="sig-name descname"><span class="pre">optimizer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.model_config.ModelConfig.optimizer" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="cocpit.model_config.ModelConfig.set_optimizer">
+<span class="sig-name descname"><span class="pre">set_optimizer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.model_config.ModelConfig.set_optimizer" title="Permalink to this definition"></a></dt>
 <dd><p>Model optimizer for stochastic gradient decent</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">SGD</span></code></p>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.model_config.ModelConfig.set_criterion">
+<span class="sig-name descname"><span class="pre">set_criterion</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.model_config.ModelConfig.set_criterion" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cocpit.model_config.ModelConfig.set_dropout">
-<span class="sig-name descname"><span class="pre">set_dropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">drop_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.model_config.ModelConfig.set_dropout" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_dropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">drop_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.model_config.ModelConfig.set_dropout" title="Permalink to this definition"></a></dt>
 <dd><p>Apply dropout rate: a technique to fight overfitting and improve neural network generalization</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>drop_rate</strong> (<em>float</em>) – probability of an element to be zeroed</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1051,29 +1065,17 @@ of the .required_grad’s set to the default of True.</p>
 
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="cocpit.model_config.main">
-<span class="sig-prename descclassname"><span class="pre">cocpit.model_config.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.model_config.main" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">SGD</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DataParallel</span></code>]</p>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 <section id="module-cocpit.models">
 <span id="cocpit-models-module"></span><h2>cocpit.models module<a class="headerlink" href="#module-cocpit.models" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="cocpit.models.Model">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.models.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_extract</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pretrained</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.models.Model" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.models.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><a class="headerlink" href="#cocpit.models.Model" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Model initializations from torchvision. We always train from scratch.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>feature_extract</strong> (<em>bool</em>) – update only the last layer parameters. Default False</p></li>
-<li><p><strong>use_pretrained</strong> (<em>bool</em>) – use a pre-trained model to extract meaningful features from new samples. Default False.</p></li>
 <li><p><strong>num_classes</strong> (<em>int</em>) – number of classes</p></li>
 <li><p><strong>model</strong> (<em>torchvision.models</em>) – a torchvision.models instance</p></li>
 </ul>
@@ -1224,24 +1226,6 @@ of the .required_grad’s set to the default of True.</p>
 
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="cocpit.models.initialize_model">
-<span class="sig-prename descclassname"><span class="pre">cocpit.models.</span></span><span class="sig-name descname"><span class="pre">initialize_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_extract</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pretrained</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.models.initialize_model" title="Permalink to this definition"></a></dt>
-<dd><p>Set up model architectures. All input size of 224</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>feature_extract</strong> (<em>bool</em>) – Start with a pretrained model and only
-update the final layer weights from which we derive predictions</p></li>
-<li><p><strong>use_pretrained</strong> (<em>bool</em>) – Update all of the model’s parameters (retrain). Default = False</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;module ‘torchvision.models’ from ‘/usr/local/lib/python3.10/site-packages/torchvision/models/__init__.py’&gt;</p>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 <section id="module-cocpit.performance_metrics">
 <span id="cocpit-performance-metrics-module"></span><h2>cocpit.performance_metrics module<a class="headerlink" href="#module-cocpit.performance_metrics" title="Permalink to this headline"></a></h2>
@@ -1249,26 +1233,27 @@ update the final layer weights from which we derive predictions</p></li>
 Logs metrics to console and/or comet-ml interface (see config.py to turn on)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.performance_metrics.</span></span><span class="sig-name descname"><span class="pre">Metrics</span></span><a class="headerlink" href="#cocpit.performance_metrics.Metrics" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.performance_metrics.</span></span><span class="sig-name descname"><span class="pre">Metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.performance_metrics.Metrics" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Calculate batch and epoch metrics for training and validation datasets
 Inherited in train and validate</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dataloaders</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>torch.utils.data.DataLoader</em><em>]</em>) – training and validation dict that loads images with sampling procedure</p></li>
-<li><p><strong>optimizer</strong> (<em>torch.optim.sgd.SGD</em>) – an algorithm that modifies the attributes of the neural network</p></li>
-<li><p><strong>model</strong> (<em>torch.nn.parallel.data_parallel.DataParallel</em>) – saved and loaded model</p></li>
-<li><p><strong>model_name</strong> (<em>str</em>) – name of model architecture</p></li>
+<li><p><strong>f</strong> (<a class="reference internal" href="#cocpit.fold_setup.FoldSetup" title="cocpit.fold_setup.FoldSetup"><em>cocpit.fold_setup.FoldSetup</em></a>) – instance of FoldSetup class</p></li>
 <li><p><strong>epoch</strong> (<em>int</em>) – epoch index in training loop</p></li>
-<li><p><strong>epochs</strong> (<em>int</em>) – max epochs</p></li>
-<li><p><strong>kfold</strong> (<em>int</em>) – number of k-folds used in resampling procedure</p></li>
-<li><p><strong>batch_size</strong> (<em>int</em>) – number of images read into memory at a time</p></li>
-<li><p><strong>totals</strong> – (float): number of images seen</p></li>
-<li><p><strong>running_loss</strong> – (float): cumulative penalties for bad predictions</p></li>
-<li><p><strong>running_corrects</strong> – (torch.Tensor): cumulative accuracy over batches</p></li>
-<li><p><strong>epoch_loss</strong> – (float): loss at the end of an epoch</p></li>
-<li><p><strong>epoch_acc</strong> – (float): accuracy at the end of an epoch</p></li>
+<li><p><strong>epochs</strong> (<em>int</em>) – total epochs for training loop</p></li>
+<li><p><strong>loss</strong> (<em>torch.Tensor</em>) – penalty for a bad prediction or a number indicating how bad the model’s prediction was on a single example</p></li>
+<li><p><strong>preds</strong> (<em>torch.Tensor</em>) – probabilities for each class</p></li>
+<li><p><strong>inputs</strong> (<em>torch.Tensor</em>) – batch of images</p></li>
+<li><p><strong>labels</strong> (<em>torch.Tensor</em>) – labels for a batch</p></li>
+<li><p><strong>batch</strong> (<em>int</em>) – index of the batch of images</p></li>
+<li><p><strong>totals</strong> (<em>int</em>) – number of images seen</p></li>
+<li><p><strong>running_loss</strong> (<em>float</em>) – cumulative penalties for bad predictions</p></li>
+<li><p><strong>running_corrects</strong> (<em>torch.Tensor</em>) – cumulative accuracy over batches</p></li>
+<li><p><strong>batch_acc</strong> (<em>float</em>) – accuracy over a given batch</p></li>
+<li><p><strong>epoch_loss</strong> (<em>float</em>) – loss at the end of an epoch</p></li>
+<li><p><strong>epoch_acc</strong> (<em>torch.Tensor</em>) – accuracy at the end of an epoch</p></li>
 </ul>
 </dd>
 </dl>
@@ -1332,20 +1317,6 @@ Inherited in train and validate</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>phase</strong> (<em>str</em>) – “train” or “val”</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cocpit.performance_metrics.Metrics.write_output">
-<span class="sig-name descname"><span class="pre">write_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.performance_metrics.Metrics.write_output" title="Permalink to this definition"></a></dt>
-<dd><p>Write acc and loss to csv file within model, epoch, kfold iteration</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>filename</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – config.ACC_SAVENAME_TRAIN or config.ACC_SAVENAME_VAL depending on phase</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
@@ -1443,14 +1414,13 @@ The image is automatically moved upon choosing a class from the dropdown menu.</
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>self.all_labels</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – list of labels across all batches</p></li>
-<li><p><strong>self.all_paths</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of paths across all batches</p></li>
-<li><p><strong>self.all_topk_probs</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – list of topk probabilities across all batches</p></li>
-<li><p><strong>self.all_topk_classes</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – list of topk classes across all batches</p></li>
-<li><p><strong>self.all_max_preds</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – list of max predictions across all batches</p></li>
+<li><p><strong>self.labels</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – list of labels across all batches</p></li>
+<li><p><strong>self.paths</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of paths across all batches</p></li>
+<li><p><strong>self.topk_probs</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – list of topk probabilities across all batches</p></li>
+<li><p><strong>self.topk_classes</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – list of topk classes across all batches</p></li>
+<li><p><strong>self.max_preds</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – list of max predictions across all batches</p></li>
 <li><p><strong>self.wrong_trunc</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – indices of wrong predictions</p></li>
 <li><p><strong>self.wrong_idx</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – all indices where the model incorrectly predicted</p></li>
-<li><p><strong>self.labels</strong> (<em>bool</em>) – True if labels are provided (i.e., validation not test)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1475,7 +1445,7 @@ The image is automatically moved upon choosing a class from the dropdown menu.</
 <dd><p>Flatten a variable across batches</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1492,50 +1462,30 @@ The image is automatically moved upon choosing a class from the dropdown menu.</
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="cocpit.predictions.LoaderPredictions.append_batch">
+<span class="sig-name descname"><span class="pre">append_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.LoaderPredictions.append_batch" title="Permalink to this definition"></a></dt>
+<dd><p>Append batch predictions across all possible validation datasets (including k-folds)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>b</strong> (<a class="reference internal" href="#cocpit.predictions.BatchPredictions" title="cocpit.predictions.BatchPredictions"><em>BatchPredictions</em></a>) – instance of batch predictions class</p></li>
+<li><p><strong>paths</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – batch paths</p></li>
+<li><p><strong>labels</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – batch labels</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="cocpit.predictions.LoaderPredictions.find_wrong_indices">
 <span class="sig-name descname"><span class="pre">find_wrong_indices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.LoaderPredictions.find_wrong_indices" title="Permalink to this definition"></a></dt>
 <dd><p>Find all indices where the model incorrectly predicted</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cocpit.predictions.LoaderPredictions.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">top_k_preds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.LoaderPredictions.predict" title="Permalink to this definition"></a></dt>
-<dd><p>Make predictions across all possible validation datasets (including k-folds)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>top_k_preds</strong> (<em>int</em>) – the top k classes will be displayed in bar chart</p></li>
-<li><p><strong>folds</strong> (<em>int</em>) – number of k-folds used in resampling procedure
-if kfold cross validation was not used, keep as 1</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cocpit.predictions.LoaderPredictions.predict_test_loader">
-<span class="sig-name descname"><span class="pre">predict_test_loader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k_preds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.predictions.LoaderPredictions.predict_test_loader" title="Permalink to this definition"></a></dt>
-<dd><p>Predict on test data loader</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>test_loader</strong> (<em>torch.utils.data.dataloader.DataLoader</em>) – dataloader holding test set</p></li>
-<li><p><strong>top_k_preds</strong> (<em>int</em>) – the top k predictions will be displayed in bar chart
-must be &lt; number of classes</p></li>
-<li><p><strong>fold</strong> (<em>int</em>) – number of k-folds used in resampling procedure
-if kfold cross validation was not used, keep as 0</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1571,12 +1521,12 @@ if kfold cross validation was not used, keep as 0</p></li>
 <li><p><strong>open_dir</strong> (<em>str</em>) – the path where the files are located</p></li>
 <li><p><strong>file</strong> (<em>str</em>) – file [including path] to sheet with cpi images</p></li>
 <li><p><strong>save_dir</strong> (<em>str</em>) – the path where the files are saved</p></li>
-<li><p><strong>self.files</strong> (<em>str</em>) – list of files to be processed</p></li>
-<li><p><strong>self.widths</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – width of rectangular roi frame</p></li>
-<li><p><strong>self.heights</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – height of rectangular roi frame</p></li>
-<li><p><strong>self.particle_heights</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – particle heights</p></li>
-<li><p><strong>self.particle_widths</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – particle widths</p></li>
-<li><p><strong>self.cutoffs</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – percent of particle intersecting border</p></li>
+<li><p><strong>files</strong> (<em>str</em>) – list of files to be processed</p></li>
+<li><p><strong>widths</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – width of rectangular roi frame</p></li>
+<li><p><strong>heights</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – height of rectangular roi frame</p></li>
+<li><p><strong>particle_heights</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – particle heights</p></li>
+<li><p><strong>particle_widths</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – particle widths</p></li>
+<li><p><strong>cutoffs</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – percent of particle intersecting border</p></li>
 </ul>
 </dd>
 </dl>
@@ -1728,8 +1678,13 @@ add ACCOUNT_SID, AUTH_TOKEN, and PHONE_NUMBER to a .env file</p>
 <li><p><strong>df</strong> (<em>pd.DataFrame</em>) – df with file names</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a dataset to be iterated over using sampling strategy</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(torch.utils.data.DataLoader)</p>
+</dd>
 </dl>
-<p>Returns:</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1825,18 +1780,16 @@ top_class (List[str]): highest class probability for all images</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cocpit.runner.main">
-<span class="sig-prename descclassname"><span class="pre">cocpit.runner.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kfold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.runner.main" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">cocpit.runner.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kfold</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.runner.main" title="Permalink to this definition"></a></dt>
 <dd><p>Trains and validates a model across epochs, phases, and batches</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dataloaders</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>torch.utils.data.DataLoader</em><em>]</em>) – training and validation dict that loads images with sampling procedure</p></li>
-<li><p><strong>optimizer</strong> (<em>torch.optim.SGD</em>) – an algorithm that modifies the attributes of the neural network</p></li>
-<li><p><strong>model</strong> (<em>torch.nn.parallel.data_parallel.DataParallel</em>) – saved and loaded model</p></li>
-<li><p><strong>epochs</strong> (<em>int</em>) – max number of epochs to train and validate</p></li>
+<li><p><strong>f</strong> (<a class="reference internal" href="#cocpit.fold_setup.FoldSetup" title="cocpit.fold_setup.FoldSetup"><em>cocpit.fold_setup.FoldSetup</em></a>) – instance of FoldSetup class</p></li>
+<li><p><strong>c</strong> (<a class="reference internal" href="#cocpit.model_config.ModelConfig" title="cocpit.model_config.ModelConfig"><em>model_config.ModelConfig</em></a>) – instance of ModelConfig class</p></li>
 <li><p><strong>model_name</strong> (<em>str</em>) – name of model architecture</p></li>
-<li><p><strong>batch_size</strong> (<em>int</em>) – number of images read into memory at a time</p></li>
-<li><p><strong>kfold</strong> (<em>int</em>) – number of k-folds used in resampling procedure</p></li>
+<li><p><strong>epochs</strong> (<em>int</em>) – total epochs for training loop</p></li>
+<li><p><strong>kfold</strong> (<em>int</em>) – number of folds use in k-fold cross validation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -1893,9 +1846,21 @@ top_class (List[str]): highest class probability for all images</p>
 <span id="cocpit-train-module"></span><h2>cocpit.train module<a class="headerlink" href="#module-cocpit.train" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="cocpit.train.Train">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.train.</span></span><span class="sig-name descname"><span class="pre">Train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kfold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criterion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CrossEntropyLoss()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.train.Train" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.train.</span></span><span class="sig-name descname"><span class="pre">Train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kfold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.train.Train" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#cocpit.performance_metrics.Metrics" title="cocpit.performance_metrics.Metrics"><code class="xref py py-class docutils literal notranslate"><span class="pre">cocpit.performance_metrics.Metrics</span></code></a></p>
 <p>Perform training methods on batched dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f</strong> (<a class="reference internal" href="#cocpit.fold_setup.FoldSetup" title="cocpit.fold_setup.FoldSetup"><em>cocpit.fold_setup.FoldSetup</em></a>) – instance of FoldSetup class</p></li>
+<li><p><strong>epoch</strong> (<em>int</em>) – epoch index in training loop</p></li>
+<li><p><strong>epochs</strong> (<em>int</em>) – total epochs for training loop</p></li>
+<li><p><strong>model_name</strong> (<em>str</em>) – name of model architecture</p></li>
+<li><p><strong>kfold</strong> (<em>int</em>) – number of folds use in k-fold cross validation</p></li>
+<li><p><strong>c</strong> (<a class="reference internal" href="#cocpit.model_config.ModelConfig" title="cocpit.model_config.ModelConfig"><em>model_config.ModelConfig</em></a>) – instance of ModelConfig class</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="cocpit.train.Train.label_counts">
 <span class="sig-name descname"><span class="pre">label_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label_cnts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.train.Train.label_counts" title="Permalink to this definition"></a></dt>
@@ -1942,6 +1907,20 @@ top_class (List[str]): highest class probability for all images</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="cocpit.train.Train.write_output">
+<span class="sig-name descname"><span class="pre">write_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.train.Train.write_output" title="Permalink to this definition"></a></dt>
+<dd><p>Write acc and loss to csv file within model, epoch, kfold iteration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – config.ACC_SAVENAME_TRAIN or config.ACC_SAVENAME_VAL depending on phase</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="cocpit.train.Train.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.train.Train.run" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -1953,12 +1932,20 @@ top_class (List[str]): highest class probability for all images</p>
 <span id="cocpit-validate-module"></span><h2>cocpit.validate module<a class="headerlink" href="#module-cocpit.validate" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="cocpit.validate.Validation">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.validate.</span></span><span class="sig-name descname"><span class="pre">Validation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kfold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criterion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CrossEntropyLoss()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.validate.Validation" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cocpit.validate.</span></span><span class="sig-name descname"><span class="pre">Validation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kfold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_best_acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.validate.Validation" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#cocpit.performance_metrics.Metrics" title="cocpit.performance_metrics.Metrics"><code class="xref py py-class docutils literal notranslate"><span class="pre">cocpit.performance_metrics.Metrics</span></code></a></p>
 <p>Perform validation methods on batched dataset</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>val_best_acc</strong> – (float): best validation accuracy of the model up to the given batch</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f</strong> (<a class="reference internal" href="#cocpit.fold_setup.FoldSetup" title="cocpit.fold_setup.FoldSetup"><em>cocpit.fold_setup.FoldSetup</em></a>) – instance of FoldSetup class</p></li>
+<li><p><strong>epoch</strong> (<em>int</em>) – epoch index in training loop</p></li>
+<li><p><strong>epochs</strong> (<em>int</em>) – total epochs for training loop</p></li>
+<li><p><strong>model_name</strong> (<em>str</em>) – name of model architecture</p></li>
+<li><p><strong>kfold</strong> (<em>int</em>) – number of folds use in k-fold cross validation</p></li>
+<li><p><strong>val_best_acc</strong> (<em>float</em>) – highest validation accuracy across epochs</p></li>
+<li><p><strong>c</strong> (<a class="reference internal" href="#cocpit.model_config.ModelConfig" title="cocpit.model_config.ModelConfig"><em>model_config.ModelConfig</em></a>) – instance of ModelConfig class</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -2052,15 +2039,26 @@ If None, confusion matrix will not be normalized.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cocpit.validate.Validation.classification_report">
-<span class="sig-name descname"><span class="pre">classification_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.validate.Validation.classification_report" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">classification_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fold</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.validate.Validation.classification_report" title="Permalink to this definition"></a></dt>
 <dd><p>create classification report from sklearn
 add model name and fold iteration to the report</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>fold</strong> (<em>int</em>) – which fold to use in resampling procedure</p></li>
-<li><p><strong>model_name</strong> (<em>str</em>) – name of the models</p></li>
-</ul>
+<dd class="field-odd"><p><strong>fold</strong> (<em>int</em>) – which fold to use in resampling procedure</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cocpit.validate.Validation.write_output">
+<span class="sig-name descname"><span class="pre">write_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cocpit.validate.Validation.write_output" title="Permalink to this definition"></a></dt>
+<dd><p>Write acc and loss to csv file within model, epoch, kfold iteration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – config.ACC_SAVENAME_TRAIN or config.ACC_SAVENAME_VAL depending on phase</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>

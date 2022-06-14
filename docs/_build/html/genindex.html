@@ -100,11 +100,13 @@
         <li><a href="cocpit.html#cocpit.gui_wrong.GUI.align_buttons">(cocpit.gui_wrong.GUI method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cocpit.html#cocpit.validate.Validation.all_labels">all_labels (cocpit.validate.Validation attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cocpit.html#cocpit.validate.Validation.all_preds">all_preds (cocpit.validate.Validation attribute)</a>
+</li>
+      <li><a href="cocpit.html#cocpit.predictions.LoaderPredictions.append_batch">append_batch() (cocpit.predictions.LoaderPredictions method)</a>
 </li>
       <li><a href="cocpit.html#cocpit.validate.Validation.append_preds">append_preds() (cocpit.validate.Validation method)</a>
 </li>
@@ -378,16 +380,18 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cocpit.html#cocpit.fold_setup.FoldSetup.dataloaders">dataloaders (cocpit.fold_setup.FoldSetup attribute)</a>
+</li>
       <li><a href="cocpit.html#cocpit.add_date.Date">Date (class in cocpit.add_date)</a>
 </li>
       <li><a href="cocpit.html#cocpit.add_date.Date.date_column">date_column() (cocpit.add_date.Date method)</a>
 </li>
       <li><a href="cocpit.html#cocpit.models.Model.densenet169">densenet169() (cocpit.models.Model method)</a>
 </li>
-      <li><a href="cocpit.html#cocpit.models.Model.densenet201">densenet201() (cocpit.models.Model method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cocpit.html#cocpit.models.Model.densenet201">densenet201() (cocpit.models.Model method)</a>
+</li>
       <li><a href="cocpit.html#cocpit.models.Model.densenet_classifier">densenet_classifier() (cocpit.models.Model method)</a>
 </li>
       <li><a href="cocpit.html#cocpit.runner.determine_phases">determine_phases() (in module cocpit.runner)</a>
@@ -484,11 +488,9 @@
 </li>
       <li><a href="cocpit.html#cocpit.data_loaders.ImageFolderWithPaths">ImageFolderWithPaths (class in cocpit.data_loaders)</a>
 </li>
-      <li><a href="cocpit.html#cocpit.gui_wrong.GUI.init_fig">init_fig() (cocpit.gui_wrong.GUI method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cocpit.html#cocpit.models.initialize_model">initialize_model() (in module cocpit.models)</a>
+      <li><a href="cocpit.html#cocpit.gui_wrong.GUI.init_fig">init_fig() (cocpit.gui_wrong.GUI method)</a>
 </li>
       <li><a href="cocpit.html#cocpit.train.Train.iterate_batches">iterate_batches() (cocpit.train.Train method)</a>
 
@@ -506,7 +508,7 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cocpit.html#cocpit.fold_setup.FoldSetup.kfold_training">kfold_training() (cocpit.fold_setup.FoldSetup method)</a>
+      <li><a href="cocpit.html#cocpit.fold_setup.FoldSetup.kfold">kfold (cocpit.fold_setup.FoldSetup attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -538,8 +540,6 @@
 
       <ul>
         <li><a href="cocpit.html#cocpit.image_stats.main">(in module cocpit.image_stats)</a>
-</li>
-        <li><a href="cocpit.html#cocpit.model_config.main">(in module cocpit.model_config)</a>
 </li>
         <li><a href="cocpit.html#cocpit.process_sheets.main">(in module cocpit.process_sheets)</a>
 </li>
@@ -657,6 +657,8 @@
         <li><a href="cocpit.html#cocpit.gui_wrong.GUI.on_button_next">(cocpit.gui_wrong.GUI method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cocpit.html#cocpit.gui.GUI.open_image">open_image() (cocpit.gui.GUI method)</a>
 
       <ul>
@@ -665,10 +667,6 @@
         <li><a href="cocpit.html#cocpit.gui_wrong.GUI.open_image">(cocpit.gui_wrong.GUI method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cocpit.html#cocpit.model_config.ModelConfig.optimizer">optimizer() (cocpit.model_config.ModelConfig method)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -689,18 +687,12 @@
         <li><a href="cocpit.plotting_scripts.html#cocpit.plotting_scripts.saliency.plot_saliency">(in module cocpit.plotting_scripts.saliency)</a>
 </li>
       </ul></li>
-      <li><a href="cocpit.html#cocpit.predictions.LoaderPredictions.predict">predict() (cocpit.predictions.LoaderPredictions method)</a>
-
-      <ul>
-        <li><a href="cocpit.html#cocpit.validate.Validation.predict">(cocpit.validate.Validation method)</a>
+      <li><a href="cocpit.html#cocpit.validate.Validation.predict">predict() (cocpit.validate.Validation method)</a>
 </li>
-      </ul></li>
-      <li><a href="cocpit.html#cocpit.predictions.LoaderPredictions.predict_test_loader">predict_test_loader() (cocpit.predictions.LoaderPredictions method)</a>
+      <li><a href="cocpit.html#cocpit.predictions.BatchPredictions.preds_softmax">preds_softmax() (cocpit.predictions.BatchPredictions method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cocpit.html#cocpit.predictions.BatchPredictions.preds_softmax">preds_softmax() (cocpit.predictions.BatchPredictions method)</a>
-</li>
       <li><a href="cocpit.plotting_scripts.html#cocpit.plotting_scripts.saliency.preprocess">preprocess() (in module cocpit.plotting_scripts.saliency)</a>
 </li>
       <li><a href="cocpit.html#cocpit.performance_metrics.Metrics.print_batch_metrics">print_batch_metrics() (cocpit.performance_metrics.Metrics method)</a>
@@ -767,15 +759,19 @@
 </li>
       <li><a href="cocpit.html#cocpit.data_loaders.save_valloader">save_valloader() (in module cocpit.data_loaders)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cocpit.html#cocpit.process_sheets.send_message">send_message() (in module cocpit.process_sheets)</a>
 
       <ul>
         <li><a href="cocpit.html#cocpit.run_model.send_message">(in module cocpit.run_model)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cocpit.html#cocpit.model_config.ModelConfig.set_criterion">set_criterion() (cocpit.model_config.ModelConfig method)</a>
+</li>
       <li><a href="cocpit.html#cocpit.model_config.ModelConfig.set_dropout">set_dropout() (cocpit.model_config.ModelConfig method)</a>
+</li>
+      <li><a href="cocpit.html#cocpit.model_config.ModelConfig.set_optimizer">set_optimizer() (cocpit.model_config.ModelConfig method)</a>
 </li>
       <li><a href="cocpit.html#cocpit.models.Model.set_parameter_requires_grad">set_parameter_requires_grad() (cocpit.models.Model method)</a>
 </li>
@@ -855,8 +851,12 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cocpit.html#cocpit.performance_metrics.Metrics.write_output">write_output() (cocpit.performance_metrics.Metrics method)</a>
+      <li><a href="cocpit.html#cocpit.train.Train.write_output">write_output() (cocpit.train.Train method)</a>
+
+      <ul>
+        <li><a href="cocpit.html#cocpit.validate.Validation.write_output">(cocpit.validate.Validation method)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cocpit.html#cocpit.timing.EpochTime.write_times">write_times() (cocpit.timing.EpochTime method)</a>
