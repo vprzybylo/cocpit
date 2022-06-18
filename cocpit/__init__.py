@@ -54,6 +54,9 @@ image_stats:
     - find the #/% of cutoff particles after removing blurry, fragmented, and spherical drops
     - used as a separate script (external - not being called in __main__.py)
 
+interpretability:
+    - gradcam, guided backprop, vanilla backprop
+
 model_config:
     - model configurations for:
         - dropout

@@ -23,6 +23,7 @@ class GuidedBackprop:
         self.model.eval()
         self.update_relus()
         self.hook_layers()
+        self.one_hot_output = None
 
     def hook_layers(self):
         def hook_function(module, grad_in, grad_out):
@@ -64,26 +65,31 @@ class GuidedBackprop:
                 module.register_backward_hook(relu_backward_hook_function)
                 module.register_forward_hook(relu_forward_hook_function)
 
-    def generate_gradients(
-        self, input_image, target_class=None, target_size=(1280, 720)
-    ):
-        # Forward pass
-        input_image = input_image.to(config.DEVICE)
-        model_output = self.model(input_image)
-        # Zero gradients
-        self.model.zero_grad()
-        # Target for backprop
-        one_hot_output = torch.FloatTensor(1, model_output.size()[-1]).zero_()
-        one_hot_output = one_hot_output.to(config.DEVICE)
+    def backward_pass(self):
+        """Backward pass"""
+        self.model_output.backward(gradient=self.one_hot_output)
 
+    def zero_grads(self):
+        """Zero gradients"""
+        self.model.zero_grad()
+
+    def target_class(self, target_class):
+        """Target for backprop"""
+        self.one_hot_output = torch.FloatTensor(1, self.model_output.size()[-1]).zero_()
+        self.one_hot_output = self.one_hot_output.to(config.DEVICE)
+        self.one_hot_output[0][target_class] = 1
+
+    def generate_gradients(self, input_image, target_size, target_class=None):
+        input_image = input_image.to(config.DEVICE)
+        self.model_output = self.model(input_image)
         if target_class is None:
-            target_class = np.argmax(model_output.data.cpu().numpy())
-        one_hot_output[0][target_class] = 1
-        # Backward pass
-        model_output.backward(gradient=one_hot_output)
+            target_class = np.argmax(self.model_output.data.cpu().numpy())
+        self.target_class(target_class)
+        self.zero_grads()
+        self.backward_pass()
+
         # Convert Pytorch variable to numpy array
         # [0] to get rid of the first channel (1,3,224,224)
-        self.gradients = cv2.resize(
+        return cv2.resize(
             np.transpose(self.gradients.cpu().numpy()[0], (1, 2, 0)), target_size
         )
-        return self.gradients[:, :, 0], config.CLASS_NAMES[target_class]

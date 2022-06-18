@@ -1,7 +1,7 @@
 """
 Created on Thu Oct 26 11:19:58 2017
-
 @author: Utku Ozbulak - github.com/utkuozbulak
+Modified by Vanessa Przybylo
 """
 import torch
 from cocpit import config as config
@@ -21,6 +21,7 @@ class VanillaBackprop:
         self.model.eval()
         # Hook the first layer to get the gradient
         self.hook_layers()
+        self.model_output = None
 
     def hook_layers(self):
         def hook_function(module, grad_in, grad_out):
@@ -30,23 +31,24 @@ class VanillaBackprop:
         first_layer = list(self.model.module.features._modules.items())[0][1]
         first_layer.register_backward_hook(hook_function)
 
-    def generate_gradients(
-        self, input_image, target_class=None, target_size=(720, 1280)
-    ):
+    def target_class(self, target_class):
+        """Target for backprop"""
+        self.one_hot_output = torch.FloatTensor(1, self.model_output.size()[-1]).zero_()
+        self.one_hot_output = self.one_hot_output.to(config.DEVICE)
+        self.one_hot_output[0][target_class] = 1
+
+    def generate_gradients(self, input_image, target_size, target_class=None):
         # Forward
         input_image = input_image.to(config.DEVICE)
-        model_output = self.model(input_image)
+        self.model_output = self.model(input_image)
         if target_class is None:
-            target_class = np.argmax(model_output.data.cpu().numpy())
+            target_class = np.argmax(self.model_output.data.cpu().numpy())
         # Zero grads
         self.model.zero_grad()
-        # Target for backprop
-        one_hot_output = torch.FloatTensor(1, model_output.size()[-1]).zero_()
-        one_hot_output[0][target_class] = 1
-        one_hot_output = one_hot_output.to(config.DEVICE)
+        self.target_class(target_class)
         # Backward pass
-        model_output.backward(gradient=one_hot_output)
+        self.model_output.backward(gradient=self.one_hot_output)
         self.gradients = cv2.resize(
-            np.transpose(self.gradients.cpu().numpy()[0], (2, 1, 0)), target_size
+            np.transpose(self.gradients.cpu().numpy()[0], (1, 2, 0)), target_size
         )
-        return self.gradients, config.CLASS_NAMES[target_class]
+        return self.gradients

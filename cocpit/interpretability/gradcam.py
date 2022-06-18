@@ -2,6 +2,7 @@
 Created on Thu Oct 26 11:06:51 2017
 
 @author: Utku Ozbulak - github.com/utkuozbulak
+Modified by Vanessa Przybylo
 """
 from PIL import Image
 import numpy as np
@@ -58,43 +59,60 @@ class GradCam:
         self.model = torch.load(config.MODEL_SAVENAME).to(config.DEVICE)
         self.model = self.model.to(config.DEVICE)
         self.model.eval()
-        # Define extractor
+        self.model_output = None
+        self.one_hot_output = None
+        self.conv_output = None
+        self.weights = None
+        self.target = None
         self.extractor = CamExtractor(self.model, target_layer)
 
-    def generate_cam(self, input_image, target_class=None):
-        # Full forward pass
-        # conv_output is the output of convolutions at specified layer
-        input_image = input_image.to(config.DEVICE)
-        conv_output, model_output = self.extractor.forward_pass(input_image)
-        if target_class is None:
-            target_class = np.argmax(model_output.data.cpu().numpy())
-        # Target for backprop
-        one_hot_output = torch.FloatTensor(1, model_output.size()[-1]).zero_()
-        one_hot_output = one_hot_output.to(config.DEVICE)
-        one_hot_output[0][target_class] = 1
-
-        # Zero grads
+    def zero_grads(self):
         self.model.module.features.zero_grad()
         self.model.module.classifier.zero_grad()
-        # Backward pass with specified target
-        model_output.backward(gradient=one_hot_output, retain_graph=True)
-        # Get hooked gradients
-        guided_gradients = self.extractor.gradients.data.cpu().numpy()[0]
-        # Get convolution outputs
-        target = conv_output.data.cpu().numpy()[0]
-        # Get weights from gradients
-        weights = np.mean(
-            guided_gradients, axis=(1, 2)
-        )  # Take averages for each gradient
 
-        # Create empty numpy array for cam
-        cam = np.zeros(target.shape[1:], dtype=np.float32)
+    def backward_pass(self):
+        """Backward pass with specified target"""
+        self.model_output.backward(gradient=self.one_hot_output, retain_graph=True)
+
+    def target_class(self, target_class):
+        """Target for backprop"""
+        self.one_hot_output = torch.FloatTensor(1, self.model_output.size()[-1]).zero_()
+        self.one_hot_output = self.one_hot_output.to(config.DEVICE)
+        self.one_hot_output[0][target_class] = 1
+
+    def get_conv_output(self):
+        """get convolutional output"""
+        self.target = self.conv_output.data.cpu().numpy()[0]
+
+    def get_weights(self):
+        """Get weights from gradients"""
+        guided_gradients = self.extractor.gradients.data.cpu().numpy()[0]
+        # Take averages for each gradient
+        self.weights = np.mean(guided_gradients, axis=(1, 2))
+
+    def create_cam(self):
+        """Create empty numpy array for cam"""
+        cam = np.zeros(self.target.shape[1:], dtype=np.float32)
         # Multiply each weight with its conv output and then, sum
-        for i, w in enumerate(weights):
-            cam += w * target[i, :, :]
+        self.get_weights()
+        for i, w in enumerate(self.weights):
+            cam += w * self.target[i, :, :]
         cam = np.maximum(cam, 0)
         cam = (cam - np.min(cam)) / (np.max(cam) - np.min(cam))  # Normalize between 0-1
         # cam = np.uint8(cam * 255)  # Scale between 0-255 to visualize
         # cam = np.uint8(Image.fromarray(cam).resize(720,1280))
         cam = cv2.resize(np.asarray(Image.fromarray(cam)), (1280, 720)) / 255
-        return cam, config.CLASS_NAMES[target_class]
+        return cam
+
+    def generate_cam(self, input_image, target_class=None):
+        input_image = input_image.to(config.DEVICE)
+        # Full forward pass
+        # conv_output is the output of convolutions at specified target layer
+        self.conv_output, self.model_output = self.extractor.forward_pass(input_image)
+        if target_class is None:
+            target_class = np.argmax(self.model_output.data.cpu().numpy())
+        self.target_class(target_class)
+        self.zero_grads()
+        self.backward_pass()
+        self.get_conv_output()
+        return self.create_cam()
