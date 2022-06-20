@@ -2,12 +2,14 @@
 Created on Thu Oct 26 11:23:47 2017
 
 @author: Utku Ozbulak - github.com/utkuozbulak
+Modified by Vanessa Przybylo
 """
 import torch
 from torch.nn import ReLU
 from cocpit import config as config
 import numpy as np
 import cv2
+from typing import Tuple
 
 
 class GuidedBackprop:
@@ -16,16 +18,18 @@ class GuidedBackprop:
     """
 
     def __init__(self):
-        self.model = torch.load(config.MODEL_SAVENAME).to(config.DEVICE)
-        self.gradients = None
+        self.model: torch.nn.parallel.data_parallel.DataParallel = torch.load(
+            config.MODEL_SAVENAME
+        ).to(config.DEVICE)
+        self.gradients: torch.Tensor = None
         self.forward_relu_outputs = []
+        self.one_hot_output: torch.Tensor = None
         # Put model in evaluation mode
         self.model.eval()
         self.update_relus()
         self.hook_layers()
-        self.one_hot_output = None
 
-    def hook_layers(self):
+    def hook_layers(self) -> None:
         def hook_function(module, grad_in, grad_out):
             self.gradients = grad_in[0]
 
@@ -53,7 +57,7 @@ class GuidedBackprop:
             del self.forward_relu_outputs[-1]  # Remove last forward output
             return (modified_grad_out,)
 
-        def relu_forward_hook_function(module, ten_in, ten_out):
+        def relu_forward_hook_function(module, ten_in, ten_out) -> None:
             """
             Store results of forward pass
             """
@@ -65,22 +69,27 @@ class GuidedBackprop:
                 module.register_backward_hook(relu_backward_hook_function)
                 module.register_forward_hook(relu_forward_hook_function)
 
-    def backward_pass(self):
+    def backward_pass(self) -> None:
         """Backward pass"""
         self.model_output.backward(gradient=self.one_hot_output)
 
-    def zero_grads(self):
+    def zero_grads(self) -> None:
         """Zero gradients"""
         self.model.zero_grad()
 
-    def target_class(self, target_class):
+    def target_class(self, target_class: int) -> None:
         """Target for backprop"""
-        self.one_hot_output = torch.FloatTensor(1, self.model_output.size()[-1]).zero_()
-        self.one_hot_output = self.one_hot_output.to(config.DEVICE)
+        self.one_hot_output = (
+            torch.FloatTensor(1, self.model_output.size()[-1]).zero_().to(config.DEVICE)
+        )
         self.one_hot_output[0][target_class] = 1
 
-    def generate_gradients(self, input_image, target_size, target_class=None):
-        input_image = input_image.to(config.DEVICE)
+    def generate_gradients(
+        self,
+        input_image: torch.Tensor,
+        target_size: Tuple[int, int],
+        target_class: int = None,
+    ) -> None:
         self.model_output = self.model(input_image)
         if target_class is None:
             target_class = np.argmax(self.model_output.data.cpu().numpy())

@@ -76,8 +76,9 @@ class GradCam:
 
     def target_class(self, target_class):
         """Target for backprop"""
-        self.one_hot_output = torch.FloatTensor(1, self.model_output.size()[-1]).zero_()
-        self.one_hot_output = self.one_hot_output.to(config.DEVICE)
+        self.one_hot_output = (
+            torch.FloatTensor(1, self.model_output.size()[-1]).zero_().to(config.DEVICE)
+        )
         self.one_hot_output[0][target_class] = 1
 
     def get_conv_output(self):
@@ -105,7 +106,6 @@ class GradCam:
         return cam
 
     def generate_cam(self, input_image, target_class=None):
-        input_image = input_image.to(config.DEVICE)
         # Full forward pass
         # conv_output is the output of convolutions at specified target layer
         self.conv_output, self.model_output = self.extractor.forward_pass(input_image)

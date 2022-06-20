@@ -15,7 +15,9 @@ class VanillaBackprop:
     """
 
     def __init__(self):
-        self.model = torch.load(config.MODEL_SAVENAME).to(config.DEVICE)
+        self.model: torch.nn.parallel.data_parallel.DataParallel = torch.load(
+            config.MODEL_SAVENAME
+        ).to(config.DEVICE)
         self.gradients = None
         # Put model in evaluation mode
         self.model.eval()
@@ -33,13 +35,13 @@ class VanillaBackprop:
 
     def target_class(self, target_class):
         """Target for backprop"""
-        self.one_hot_output = torch.FloatTensor(1, self.model_output.size()[-1]).zero_()
-        self.one_hot_output = self.one_hot_output.to(config.DEVICE)
+        self.one_hot_output = (
+            torch.FloatTensor(1, self.model_output.size()[-1]).zero_().to(config.DEVICE)
+        )
         self.one_hot_output[0][target_class] = 1
 
     def generate_gradients(self, input_image, target_size, target_class=None):
         # Forward
-        input_image = input_image.to(config.DEVICE)
         self.model_output = self.model(input_image)
         if target_class is None:
             target_class = np.argmax(self.model_output.data.cpu().numpy())

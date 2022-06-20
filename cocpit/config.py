@@ -91,7 +91,7 @@ MODEL_NAMES = [
 ]
 
 # directory that holds the training data
-DATA_DIR = f"{BASE_DIR}/codebook_dataset/combined/"
+DATA_DIR = f"{BASE_DIR}/codebook_dataset/combined_4/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # whether to save the model
@@ -159,7 +159,7 @@ CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
 
 # log experiment to comet for tracking?
-LOG_EXP = True
+LOG_EXP = False
 NOTEBOOK = os.path.basename(sys.argv[0]) != "__main__.py"
 load_dotenv()  # loading sensitive keys from .env file
 if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
