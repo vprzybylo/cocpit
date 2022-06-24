@@ -4,8 +4,7 @@ train the CNN model(s)
 import time
 import cocpit
 import cocpit.config as config  # isort:split
-from typing import List, Dict
-import csv
+from typing import List
 
 
 def determine_phases() -> List[str]:

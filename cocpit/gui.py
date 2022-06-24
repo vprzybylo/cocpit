@@ -29,13 +29,17 @@ class GUI:
     Args:
         all_labels (List[int]): List of labels on training data from one specified class
         all_paths (List[str]): List of paths of labeleld data from one specified class
+        index (int): index of the image in the list of paths
+        count (int): number of moved images
+        center (ipywidgets.Output()): main display
+        menu (ipywidgets.Dropdown): class name dropdown to move images
+        foward (ipywidgets.Button): next button
     """
 
     def __init__(self, all_labels: List[int], all_paths: List[str]):
         self.all_labels = all_labels
         self.all_paths = all_paths
         self.index = 0
-        self.label = self.all_labels[self.index]
         self.count = 0  # number of moved images
         self.center = None
         self.menu = None
@@ -66,7 +70,7 @@ class GUI:
         self.menu = ipywidgets.Dropdown(
             options=config.CLASS_NAMES,
             description="Category:",
-            value=config.CLASS_NAMES[self.label],
+            value=config.CLASS_NAMES[self.all_labels[self.index]],
         )
         with self.center:
             self.view_classifications()
@@ -88,7 +92,7 @@ class GUI:
 
         # Keep the default dropdown value
         # Don't want it to change based on previous selection
-        self.menu.value = config.CLASS_NAMES[self.label]
+        self.menu.value = config.CLASS_NAMES[self.all_labels[self.index]]
 
     def view_classifications(self) -> None:
         """

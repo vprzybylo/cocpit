@@ -1,188 +1,49 @@
+import shutil
+
 import ipywidgets
 import matplotlib.pyplot as plt
 import numpy as np
 from IPython.display import clear_output
 from ipywidgets import Button
 import PIL
-import cocpit
-from cocpit.interpretability.misc_funcs import (
-    normalize,
-    preprocess_image,
-    apply_colormap_on_image,
-)
-import cocpit.config as config
+from typing import List, Optional
 from cocpit.auto_str import auto_str
-from typing import Optional, Tuple
-import cv2
-import os
-from cocpit.interpretability import gradcam, vanilla_backprop, guided_backprop
+import cocpit
+from cocpit.interpretability import guided_backprop
+from cocpit.interpretability.misc_funcs import preprocess_image
 
 plt_params = {
-    "axes.labelsize": "large",
-    "axes.titlesize": "large",
-    "xtick.labelsize": "large",
-    "ytick.labelsize": "large",
+    "axes.labelsize": "xx-large",
+    "axes.titlesize": "xx-large",
+    "xtick.labelsize": "xx-large",
+    "ytick.labelsize": "xx-large",
     "legend.title_fontsize": 12,
 }
 plt.rcParams["font.family"] = "serif"
 plt.rcParams.update(plt_params)
 
 
-@auto_str
-class GUI:
+class Interp:
     """
-    - ipywidget buttons to label incorrect predictions from a dataloader.
-    - The dataloader, model, and all class variables are initialized in notebooks/move_wrong_predictions.ipynb
-
+    Holds interpretability methods
     Args:
-        wrong_trunc (List[int]): indices where the model predictions are wrong
-        labels (np.ndarray[int]): image labels
-        paths (np.ndarray[str]): image paths
-        topk_props (np.ndarray[float]): top predicted probabilites
-        topk_classes (np.ndarray[int]): classes related to the top predicted probabilites
+        gradients (np.ndarray):  a vector which gives us the direction in which the loss function has the steepest ascent.
+        pos_saliency (np.ndarray): Positive values in the gradients in which a small change to that pixel will increase the output value
+        neg_saliency (np.ndarray): Negative values in the gradients in which a small change to that pixel will decrease the output value
+
     """
 
-    def __init__(
-        self,
-        paths,
-        topk_probs,
-        topk_classes,
-        wrong_trunc=None,
-        labels=None,
-        precip=None,
-    ):
-        self.index = 0
-        self.paths = paths
-        self.topk_probs = topk_probs
-        self.topk_classes = topk_classes
-        self.labels = labels
-        if wrong_trunc:
-            self.paths = np.array(paths)[wrong_trunc]
-            self.topk_probs = np.array(topk_probs)[wrong_trunc]
-            self.topk_classes = np.array(topk_classes)[wrong_trunc]
-            self.labels = np.array(labels)[wrong_trunc]
-        self.output = ipywidgets.Output()  # main display
-        self.next_btn = Button(description="Next")
-        self.next_btn.on_click(self.on_button_next)
-        self.count = 0  # number of moved images
-        self.precip = precip
-        self.prep_image = None
-        self.cam = None
-        self.vanilla_grads = None
+    def __init__(self):
         self.gradients = None
-        self.target_size = None
+        self.pos_saliency = None
+        self.neg_saliency = None
 
-    def open_image(self) -> Optional[PIL.Image.Image]:
-        try:
-            self.image = PIL.Image.open(self.paths[self.index])
-            self.target_size = (np.shape(self.image)[1], np.shape(self.image)[0])
-        except FileNotFoundError:
-            print("The file cannot be found.")
-            return
-
-    def on_button_next(self, b) -> None:
+    def plot_saliency_pos(self, ax: plt.Axes):
         """
-        when the next button is clicked, make a new image and bar chart appear
-        by updating the index within the wrong predictions by 1
-
-        Args:
-            b: button instance
+        plot positive saliency - where gradients are positive after RELU
         """
-        self.index = self.index + 1
-        self.interp()
-
-    def show_original(self, ax1: plt.Axes) -> None:
-        """
-        display the raw image
-
-        Args:
-            ax1 (plt.Axes): subplot axis
-        """
-        clear_output()  # so that the next fig doesnt display below
-        ax1.imshow(self.image)
-        station = self.paths[self.index].split("/")[-1].split("_")[-1].split(".")[0]
-        if self.precip:
-            ax1.set_title(
-                f"Prediction: {[config.CLASS_NAMES[e] for e in self.topk_classes[self.index]][0]}\n"
-                f"Station: {station}\n"
-                f"1 min precip accumulation: {self.precip[self.index].values[0]}"
-            )
-        else:
-            pred_list = [config.CLASS_NAMES[e] for e in self.topk_classes[self.index]]
-            pred_mag = [np.round(i * 100, 2) for i in self.topk_probs[self.index]]
-
-            if self.labels.any():
-                ax1.set_title(
-                    f"Human label: {config.CLASS_NAMES[self.labels[self.index]]}\n"
-                    f"Model Prediction [%]: \n"
-                    f"{', '.join(repr(e) for e in pred_list)}\n"
-                    f"{', '.join(repr(e) for e in pred_mag)}"
-                )
-            else:
-                ax1.set_title(
-                    f"Prediction [%]: \n"
-                    f"{', '.join(repr(e) for e in pred_list)}\n"
-                    f"{', '.join(repr(e) for e in pred_mag)}"
-                )
-        ax1.axis("off")
-
-    def bar_chart(self, ax3: plt.Axes) -> None:
-        """create barchart that outputs top k predictions for a given image
-
-        Args:
-            ax3 (plt.Axes): subplot axis
-        """
-        y_pos = np.arange(len(self.topk_probs[self.index]))
-        ax3.barh(y_pos, self.topk_probs[self.index], align="center")
-        ax3.set_yticks(y_pos)
-        ax3.set_yticklabels(
-            [config.CLASS_NAMES[e] for e in self.topk_classes[self.index]]
-        )
-        ax3.yaxis.set_label_position("right")
-        ax3.yaxis.tick_right()
-        ax3.invert_yaxis()  # labels read top-to-bottom
-        ax3.set_title("Class Probability")
-
-    def plot_saliency(self, ax2: plt.Axes, size: int = 224) -> None:
-        """create saliency map for image in test dataset
-
-        Args:
-            ax2 (plt.Axes): subplot axis
-            size (int): image size for transformation
-        """
-        image = cocpit.plotting_scripts.saliency.preprocess(self.image, size)
-        saliency, _, _ = cocpit.plotting_scripts.saliency.get_saliency(image)
-        saliency = cv2.resize(
-            np.array(np.transpose(saliency, (1, 2, 0))), self.target_size
-        )
-        ax2.imshow(saliency, cmap=plt.cm.hot)
-        ax2.axes.xaxis.set_ticks([])
-        ax2.axes.yaxis.set_ticks([])
-        ax2.set_title("Saliency Map")
-
-    def get_vanilla_grads(self) -> None:
-        """gradients for vanilla backpropagation"""
-        VBP = vanilla_backprop.VanillaBackprop()
-        vanilla_grads = VBP.generate_gradients(self.prep_img, self.target_size)
-        self.vanilla_grads = normalize(vanilla_grads)
-
-    def plot_vanilla_bp(self, ax: plt.Axes) -> None:
-        """plot vanilla backpropagation gradients"""
-        ax.imshow(self.vanilla_grads)
-        ax.axes.xaxis.set_ticks([])
-        ax.axes.yaxis.set_ticks([])
-        ax.axes.set_title("Vanilla Backpropagation")
-
-    def generate_cam(self):
-        """generate gradient class activation map"""
-        grad_cam = gradcam.GradCam(target_layer=42)
-        self.cam = grad_cam.generate_cam(self.prep_img)
-
-    def plot_gradcam(self, ax: plt.Axes) -> None:
-        """plot gradient class activation map"""
-        heatmap = apply_colormap_on_image(self.cam, self.image, alpha=0.5)
-        ax.imshow(heatmap)
-        ax.axes.set_title("GRAD-CAM")
+        ax.imshow(self.pos_saliency)
+        ax.axes.set_title("Positive Saliency")
         ax.axes.xaxis.set_ticks([])
         ax.axes.yaxis.set_ticks([])
 
@@ -203,78 +64,192 @@ class GUI:
             np.maximum(0, -self.gradients[:, :, 0]) / -self.gradients[:, :, 0].min()
         )
 
-    def plot_saliency_pos(self, ax: plt.Axes):
-        """
-        plot positive saliency - where gradients are positive after RELU
-        """
-        ax.imshow(self.pos_saliency)
-        ax.axes.set_title("Positive Saliency")
-        ax.axes.xaxis.set_ticks([])
-        ax.axes.yaxis.set_ticks([])
 
-    def plot_saliency_neg(self, ax: plt.Axes):
-        """
-        plot negative saliency - where gradients are positive after RELU
-        """
-        ax.imshow(self.neg_saliency)
-        ax.axes.set_title("Negative Saliency")
-        ax.axes.xaxis.set_ticks([])
-        ax.axes.yaxis.set_ticks([])
+@auto_str
+class GUI(Interp):
+    """
+    - ipywidget buttons to label incorrect predictions from a dataloader.
+    - The dataloader, model, and all class variables are initialized in notebooks/move_wrong_predictions.ipynb
 
-    def plot_guided_gradcam(self, ax: plt.Axes) -> None:
-        """
-        Guided Grad CAM combines the best of Grad CAM,
-        which is class-discriminative and localizes relevant image regions,
-        and Guided Backpropagation, which visualizes gradients with respect
-        to the image where negative gradients set to zero to highlight
-        import pixel in the image when backpropagating through ReLU layers.
-        """
-        cam_gb = np.multiply(self.cam, self.gradients[:, :, 0])
-        ax.imshow(cam_gb)
-        ax.axes.set_title("Guided GRAD-CAM")
-        ax.axes.xaxis.set_ticks([])
-        ax.axes.yaxis.set_ticks([])
+    Args:
+        wrong_trunc (List[int]): indices where the model predictions are wrong
+        labels (np.ndarray[int]): image labels
+        paths (np.ndarray[str]): image paths
+        topk_probs (np.ndarray[float]): top predicted probabilites
+        topk_classes (np.ndarray[int]): classes related to the top predicted probabilites
 
-    def save(
+        buttons (List[widgets.Button]): list of buttons for class names
+        next_btn (widgets.Button): next button to move index by one
+        count (int): number of moved images
+
+        image (torch.Tensor): preprocessed image. Default None, defined in interp()
+        prep_image (torch.Tensor): preprocessed image. Default None, defined in interp()
+        target_size (Tuple[int, int]): original image size for resizing interpretability plots
+        center (ipywidgets.Output()): main display
+    """
+
+    def __init__(
         self,
-        fig: plt.Axes,
-        directory: str = "/ai2es/codebook_dataset/carly/interpretability",
-        class_="obstructed",
+        wrong_trunc: List[int],
+        labels: np.ndarray,
+        paths: np.ndarray,
+        topk_probs: np.ndarray,
+        topk_classes: np.ndarray,
     ):
-        if not os.path.exists(os.path.join(directory, class_)):
-            os.makedirs(os.path.join(directory, class_))
-        fig.savefig(
-            os.path.join(directory, class_, self.paths[self.index].split("/")[-1])
-        )
+        self.index = 0
+        self.labels = np.array(labels)[wrong_trunc]
+        self.paths = np.array(paths)[wrong_trunc]
+        self.topk_probs = np.array(topk_probs)[wrong_trunc]
+        self.topk_classes = np.array(topk_classes)[wrong_trunc]
 
-    def call_plots(self, figsize: Tuple[int, int] = (12, 6), ncols=3, nrows=2):
-        fig, ((ax1, ax2, ax3), (ax4, ax5, ax6)) = plt.subplots(
-            constrained_layout=True, figsize=figsize, ncols=ncols, nrows=nrows
+        self.buttons = []
+        self.next_btn = Button(
+            description="Next",
+            style=dict(
+                font_style="italic",
+                font_weight="bold",
+                font_variant="small-caps",
+            ),
         )
-        self.show_original(ax1)
-        # self.plot_saliency(ax2)
-        # self.bar_chart(ax3)
-        self.plot_vanilla_bp(ax4)
-        self.plot_gradcam(ax5)
-        self.plot_guided_gradcam(ax6)
-        self.plot_saliency_pos(ax2)
-        self.plot_saliency_neg(ax3)
-        # self.save(fig)
+        self.count = 0
 
-    def interp(self) -> None:
+        self.image = None
+        self.prep_image = None
+        self.target_size = None
+        self.center = ipywidgets.Output()
+
+    def open_image(self):
         """
-        Calculate gradients used in interpretability
+        Open an image from a path at a given index
+
+        Returns:
+            Union[Image.Image, None]: opened PIL image or None if no image is opened
+
+        Raises:
+            FileNotFoundError: File already moved and cannot be opened
         """
-        with self.output:
-            # add chart to ipywidgets.Output()
+
+        try:
+            self.image = PIL.Image.open(self.paths[self.index])
+            self.target_size = (np.shape(self.image)[1], np.shape(self.image)[0])
+
+        except FileNotFoundError:
+            print("This file cannot be found.")
+
+    def make_buttons(self) -> None:
+        """Make buttons for each category"""
+
+        for idx, label in enumerate(cocpit.config.CLASS_NAMES):
+            self.buttons.append(
+                Button(
+                    description=label,
+                )
+            )
+            self.buttons[idx].on_click(self.save_image)
+        self.next_btn.on_click(self.on_button_next)
+
+    def on_button_next(self, b) -> None:
+        """
+        When the next button is clicked, make a new image and bar chart appear
+        by updating the index within the wrong predictions by 1
+        """
+
+        self.index = self.index + 1
+        self.visualizations()
+
+    def align_buttons(self):
+        """
+        Alter layout based on # of classes
+        """
+        with self.center:
+            if len(cocpit.config.CLASS_NAMES) > 5:
+                # align buttons vertically
+                self.label_btns = ipywidgets.VBox(
+                    [self.buttons[i] for i in range(len(cocpit.config.CLASS_NAMES))]
+                )
+            else:
+                # align buttons horizontally
+                self.label_btns = ipywidgets.HBox(
+                    [self.buttons[i] for i in range(len(cocpit.config.CLASS_NAMES))],
+                )
+
+    def init_fig(self, ax1: plt.Axes) -> None:
+        """
+        Display the raw image
+
+        Args:
+            image (Image.Image): opened image
+            ax1 (plt.Axes): subplot axis
+        """
+        clear_output()  # so that the next fig doesnt display below
+        ax1.imshow(self.image, aspect="auto")
+        ax1.set_title(
+            f"Human Labeled as: {cocpit.config.CLASS_NAMES[self.labels[self.index]]}\n"
+            f"Model Labeled as: {[cocpit.config.CLASS_NAMES[e] for e in self.topk_classes[self.index]][0]}\n"
+        )
+        ax1.axis("off")
+
+    def bar_chart(self, ax2) -> None:
+        """
+        Create barchart that outputs top k predictions for a given image
+
+        Args:
+            ax2 (plt.Axes): subplot axis
+        """
+
+        y_pos = np.arange(len(self.topk_probs[self.index]))
+        ax2.bar(y_pos, self.topk_probs[self.index])
+        ax2.set_ylim(0.0, 1.0)
+        ax2.set_xticks(y_pos)
+        ax2.set_xticklabels(
+            [cocpit.config.CLASS_NAMES[e] for e in self.topk_classes[self.index]]
+        )
+        ax2.tick_params(axis="x", rotation=45)
+        # ax2.invert_yaxis()  # labels read top-to-bottom
+        ax2.set_title("Class Probability")
+
+    def save_image(self, b) -> None:
+        """
+        Move the image based on dropdown selection
+
+        Args:
+            b: button instance
+        """
+
+        filename = self.paths[self.index].split("/")[-1]
+
+        try:
+            shutil.move(
+                f"{cocpit.config.DATA_DIR}{cocpit.config.CLASS_NAME_MAP[cocpit.config.CLASS_NAMES[self.labels[self.index]]]}/{filename}",
+                f"{cocpit.config.DATA_DIR}{cocpit.config.CLASS_NAME_MAP[b.description]}/{filename}",
+            )
+            self.count += 1
+            print(f"moved {self.count} images")
+
+        except FileNotFoundError:
+            print(self.paths[self.index])
+            print("File not found or directory does not exist. Not moving.")
+
+    def visualizations(self) -> None:
+        """
+        Use the human and model labels and classes to
+        create a bar chart with the top k predictions
+        from the image at the current index
+        """
+        # add chart to ipywidgets.Output()
+        with self.center:
             if self.index == len(self.topk_probs):
-                print("You have completed looking at all predictions!")
+                print("You have completed looking at all incorrect predictions!")
                 return
             else:
+                _, (ax1, ax2) = plt.subplots(
+                    constrained_layout=True, figsize=(14, 7), ncols=2, nrows=1
+                )
                 self.open_image()
+                self.init_fig(ax1)
                 self.prep_img = preprocess_image(self.image).cuda()
-                self.generate_cam()
-                self.get_guided_grads()
-                self.get_vanilla_grads()
-                self.call_plots()
+                # self.get_guided_grads()
+                # self.plot_saliency_pos(ax2)
+                self.bar_chart(ax2)
                 plt.show()
+                # fig.savefig(f"/ai2es/plots/wrong_preds{self.index}.pdf")

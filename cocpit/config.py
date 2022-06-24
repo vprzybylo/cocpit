@@ -91,11 +91,11 @@ MODEL_NAMES = [
 ]
 
 # directory that holds the training data
-DATA_DIR = f"{BASE_DIR}/codebook_dataset/combined_4/"
+DATA_DIR = f"{BASE_DIR}/codebook_dataset/combined_extra/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # whether to save the model
-SAVE_MODEL = True
+SAVE_MODEL = False
 
 # directory to save the trained model to
 MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
@@ -105,7 +105,7 @@ MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
 VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/{TAG}/"
 
 # model to load
-MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[30]_bs[64]_k0_1model(s).pt"
+MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[40]_bs[64]_k0_1model(s).pt"
 
 MODEL_SAVENAME = (
     f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_"

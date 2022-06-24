@@ -13,6 +13,7 @@ from torchvision import datasets, transforms
 from typing import List, Optional
 from cocpit.auto_str import auto_str
 import numpy as np
+import random
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -88,7 +89,7 @@ def get_data(phase: str) -> ImageFolderWithPaths:
     transform_dict = {
         "train": transforms.Compose(
             [
-                transforms.Resize(224),
+                transforms.Resize((224, 224)),
                 transforms.RandomHorizontalFlip(),
                 # transforms.RandomVerticalFlip(),
                 transforms.ToTensor(),
@@ -99,7 +100,7 @@ def get_data(phase: str) -> ImageFolderWithPaths:
         ),
         "val": transforms.Compose(
             [
-                transforms.Resize(224),
+                transforms.Resize((224, 224)),
                 transforms.ToTensor(),
                 transforms.Normalize(
                     mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
@@ -138,6 +139,14 @@ def balanced_sampler(train_labels: List[int]) -> sampler.WeightedRandomSampler:
     )
 
 
+def seed_worker(worker_id) -> None:
+    torch_seed = torch.initial_seed()
+    random.seed(torch_seed + worker_id)
+    if torch_seed >= 2 ** 30:  # make sure torch_seed + workder_id < 2**32
+        torch_seed = torch_seed % 2 ** 30
+    np.random.seed(torch_seed + worker_id)
+
+
 def create_loader(
     data: torch.utils.data.Subset,
     batch_size: int,
@@ -158,12 +167,17 @@ def create_loader(
         torch.utils.data.DataLoader: a dataset to be iterated over using sampling strategy
 
     """
+    g = torch.Generator()
+    g.manual_seed(0)
+
     return torch.utils.data.DataLoader(
         data,
         batch_size=batch_size,
         sampler=sampler,
         num_workers=config.NUM_WORKERS,
         pin_memory=pin_memory,
+        worker_init_fn=seed_worker,
+        generator=g,
     )
 
 

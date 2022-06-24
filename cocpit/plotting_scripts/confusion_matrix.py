@@ -30,7 +30,7 @@ def heatmap(cm: sklearn.metrics.confusion_matrix) -> sns.heatmap:
     Return:
         sns.heatmap
     """
-    return sns.heatmap(
+    ax = sns.heatmap(
         cm,
         annot=True,
         fmt=".2f",
@@ -41,6 +41,16 @@ def heatmap(cm: sklearn.metrics.confusion_matrix) -> sns.heatmap:
         cmap=change_cmap(),
         annot_kws={"size": 16},
     )
+    b, t = plt.ylim()  # discover the values for bottom and top
+    l, r = plt.xlim()
+    b += 0.1  # Add 0.5 to the bottom
+    t -= 0.1  # Subtract 0.5 from the top
+    l -= 0.1
+    r += 0.1
+    plt.ylim(b, t)  # update the ylim(bottom, top) values
+    plt.xlim(l, r)
+    plt.show()  # ta-da!
+    return ax
 
 
 def change_cmap() -> mpl.cm:
@@ -64,7 +74,7 @@ def heatmap_axes(hm: sns.heatmap, ax: plt.Axes) -> None:
     cbar.ax.tick_params(labelsize=20)
     ax.set_xlabel("Predicted Labels", fontsize=22)
     ax.set_ylabel("Actual Labels", fontsize=22)
-    hm.set_xticklabels(hm.get_xticklabels(), rotation=90, fontsize=20)
+    hm.set_xticklabels(hm.get_xticklabels(), rotation=20, fontsize=20)
     hm.set_yticklabels(hm.get_xticklabels(), rotation=0, fontsize=20)
 
 
@@ -86,9 +96,9 @@ def conf_matrix(
                 If None, confusion matrix will not be normalized.
         save_fig (bool): save the conf matrix to file
     """
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10, 8))
     cm = confusion_matrix(all_labels, all_preds, normalize=norm)
-    cm = mask_cm_small_values(cm)
+    # cm = mask_cm_small_values(cm)
     hm = heatmap(cm)
     heatmap_axes(hm, ax)
     if norm:
