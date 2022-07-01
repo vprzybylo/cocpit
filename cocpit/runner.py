@@ -4,7 +4,13 @@ train the CNN model(s)
 import time
 import cocpit
 import cocpit.config as config  # isort:split
-from typing import List
+from typing import List, Optional
+import pandas as pd
+from cocpit.plotting_scripts import confusion_matrix as confusion_matrix
+from sklearn.metrics import classification_report
+import itertools
+import numpy as np
+from itertools import chain
 
 
 def determine_phases() -> List[str]:
@@ -13,6 +19,67 @@ def determine_phases() -> List[str]:
     Returns:
         List[str]: either training or training and validation phase"""
     return ["train"] if config.VALID_SIZE < 0.1 else ["train", "val"]
+
+
+def conf_matrix(labels, preds, norm: Optional[str] = None) -> None:
+    """
+    log a confusion matrix to comet ml after the last epoch
+        - found under the graphics tab
+    if using kfold, it will concatenate all validation dataloaders
+    if not using kfold, it will only plot the validation dataset (e.g, 20%)
+
+    Args:
+       norm (str): 'true', 'pred', or None.
+            Normalizes confusion matrix over the true (rows),
+            predicted (columns) conditions or all the population.
+            If None, confusion matrix will not be normalized.
+    """
+    print(list(chain.from_iterable(labels)))
+    _ = confusion_matrix.conf_matrix(
+        np.asarray(list(chain.from_iterable(labels))),
+        np.asarray(list(chain.from_iterable(preds))),
+        norm=norm,
+        save_fig=True,
+    )
+
+    # log to comet
+    if config.LOG_EXP:
+        config.experiment.log_image(
+            config.CONF_MATRIX_SAVENAME,
+            name="confusion matrix",
+            image_format="pdf",
+        )
+
+
+def class_report(model_name, labels, preds, fold: int) -> None:
+    """
+    create classification report from sklearn
+    add model name and fold iteration to the report
+
+    Args:
+        fold (int): which fold to use in resampling procedure
+    """
+
+    clf_report = classification_report(
+        np.asarray(list(itertools.chain(*labels))),
+        np.asarray(list(itertools.chain(*preds))),
+        digits=3,
+        target_names=config.CLASS_NAMES,
+        output_dict=True,
+    )
+    clf_report_df = pd.DataFrame(clf_report)
+    if config.SAVE_ACC:
+        clf_report_df.to_csv(config.METRICS_SAVENAME, mode="a")
+
+    # transpose classes as columns and convert to df
+    clf_report = pd.DataFrame(clf_report).iloc[:-1, :].T
+
+    # add fold iteration and model name
+    clf_report["fold"] = fold
+    clf_report["model"] = model_name
+
+    if config.SAVE_ACC:
+        clf_report.to_csv(config.METRICS_SAVENAME, mode="a")
 
 
 def main(
@@ -32,8 +99,11 @@ def main(
         epochs (int): total epochs for training loop
         kfold (int): number of folds use in k-fold cross validation
     """
+
     since_total = time.time()
     val_best_acc = 0.0
+    val_labels = []
+    val_preds = []
     for epoch in range(epochs):
         since_epoch = time.time()
         t = cocpit.timing.EpochTime(since_total, since_epoch)
@@ -48,7 +118,13 @@ def main(
                     f, epoch, epochs, model_name, kfold, val_best_acc, c
                 )
                 val_best_acc = val.run()
+                val_labels.append(val.epoch_labels)
+                val_preds.append(val.epoch_preds)
             t.print_time_one_epoch()
+
+    conf_matrix(val_labels, val_preds)
+    class_report(model_name, val_labels, val_preds, kfold)
+
     try:
         t.print_time_all_epochs()
         t.write_times(model_name, kfold)

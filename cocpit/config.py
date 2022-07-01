@@ -129,7 +129,7 @@ FEATURE_EXTRACT = False
 USE_PRETRAINED = False
 
 # write training loss and accuracy to csv
-SAVE_ACC = True
+SAVE_ACC = False
 
 # directory for saving training accuracy and loss csv's
 ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"

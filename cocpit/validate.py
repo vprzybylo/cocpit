@@ -1,13 +1,7 @@
 import os
 import torch
-import itertools
-import numpy as np
-from cocpit.plotting_scripts import confusion_matrix as confusion_matrix
-from sklearn.metrics import classification_report
-import pandas as pd
 from cocpit.performance_metrics import Metrics
 from cocpit import config as config
-from typing import Optional
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 import csv
 
@@ -25,15 +19,14 @@ class Validation(Metrics):
         c (model_config.ModelConfig): instance of ModelConfig class
     """
 
-    all_preds = []  # validation preds for 1 epoch for plotting
-    all_labels = []  # validation labels for 1 epoch for plotting
-
     def __init__(self, f, epoch, epochs, model_name, kfold, val_best_acc, c):
         super().__init__(f, epoch, epochs)
         self.model_name = model_name
         self.kfold = kfold
         self.val_best_acc = val_best_acc
         self.c = c
+        self.epoch_preds = []  # validation preds for 1 epoch for plotting
+        self.epoch_labels = []  # validation labels for 1 epoch for plotting
 
     def predict(self) -> None:
         """make predictions"""
@@ -45,8 +38,8 @@ class Validation(Metrics):
 
     def append_preds(self) -> None:
         """save each batch prediction and labels for plots"""
-        self.all_preds.append(self.preds.cpu().numpy())
-        self.all_labels.append(self.labels.cpu().numpy())
+        self.epoch_preds.append(self.preds.cpu().numpy())
+        self.epoch_labels.append(self.labels.cpu().numpy())
 
     def save_model(self) -> None:
         """save/load best model weights after improvement in val accuracy"""
@@ -91,61 +84,6 @@ class Validation(Metrics):
             if (self.batch + 1) % 5 == 0:
                 self.print_batch_metrics("val")
 
-    def confusion_matrix(self, norm: Optional[str] = None) -> None:
-        """
-        log a confusion matrix to comet ml after the last epoch
-            - found under the graphics tab
-        if using kfold, it will concatenate all validation dataloaders
-        if not using kfold, it will only plot the validation dataset (e.g, 20%)
-
-        Args:
-           norm (str): 'true', 'pred', or None.
-                Normalizes confusion matrix over the true (rows),
-                predicted (columns) conditions or all the population.
-                If None, confusion matrix will not be normalized.
-        """
-        _ = confusion_matrix.conf_matrix(
-            np.asarray(list(itertools.chain(*self.all_labels))),
-            np.asarray(list(itertools.chain(*self.all_preds))),
-            norm=norm,
-            save_fig=True,
-        )
-
-        # log to comet
-        if config.LOG_EXP:
-            config.experiment.log_image(
-                config.CONF_MATRIX_SAVENAME,
-                name="confusion matrix",
-                image_format="pdf",
-            )
-
-    def classification_report(self, fold: int) -> None:
-        """
-        create classification report from sklearn
-        add model name and fold iteration to the report
-
-        Args:
-            fold (int): which fold to use in resampling procedure
-        """
-
-        clf_report = classification_report(
-            np.asarray(list(itertools.chain(*self.all_labels))),
-            np.asarray(list(itertools.chain(*self.all_preds))),
-            digits=3,
-            target_names=config.CLASS_NAMES,
-            output_dict=True,
-        )
-
-        # transpose classes as columns and convert to df
-        clf_report = pd.DataFrame(clf_report).iloc[:-1, :].T
-
-        # add fold iteration and model name
-        clf_report["fold"] = fold
-        clf_report["model"] = self.model_name
-
-        if config.SAVE_ACC:
-            clf_report.to_csv(config.METRICS_SAVENAME, mode="a")
-
     def write_output(self, filename: str) -> None:
         """
         Write acc and loss to csv file within model, epoch, kfold iteration
@@ -177,18 +115,6 @@ class Validation(Metrics):
         self.epoch_metrics()
         self.reduce_lr()
         val_best_acc = self.save_model()
-
-        # confusion matrix
-        if (
-            self.epoch == self.epochs - 1
-            and (config.KFOLD != 0 and self.kfold == config.KFOLD - 1)
-            or (config.KFOLD == 0)
-        ):
-            self.confusion_matrix()
-
-        # classification report
-        if self.epoch == self.epochs - 1:
-            self.classification_report(self.kfold)
 
         self.log_epoch_metrics("epoch_acc_val", "epoch_loss_val")
         self.print_epoch_metrics("Validation")
