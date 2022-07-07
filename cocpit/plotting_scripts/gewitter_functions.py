@@ -14,6 +14,18 @@ import matplotlib
 import matplotlib.pyplot as plt
 from cocpit import config as config
 
+
+def is_unique(s):
+    s = list(s)
+    s.sort()
+
+    for i in range(len(s) - 1):
+        if s[i] == s[i + 1]:
+            return 0
+    else:
+        return 1
+
+
 NUM_TRUE_POSITIVES_KEY = "num_true_positives"
 NUM_FALSE_POSITIVES_KEY = "num_false_positives"
 NUM_FALSE_NEGATIVES_KEY = "num_false_negatives"
