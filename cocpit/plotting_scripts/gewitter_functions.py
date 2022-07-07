@@ -40,17 +40,6 @@ MAX_OPTIMIZATION_STRING = "max"
 VALID_OPTIMIZATION_STRINGS = [MIN_OPTIMIZATION_STRING, MAX_OPTIMIZATION_STRING]
 LEVELS_FOR_PEIRCE_CONTOURS = np.linspace(0, 1, num=11, dtype=float)
 
-NUM_TRUE_POSITIVES_KEY = "num_true_positives"
-NUM_FALSE_POSITIVES_KEY = "num_false_positives"
-NUM_FALSE_NEGATIVES_KEY = "num_false_negatives"
-NUM_TRUE_NEGATIVES_KEY = "num_true_negatives"
-
-BSS_KEY = "brier_skill_score"
-BRIER_SCORE_KEY = "brier_score"
-RESOLUTION_KEY = "resolution"
-RELIABILITY_KEY = "reliability"
-UNCERTAINTY_KEY = "uncertainty"
-
 POD_BY_THRESHOLD_KEY = "pod_by_threshold"
 POFD_BY_THRESHOLD_KEY = "pofd_by_threshold"
 SR_BY_THRESHOLD_KEY = "success_ratio_by_threshold"
