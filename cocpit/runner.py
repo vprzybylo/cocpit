@@ -36,8 +36,8 @@ def conf_matrix(labels, preds, norm: Optional[str] = None) -> None:
     """
     print(list(chain.from_iterable(labels)))
     _ = confusion_matrix.conf_matrix(
-        np.asarray(list(chain.from_iterable(labels))),
-        np.asarray(list(chain.from_iterable(preds))),
+        np.asarray(list(chain.from_iterable(*labels))),
+        np.asarray(list(chain.from_iterable(*preds))),
         norm=norm,
         save_fig=True,
     )

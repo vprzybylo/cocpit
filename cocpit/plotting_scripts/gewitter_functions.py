@@ -14,7 +14,7 @@ import sklearn
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-
+from cocpit import config as config
 
 ############# Global default variables ####################
 # if you want to see the functions go see after line 92
@@ -38,6 +38,7 @@ MAX_PROB_FOR_XENTROPY = 1.0 - np.finfo(float).eps
 MIN_OPTIMIZATION_STRING = "min"
 MAX_OPTIMIZATION_STRING = "max"
 VALID_OPTIMIZATION_STRINGS = [MIN_OPTIMIZATION_STRING, MAX_OPTIMIZATION_STRING]
+LEVELS_FOR_PEIRCE_CONTOURS = np.linspace(0, 1, num=11, dtype=float)
 
 NUM_TRUE_POSITIVES_KEY = "num_true_positives"
 NUM_FALSE_POSITIVES_KEY = "num_false_positives"
@@ -124,36 +125,12 @@ THRESHOLD_ARG_FOR_UNIQUE_FORECASTS = "unique_forecasts"
 ################### Helper functions ######################
 
 
-def get_performance_diagram_boot(
-    forecast_labels, observed_labels, sample_size=10000, desired_size=100000, ci=0.95
-):
-    n_iter = int(desired_size / sample_size)
-    if n_iter < 30:
-        n_iter = 30
-    pod_l = np.zeros(n_iter)
-    sr_l = np.zeros(n_iter)
-    for i in np.arange(0, n_iter):
-        idx_boot = np.random.choice(
-            np.arange(0, forecast_labels.shape[0]), replace=True, size=sample_size
-        )
-        fore_boot = forecast_labels[idx_boot]
-        obse_boot = observed_labels[idx_boot]
-        table = get_contingency_table(fore_boot, obse_boot)
-        pod_l[i] = get_pod(table)
-        sr_l[i] = get_success_ratio(table)
+def get_contingency_table(id, ol, pl):
+    """
 
-    sr_r = st.t.interval(
-        alpha=ci, df=len(sr_l) - 1, loc=np.mean(sr_l), scale=st.sem(sr_l)
-    )
-    pod_r = st.t.interval(
-        alpha=ci, df=len(pod_l) - 1, loc=np.mean(pod_l), scale=st.sem(pod_l)
-    )
+    """
 
-    return np.asarray(pod_r), np.asarray(sr_r)
-
-
-def get_contingency_table(num_classes, id, ol, pl):
-    wrong_labels = np.arange(0, num_classes)
+    wrong_labels = np.arange(0, len(config.CLASS_NAMES))
     wrong_labels = wrong_labels[wrong_labels != id]
 
     tp = len(np.where(np.logical_and(ol == id, pl == id))[0])
@@ -204,38 +181,37 @@ def get_contingency_table(num_classes, id, ol, pl):
     }
 
 
-# def get_contingency_table(tp, fp, fn, tn):
-#     """Computes contingency table.
-#     N = number of forecasts
-#     :param forecast_labels: See documentation for
-#         _check_forecast_and_observed_labels.
-#     :param observed_labels: See doc for _check_forecast_and_observed_labels.
-#     :return: contingency_table_as_dict: Dictionary with the following keys.
-#     contingency_table_as_dict['num_true_positives']: Number of true positives.
-#     contingency_table_as_dict['num_false_positives']: Number of false positives.
-#     contingency_table_as_dict['num_false_negatives']: Number of false negatives.
-#     contingency_table_as_dict['num_true_negatives']: Number of true negatives.
-#     """
-#     # true_positive_indices = np.where(np.logical_and(
-#     #     forecast_labels == 1, observed_labels == 1
-#     # ))[0]
-#     # print(true_positive_indices)
-#     # false_positive_indices = np.where(np.logical_and(
-#     #     forecast_labels == 1, observed_labels == 0
-#     # ))[0]
-#     # false_negative_indices = np.where(np.logical_and(
-#     #     forecast_labels == 0, observed_labels == 1
-#     # ))[0]
-#     # true_negative_indices = np.where(np.logical_and(
-#     #     forecast_labels == 0, observed_labels == 0
-#     # ))[0]
+def get_contingency_table_binary(forecast_labels, observed_labels):
+    """Computes contingency table.
+    N = number of forecasts
+    :param forecast_labels: See documentation for
+        _check_forecast_and_observed_labels.
+    :param observed_labels: See doc for _check_forecast_and_observed_labels.
+    :return: contingency_table_as_dict: Dictionary with the following keys.
+    contingency_table_as_dict['num_true_positives']: Number of true positives.
+    contingency_table_as_dict['num_false_positives']: Number of false positives.
+    contingency_table_as_dict['num_false_negatives']: Number of false negatives.
+    contingency_table_as_dict['num_true_negatives']: Number of true negatives.
+    """
+    tp = np.where(np.logical_and(
+        forecast_labels == 1, observed_labels == 1
+    ))[0]
+    fp = np.where(np.logical_and(
+        forecast_labels == 1, observed_labels == 0
+    ))[0]
+    fn = np.where(np.logical_and(
+        forecast_labels == 0, observed_labels == 1
+    ))[0]
+    tn = np.where(np.logical_and(
+        forecast_labels == 0, observed_labels == 0
+    ))[0]
 
-#     return {
-#         NUM_TRUE_POSITIVES_KEY: tp,
-#         NUM_FALSE_POSITIVES_KEY: fp,
-#         NUM_FALSE_NEGATIVES_KEY: fn,
-#         NUM_TRUE_NEGATIVES_KEY: tn
-#     }
+    return {
+        NUM_TRUE_POSITIVES_KEY: len(tp),
+        NUM_FALSE_POSITIVES_KEY: len(fp),
+        NUM_FALSE_NEGATIVES_KEY: len(fn),
+        NUM_TRUE_NEGATIVES_KEY: len(tn)
+    }
 
 
 def get_pod(contingency_table_as_dict):
@@ -272,6 +248,8 @@ def get_sr(contingency_table_as_dict):
     if denominator == 0:
         return np.nan
 
+    # tp/(tp+fp) #performance
+    # fp/(fp+tn)    # ROC
     numerator = float(contingency_table_as_dict[NUM_TRUE_POSITIVES_KEY])
     return numerator / denominator
 
@@ -322,7 +300,7 @@ def get_far(contingency_table_as_dict):
         get_contingency_table.
     :return: false_alarm_rate: FAR.
     """
-    return 1.0 - get_success_ratio(contingency_table_as_dict)
+    return 1.0 - get_sr(contingency_table_as_dict)
 
 
 def get_pofd(contingency_table_as_dict):
@@ -339,14 +317,135 @@ def get_pofd(contingency_table_as_dict):
 
     if denominator == 0:
         return np.nan
-
+    # fp/(fp+tn)
     numerator = float(contingency_table_as_dict[NUM_FALSE_POSITIVES_KEY])
     return numerator / denominator
 
+def _get_pofd_pod_grid(pofd_spacing=0.01, pod_spacing=0.01):
+    """Creates grid in POFD-POD space.
+    M = number of rows (unique POD values) in grid
+    N = number of columns (unique POFD values) in grid
+    :param pofd_spacing: Spacing between grid cells in adjacent columns.
+    :param pod_spacing: Spacing between grid cells in adjacent rows.
+    :return: pofd_matrix: M-by-N numpy array of POFD values.
+    :return: pod_matrix: M-by-N numpy array of POD values.
+    """
+
+    num_pofd_values = 1 + int(np.ceil(1. / pofd_spacing))
+    num_pod_values = 1 + int(np.ceil(1. / pod_spacing))
+
+    unique_pofd_values = np.linspace(0., 1., num=num_pofd_values)
+    unique_pod_values = np.linspace(0., 1., num=num_pod_values)[::-1]
+    return np.meshgrid(unique_pofd_values, unique_pod_values)
+
+
+def _get_peirce_colour_scheme():
+    """Returns colour scheme for Peirce score.
+    :return: colour_map_object: Colour scheme (instance of
+        `matplotlib.colors.ListedColormap`).
+    :return: colour_norm_object: Instance of `matplotlib.colors.BoundaryNorm`,
+        defining the scale of the colour map.
+    """
+
+    this_colour_map_object = plt.cm.Blues
+    this_colour_norm_object = matplotlib.colors.BoundaryNorm(
+        LEVELS_FOR_PEIRCE_CONTOURS, this_colour_map_object.N)
+
+    rgba_matrix = this_colour_map_object(this_colour_norm_object(
+        LEVELS_FOR_PEIRCE_CONTOURS
+    ))
+
+    colour_list = [
+        rgba_matrix[i, ..., :-1] for i in range(rgba_matrix.shape[0])
+    ]
+
+    colour_map_object = matplotlib.colors.ListedColormap(colour_list)
+    colour_map_object.set_under(np.array([1, 1, 1]))
+    colour_norm_object = matplotlib.colors.BoundaryNorm(
+        LEVELS_FOR_PEIRCE_CONTOURS, colour_map_object.N)
+
+    return colour_map_object, colour_norm_object
+
+def add_colour_bar(
+        axes_object, colour_map_object, values_to_colour, min_colour_value,
+        max_colour_value, colour_norm_object=None,
+        orientation_string='vertical', extend_min=True, extend_max=True,
+        fraction_of_axis_length=1.):
+    """Adds colour bar to existing axes.
+    :param axes_object: Existing axes (instance of
+        `matplotlib.axes._subplots.AxesSubplot`).
+    :param colour_map_object: Colour scheme (instance of
+        `matplotlib.pyplot.cm`).
+    :param values_to_colour: numpy array of values to colour.
+    :param min_colour_value: Minimum value in colour map.
+    :param max_colour_value: Max value in colour map.
+    :param colour_norm_object: Instance of `matplotlib.colors.BoundaryNorm`,
+        defining the scale of the colour map.  If `colour_norm_object is None`,
+        will assume that scale is linear.
+    :param orientation_string: Orientation of colour bar ("vertical" or
+        "horizontal").
+    :param extend_min: Boolean flag.  If True, the bottom of the colour bar will
+        have an arrow.  If False, it will be a flat line, suggesting that lower
+        values are not possible.
+    :param extend_max: Same but for top of colour bar.
+    :param fraction_of_axis_length: Fraction of axis length (y-axis if
+        orientation is "vertical", x-axis if orientation is "horizontal")
+        occupied by colour bar.
+    :param font_size: Font size for labels on colour bar.
+    :return: colour_bar_object: Colour bar (instance of
+        `matplotlib.pyplot.colorbar`) created by this method.
+    """
+
+    if colour_norm_object is None:
+        colour_norm_object = matplotlib.colors.Normalize(
+            vmin=min_colour_value, vmax=max_colour_value, clip=False)
+
+    scalar_mappable_object = plt.cm.ScalarMappable(
+        cmap=colour_map_object, norm=colour_norm_object)
+    scalar_mappable_object.set_array(values_to_colour)
+
+    if extend_min and extend_max:
+        extend_string = 'both'
+    elif extend_min:
+        extend_string = 'min'
+    elif extend_max:
+        extend_string = 'max'
+    else:
+        extend_string = 'neither'
+
+    padding = 0.075 if orientation_string == 'horizontal' else 0.05
+    colour_bar_object = plt.colorbar(
+        ax=axes_object, mappable=scalar_mappable_object,
+        orientation=orientation_string, pad=padding, extend=extend_string,
+        shrink=fraction_of_axis_length)
+
+    colour_bar_object.ax.tick_params(labelsize=14)
+    return colour_bar_object
+
+def peirce_contour(ax):
+    pofd_matrix, pod_matrix = _get_pofd_pod_grid()
+    peirce_score_matrix = pod_matrix - pofd_matrix
+
+    colour_map_object, colour_norm_object = _get_peirce_colour_scheme()
+
+    ax.contourf(
+        pofd_matrix, pod_matrix, peirce_score_matrix,
+        LEVELS_FOR_PEIRCE_CONTOURS, cmap=colour_map_object,
+        norm=colour_norm_object, vmin=0., vmax=1.)
+
+    # TODO(thunderhoser): Calling private method is a HACK.
+    colour_bar_object = add_colour_bar(
+        axes_object=ax, colour_map_object=colour_map_object,
+        colour_norm_object=colour_norm_object,
+        values_to_colour=peirce_score_matrix, min_colour_value=0.,
+        max_colour_value=1., orientation_string='vertical',
+        extend_min=False, extend_max=False)
+
+    colour_bar_object.set_label('Peirce score')
 
 def get_points_in_roc_curve(
+    id, ol, pl,
     forecast_probabilities=None,
-    observed_labels=None,
     threshold_arg=None,
     forecast_precision=DEFAULT_FORECAST_PRECISION,
 ):
@@ -380,7 +479,7 @@ def get_points_in_roc_curve(
             forecast_probabilities, binarization_thresholds[i]
         )
         this_contingency_table_as_dict = get_contingency_table(
-            these_forecast_labels, observed_labels
+            id, ol, pl
         )
 
         pofd_by_threshold[i] = get_pofd(this_contingency_table_as_dict)
@@ -512,30 +611,29 @@ def get_area_under_roc_curve(pofd_by_threshold, pod_by_threshold):
 
 
 def make_performance_diagram_axis(
-    ax=None, figsize=(5, 5), CSIBOOL=True, FBBOOL=True, csi_cmap="Blues"
+    ax=None, figsize=(15, 5), CSIBOOL=True, FBBOOL=True, csi_cmap="Blues"
 ):
     if ax is None:
-        fig = plt.figure(figsize=figsize)
+        fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=figsize)
         fig.set_facecolor("w")
-        ax = plt.gca()
 
     if CSIBOOL:
         sr_array = np.linspace(0.001, 1, 200)
         pod_array = np.linspace(0.001, 1, 200)
         X, Y = np.meshgrid(sr_array, pod_array)
         csi_vals = csi_from_sr_and_pod(X, Y)
-        pm = ax.contourf(X, Y, csi_vals, levels=np.arange(0, 1.1, 0.1), cmap=csi_cmap)
-        plt.colorbar(pm, ax=ax, label="CSI")
+        pm = ax2.contourf(X, Y, csi_vals, levels=np.arange(0, 1.1, 0.1), cmap=csi_cmap)
+        plt.colorbar(pm, ax=ax2, label="CSI")
 
     if FBBOOL:
         fb = frequency_bias_from_sr_and_pod(X, Y)
-        bias = ax.contour(
+        bias = ax2.contour(
             X,
             Y,
             fb,
             levels=[0.25, 0.5, 1, 1.5, 2, 3, 5],
             linestyles="--",
-            colors="Grey",
+            colors="k",
         )
         plt.clabel(
             bias,
@@ -543,35 +641,12 @@ def make_performance_diagram_axis(
             inline_spacing=FREQ_BIAS_PADDING,
             fmt=FREQ_BIAS_STRING_FORMAT,
             fontsize=10,
-            colors="LightGrey",
+            colors="k",
         )
 
-    ax.set_xlim([0, 1])
-    ax.set_ylim([0, 1])
-    ax.set_xlabel("SR")
-    ax.set_ylabel("POD")
-    return ax
+    ax2.set_xlim([0.0, 1.0])
+    ax2.set_ylim([0.0, 1.0])
+    ax2.set_xlabel("Precision/Success Ratio")
+    ax2.set_title('Performance Diagram')
+    return ax1, ax2
 
-
-def get_mae(y, yhat):
-    """Calcualte the mean absolute error"""
-    return np.mean(np.abs(y - yhat))
-
-
-def get_rmse(y, yhat):
-    """Calcualte the root mean squared error"""
-    return np.sqrt(np.mean((y - yhat) ** 2))
-
-
-def get_bias(y, yhat):
-    """Calcualte the mean bias (i.e., error)"""
-    return np.mean(y - yhat)
-
-
-def get_r2(y, yhat):
-    """Calcualte the coef. of determination (R^2)"""
-    ybar = np.mean(y)
-    return 1 - (np.sum((y - yhat) ** 2)) / (np.sum((y - ybar) ** 2))
-
-
-###########################################################

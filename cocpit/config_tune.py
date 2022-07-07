@@ -62,10 +62,19 @@ KFOLD = 0
 VALID_SIZE = 0.20
 
 # images read into memory at a time during training
-BATCH_SIZE = [64]
+BATCH_SIZE = [32, 64, 128, 256]
 
 # number of epochs to train model
-MAX_EPOCHS = [30]
+MAX_EPOCHS = [20, 30, 40]
+
+# hyperparameter search using ray tune (called in main)
+TUNE = True
+
+# dropout rate (in model_config)
+DROP_RATE = [0.0, 0.3, 0.5]
+
+#learning rate (in model_config)
+LR = [0.001, 0.01, 0.1]
 
 # names of each ice crystal class
 CLASS_NAMES = ["no precipitation", "obstructed", "precipitation"]
@@ -79,15 +88,15 @@ CLASS_NAME_MAP = {
 
 # models to train
 MODEL_NAMES = [
-    # "resnet18",
-    # "efficient",
-    # "resnet34",
-    # "resnet152",
-    # "alexnet",
+    "resnet18",
+    "efficient",
+    "resnet34",
+    "resnet152",
+    "alexnet",
     "vgg16",
-    # "vgg19",
-    # "densenet169",
-    # "densenet201",
+    "vgg19",
+    "densenet169",
+    "densenet201",
 ]
 
 # directory that holds the training data

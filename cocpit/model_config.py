@@ -59,23 +59,20 @@ class ModelConfig:
     def set_optimizer(self) -> None:
         """Model optimizer for stochastic gradient decent"""
         self.optimizer = optim.SGD(
-            self.update_params(), lr=0.01, momentum=0.9, nesterov=True
+            self.update_params(), lr=config.LR, momentum=0.9, nesterov=True
         )
 
     def set_criterion(self) -> None:
         self.criterion = nn.CrossEntropyLoss()
 
-    def set_dropout(self, drop_rate: float = 0.3) -> None:
+    def set_dropout(self) -> None:
         """
         Apply dropout rate: a technique to fight overfitting and improve neural network generalization
-
-        Args:
-            drop_rate (float): probability of an element to be zeroed
         """
         for _, child in self.model.named_children():
             if isinstance(child, torch.nn.Dropout):
-                child.p = drop_rate
-            self.set_dropout(child, drop_rate=drop_rate)
+                child.p = config.DROP_RATE
+            self.set_dropout(child, drop_rate=config.DROP_RATE)
 
     def to_device(self) -> None:
         """
