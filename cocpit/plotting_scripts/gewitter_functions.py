@@ -28,12 +28,6 @@ TOLERANCE = 1e-6
 
 LEVELS_FOR_PEIRCE_CONTOURS = np.linspace(0, 1, num=11, dtype=float)
 
-POD_BY_THRESHOLD_KEY = "pod_by_threshold"
-POFD_BY_THRESHOLD_KEY = "pofd_by_threshold"
-SR_BY_THRESHOLD_KEY = "success_ratio_by_threshold"
-MEAN_FORECAST_BY_BIN_KEY = "mean_forecast_by_bin"
-EVENT_FREQ_BY_BIN_KEY = "event_frequency_by_bin"
-
 POD_KEY = "pod"
 POFD_KEY = "pofd"
 SUCCESS_RATIO_KEY = "success_ratio"
