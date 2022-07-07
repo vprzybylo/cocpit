@@ -4,7 +4,7 @@ from cocpit.performance_metrics import Metrics
 from cocpit import config as config
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 import csv
-
+from ray import tune
 
 class Validation(Metrics):
     """Perform validation methods on batched dataset
@@ -43,7 +43,6 @@ class Validation(Metrics):
 
     def save_model(self) -> None:
         """save/load best model weights after improvement in val accuracy"""
-        print(self.epoch_acc, self.val_best_acc)
         if self.epoch_acc > self.val_best_acc and config.SAVE_MODEL:
             print(
                 f"Epoch acc:{self.epoch_acc} > best acc: {self.val_best_acc}. Saving model."
@@ -53,6 +52,7 @@ class Validation(Metrics):
             if not os.path.exists(config.MODEL_SAVE_DIR):
                 os.makedirs(config.MODEL_SAVE_DIR)
             torch.save(self.c.model, config.MODEL_SAVENAME)
+        tune.report(loss=self.epoch_loss, accuracy=self.epoch_acc)
         return self.val_best_acc
 
     def reduce_lr(self) -> None:
@@ -113,7 +113,8 @@ class Validation(Metrics):
         """
         self.iterate_batches()
         self.epoch_metrics()
-        self.reduce_lr()
+        if not config.TUNE:
+            self.reduce_lr()
         val_best_acc = self.save_model()
 
         self.log_epoch_metrics("epoch_acc_val", "epoch_loss_val")
