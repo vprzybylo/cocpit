@@ -31,7 +31,6 @@ FREQ_BIAS_PADDING = 5
 
 TOLERANCE = 1e-6
 
-VALID_OPTIMIZATION_STRINGS = [MIN_OPTIMIZATION_STRING, MAX_OPTIMIZATION_STRING]
 LEVELS_FOR_PEIRCE_CONTOURS = np.linspace(0, 1, num=11, dtype=float)
 
 POD_BY_THRESHOLD_KEY = "pod_by_threshold"
@@ -101,9 +100,7 @@ THRESHOLD_ARG_FOR_UNIQUE_FORECASTS = "unique_forecasts"
 
 
 def get_contingency_table(id, ol, pl):
-    """
-
-    """
+    """ """
 
     wrong_labels = np.arange(0, len(config.CLASS_NAMES))
     wrong_labels = wrong_labels[wrong_labels != id]
@@ -168,24 +165,16 @@ def get_contingency_table_binary(forecast_labels, observed_labels):
     contingency_table_as_dict['num_false_negatives']: Number of false negatives.
     contingency_table_as_dict['num_true_negatives']: Number of true negatives.
     """
-    tp = np.where(np.logical_and(
-        forecast_labels == 1, observed_labels == 1
-    ))[0]
-    fp = np.where(np.logical_and(
-        forecast_labels == 1, observed_labels == 0
-    ))[0]
-    fn = np.where(np.logical_and(
-        forecast_labels == 0, observed_labels == 1
-    ))[0]
-    tn = np.where(np.logical_and(
-        forecast_labels == 0, observed_labels == 0
-    ))[0]
+    tp = np.where(np.logical_and(forecast_labels == 1, observed_labels == 1))[0]
+    fp = np.where(np.logical_and(forecast_labels == 1, observed_labels == 0))[0]
+    fn = np.where(np.logical_and(forecast_labels == 0, observed_labels == 1))[0]
+    tn = np.where(np.logical_and(forecast_labels == 0, observed_labels == 0))[0]
 
     return {
         NUM_TRUE_POSITIVES_KEY: len(tp),
         NUM_FALSE_POSITIVES_KEY: len(fp),
         NUM_FALSE_NEGATIVES_KEY: len(fn),
-        NUM_TRUE_NEGATIVES_KEY: len(tn)
+        NUM_TRUE_NEGATIVES_KEY: len(tn),
     }
 
 
@@ -256,7 +245,7 @@ def csi_from_sr_and_pod(success_ratio_array, pod_array):
     :param pod_array: np array (same shape) of POD values.
     :return: csi_array: np array (same shape) of CSI values.
     """
-    return (success_ratio_array ** -1 + pod_array ** -1 - 1.0) ** -1
+    return (success_ratio_array**-1 + pod_array**-1 - 1.0) ** -1
 
 
 def frequency_bias_from_sr_and_pod(success_ratio_array, pod_array):
@@ -296,6 +285,7 @@ def get_pofd(contingency_table_as_dict):
     numerator = float(contingency_table_as_dict[NUM_FALSE_POSITIVES_KEY])
     return numerator / denominator
 
+
 def _get_pofd_pod_grid(pofd_spacing=0.01, pod_spacing=0.01):
     """Creates grid in POFD-POD space.
     M = number of rows (unique POD values) in grid
@@ -306,11 +296,11 @@ def _get_pofd_pod_grid(pofd_spacing=0.01, pod_spacing=0.01):
     :return: pod_matrix: M-by-N numpy array of POD values.
     """
 
-    num_pofd_values = 1 + int(np.ceil(1. / pofd_spacing))
-    num_pod_values = 1 + int(np.ceil(1. / pod_spacing))
+    num_pofd_values = 1 + int(np.ceil(1.0 / pofd_spacing))
+    num_pod_values = 1 + int(np.ceil(1.0 / pod_spacing))
 
-    unique_pofd_values = np.linspace(0., 1., num=num_pofd_values)
-    unique_pod_values = np.linspace(0., 1., num=num_pod_values)[::-1]
+    unique_pofd_values = np.linspace(0.0, 1.0, num=num_pofd_values)
+    unique_pod_values = np.linspace(0.0, 1.0, num=num_pod_values)[::-1]
     return np.meshgrid(unique_pofd_values, unique_pod_values)
 
 
@@ -324,28 +314,36 @@ def _get_peirce_colour_scheme():
 
     this_colour_map_object = plt.cm.Blues
     this_colour_norm_object = matplotlib.colors.BoundaryNorm(
-        LEVELS_FOR_PEIRCE_CONTOURS, this_colour_map_object.N)
+        LEVELS_FOR_PEIRCE_CONTOURS, this_colour_map_object.N
+    )
 
-    rgba_matrix = this_colour_map_object(this_colour_norm_object(
-        LEVELS_FOR_PEIRCE_CONTOURS
-    ))
+    rgba_matrix = this_colour_map_object(
+        this_colour_norm_object(LEVELS_FOR_PEIRCE_CONTOURS)
+    )
 
-    colour_list = [
-        rgba_matrix[i, ..., :-1] for i in range(rgba_matrix.shape[0])
-    ]
+    colour_list = [rgba_matrix[i, ..., :-1] for i in range(rgba_matrix.shape[0])]
 
     colour_map_object = matplotlib.colors.ListedColormap(colour_list)
     colour_map_object.set_under(np.array([1, 1, 1]))
     colour_norm_object = matplotlib.colors.BoundaryNorm(
-        LEVELS_FOR_PEIRCE_CONTOURS, colour_map_object.N)
+        LEVELS_FOR_PEIRCE_CONTOURS, colour_map_object.N
+    )
 
     return colour_map_object, colour_norm_object
 
+
 def add_colour_bar(
-        axes_object, colour_map_object, values_to_colour, min_colour_value,
-        max_colour_value, colour_norm_object=None,
-        orientation_string='vertical', extend_min=True, extend_max=True,
-        fraction_of_axis_length=1.):
+    axes_object,
+    colour_map_object,
+    values_to_colour,
+    min_colour_value,
+    max_colour_value,
+    colour_norm_object=None,
+    orientation_string="vertical",
+    extend_min=True,
+    extend_max=True,
+    fraction_of_axis_length=1.0,
+):
     """Adds colour bar to existing axes.
     :param axes_object: Existing axes (instance of
         `matplotlib.axes._subplots.AxesSubplot`).
@@ -373,29 +371,36 @@ def add_colour_bar(
 
     if colour_norm_object is None:
         colour_norm_object = matplotlib.colors.Normalize(
-            vmin=min_colour_value, vmax=max_colour_value, clip=False)
+            vmin=min_colour_value, vmax=max_colour_value, clip=False
+        )
 
     scalar_mappable_object = plt.cm.ScalarMappable(
-        cmap=colour_map_object, norm=colour_norm_object)
+        cmap=colour_map_object, norm=colour_norm_object
+    )
     scalar_mappable_object.set_array(values_to_colour)
 
     if extend_min and extend_max:
-        extend_string = 'both'
+        extend_string = "both"
     elif extend_min:
-        extend_string = 'min'
+        extend_string = "min"
     elif extend_max:
-        extend_string = 'max'
+        extend_string = "max"
     else:
-        extend_string = 'neither'
+        extend_string = "neither"
 
-    padding = 0.075 if orientation_string == 'horizontal' else 0.05
+    padding = 0.075 if orientation_string == "horizontal" else 0.05
     colour_bar_object = plt.colorbar(
-        ax=axes_object, mappable=scalar_mappable_object,
-        orientation=orientation_string, pad=padding, extend=extend_string,
-        shrink=fraction_of_axis_length)
+        ax=axes_object,
+        mappable=scalar_mappable_object,
+        orientation=orientation_string,
+        pad=padding,
+        extend=extend_string,
+        shrink=fraction_of_axis_length,
+    )
 
     colour_bar_object.ax.tick_params(labelsize=14)
     return colour_bar_object
+
 
 def peirce_contour(ax):
     pofd_matrix, pod_matrix = _get_pofd_pod_grid()
@@ -404,22 +409,36 @@ def peirce_contour(ax):
     colour_map_object, colour_norm_object = _get_peirce_colour_scheme()
 
     ax.contourf(
-        pofd_matrix, pod_matrix, peirce_score_matrix,
-        LEVELS_FOR_PEIRCE_CONTOURS, cmap=colour_map_object,
-        norm=colour_norm_object, vmin=0., vmax=1.)
+        pofd_matrix,
+        pod_matrix,
+        peirce_score_matrix,
+        LEVELS_FOR_PEIRCE_CONTOURS,
+        cmap=colour_map_object,
+        norm=colour_norm_object,
+        vmin=0.0,
+        vmax=1.0,
+    )
 
     # TODO(thunderhoser): Calling private method is a HACK.
     colour_bar_object = add_colour_bar(
-        axes_object=ax, colour_map_object=colour_map_object,
+        axes_object=ax,
+        colour_map_object=colour_map_object,
         colour_norm_object=colour_norm_object,
-        values_to_colour=peirce_score_matrix, min_colour_value=0.,
-        max_colour_value=1., orientation_string='vertical',
-        extend_min=False, extend_max=False)
+        values_to_colour=peirce_score_matrix,
+        min_colour_value=0.0,
+        max_colour_value=1.0,
+        orientation_string="vertical",
+        extend_min=False,
+        extend_max=False,
+    )
 
-    colour_bar_object.set_label('Peirce score')
+    colour_bar_object.set_label("Peirce score")
+
 
 def get_points_in_roc_curve(
-    id, ol, pl,
+    id,
+    ol,
+    pl,
     forecast_probabilities=None,
     threshold_arg=None,
     forecast_precision=DEFAULT_FORECAST_PRECISION,
@@ -450,12 +469,7 @@ def get_points_in_roc_curve(
     pod_by_threshold = np.full(num_thresholds, np.nan)
 
     for i in range(num_thresholds):
-        these_forecast_labels = binarize_forecast_probs(
-            forecast_probabilities, binarization_thresholds[i]
-        )
-        this_contingency_table_as_dict = get_contingency_table(
-            id, ol, pl
-        )
+        this_contingency_table_as_dict = get_contingency_table(id, ol, pl)
 
         pofd_by_threshold[i] = get_pofd(this_contingency_table_as_dict)
         pod_by_threshold[i] = get_pod(this_contingency_table_as_dict)
@@ -622,6 +636,5 @@ def make_performance_diagram_axis(
     ax2.set_xlim([0.0, 1.0])
     ax2.set_ylim([0.0, 1.0])
     ax2.set_xlabel("Precision/Success Ratio")
-    ax2.set_title('Performance Diagram')
+    ax2.set_title("Performance Diagram")
     return ax1, ax2
-
