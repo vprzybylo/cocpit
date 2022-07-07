@@ -6,8 +6,6 @@ This script hosts many helper functions to make notebooks cleaner. The hope is t
 Alot of these were sourced from Dr. Lagerquist and found originally in his gewitter repo (https://github.com/thunderhoser/GewitterGefahr).
 
 """
-
-# additional libraries needed here
 import scipy.stats as st
 import copy
 import sklearn
@@ -15,9 +13,6 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from cocpit import config as config
-
-############# Global default variables ####################
-# if you want to see the functions go see after line 92
 
 NUM_TRUE_POSITIVES_KEY = "num_true_positives"
 NUM_FALSE_POSITIVES_KEY = "num_false_positives"
@@ -50,42 +45,6 @@ PEIRCE_SCORE_KEY = "peirce_score"
 HEIDKE_SCORE_KEY = "heidke_score"
 AUC_KEY = "auc"
 AUPD_KEY = "aupd"
-
-EVALUATION_TABLE_COLUMNS = [
-    NUM_TRUE_POSITIVES_KEY,
-    NUM_FALSE_POSITIVES_KEY,
-    NUM_FALSE_NEGATIVES_KEY,
-    NUM_TRUE_NEGATIVES_KEY,
-    POD_KEY,
-    POFD_KEY,
-    SUCCESS_RATIO_KEY,
-    FOCN_KEY,
-    ACCURACY_KEY,
-    CSI_KEY,
-    FREQUENCY_BIAS_KEY,
-    PEIRCE_SCORE_KEY,
-    HEIDKE_SCORE_KEY,
-    POD_BY_THRESHOLD_KEY,
-    POFD_BY_THRESHOLD_KEY,
-    AUC_KEY,
-    SR_BY_THRESHOLD_KEY,
-    AUPD_KEY,
-    MEAN_FORECAST_BY_BIN_KEY,
-    EVENT_FREQ_BY_BIN_KEY,
-    RELIABILITY_KEY,
-    RESOLUTION_KEY,
-    BSS_KEY,
-]
-
-EVALUATION_DICT_KEYS = [
-    FORECAST_PROBABILITIES_KEY,
-    OBSERVED_LABELS_KEY,
-    BEST_THRESHOLD_KEY,
-    ALL_THRESHOLDS_KEY,
-    NUM_EXAMPLES_BY_BIN_KEY,
-    DOWNSAMPLING_DICT_KEY,
-    EVALUATION_TABLE_KEY,
-]
 
 MIN_BINARIZATION_THRESHOLD = 0.0
 MAX_BINARIZATION_THRESHOLD = 1.0 + TOLERANCE
