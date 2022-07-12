@@ -118,9 +118,8 @@ def plot_dd(
 
 def classification_report_classes(clf_report, save_name, save_fig=False) -> None:
     """
-    plot precision, recall, and f1-score for each class from 1 model
-    average across folds
-    also includes accuracy, macro avg, and weighted avg total
+    Plot precision, recall, and f1-score for each class from 1 model
+    Average across folds and include accuracy, macro avg, and weighted avg total
 
     Args:
         clf_report: classification report from sklearn
