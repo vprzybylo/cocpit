@@ -34,7 +34,6 @@ def conf_matrix(labels, preds, norm: Optional[str] = None) -> None:
             predicted (columns) conditions or all the population.
             If None, confusion matrix will not be normalized.
     """
-    print(list(chain.from_iterable(labels)))
     _ = confusion_matrix.conf_matrix(
         np.asarray(list(chain.from_iterable(*labels))),
         np.asarray(list(chain.from_iterable(*preds))),

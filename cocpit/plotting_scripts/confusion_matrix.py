@@ -28,7 +28,7 @@ def heatmap(cm: sklearn.metrics.confusion_matrix) -> sns.heatmap:
     Args:
         cm (sklearn.metrics.confusion_matrix): confusion matrix
     Return:
-        sns.heatmap
+        ax (sns.heatmap): heatmap
     """
     ax = sns.heatmap(
         cm,
@@ -49,7 +49,7 @@ def heatmap(cm: sklearn.metrics.confusion_matrix) -> sns.heatmap:
     r += 0.1
     plt.ylim(b, t)  # update the ylim(bottom, top) values
     plt.xlim(l, r)
-    plt.show()  # ta-da!
+    plt.show()
     return ax
 
 
@@ -95,6 +95,9 @@ def conf_matrix(
                 predicted (columns) conditions or all the population.
                 If None, confusion matrix will not be normalized.
         save_fig (bool): save the conf matrix to file
+
+    Returns:
+        cm (sklearn.metrics.confusion_matrix): confusion matrix
     """
     fig, ax = plt.subplots(figsize=(10, 8))
     cm = confusion_matrix(all_labels, all_preds, normalize=norm)

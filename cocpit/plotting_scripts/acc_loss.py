@@ -18,6 +18,10 @@ plt.rcParams.update(plt_params)
 
 
 class AccLossPlot:
+    """
+    Create acc and loss training and validation curves per epoch
+    """
+
     def __init__(self, model_names, num_epochs, savename, colors, new_names):
         self.model_names = model_names
         self.num_models = len(model_names)
@@ -105,7 +109,13 @@ class AccLossPlot:
 
 
 def balance_diff_accuracy(
-    num_epochs, df_val, df_val_unbalanced, df_train, df_train_unbalanced, save_fig=False
+    num_epochs,
+    df_val,
+    df_val_unbalanced,
+    df_train,
+    df_train_unbalanced,
+    save_name,
+    save_fig=False,
 ):
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 3))
 
@@ -147,60 +157,6 @@ def balance_diff_accuracy(
     ax1.yaxis.set_ticks_position("both")
     ax1.minorticks_on()
     plt.tight_layout()
+    plt.show()
     if save_fig:
-        plt.savefig(self.save_name)
-
-
-def sorted_colors(colors, accs):
-    return OrderedDict([(el, colors[el]) for el in accs])
-
-
-def val_acc_fold_bar(colors, kfold, num_models, new_names, val_accs_avg_sort, val_accs):
-
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(7, 7), sharex=True, sharey=True)
-    # fig = plt.figure(figsize=(20,20))
-    for i in range(num_models):
-        ax1.plot(
-            np.arange(1, (kfold + 1)),
-            [i * 100 for i in val_accs[i, :, -1]],
-            c=colors[new_names[i]],
-            marker="o",
-            label=new_names[i],
-        )
-        plt.ylabel("Accuracy [%]")
-        plt.xlabel("Fold")
-        plt.ylim(70, 100)
-        # plt.xlim(1,num_epochs)
-        # ax1.legend(title='Model type:', loc='best', prop={'size': 12})
-        # Shrink current axis by 20%
-        #        box = ax1.get_position()
-        #        ax1.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-
-        # Put a legend to the right of the current axis
-        ax1.legend(fontsize=14)
-        ax1.axes.xaxis.set_ticks(np.arange(1, 6, 1))
-        ax1.yaxis.set_ticks_position("both")
-        ax1.minorticks_on()
-        ax1.tick_params(axis="y", which="minor", direction="out")
-        # ax1.xaxis.set_tick_params(which='minor', bottom=False)
-        ax1.title.set_text("Validation Data Accuracies")
-
-        colors = sorted_colors(colors, val_accs_avg_sort)
-        plt.bar(
-            np.arange(1, num_models + 1),
-            [i * 100 for i in val_accs_avg_sort.values()],
-            color=colors.values(),
-        )
-        plt.ylabel("Average Accuracy [%]")
-        plt.xlabel("Model Name")
-        plt.ylim(85, 100)
-        # plt.xlim(1,num_epochs)
-        # Shrink current axis by 20%
-        # box = ax2.get_position()
-        # ax2.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-
-        # Set number of ticks for x-axis
-        ax2.set_xticks(np.arange(1, 10))
-        # Set ticks labels for x-axis
-        ax2.set_xticklabels(colors.keys(), rotation="vertical")
-        ax2.yaxis.set_ticks_position("both")
+        plt.savefig(save_name)
