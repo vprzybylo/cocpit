@@ -6,6 +6,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 import csv
 from ray import tune
 
+
 class Validation(Metrics):
     """Perform validation methods on batched dataset
 
@@ -38,8 +39,8 @@ class Validation(Metrics):
 
     def append_preds(self) -> None:
         """save each batch prediction and labels for plots"""
-        self.epoch_preds.append(self.preds.cpu().numpy())
-        self.epoch_labels.append(self.labels.cpu().numpy())
+        self.epoch_preds.append(self.preds.cpu().tolist())
+        self.epoch_labels.append(self.labels.cpu().tolist())
 
     def save_model(self) -> None:
         """save/load best model weights after improvement in val accuracy"""
@@ -52,7 +53,8 @@ class Validation(Metrics):
             if not os.path.exists(config.MODEL_SAVE_DIR):
                 os.makedirs(config.MODEL_SAVE_DIR)
             torch.save(self.c.model, config.MODEL_SAVENAME)
-        tune.report(loss=self.epoch_loss, accuracy=self.epoch_acc)
+        if config.TUNE:
+            tune.report(loss=self.epoch_loss, accuracy=self.epoch_acc)
         return self.val_best_acc
 
     def reduce_lr(self) -> None:

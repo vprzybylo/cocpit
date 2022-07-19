@@ -35,8 +35,8 @@ def conf_matrix(labels, preds, norm: Optional[str] = None) -> None:
             If None, confusion matrix will not be normalized.
     """
     _ = confusion_matrix.conf_matrix(
-        np.asarray(list(chain.from_iterable(*labels))),
-        np.asarray(list(chain.from_iterable(*preds))),
+        [x for xs in labels for x in xs][0],
+        [x for xs in preds for x in xs][0],
         norm=norm,
         save_fig=True,
     )
@@ -60,8 +60,8 @@ def class_report(model_name, labels, preds, fold: int) -> None:
     """
 
     clf_report = classification_report(
-        np.asarray(list(itertools.chain(*labels))),
-        np.asarray(list(itertools.chain(*preds))),
+        [x for xs in labels for x in xs][0],
+        [x for xs in preds for x in xs][0],
         digits=3,
         target_names=config.CLASS_NAMES,
         output_dict=True,

@@ -61,11 +61,24 @@ KFOLD = 0
 # percent of the training dataset to use as validation
 VALID_SIZE = 0.20
 
+# tune using ray tune?
+TUNE = False
+
 # images read into memory at a time during training
 BATCH_SIZE = [64]
+BATCH_SIZE_TUNE = [32, 64, 128, 256]
 
 # number of epochs to train model
-MAX_EPOCHS = [30]
+MAX_EPOCHS = [1]
+MAX_EPOCHS_TUNE = [20, 30, 40]
+
+# dropout rate (in model_config)
+DROP_RATE = 0.1
+DROP_RATE_TUNE = [0.0, 0.3, 0.5]
+
+# learning rate (in model_config)
+LR = 0.01
+LR_TUNE = [0.001, 0.01, 0.1]
 
 # names of each ice crystal class
 CLASS_NAMES = ["no precipitation", "obstructed", "precipitation"]
@@ -78,16 +91,19 @@ CLASS_NAME_MAP = {
 }
 
 # models to train
-MODEL_NAMES = [
-    # "resnet18",
-    # "efficient",
-    # "resnet34",
-    # "resnet152",
-    # "alexnet",
+MODEL_NAMES_TUNE = [
     "vgg16",
-    # "vgg19",
-    # "densenet169",
-    # "densenet201",
+]
+MODEL_NAMES = [
+    "resnet18",
+    "efficient",
+    "resnet34",
+    "resnet152",
+    "alexnet",
+    "vgg16",
+    "vgg19",
+    "densenet169",
+    "densenet201",
 ]
 
 # directory that holds the training data
@@ -159,7 +175,7 @@ CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
 
 # log experiment to comet for tracking?
-LOG_EXP = True
+LOG_EXP = False
 NOTEBOOK = os.path.basename(sys.argv[0]) != "__main__.py"
 load_dotenv()  # loading sensitive keys from .env file
 if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
