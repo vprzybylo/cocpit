@@ -88,7 +88,7 @@ Cloud probe images are classified into 9 categories, but further development may
 
 ### Additional descriptors that can be processed on the images:
 
-* found in cocpit/pic.py
+* found in cocpit/geometry.py
 
 | Predictor            | Description                                                                                                                                                                                              |
 |----------------------|------------------------------------------

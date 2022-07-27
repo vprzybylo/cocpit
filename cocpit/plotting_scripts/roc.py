@@ -395,7 +395,8 @@ def performance_diagram(
     pofds = np.zeros((len(config.CLASS_NAMES), len(threshs)))
     pods = np.zeros((len(config.CLASS_NAMES), len(threshs)))
     srs = np.zeros((len(config.CLASS_NAMES), len(threshs)))
-
+    plot_frequency_bias(ax1)
+    plot_frequency_bias(ax2)
     markerfacecolor = ["limegreen", "orange", "r"]
     for c, _ in enumerate(config.CLASS_NAMES):
         y_preds = yhat_proba[:, c]

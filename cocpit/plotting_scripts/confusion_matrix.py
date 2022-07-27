@@ -39,7 +39,7 @@ def heatmap(cm: sklearn.metrics.confusion_matrix) -> sns.heatmap:
         xticklabels=config.CLASS_NAMES,
         yticklabels=config.CLASS_NAMES,
         cmap=change_cmap(),
-        annot_kws={"size": 16},
+        annot_kws={"size": 28},
     )
     b, t = plt.ylim()  # discover the values for bottom and top
     l, r = plt.xlim()
@@ -62,20 +62,21 @@ def change_cmap() -> mpl.cm:
     return copy.copy(mpl.cm.get_cmap("Reds"))
 
 
-def heatmap_axes(hm: sns.heatmap, ax: plt.Axes) -> None:
+def heatmap_axes(hm: sns.heatmap, ax: plt.Axes, fontsize: int = 28) -> None:
     """
     Confusion matrix axis labels, colorbar, and tick marks
 
     Args:
         hm (sns.heatmap): heatmap of confusion matrix
         ax (plt.Axes): conf matrix axis
+        fontsize (int): label fontsize
     """
     cbar = hm.collections[0].colorbar
-    cbar.ax.tick_params(labelsize=20)
-    ax.set_xlabel("Predicted Labels", fontsize=22)
-    ax.set_ylabel("Actual Labels", fontsize=22)
-    hm.set_xticklabels(hm.get_xticklabels(), rotation=20, fontsize=20)
-    hm.set_yticklabels(hm.get_xticklabels(), rotation=0, fontsize=20)
+    cbar.ax.tick_params(labelsize=fontsize)
+    ax.set_xlabel("Predicted Labels", fontsize=fontsize)
+    ax.set_ylabel("Actual Labels", fontsize=fontsize)
+    hm.set_xticklabels(hm.get_xticklabels(), rotation=20, fontsize=fontsize)
+    hm.set_yticklabels(hm.get_xticklabels(), rotation=0, fontsize=fontsize)
 
 
 def conf_matrix(
@@ -105,9 +106,9 @@ def conf_matrix(
     hm = heatmap(cm)
     heatmap_axes(hm, ax)
     if norm:
-        ax.set_title("Normalized", fontsize=18)
+        ax.set_title("Normalized", fontsize=24)
     else:
-        ax.set_title("Unweighted", fontsize=18)
+        ax.set_title("Unweighted", fontsize=24)
 
     if save_fig:
         fig.savefig(config.CONF_MATRIX_SAVENAME, bbox_inches="tight")

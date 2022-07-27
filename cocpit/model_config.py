@@ -56,23 +56,30 @@ class ModelConfig:
         """
         return sum(p.numel() for p in self.model.parameters() if p.requires_grad)
 
-    def set_optimizer(self) -> None:
-        """Model optimizer for stochastic gradient decent"""
+    def set_optimizer(self, lr=0.01) -> None:
+        """
+        Model optimizer for stochastic gradient decent
+
+        Args:
+            lr (float): the learning rate for SGD
+        """
         self.optimizer = optim.SGD(
-            self.update_params(), lr=config.LR, momentum=0.9, nesterov=True
+            self.update_params(), lr=lr, momentum=0.9, nesterov=True
         )
 
     def set_criterion(self) -> None:
         self.criterion = nn.CrossEntropyLoss()
 
-    def set_dropout(self) -> None:
+    def set_dropout(self, drop_rate=0.1) -> None:
         """
         Apply dropout rate: a technique to fight overfitting and improve neural network generalization
+
+        Args:
+            drop_rate (float): dropout rate for neurons - 1 = 100%
         """
-        for _, child in self.model.named_children():
-            if isinstance(child, torch.nn.Dropout):
-                child.p = config.DROP_RATE
-            self.set_dropout(child, drop_rate=config.DROP_RATE)
+        for m in self.model.modules():
+            if isinstance(m, nn.Dropout):
+                m.p = drop_rate
 
     def to_device(self) -> None:
         """

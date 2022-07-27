@@ -10,7 +10,7 @@ isort:skip_file
 
 
 from comet_ml import Experiment  # isort:split
-
+from ray import tune
 import os
 from dotenv import load_dotenv
 import torch
@@ -62,22 +62,20 @@ KFOLD = 0
 VALID_SIZE = 0.20
 
 # tune using ray tune?
-TUNE = False
+TUNE = True
 
 # images read into memory at a time during training
 BATCH_SIZE = [64]
 BATCH_SIZE_TUNE = [32, 64, 128, 256]
 
 # number of epochs to train model
-MAX_EPOCHS = [1]
+MAX_EPOCHS = [40]
 MAX_EPOCHS_TUNE = [20, 30, 40]
 
 # dropout rate (in model_config)
-DROP_RATE = 0.1
 DROP_RATE_TUNE = [0.0, 0.3, 0.5]
 
 # learning rate (in model_config)
-LR = 0.01
 LR_TUNE = [0.001, 0.01, 0.1]
 
 # names of each ice crystal class
@@ -92,9 +90,6 @@ CLASS_NAME_MAP = {
 
 # models to train
 MODEL_NAMES_TUNE = [
-    "vgg16",
-]
-MODEL_NAMES = [
     "resnet18",
     "efficient",
     "resnet34",
@@ -105,13 +100,25 @@ MODEL_NAMES = [
     "densenet169",
     "densenet201",
 ]
+MODEL_NAMES = [
+    "vgg16",
+]
+
+config_ray = {
+    "BATCH_SIZE": tune.choice(BATCH_SIZE_TUNE),
+    "MODEL_NAMES": tune.choice(MODEL_NAMES_TUNE),
+    "LR": tune.choice(LR_TUNE),
+    "DROP_RATE": tune.choice(DROP_RATE_TUNE),
+    "MAX_EPOCHS": tune.choice(MAX_EPOCHS_TUNE),
+}
+
 
 # directory that holds the training data
 DATA_DIR = f"{BASE_DIR}/codebook_dataset/combined_extra/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # whether to save the model
-SAVE_MODEL = True
+SAVE_MODEL = False
 
 # directory to save the trained model to
 MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
@@ -145,7 +152,7 @@ FEATURE_EXTRACT = False
 USE_PRETRAINED = False
 
 # write training loss and accuracy to csv
-SAVE_ACC = True
+SAVE_ACC = False
 
 # directory for saving training accuracy and loss csv's
 ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"
