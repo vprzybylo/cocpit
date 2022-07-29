@@ -22,26 +22,41 @@ class AccLossPlot:
     Create acc and loss training and validation curves per epoch
     """
 
-    def __init__(self, model_names, num_epochs, savename, colors, new_names):
+    def __init__(
+        self,
+        model_names,
+        num_epochs,
+        savename,
+        colors,
+        new_names,
+        savefig=False,
+    ):
         self.model_names = model_names
         self.num_models = len(model_names)
         self.num_epochs = num_epochs
         self.savename = savename
         self.colors = colors
         self.new_names = new_names
-        self.savefig = False
+        self.savefig = savefig
 
-    def plot_var(self, ax, var, marker, size, acc=True):
+    def plot_var(self, ax, var, marker, size, acc=True, zorder=1):
 
         for i in range(self.num_models):
+            if i == 5:
+                size = size * 1.1
+                zorder = 2
+            else:
+                size = 55
+                zorder = 1
             factor = 100 if acc else 1
             ax.scatter(
                 np.arange(1, (self.num_epochs + 1)),
-                [i * factor for i in var[i, :]],
+                [f * factor for f in var[i, :]],
                 c=self.colors[self.new_names[i]],
                 marker=marker,
                 s=size,
                 label=self.model_names[i],
+                zorder=zorder,
             )
 
     def acc_layout(self, ax, label):
@@ -90,8 +105,8 @@ class AccLossPlot:
         ax.set_ylim([0, 2.0])
         ax.set_xlim(0, self.num_epochs + 1)
 
-    def savefig(self):
-        plt.savefig(self.save_name, dpi=300, bbox_inches="tight")
+    def save(self):
+        plt.savefig(self.savename, dpi=300, bbox_inches="tight")
 
     def create_plot(self, train_acc, val_acc, train_loss, val_loss):
         fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(
@@ -105,7 +120,7 @@ class AccLossPlot:
         self.validation_loss(ax4, val_loss)
         plt.tight_layout()
         if self.savefig:
-            self.savefig()
+            self.save()
 
 
 def balance_diff_accuracy(

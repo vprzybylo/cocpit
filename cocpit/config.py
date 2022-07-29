@@ -56,20 +56,20 @@ NUM_WORKERS = 10
 # how many folds used in training (cross-validation)
 # kold = 0 turns this off and splits the data according to valid_size
 # cannot = 1
-KFOLD = 0
+KFOLD = 5
 
 # percent of the training dataset to use as validation
 VALID_SIZE = 0.20
 
-# tune using ray tune?
-TUNE = True
+# ray tune hyperoptimization
+TUNE = False
 
 # images read into memory at a time during training
 BATCH_SIZE = [64]
 BATCH_SIZE_TUNE = [32, 64, 128, 256]
 
 # number of epochs to train model
-MAX_EPOCHS = [40]
+MAX_EPOCHS = [30]
 MAX_EPOCHS_TUNE = [20, 30, 40]
 
 # dropout rate (in model_config)
@@ -118,7 +118,7 @@ DATA_DIR = f"{BASE_DIR}/codebook_dataset/combined_extra/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # whether to save the model
-SAVE_MODEL = False
+SAVE_MODEL = True
 
 # directory to save the trained model to
 MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
@@ -152,7 +152,7 @@ FEATURE_EXTRACT = False
 USE_PRETRAINED = False
 
 # write training loss and accuracy to csv
-SAVE_ACC = False
+SAVE_ACC = True
 
 # directory for saving training accuracy and loss csv's
 ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"

@@ -78,11 +78,8 @@ class BatchPredictions:
 
 class LoaderPredictions:
     """
-    In gui.py, use a model and validation dataloader to check predictions.
-    Loops through all validation loader predictions but only saves incorrect predictions.
-    The incorrect predictions are loaded into a gui so that a user can decide
-    whether the label is wrong upon second look (i.e., the model is right).
-    The image is automatically moved upon choosing a class from the dropdown menu.
+    Concats all validation loader predictions across batches.
+    Finds incorrect predictions.
 
     Args:
         self.labels (List[int]): list of labels across all batches
@@ -110,7 +107,10 @@ class LoaderPredictions:
         #     f"_k{fold}_vgg16.pt"
         # ).cuda()
         # model = torch.load(f"{config.MODEL_SAVE_DIR}e[30]_bs[64]_k0_.pt")
-        model = torch.load(config.MODEL_SAVENAME)
+        # model = torch.load(config.MODEL_SAVENAME)
+        model = torch.load(
+            f"/ai2es/saved_models/v0.0.0/e[30]_bs[64]_k{fold}_1model(s).pt"
+        )
         model.eval()
         return model
 
@@ -118,7 +118,10 @@ class LoaderPredictions:
         # val_data = torch.load(
         #     f"{config.VAL_LOADER_SAVE_DIR}e{config.MAX_EPOCHS}_val_loader{int(config.VALID_SIZE*100)}_bs{config.BATCH_SIZE}_k{fold}_vgg16.pt"
         # )
-        val_data = torch.load(config.VAL_LOADER_SAVENAME)
+        # val_data = torch.load(config.VAL_LOADER_SAVENAME)
+        val_data = torch.load(
+            f"/ai2es/saved_val_loaders/v0.0.0/e[30]_val_loader20_bs[64]_k{fold}_1model(s).pt"
+        )
         return data_loaders.create_loader(val_data, batch_size=100, sampler=None)
 
     def concat(self, var: Any) -> List[Any]:

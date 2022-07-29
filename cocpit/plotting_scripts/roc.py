@@ -6,7 +6,6 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from cocpit import config as config
-import tqdm
 from sklearn.metrics import confusion_matrix
 from matplotlib.colors import BoundaryNorm, ListedColormap
 from numpy import float64, int64, ndarray
@@ -302,7 +301,12 @@ def plot_frequency_bias(ax: plt.Axes) -> None:
 
 
 def plot_roc(
-    ax1: plt.Axes, pofds: ndarray, pods: ndarray, markerfacecolor: str, label: str
+    ax1: plt.Axes,
+    pofds_mean: ndarray,
+    pods_mean: ndarray,
+    pods_std: ndarray,
+    markerfacecolor: str,
+    label: str,
 ) -> None:
     """
     Plot ROC curve for one class
@@ -315,8 +319,15 @@ def plot_roc(
         label (str): class name
     """
     ax1.plot(
-        pofds, pods, "-", color=markerfacecolor, markerfacecolor="w", lw=2, label=label
+        pofds_mean,
+        pods_mean,
+        "-",
+        color=markerfacecolor,
+        markerfacecolor="w",
+        lw=2,
+        label=label,
     )
+    ax1.fill_between(pofds_mean, pods_mean - pods_std, pods_mean + pods_std, alpha=0.6)
     ax1.set_xlabel("POFD (probability of false detection)")
     ax1.set_ylabel("POD (probability of detection)")
     ax1.set_title("ROC Curve")
@@ -326,7 +337,12 @@ def plot_roc(
 
 
 def plot_performance(
-    ax2: plt.Axes, srs: ndarray, pods: ndarray, markerfacecolor: str, label: str
+    ax2: plt.Axes,
+    srs_mean: ndarray,
+    pods_mean: ndarray,
+    pods_std: ndarray,
+    markerfacecolor: str,
+    label: str,
 ) -> None:
     """
     Plot performance metrics (success ratio and probability of detection) for one class
@@ -339,8 +355,15 @@ def plot_performance(
         label (str): class name
     """
     ax2.plot(
-        srs, pods, "-", color=markerfacecolor, markerfacecolor="w", lw=2, label=label
+        srs_mean,
+        pods_mean,
+        "-",
+        color=markerfacecolor,
+        markerfacecolor="w",
+        lw=2,
+        label=label,
     )
+    ax2.fill_between(srs_mean, pods_mean - pods_std, pods_mean + pods_std, alpha=0.6)
     ax2.legend(loc="center left", bbox_to_anchor=(1.5, 0.5))
     ax2.set_xlim([0.0, 1.0])
     ax2.set_ylim([0.0, 1.0])
@@ -392,28 +415,35 @@ def performance_diagram(
     """
 
     threshs = np.linspace(0.0, 1.0, 100)
-    pofds = np.zeros((len(config.CLASS_NAMES), len(threshs)))
-    pods = np.zeros((len(config.CLASS_NAMES), len(threshs)))
-    srs = np.zeros((len(config.CLASS_NAMES), len(threshs)))
-    plot_frequency_bias(ax1)
-    plot_frequency_bias(ax2)
+    pofds = np.zeros(((config.KFOLD + 1), len(config.CLASS_NAMES), len(threshs)))
+    pods = np.zeros(((config.KFOLD + 1), len(config.CLASS_NAMES), len(threshs)))
+    srs = np.zeros(((config.KFOLD + 1), len(config.CLASS_NAMES), len(threshs)))
     markerfacecolor = ["limegreen", "orange", "r"]
+
     for c, _ in enumerate(config.CLASS_NAMES):
-        y_preds = yhat_proba[:, c]
-        for i, t in enumerate(tqdm.tqdm(threshs)):
-            table = table_at_threshold(labels, y_preds, c, t)
-            # calculate pod, sr and csi
-            pofds[c, i] = probability_of_false_detection(table)
-            srs[c, i] = success_ratio(table)
-            pods[c, i] = probability_of_detection(table)
+        for f in range(config.KFOLD + 1):
+            y_preds = yhat_proba[f, :, c]
+
+            for i, t in enumerate(threshs):
+                table = table_at_threshold(labels[f, :], y_preds, c, t)
+                # calculate pod, sr and csi
+                pofds[f, c, i] = probability_of_false_detection(table)
+                srs[f, c, i] = success_ratio(table)
+                pods[f, c, i] = probability_of_detection(table)
 
         plot_roc(
             ax1,
-            pofds[c, :],
-            pods[c, :],
+            np.mean(pofds[:, c, :], axis=0),
+            np.mean(pods[:, c, :], axis=0),
+            np.std(pods[:, c, :], axis=0),
             markerfacecolor[c],
             label=config.CLASS_NAMES[c],
         )
         plot_performance(
-            ax2, srs[c, :], pods[c, :], markerfacecolor[c], label=config.CLASS_NAMES[c]
+            ax2,
+            np.mean(srs[:, c, :], axis=0),
+            np.mean(pods[:, c, :], axis=0),
+            np.std(pods[:, c, :], axis=0),
+            markerfacecolor[c],
+            label=config.CLASS_NAMES[c],
         )
