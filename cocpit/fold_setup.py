@@ -149,5 +149,5 @@ class FoldSetup:
             random.shuffle(self.train_indices)
         else:
             self.train_indices, self.val_indices = train_test_split(
-                list(range(total_files)), test_size=config.VALID_SIZE
+                list(range(total_files)), test_size=config.VALID_SIZE, random_state=42
             )

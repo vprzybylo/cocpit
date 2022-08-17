@@ -34,7 +34,7 @@ photo_dir = f"{BASE_DIR}/cam_photos/"
 
 # where the mesonet obs live in parquet format
 # output from nysm_obs_to_parquet
-parquet_dir = f"{BASE_DIR}/mesonet_parquet_1M"
+parquet_dir = f"{BASE_DIR}/mesonet_parquet_5M"
 
 # ai2es version used in docker and git
 TAG = "v0.0.0"

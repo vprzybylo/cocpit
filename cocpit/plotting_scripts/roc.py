@@ -6,119 +6,12 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from cocpit import config as config
-from sklearn.metrics import confusion_matrix
+from cocpit import roc_utils as roc_utils
+from sklearn.metrics import confusion_matrix, auc
 from matplotlib.colors import BoundaryNorm, ListedColormap
 from numpy import float64, int64, ndarray
 from typing import Dict, List, Tuple
-
-
-def contingency_table(cnf_matrix: ndarray, c: int) -> Dict[str, int64]:
-    """
-    Multi-class contingency table.
-    A miss is anything outside of the target class.
-
-    Args:
-        cnf_matrix (ndarray): sklearn.metrics confusion matrix (labels, y_preds_bi)
-        c (int): class id
-
-    Returns:
-        table (Dict[str, int64]): contingency table for a specified class
-
-    """
-    TP = np.diag(cnf_matrix)
-    FP = cnf_matrix.sum(axis=0) - np.diag(cnf_matrix)
-    FN = cnf_matrix.sum(axis=1) - np.diag(cnf_matrix)
-    TN = cnf_matrix.sum() - (FP + FN + TP)
-
-    return {
-        "num_true_positives": TP[c],
-        "num_false_positives": FP[c],
-        "num_false_negatives": FN[c],
-        "num_true_negatives": TN[c],
-    }
-
-
-def probability_of_detection(table: Dict[str, int64]) -> float64:
-    """
-    Computes probability of detection (POD).
-
-    Args:
-        table (Dict[str, int64]): see contingency_table()
-
-    Returns:
-        probability_of_detection (float64): tp/(tp+fn)
-    """
-    return float(table["num_true_positives"]) / (
-        table["num_true_positives"] + table["num_false_negatives"]
-    )
-
-
-def success_ratio(table: Dict[str, int64]) -> float64:
-    """
-    Computes success ratio.
-
-    Args:
-        table (Dict[str, int64]): see contingency_table()
-
-    Returns:
-        success_ratio (float64): tp/(tp+fp)
-    """
-    return float(table["num_true_positives"]) / (
-        table["num_true_positives"] + table["num_false_positives"]
-    )
-
-
-def csi_from_sr_and_pod(success_ratio_array: ndarray, pod_array: ndarray) -> ndarray:
-    """
-    Computes CSI (critical success index) from success ratio and probability of detection
-
-    Args:
-        success_ratio_array (ndrray): Any length of success ratios
-        pod_array (ndrray): array of POD values same length as success ratios
-    Returns:
-        csi_array (ndarry): critcal success index length of success ratio
-    """
-    return (success_ratio_array**-1 + pod_array**-1 - 1.0) ** -1
-
-
-def probability_of_false_detection(table: Dict[str, int64]) -> float64:
-    """
-    Computes POFD (probability of false detection).
-
-    Args:
-        table (Dict[str, int64]): see contingency_table()
-    Returns:
-        probability_of_false_detection (float64): fp/(fp+tn)
-    """
-
-    return float(table["num_false_positives"]) / (
-        table["num_false_positives"] + table["num_true_negatives"]
-    )
-
-
-def _pofd_pod_grid(
-    pofd_spacing: float = 0.01, pod_spacing: float = 0.01
-) -> List[ndarray]:
-    """
-    Creates grid in POFD-POD space.
-    M = number of rows (unique POD values) in grid
-    N = number of columns (unique POFD values) in grid
-
-    Args:
-        pofd_spacing (float): Spacing between grid cells in adjacent columns.
-        pod_spacing (float): Spacing between grid cells in adjacent rows.
-
-    Returns:
-        pofd_matrix (ndarray): M-by-N numpy array of POFD values.
-        pod_matrix (ndarray): M-by-N numpy array of POD values.
-    """
-
-    num_pofd_values = 1 + int(np.ceil(1.0 / pofd_spacing))
-    num_pod_values = 1 + int(np.ceil(1.0 / pod_spacing))
-
-    unique_pofd_values = np.linspace(0.0, 1.0, num=num_pofd_values)
-    unique_pod_values = np.linspace(0.0, 1.0, num=num_pod_values)[::-1]
-    return np.meshgrid(unique_pofd_values, unique_pod_values)
+import matplotlib.patheffects as path_effects
 
 
 def _get_peirce_colour_scheme(
@@ -210,7 +103,7 @@ def peirce_contour(
         ax (plt.Axes): subplot axis for ROC curve
         peirce_levels (ndarray): contour levels from 0-1
     """
-    pofd_matrix, pod_matrix = _pofd_pod_grid()
+    pofd_matrix, pod_matrix = roc_utils._pofd_pod_grid()
     peirce_score_matrix = pod_matrix - pofd_matrix
 
     colour_map_object, colour_norm_object = _get_peirce_colour_scheme()
@@ -239,23 +132,6 @@ def peirce_contour(
     colour_bar_object.set_label("Peirce score [POD-POFD]")
 
 
-def frequency_bias_from_sr_and_pod(
-    success_ratio_array: ndarray, pod_array: ndarray
-) -> ndarray:
-    """
-    Computes frequency bias from success ratio and probability of detection.
-    The frequency bias is the ratio of the frequency of ‘‘yes’’ forecasts to the frequency of ‘‘yes’’ observations.
-
-    Args:
-        success_ratio_array (ndarray): array of any number of success ratios.
-        pod_array (ndarray): array of pod values (same length as success_ratio_array).
-
-    Returns:
-        frequency_bias_array (ndarray): array of frequency biases on a meshgrid.
-    """
-    return pod_array / success_ratio_array
-
-
 def csi_contour(ax: plt.Axes) -> None:
     """
     Add critical success index contour to performance diagram
@@ -266,7 +142,7 @@ def csi_contour(ax: plt.Axes) -> None:
     sr_array = np.linspace(0.001, 1, 200)
     pod_array = np.linspace(0.001, 1, 200)
     X, Y = np.meshgrid(sr_array, pod_array)
-    csi_vals = csi_from_sr_and_pod(X, Y)
+    csi_vals = roc_utils.csi_from_sr_and_pod(X, Y)
     pm = ax.contourf(X, Y, csi_vals, levels=np.arange(0, 1.1, 0.1), cmap="Blues")
     plt.colorbar(pm, ax=ax, label="CSI")
 
@@ -281,7 +157,7 @@ def plot_frequency_bias(ax: plt.Axes) -> None:
     sr_array = np.linspace(0.001, 1, 200)
     pod_array = np.linspace(0.001, 1, 200)
     X, Y = np.meshgrid(sr_array, pod_array)
-    fb = frequency_bias_from_sr_and_pod(X, Y)
+    fb = roc_utils.frequency_bias_from_sr_and_pod(X, Y)
     bias = ax.contour(
         X,
         Y,
@@ -307,16 +183,19 @@ def plot_roc(
     pods_std: ndarray,
     markerfacecolor: str,
     label: str,
+    text_height: float,
 ) -> None:
     """
     Plot ROC curve for one class
 
     Args:
         ax1 (plt.Axes): subplot axis for ROC
-        pofds (ndarray(len(threshs))): probability of false detection for a class across all thresholds
-        pods (ndarray(len(threshs))): probability of detection for a class across all thresholds
+        pofds_mean (ndarray(len(threshs))): mean probability of false detection for a class across all thresholds
+        pods_mean (ndarray(len(threshs))): mean probability of detection for a class across all thresholds
+        pods_std (ndarray(len(threshs))): std of probability of detection for a class across all thresholds
         markerfacecolor (str): color of line for class
         label (str): class name
+        text_height (float): label distance above y-axis
     """
     ax1.plot(
         pofds_mean,
@@ -327,6 +206,24 @@ def plot_roc(
         lw=2,
         label=label,
     )
+    auc_val = np.round(roc_utils.get_area_under_roc_curve(pofds_mean, pods_mean), 2)
+    print(f"AUC: {auc_val}")
+    ax1.text(
+        0.38,
+        text_height,
+        f"AUC = {auc_val}: ",
+        color="k",
+        fontsize=12,
+    )
+    ax1.text(
+        0.65,
+        text_height,
+        f"{label}",
+        color=markerfacecolor,
+        fontsize=12,
+    )
+    ax1.arrow(0.5, 0.55, -0.1, 0.1, facecolor="k", zorder=2, width=0.007)
+    ax1.text(0.42, 0.66, "Better", rotation=45, color="k", fontsize=16)
     ax1.fill_between(pofds_mean, pods_mean - pods_std, pods_mean + pods_std, alpha=0.6)
     ax1.set_xlabel("POFD (probability of false detection)")
     ax1.set_ylabel("POD (probability of detection)")
@@ -349,11 +246,13 @@ def plot_performance(
 
     Args:
         ax2 (plt.Axes): subplot axis for performance diagram
-        srs (ndarray(len(threshs))): success ratio for a class across all thresholds
-        pods (ndarray(len(threshs))): probability of detection for a class across all thresholds
+        srs_mean (ndarray(len(threshs))): mean success ratio for a class across all thresholds
+        pods_mean (ndarray(len(threshs))): mean probability of detection for a class across all thresholds
+        pods_std (ndarray(len(threshs))): std of probability of detection for a class across all thresholds
         markerfacecolor (str): color of line for class
         label (str): class name
     """
+
     ax2.plot(
         srs_mean,
         pods_mean,
@@ -398,7 +297,7 @@ def table_at_threshold(
     y_preds_bi[idx] = c
     # get the contingency with overriden predicted labels
     cm = confusion_matrix(labels, y_preds_bi)
-    return contingency_table(cm, c)
+    return roc_utils.contingency_table(cm, c)
 
 
 def performance_diagram(
@@ -410,15 +309,17 @@ def performance_diagram(
     Args:
         ax1 (plt.Axes): subplot axis for ROC curve
         ax2 (plt.Axes): subplot axis for performance diagram
-        labels (ndarray(len(samples)): array of actual labels
-        yhat_proba (ndarray(len(samples), len(classes))): array of predicted probabilities in order of class number
+        labels (ndarray(len(folds), len(samples)): array of actual labels
+        yhat_proba (ndarray(len(folds), len(samples), len(classes))): array of predicted probabilities in order of class number
     """
 
     threshs = np.linspace(0.0, 1.0, 100)
     pofds = np.zeros(((config.KFOLD + 1), len(config.CLASS_NAMES), len(threshs)))
     pods = np.zeros(((config.KFOLD + 1), len(config.CLASS_NAMES), len(threshs)))
     srs = np.zeros(((config.KFOLD + 1), len(config.CLASS_NAMES), len(threshs)))
+    csi = np.zeros(((config.KFOLD + 1), len(config.CLASS_NAMES), len(threshs)))
     markerfacecolor = ["limegreen", "orange", "r"]
+    text_height = [0.05, 0.12, 0.19]
 
     for c, _ in enumerate(config.CLASS_NAMES):
         for f in range(config.KFOLD + 1):
@@ -427,9 +328,12 @@ def performance_diagram(
             for i, t in enumerate(threshs):
                 table = table_at_threshold(labels[f, :], y_preds, c, t)
                 # calculate pod, sr and csi
-                pofds[f, c, i] = probability_of_false_detection(table)
-                srs[f, c, i] = success_ratio(table)
-                pods[f, c, i] = probability_of_detection(table)
+                pofds[f, c, i] = roc_utils.probability_of_false_detection(table)
+                srs[f, c, i] = roc_utils.success_ratio(table)
+                pods[f, c, i] = roc_utils.probability_of_detection(table)
+                csi[f, c, i] = roc_utils.csi_from_sr_and_pod(
+                    srs[f, c, i], pods[f, c, i]
+                )
 
         plot_roc(
             ax1,
@@ -438,6 +342,7 @@ def performance_diagram(
             np.std(pods[:, c, :], axis=0),
             markerfacecolor[c],
             label=config.CLASS_NAMES[c],
+            text_height=text_height[c],
         )
         plot_performance(
             ax2,

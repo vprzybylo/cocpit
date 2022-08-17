@@ -56,7 +56,9 @@ class GradCam:
     """
 
     def __init__(self, target_layer):
-        self.model = torch.load(config.MODEL_SAVENAME).to(config.DEVICE)
+        self.model = torch.load(
+            "/ai2es/saved_models/v0.0.0/e[20]_bs[64]_k0_1model(s).pt"
+        ).to(config.DEVICE)
         self.model = self.model.to(config.DEVICE)
         self.model.eval()
         self.model_output = None

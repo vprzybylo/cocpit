@@ -1,7 +1,7 @@
-'''
+"""
 plot figures for environmental attributes of ice crystals
 includes callbacks
-'''
+"""
 
 import pandas as pd
 import plotly.express as px
@@ -21,7 +21,7 @@ def register(app):
         ],
     )
     def environment_violin(env_prop, classification, label):
-        '''violin plot of particle type vs user selected environmental property'''
+        """violin plot of particle type vs user selected environmental property"""
 
         # remove rows where there is bad environmental data
         env_prop = env_prop.replace([-999.99, -999.0, np.inf, -np.inf], np.nan)
@@ -39,7 +39,7 @@ def register(app):
             },
         )
 
-        if label == 'Temperature':
+        if label == "Temperature":
             fig.update_yaxes(autorange="reversed")
 
         return process.update_layout(fig)

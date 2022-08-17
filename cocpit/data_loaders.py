@@ -10,7 +10,7 @@ import torch.utils.data.sampler as sampler
 from PIL import Image, ImageFile
 from torch.utils.data import Dataset
 from torchvision import datasets, transforms
-from typing import List, Optional
+from typing import List, Union, Optional
 from cocpit.auto_str import auto_str
 import numpy as np
 import random
@@ -48,11 +48,11 @@ class TestDataSet(Dataset):
     - Applies transformations such as resizing and normalization
 
     Args:
-        open_dir (str): directory holding the data to open
+        open_dir (Optional[str, List[str]]): directory holding the data to open
         file_list (List[str]): list of filenames
     """
 
-    def __init__(self, open_dir: str, file_list: List[str]):
+    def __init__(self, open_dir: Union[str, List[str]], file_list: List[str]):
 
         self.open_dir = open_dir
         self.file_list = list(file_list)
@@ -68,7 +68,10 @@ class TestDataSet(Dataset):
         return len(self.file_list)
 
     def __getitem__(self, idx):
-        self.path = os.path.join(self.open_dir, self.file_list[idx])
+        if len(self.open_dir) == 1:
+            self.path = os.path.join(self.open_dir, self.file_list[idx])
+        else:
+            self.path = os.path.join(self.open_dir[idx], self.file_list[idx])
         image = Image.open(self.path)
         tensor_image = self.transform(image)
         return (tensor_image, self.path)
@@ -142,8 +145,8 @@ def balanced_sampler(train_labels: List[int]) -> sampler.WeightedRandomSampler:
 def seed_worker(worker_id) -> None:
     torch_seed = torch.initial_seed()
     random.seed(torch_seed + worker_id)
-    if torch_seed >= 2 ** 30:  # make sure torch_seed + workder_id < 2**32
-        torch_seed = torch_seed % 2 ** 30
+    if torch_seed >= 2**30:  # make sure torch_seed + workder_id < 2**32
+        torch_seed = torch_seed % 2**30
     np.random.seed(torch_seed + worker_id)
 
 

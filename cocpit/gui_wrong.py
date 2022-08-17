@@ -23,50 +23,8 @@ plt.rcParams["font.family"] = "serif"
 plt.rcParams.update(plt_params)
 
 
-class Interp:
-    """
-    Holds interpretability methods
-    Args:
-        gradients (np.ndarray):  a vector which gives us the direction in which the loss function has the steepest ascent.
-        pos_saliency (np.ndarray): Positive values in the gradients in which a small change to that pixel will increase the output value
-        neg_saliency (np.ndarray): Negative values in the gradients in which a small change to that pixel will decrease the output value
-
-    """
-
-    def __init__(self):
-        self.gradients = None
-        self.pos_saliency = None
-        self.neg_saliency = None
-
-    def plot_saliency_pos(self, ax: plt.Axes):
-        """
-        plot positive saliency - where gradients are positive after RELU
-        """
-        ax.imshow(self.pos_saliency)
-        ax.axes.set_title("Positive Saliency")
-        ax.axes.xaxis.set_ticks([])
-        ax.axes.yaxis.set_ticks([])
-
-    def get_guided_grads(self):
-        """
-        Guided backpropagation and saliency maps.
-        Positive and negative gradients indicate the direction in which we
-        would have to change this feature to increase the conditional
-        probability of the attended class given this input example and
-        their magnitude shows the size of this effect.
-        """
-        GBP = guided_backprop.GuidedBackprop()
-        self.gradients = GBP.generate_gradients(self.prep_img, self.target_size)
-        self.pos_saliency = (
-            np.maximum(0, self.gradients[:, :, 0]) / self.gradients[:, :, 0].max()
-        )
-        self.neg_saliency = (
-            np.maximum(0, -self.gradients[:, :, 0]) / -self.gradients[:, :, 0].min()
-        )
-
-
 @auto_str
-class GUI(Interp):
+class GUI:
     """
     - ipywidget buttons to label incorrect predictions from a dataloader.
     - The dataloader, model, and all class variables are initialized in notebooks/move_wrong_predictions.ipynb
@@ -248,8 +206,6 @@ class GUI(Interp):
                 self.open_image()
                 self.init_fig(ax1)
                 self.prep_img = preprocess_image(self.image).cuda()
-                # self.get_guided_grads()
-                # self.plot_saliency_pos(ax2)
                 self.bar_chart(ax2)
                 plt.show()
                 # fig.savefig(f"/ai2es/plots/wrong_preds{self.index}.pdf")
