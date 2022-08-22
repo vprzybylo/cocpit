@@ -68,7 +68,7 @@ class TestDataSet(Dataset):
         return len(self.file_list)
 
     def __getitem__(self, idx):
-        if len(self.open_dir) == 1:
+        if len(self.open_dir) == 1 or self.open_dir == "":
             self.path = os.path.join(self.open_dir, self.file_list[idx])
         else:
             self.path = os.path.join(self.open_dir[idx], self.file_list[idx])

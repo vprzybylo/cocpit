@@ -94,7 +94,7 @@ class Interp:
 
     def generate_cam(self):
         """generate gradient class activation map"""
-        grad_cam = gradcam.GradCam(target_layer=42)
+        grad_cam = gradcam.GradCam(target_layer=26)
         self.cam = grad_cam.generate_cam(self.prep_img)
 
     def plot_gradcam(self, ax: plt.Axes) -> None:
@@ -130,8 +130,9 @@ class Interp:
         ax1.set_title(
             f"Prediction: {self.label}\n"
             f"Station: {self.station}\n"
+            f"Probability: {self.prob}\n"
             f"Date: {self.date}\n"
-            f"1 min precip accumulation {self.precip}"
+            f"5 min precip accumulation {self.precip}"
         )
         ax1.axis("off")
 

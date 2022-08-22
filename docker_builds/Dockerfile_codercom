@@ -37,12 +37,12 @@ COPY README.md README.md
 RUN pip3 install -e .
 
 WORKDIR /code_server
-RUN wget https://github.com/cdr/code-server/releases/download/v4.5.0/code-server-4.5.0-linux-amd64.tar.gz  && \
-	tar -xzvf code-server-4.5.0-linux-amd64.tar.gz
+RUN wget https://github.com/cdr/code-server/releases/download/v4.6.0/code-server-4.6.0-linux-amd64.tar.gz  && \
+	tar -xzvf code-server-4.6.0-linux-amd64.tar.gz
 EXPOSE 8443
 
 # auto load vscode extensions following: publisher.extension
-CMD /bin/bash -c "./code-server-4.5.0-linux-amd64/code-server \
+CMD /bin/bash -c "./code-server-4.6.0-linux-amd64/code-server \
 	--host 0.0.0.0 \
 	--port 8443 \
 	data/data"
