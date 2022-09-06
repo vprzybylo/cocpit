@@ -7,6 +7,7 @@ import torch
 from cocpit import config as config
 import numpy as np
 import cv2
+from typing import Tuple
 
 
 class VanillaBackprop:
@@ -16,7 +17,7 @@ class VanillaBackprop:
 
     def __init__(self):
         self.model: torch.nn.parallel.data_parallel.DataParallel = torch.load(
-            config.MODEL_SAVENAME
+            "/ai2es/saved_models/v0.0.0/e[30]_bs[64]_k0_1model(s).pt"
         ).to(config.DEVICE)
         self.gradients = None
         # Put model in evaluation mode
@@ -50,7 +51,7 @@ class VanillaBackprop:
         self.target_class(target_class)
         # Backward pass
         self.model_output.backward(gradient=self.one_hot_output)
-        self.gradients = cv2.resize(
-            np.transpose(self.gradients.cpu().numpy()[0], (1, 2, 0)), target_size
+        return cv2.resize(
+            self.gradients.cpu().numpy()[0, 0, :, :],
+            target_size,
         )
-        return self.gradients

@@ -34,7 +34,8 @@ photo_dir = f"{BASE_DIR}/cam_photos/"
 
 # where the mesonet obs live in parquet format
 # output from nysm_obs_to_parquet
-parquet_dir = f"{BASE_DIR}/mesonet_parquet_5M"
+parquet_dir_5M = f"{BASE_DIR}/mesonet_parquet_5M"
+parquet_dir_1M = f"{BASE_DIR}/mesonet_parquet_1M"
 
 # ai2es version used in docker and git
 TAG = "v0.0.0"
@@ -56,7 +57,7 @@ NUM_WORKERS = 10
 # how many folds used in training (cross-validation)
 # kold = 0 turns this off and splits the data according to valid_size
 # cannot = 1
-KFOLD = 5
+KFOLD = 0
 
 # percent of the training dataset to use as validation
 VALID_SIZE = 0.20
@@ -128,7 +129,7 @@ MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
 VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/{TAG}/"
 
 # model to load
-MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[40]_bs[64]_k0_1model(s).pt"
+MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[30]_bs[64]_k4_1model(s).pt"
 
 MODEL_SAVENAME = (
     f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_"
@@ -182,7 +183,7 @@ CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
 
 # log experiment to comet for tracking?
-LOG_EXP = False
+LOG_EXP = True
 NOTEBOOK = os.path.basename(sys.argv[0]) != "__main__.py"
 load_dotenv()  # loading sensitive keys from .env file
 if LOG_EXP and not NOTEBOOK and BUILD_MODEL:

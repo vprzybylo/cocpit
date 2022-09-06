@@ -9,6 +9,7 @@ import numpy as np
 import torch
 from cocpit import config as config
 import cv2
+from typing import Tuple
 
 
 class CamExtractor:
@@ -57,9 +58,8 @@ class GradCam:
 
     def __init__(self, target_layer):
         self.model = torch.load(
-            "/ai2es/saved_models/v0.0.0/e[20]_bs[64]_k0_1model(s).pt"
+            "/ai2es/saved_models/v0.0.0/e[30]_bs[64]_k0_1model(s).pt"
         ).to(config.DEVICE)
-        self.model = self.model.to(config.DEVICE)
         self.model.eval()
         self.model_output = None
         self.one_hot_output = None
@@ -93,21 +93,9 @@ class GradCam:
         # Take averages for each gradient
         self.weights = np.mean(guided_gradients, axis=(1, 2))
 
-    def create_cam(self):
-        """Create empty numpy array for cam"""
-        cam = np.zeros(self.target.shape[1:], dtype=np.float32)
-        # Multiply each weight with its conv output and then, sum
-        self.get_weights()
-        for i, w in enumerate(self.weights):
-            cam += w * self.target[i, :, :]
-        cam = np.maximum(cam, 0)
-        cam = (cam - np.min(cam)) / (np.max(cam) - np.min(cam))  # Normalize between 0-1
-        # cam = np.uint8(cam * 255)  # Scale between 0-255 to visualize
-        # cam = np.uint8(Image.fromarray(cam).resize(720,1280))
-        cam = cv2.resize(np.asarray(Image.fromarray(cam)), (1280, 720)) / 255
-        return cam
-
-    def generate_cam(self, input_image, target_class=None):
+    def generate_cam(
+        self, input_image, target_size: Tuple[int, int], target_class=None
+    ) -> np.ndarray:
         # Full forward pass
         # conv_output is the output of convolutions at specified target layer
         self.conv_output, self.model_output = self.extractor.forward_pass(input_image)
@@ -117,4 +105,15 @@ class GradCam:
         self.zero_grads()
         self.backward_pass()
         self.get_conv_output()
-        return self.create_cam()
+
+        cam = np.zeros(self.target.shape[1:], dtype=np.float32)
+        # Multiply each weight with its conv output and then, sum
+        self.get_weights()
+        for i, w in enumerate(self.weights):
+            cam += w * self.target[i, :, :]
+        cam = np.maximum(cam, 0)
+        cam = (cam - np.min(cam)) / (np.max(cam) - np.min(cam))  # Normalize between 0-1
+        # cam = np.uint8(cam * 255)  # Scale between 0-255 to visualize
+        # cam = np.uint8(Image.fromarray(cam).resize(720,1280))
+        cam = cv2.resize(np.asarray(Image.fromarray(cam)), target_size) / 255
+        return cam

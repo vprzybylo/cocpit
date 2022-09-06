@@ -9,7 +9,7 @@ from torch.nn import ReLU
 from cocpit import config as config
 import numpy as np
 import cv2
-from typing import Tuple
+from typing import Tuple, Optional
 
 
 class GuidedBackprop:
@@ -19,12 +19,12 @@ class GuidedBackprop:
 
     def __init__(self):
         self.model: torch.nn.parallel.data_parallel.DataParallel = torch.load(
-            config.MODEL_SAVENAME
+            "/ai2es/saved_models/v0.0.0/e[30]_bs[64]_k0_1model(s).pt"
         ).to(config.DEVICE)
         self.gradients: torch.Tensor = None
         self.forward_relu_outputs = []
+        self.model_output = None
         self.one_hot_output: torch.Tensor = None
-        # Put model in evaluation mode
         self.model.eval()
         self.update_relus()
         self.hook_layers()
@@ -77,7 +77,7 @@ class GuidedBackprop:
         """Zero gradients"""
         self.model.zero_grad()
 
-    def target_class(self, target_class: int) -> None:
+    def encode_target_class(self, target_class: int) -> None:
         """Target for backprop"""
         self.one_hot_output = (
             torch.FloatTensor(1, self.model_output.size()[-1]).zero_().to(config.DEVICE)
@@ -88,17 +88,18 @@ class GuidedBackprop:
         self,
         input_image: torch.Tensor,
         target_size: Tuple[int, int],
-        target_class: int = None,
+        target_class: Optional[int] = None,
     ) -> None:
         self.model_output = self.model(input_image)
+
         if target_class is None:
             target_class = np.argmax(self.model_output.data.cpu().numpy())
-        self.target_class(target_class)
+        self.encode_target_class(target_class)
         self.zero_grads()
         self.backward_pass()
-
         # Convert Pytorch variable to numpy array
         # [0] to get rid of the first channel (1,3,224,224)
         return cv2.resize(
-            np.transpose(self.gradients.cpu().numpy()[0], (1, 2, 0)), target_size
+            self.gradients.cpu().numpy()[0, 0, :, :],
+            target_size,
         )

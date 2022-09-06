@@ -84,6 +84,7 @@ class GUI:
         )
 
         copyfile(self.all_paths[self.index], output_path)
+        print(f"copying to {output_path}")
         self.index = self.index + 1
         self.display_image()
 
