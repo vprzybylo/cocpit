@@ -9,8 +9,6 @@ import PIL
 from typing import List, Optional
 from cocpit.auto_str import auto_str
 import cocpit
-from cocpit.interpretability import guided_backprop
-from cocpit.interpretability.misc_funcs import preprocess_image
 
 plt_params = {
     "axes.labelsize": "xx-large",
@@ -205,7 +203,9 @@ class GUI:
                 )
                 self.open_image()
                 self.init_fig(ax1)
-                self.prep_img = preprocess_image(self.image).cuda()
+                self.prep_img = cocpit.interpretability.misc_funcs.preprocess_image(
+                    self.image
+                ).cuda()
                 self.bar_chart(ax2)
                 plt.show()
                 # fig.savefig(f"/ai2es/plots/wrong_preds{self.index}.pdf")

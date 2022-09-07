@@ -18,7 +18,7 @@ class CamExtractor:
     """
 
     def __init__(self, model, target_layer):
-        self.model = model
+        self.model: torch.nn.parallel.data_parallel.DataParallel = model
         self.target_layer = target_layer
         self.gradients = None
 
@@ -46,7 +46,6 @@ class CamExtractor:
         conv_output, x = self.forward_pass_on_convolutions(x)
         x = x.view(x.size(0), -1)  # Flatten
         # Forward pass on the classifier
-
         x = self.model.module.classifier(x)
         return conv_output, x
 
@@ -56,10 +55,8 @@ class GradCam:
     Produces class activation map
     """
 
-    def __init__(self, target_layer):
-        self.model = torch.load(
-            "/ai2es/saved_models/v0.0.0/e[30]_bs[64]_k0_1model(s).pt"
-        ).to(config.DEVICE)
+    def __init__(self, model, target_layer):
+        self.model: torch.nn.parallel.data_parallel.DataParallel = model
         self.model.eval()
         self.model_output = None
         self.one_hot_output = None

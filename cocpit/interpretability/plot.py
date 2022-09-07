@@ -3,21 +3,23 @@ Make interpretability 6 panel plot.
 Called in /ai2es/notebooks/classify_real_preds.ipynb
 """
 
-from cocpit.interpretability import gradcam, vanilla_backprop, guided_backprop, interp
+from cocpit.interpretability import gradcam, vanilla_backprop, interp
 from cocpit.interpretability.misc_funcs import apply_colormap_on_image
 import matplotlib.pyplot as plt
 import matplotlib
 import PIL
 from typing import Tuple
 import numpy as np
+import torch
 
 
 class Plot(interp.Interp):
     """Plot interpretability output in 6 panels"""
 
-    def __init__(self, image):
-        self.image = image
-        super().__init__(image)
+    def __init__(self, model, image):
+        self.model: torch.nn.parallel.data_parallel.DataParallel = model
+        self.image: PIL.Image = image
+        super().__init__(model, image)
 
     def plot_saliency_pos(self, ax: plt.Axes) -> None:
         """
@@ -32,7 +34,13 @@ class Plot(interp.Interp):
         """
         plot negative saliency - where gradients are positive after RELU
         """
-        ax.imshow(self.neg_saliency)
+        ax.imshow(self.cam_gb)
+        ax.axes.set_title("Negative Saliency")
+        ax.axes.xaxis.set_ticks([])
+        ax.axes.yaxis.set_ticks([])
+
+    def plot_cam_all_layers(self, ax: plt.Axes) -> None:
+        ax.imshow(self.cam_gb)
         ax.axes.set_title("Negative Saliency")
         ax.axes.xaxis.set_ticks([])
         ax.axes.yaxis.set_ticks([])

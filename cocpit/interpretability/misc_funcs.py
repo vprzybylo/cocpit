@@ -17,7 +17,7 @@ import cv2
 
 def convert_to_grayscale(im_as_arr):
     """
-        Converts 3d image to grayscale
+    Converts 3d image to grayscale
 
     Args:
         im_as_arr (numpy arr): RGB image with shape (D,W,H)
@@ -41,7 +41,7 @@ def normalize(gradient):
 
 def save_gradient_images(gradient, file_name):
     """
-        Exports the original gradient image
+    Exports the original gradient image
 
     Args:
         gradient (np arr): Numpy array of the gradient with shape (3, 224, 224)
@@ -57,7 +57,7 @@ def save_gradient_images(gradient, file_name):
 
 def save_class_activation_images(org_img, activation_map, file_name):
     """
-        Saves cam activation map and activation map on the original image
+    Saves cam activation map and activation map on the original image
 
     Args:
         org_img (PIL img): Original image
@@ -98,9 +98,10 @@ def apply_colormap_on_image(
 
 def format_np_output(np_arr):
     """
-        This is a (kind of) bandaid fix to streamline saving procedure.
-        It converts all the outputs to the same format which is 3xWxH
-        with using sucecssive if clauses.
+    This is a (kind of) bandaid fix to streamline saving procedure.
+    It converts all the outputs to the same format which is 3xWxH
+    with using sucecssive if clauses.
+
     Args:
         im_as_arr (Numpy array): Matrix of shape 1xWxH or WxH or 3xWxH
     """
@@ -125,7 +126,8 @@ def format_np_output(np_arr):
 
 def save_image(im, path):
     """
-        Saves a numpy matrix or PIL image as an image
+    Saves a numpy matrix or PIL image as an image
+
     Args:
         im_as_arr (Numpy array): Matrix of shape DxWxH
         path (str): Path to the image
@@ -138,7 +140,7 @@ def save_image(im, path):
 
 def preprocess_image(pil_im, resize_im=True):
     """
-        Processes image for CNNs
+    Processes image for CNNs
 
     Args:
         PIL_img (PIL_img): PIL Image or numpy array to process
@@ -179,25 +181,3 @@ def preprocess_image(pil_im, resize_im=True):
     # Convert to Pytorch variable
     im_as_var = Variable(im_as_ten, requires_grad=True)
     return im_as_var
-
-
-def recreate_image(im_as_var):
-    """
-        Recreates images from a torch variable, sort of reverse preprocessing
-    Args:
-        im_as_var (torch variable): Image to recreate
-    returns:
-        recreated_im (numpy arr): Recreated image in array
-    """
-    reverse_mean = [-0.485, -0.456, -0.406]
-    reverse_std = [1 / 0.229, 1 / 0.224, 1 / 0.225]
-    recreated_im = copy.copy(im_as_var.data.numpy()[0])
-    for c in range(3):
-        recreated_im[c] /= reverse_std[c]
-        recreated_im[c] -= reverse_mean[c]
-    recreated_im[recreated_im > 1] = 1
-    recreated_im[recreated_im < 0] = 0
-    recreated_im = np.round(recreated_im * 255)
-
-    recreated_im = np.uint8(recreated_im).transpose(1, 2, 0)
-    return recreated_im
