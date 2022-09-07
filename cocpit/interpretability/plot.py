@@ -25,7 +25,7 @@ class Plot(interp.Interp):
         """
         plot positive saliency - where gradients are positive after RELU
         """
-        ax.imshow(self.pos_saliency)
+        ax.imshow(self.pos_saliency[0])
         ax.axes.set_title("Positive Saliency")
         ax.axes.xaxis.set_ticks([])
         ax.axes.yaxis.set_ticks([])
@@ -34,14 +34,14 @@ class Plot(interp.Interp):
         """
         plot negative saliency - where gradients are positive after RELU
         """
-        ax.imshow(self.neg_saliency)
+        ax.imshow(self.pos_saliency[10])
         ax.axes.set_title("Negative Saliency")
         ax.axes.xaxis.set_ticks([])
         ax.axes.yaxis.set_ticks([])
 
     def plot_guided_bp(self, ax: plt.Axes) -> None:
         """plot guided backpropagation gradients"""
-        ax.imshow(self.grayscale_guided_grads)
+        ax.imshow(self.grayscale_guided_grads[0])
         ax.axes.xaxis.set_ticks([])
         ax.axes.yaxis.set_ticks([])
         ax.axes.set_title("Guided Backpropagation")
@@ -62,7 +62,7 @@ class Plot(interp.Interp):
         to the image where negative gradients set to zero to highlight
         import pixel in the image when backpropagating through ReLU layers.
         """
-        cam_gb = np.multiply(self.cam, self.gradients)
+        cam_gb = np.multiply(self.cam, self.grayscale_guided_grads[0])
         ax.imshow(cam_gb)
         ax.axes.set_title("Guided GRAD-CAM")
         ax.axes.xaxis.set_ticks([])
@@ -75,6 +75,7 @@ class Plot(interp.Interp):
             constrained_layout=True, figsize=figsize, ncols=ncols, nrows=nrows
         )
         ax1.imshow(self.image)
+        ax1.set_title("Original Image")
         ax1.axis("off")
         self.plot_guided_bp(ax4)
         self.plot_gradcam(ax5)

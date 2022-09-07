@@ -10,7 +10,7 @@ from PIL import Image
 import matplotlib.cm as mpl_color_map
 from matplotlib.colors import ListedColormap
 from matplotlib import pyplot as plt
-
+import cv2
 import torch
 from torch.autograd import Variable
 from torchvision import models
@@ -82,28 +82,27 @@ def save_class_activation_images(org_img, activation_map, file_name):
     save_image(activation_map, path_to_file)
 
 
-def apply_colormap_on_image(org_im, activation, colormap_name="Reds"):
-    """
-        Apply heatmap on image
-    Args:
-        org_img (PIL img): Original image
-        activation_map (numpy arr): Activation map (grayscale) 0-255
-        colormap_name (str): Name of the colormap
-    """
-    # Get colormap
-    color_map = mpl_color_map.get_cmap(colormap_name)
-    no_trans_heatmap = color_map(activation)
-    # Change alpha channel in colormap to make sure original image is displayed
-    heatmap = copy.copy(no_trans_heatmap)
-    heatmap[:, :, 3] = 0.4
-    heatmap = Image.fromarray((heatmap * 255).astype(np.uint8))
-    no_trans_heatmap = Image.fromarray((no_trans_heatmap * 255).astype(np.uint8))
-
-    # Apply heatmap on image
-    heatmap_on_image = Image.new("RGBA", org_im.size)
-    heatmap_on_image = Image.alpha_composite(heatmap_on_image, org_im.convert("RGBA"))
-    heatmap_on_image = Image.alpha_composite(heatmap_on_image, heatmap)
-    return no_trans_heatmap, heatmap_on_image
+def apply_colormap_on_image(
+    activation, org_img, alpha=0.5, colormap=cv2.COLORMAP_HOT, eps=1e-8
+):
+    # grab the spatial dimensions of the input image and resize
+    # the output class activation map to match the input image
+    # dimensions
+    (w, h) = (np.shape(org_img)[1], np.shape(org_img)[0])
+    heatmap = cv2.resize(np.asarray(activation), (w, h))
+    # normalize the heatmap such that all values lie in the range
+    # [0, 1], scale the resulting values to the range [0, 255],
+    # and then convert to an unsigned 8-bit integer
+    numer = heatmap - np.min(heatmap)
+    denom = (heatmap.max() - heatmap.min()) + eps
+    heatmap = numer / denom
+    heatmap = (heatmap * 255).astype("uint8")
+    # apply the supplied color map to the heatmap and then
+    # overlay the heatmap on the input image
+    heatmap = cv2.applyColorMap(heatmap, colormap)
+    return cv2.addWeighted(
+        np.transpose(np.asarray(org_img), (0, 1, 2)), alpha, heatmap, 1 - alpha, 0
+    )
 
 
 def apply_heatmap(R, sx, sy):
@@ -177,19 +176,6 @@ def preprocess_image(pil_im, resize_im=True):
     # Mean and std list for channels (Imagenet)
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
-
-    # Ensure or transform incoming image to PIL image
-    if type(pil_im) != Image.Image:
-        try:
-            pil_im = Image.fromarray(pil_im)
-        except Exception:
-            print(
-                "could not transform PIL_img to a PIL Image object. Please check input."
-            )
-
-    # Resize image
-    if resize_im:
-        pil_im = pil_im.resize((224, 224), Image.ANTIALIAS)
 
     im_as_arr = np.float32(pil_im)
     im_as_arr = im_as_arr.transpose(2, 0, 1)  # Convert array to D,W,H
