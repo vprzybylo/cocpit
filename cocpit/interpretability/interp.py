@@ -6,8 +6,10 @@ Called in /ai2es/notebooks/classify_real_preds.ipynb
 from cocpit.interpretability.misc_funcs import (
     preprocess_image,
     normalize,
+    convert_to_grayscale,
+    get_positive_negative_saliency,
 )
-from cocpit.interpretability import gradcam, vanilla_backprop, cam_all_layers
+from cocpit.interpretability import gradcam, guided_backprop, cam_all_layers
 import matplotlib
 import PIL
 from typing import Tuple
@@ -60,10 +62,14 @@ class Interp:
         probability of the attended class given this input example and
         their magnitude shows the size of this effect.
         """
-        GBP = vanilla_backprop.Gradient(self.model, guided_backprop=True)
-        self.gradients = GBP.generate_gradients(self.prep_img, self.target_size)
-        self.pos_saliency = np.maximum(0, self.gradients) / self.gradients.max()
-        self.neg_saliency = np.maximum(0, -self.gradients) / (-self.gradients.min())
+
+        GBP = guided_backprop.GuidedBackprop(self.model)
+        guided_grads = GBP.generate_gradients(self.prep_img)
+        self.grayscale_guided_grads = convert_to_grayscale(guided_grads)
+        self.grayscale_guided_grads = np.squeeze(self.grayscale_guided_grads, axis=0)
+        self.pos_saliency, self.neg_saliency = get_positive_negative_saliency(
+            guided_grads
+        )
 
     def generate_vanilla_grads(self) -> None:
         """gradients for vanilla backpropagation"""
@@ -76,18 +82,10 @@ class Interp:
         grad_cam = gradcam.GradCam(self.model, target_layer=42)
         self.cam = grad_cam.generate_cam(self.prep_img, self.target_size)
 
-    def generate_cam_all_layers(self, image_path) -> None:
-        """generate gradient class activation map from all conv2D layers"""
-        self.cam_gb, self.gb = cam_all_layers.cam_all_layers(
-            image_path, self.prep_img, self.model
-        )
-
     def interp_runner(self, image_path) -> None:
         """
         Calculate gradients used in interpretability figures
         """
         self.prep_img = preprocess_image(self.image).cuda()
-        self.generate_cam_all_layers(image_path)
         self.generate_cam()
         self.generate_guided_grads()
-        self.generate_vanilla_grads()

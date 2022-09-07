@@ -34,27 +34,21 @@ class Plot(interp.Interp):
         """
         plot negative saliency - where gradients are positive after RELU
         """
-        ax.imshow(self.cam_gb)
+        ax.imshow(self.neg_saliency)
         ax.axes.set_title("Negative Saliency")
         ax.axes.xaxis.set_ticks([])
         ax.axes.yaxis.set_ticks([])
 
-    def plot_cam_all_layers(self, ax: plt.Axes) -> None:
-        ax.imshow(self.cam_gb)
-        ax.axes.set_title("Negative Saliency")
+    def plot_guided_bp(self, ax: plt.Axes) -> None:
+        """plot guided backpropagation gradients"""
+        ax.imshow(self.grayscale_guided_grads)
         ax.axes.xaxis.set_ticks([])
         ax.axes.yaxis.set_ticks([])
-
-    def plot_vanilla_bp(self, ax: plt.Axes) -> None:
-        """plot vanilla backpropagation gradients"""
-        ax.imshow(self.vanilla_grads)
-        ax.axes.xaxis.set_ticks([])
-        ax.axes.yaxis.set_ticks([])
-        ax.axes.set_title("Vanilla Backpropagation")
+        ax.axes.set_title("Guided Backpropagation")
 
     def plot_gradcam(self, ax: plt.Axes) -> None:
         """plot gradient class activation map"""
-        heatmap = apply_colormap_on_image(self.cam, self.image, alpha=0.5)
+        heatmap = apply_colormap_on_image(self.cam, self.image)
         ax.imshow(heatmap)
         ax.axes.set_title("GRAD-CAM")
         ax.axes.xaxis.set_ticks([])
@@ -82,7 +76,7 @@ class Plot(interp.Interp):
         )
         ax1.imshow(self.image)
         ax1.axis("off")
-        self.plot_vanilla_bp(ax4)
+        self.plot_guided_bp(ax4)
         self.plot_gradcam(ax5)
         self.plot_guided_gradcam(ax6)
         self.plot_saliency_pos(ax2)
