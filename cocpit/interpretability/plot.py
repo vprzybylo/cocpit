@@ -82,4 +82,4 @@ class Plot(interp.Interp):
         self.plot_guided_gradcam(ax6)
         self.plot_saliency_pos(ax2)
         self.plot_saliency_neg(ax3)
-        return fig
+        return plt

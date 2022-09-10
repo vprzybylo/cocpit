@@ -82,6 +82,7 @@ class GuidedBackprop:
         self.model.zero_grad()
         if target_class is None:
             target_class = np.argmax(self.model_output.data.cpu().numpy())
+            print(f"predicted: {config.CLASS_NAMES_ALPHABETICAL[target_class]}")
         self.target_class(target_class)
         self.model_output.backward(gradient=self.one_hot_output)
         return self.gradients.data.cpu().numpy()[0]
