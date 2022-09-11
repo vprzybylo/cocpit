@@ -73,7 +73,9 @@ class BatchPredictions:
             top_k_preds (int): the top k probabilities/classes predicted
         """
         topk = self.preds_softmax().cpu().topk(top_k_preds)
-        self.probs, self.classes = [e.data.numpy().squeeze().tolist() for e in topk]
+        self.probs, self.classes = [
+            e.data.numpy().squeeze().tolist() for e in topk
+        ]
 
 
 class LoaderPredictions:
@@ -100,7 +102,9 @@ class LoaderPredictions:
         self.wrong_trunc: List[int] = []
         self.wrong_idx: List[int] = []
 
-    def load_model(self, fold: int):  # -> torch.nn.parallel.data_parallel.DataParallel:
+    def load_model(
+        self, fold: int
+    ):  # -> torch.nn.parallel.data_parallel.DataParallel:
         # model = torch.load(
         #     f"{config.MODEL_SAVE_DIR}e{config.MAX_EPOCHS}"
         #     f"_bs{config.BATCH_SIZE}"
@@ -114,7 +118,9 @@ class LoaderPredictions:
         model.eval()
         return model
 
-    def load_val_loader(self, fold: int) -> torch.utils.data.dataloader.DataLoader:
+    def load_val_loader(
+        self, fold: int
+    ) -> torch.utils.data.dataloader.DataLoader:
         # val_data = torch.load(
         #     f"{config.VAL_LOADER_SAVE_DIR}e{config.MAX_EPOCHS}_val_loader{int(config.VALID_SIZE*100)}_bs{config.BATCH_SIZE}_k{fold}_vgg16.pt"
         # )
@@ -122,7 +128,9 @@ class LoaderPredictions:
         # val_data = torch.load(
         #     f"/ai2es/saved_val_loaders/v0.0.0/e[30]_val_loader20_bs[64]_k{fold}_1model(s).pt"
         # )
-        return data_loaders.create_loader(val_data, batch_size=100, sampler=None)
+        return data_loaders.create_loader(
+            val_data, batch_size=100, sampler=None
+        )
 
     def concat(self, var: Any) -> List[Any]:
         """
@@ -165,7 +173,10 @@ class LoaderPredictions:
             ) = map(self.concat, pred_list)
 
     def append_batch(
-        self, b: BatchPredictions, paths: List[str], labels: torch.tensor = None
+        self,
+        b: BatchPredictions,
+        paths: List[str],
+        labels: torch.tensor = None,
     ) -> None:
         """
         Append batch predictions across all possible validation datasets (including k-folds)
@@ -211,9 +222,14 @@ class LoaderPredictions:
             for i in idx_human[0]
             if self.max_preds[i] == model_label
         ]
-        cat1 = list(label_list.keys())[list(label_list.values()).index(human_label)]
-        cat2 = list(label_list.keys())[list(label_list.values()).index(model_label)]
+        cat1 = list(label_list.keys())[
+            list(label_list.values()).index(human_label)
+        ]
+        cat2 = list(label_list.keys())[
+            list(label_list.values()).index(model_label)
+        ]
         if self.wrong_trunc:
             print(
-                f"{len(self.wrong_trunc)} wrong predictions between {cat1} and {cat2}"
+                f"{len(self.wrong_trunc)} wrong predictions between {cat1} and"
+                f" {cat2}"
             )
