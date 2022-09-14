@@ -34,7 +34,7 @@ class Plot(interp.Interp):
         """
         plot negative saliency - where gradients are positive after RELU
         """
-        ax.imshow(self.pos_saliency[10])
+        ax.imshow(self.pos_saliency[1])
         ax.axes.set_title("Negative Saliency")
         ax.axes.xaxis.set_ticks([])
         ax.axes.yaxis.set_ticks([])

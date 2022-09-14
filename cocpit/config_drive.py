@@ -19,10 +19,10 @@ import sys
 # Absolute path to to folder where the data and models live
 # BASE_DIR = '/Volumes/TOSHIBA EXT/raid/data/cpi_data'
 
-BASE_DIR = "/cocpit"
+BASE_DIR = "/DRIVE_PYTORCH"
 
 # ai2es version used in docker and git
-TAG = "v1.4.0"
+TAG = "v0.0.0"
 
 # create and save CNN
 BUILD_MODEL = True
@@ -54,7 +54,7 @@ BATCH_SIZE = [64]
 BATCH_SIZE_TUNE = [32, 64, 128, 256]
 
 # number of epochs to train model
-MAX_EPOCHS = [30]
+MAX_EPOCHS = [25]
 MAX_EPOCHS_TUNE = [20, 30, 40]
 
 # dropout rate (in model_config)
@@ -64,28 +64,15 @@ DROP_RATE_TUNE = [0.0, 0.3, 0.5]
 LR_TUNE = [0.001, 0.01, 0.1]
 
 # names of each ice crystal class
-CLASS_NAMES = [
-    "agg",
-    "budding",
-    "bullet",
-    "column",
-    "compact_irreg",
-    "fragment",
-    "planar_polycrystal",
-    "rimed",
-    "sphere",
-]
+CLASS_NAMES = ["wet", "dry", "snow", "snow_severe"]
+CLASS_NAMES_ALPHABETICAL = ["dry", "snow", "snow_severe", "wet"]
 
 # any abbreviations in folder names where the data lives for each class
 CLASS_NAME_MAP = {
-    "agg": "aggregate",
-    "bullet": "bullet rosette",
-    "column": "column",
-    "compact_irreg": "compact irregular",
-    "fragment": "fragment",
-    "planar_polycrystal": "planar polycrystal",
-    "rimed": "rimed",
-    "sphere": "sphere",
+    "wet": "wet",
+    "dry": "dry",
+    "snow": "snow",
+    "snow_severe": "severe snow",
 }
 
 # models to train
@@ -114,31 +101,34 @@ config_ray = {
 
 
 # directory that holds the training data
-DATA_DIR = "/data/data/cpi_data/training_datasets/hand_labeled_v1.4.0_noaug/"
+DATA_DIR = "/DRIVE/site_analysis/corridor_LIE_east/gui_label/training_data/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # whether to save the model
 SAVE_MODEL = True
 
 # directory to save the trained model to
-MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/no_mask/{TAG}/"
+MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
 
 # directory to save validation data to
 # for later inspection of predictions
-VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/no_mask/{TAG}/"
+VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/{TAG}/"
 
 # model to load
-MODEL_PATH = f"{BASE_DIR}/saved_models/no_mask/{TAG}/e[30]_bs[64]_k0_vgg16.pt"
+MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[30]_bs[64]_k4_1model(s).pt"
 
 MODEL_SAVENAME = (
-    f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_bs{BATCH_SIZE}_k{KFOLD}_vgg16.pt"
+    f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_"
+    f"bs{BATCH_SIZE}_"
+    f"k{KFOLD}_"
+    f"{len(MODEL_NAMES)}model(s).pt"
 )
 
 VAL_LOADER_SAVENAME = (
     f"{VAL_LOADER_SAVE_DIR}e{MAX_EPOCHS}_val_loader20_"
     f"bs{BATCH_SIZE}_"
     f"k{KFOLD}_"
-    "vgg16.pt"
+    f"{len(MODEL_NAMES)}model(s).pt"
 )
 
 # Start with a pretrained model and only update the final layer weights
@@ -152,7 +142,7 @@ USE_PRETRAINED = False
 SAVE_ACC = False
 
 # directory for saving training accuracy and loss csv's
-ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/no_mask/{TAG}/"
+ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/drive/{TAG}/"
 
 #  filename for saving training accuracy and loss
 ACC_SAVENAME_TRAIN = (
