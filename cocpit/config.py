@@ -54,7 +54,7 @@ BATCH_SIZE = [64]
 BATCH_SIZE_TUNE = [32, 64, 128, 256]
 
 # number of epochs to train model
-MAX_EPOCHS = [30]
+MAX_EPOCHS = [25]
 MAX_EPOCHS_TUNE = [20, 30, 40]
 
 # dropout rate (in model_config)
@@ -86,7 +86,7 @@ CLASS_NAME_MAP = {
     "planar_polycrystal": "planar polycrystal",
     "rimed": "rimed",
     "sphere": "sphere",
-}
+
 
 # models to train
 MODEL_NAMES_TUNE = [
@@ -114,13 +114,18 @@ config_ray = {
 
 
 # directory that holds the training data
+<<<<<<< HEAD
 DATA_DIR = "/data/data/cpi_data/training_datasets/hand_labeled_v1.4.0_noaug/"
+=======
+DATA_DIR = "/DRIVE/site_analysis/corridor_LIE_east/gui_label/training_data/"
+>>>>>>> 186be0a52d38c7bee28da3a7182c67fce9ef6890
 # DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # whether to save the model
 SAVE_MODEL = True
 
 # directory to save the trained model to
+<<<<<<< HEAD
 MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/no_mask/{TAG}/"
 
 # directory to save validation data to
@@ -129,6 +134,18 @@ VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/no_mask/{TAG}/"
 
 # model to load
 MODEL_PATH = f"{BASE_DIR}/saved_models/no_mask/{TAG}/e[30]_bs[64]_k0_vgg16.pt"
+=======
+MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/drive/{TAG}/"
+
+# directory to save validation data to
+# for later inspection of predictions
+VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/drive/{TAG}/"
+
+# model to load
+MODEL_PATH = (
+    f"{BASE_DIR}/saved_models/drive/{TAG}/e[30]_bs[64]_k4_1model(s).pt"
+)
+>>>>>>> 186be0a52d38c7bee28da3a7182c67fce9ef6890
 
 MODEL_SAVENAME = (
     f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_bs{BATCH_SIZE}_k{KFOLD}_vgg16.pt"
@@ -152,7 +169,11 @@ USE_PRETRAINED = False
 SAVE_ACC = False
 
 # directory for saving training accuracy and loss csv's
+<<<<<<< HEAD
 ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/no_mask/{TAG}/"
+=======
+ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/drive/{TAG}/"
+>>>>>>> 186be0a52d38c7bee28da3a7182c67fce9ef6890
 
 #  filename for saving training accuracy and loss
 ACC_SAVENAME_TRAIN = (
