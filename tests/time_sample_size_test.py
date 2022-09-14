@@ -2,8 +2,9 @@
 import sys
 
 import cocpit.run_ML_model  # noqa
+from cocpit import config as config
 
-sys.path.insert(0, "/data/data/")
+sys.path.insert(0, f"{config.BASE_DIR}")
 import csv  # noqa
 import os  # noqa
 import time  # noqa
@@ -41,15 +42,17 @@ class_names = [
 ]
 num_workers = 20  # cpus to load data
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-path = "/data/data/cpi_data/campaigns/time_test/"
+path = f"{config.BASE_DIR}/cpi_data/campaigns/time_test/"
 
 with open(
-    "/data/data/saved_timings/model_timing_samples3.csv", "a", newline=""
+    f"{config.BASE_DIR}/saved_timings/model_timing_samples3.csv",
+    "a",
+    newline="",
 ) as file:
     writer = csv.writer(file)
     for model_name in model_names:
         model = torch.load(
-            "/data/data/saved_models/no_mask/e30_bs128_k0_9models_v1.0.0_removed_"
+            f"{config.BASE_DIR}/saved_models/no_mask/e30_bs128_k0_9models_v1.0.0_removed_"
             + model_name
         )
         model = model.to(device)

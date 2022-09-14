@@ -1,5 +1,4 @@
 FROM python:3.9-slim-buster
-WORKDIR /data/data
 
 RUN apt-get -y update && apt-get install -y --no-install-recommends \
 	git \
@@ -16,4 +15,4 @@ COPY requirements_dash.txt requirements_dash.txt
 RUN pip3 install -r requirements_dash.txt
 ENV PYTHONUNBUFFERED=0
 EXPOSE 8050
-CMD ["python", "-u", "/data/data/cocpit/dash_app/app.py"]
+CMD ["python", "-u", "/cocpit/dash_app/app.py"]

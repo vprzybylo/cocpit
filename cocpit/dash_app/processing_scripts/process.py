@@ -13,11 +13,10 @@ def read_campaign(campaign):
     # filenames don't have spaces or parentheses
     campaign = campaign.replace(" ", "_").replace("(", "").replace(")", "")
 
-    df = pd.read_parquet(
-        f"/data/data/final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
+    return pd.read_parquet(
+        f"{config.BASE_DIR}/final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
         engine="fastparquet",
     )
-    return df
 
 
 def remove_bad_data(df):
@@ -38,7 +37,9 @@ def remove_bad_data(df):
 
 def rename(df):
     """remove underscores in particle properties in classification column"""
-    rename_types = dict(zip(globals.particle_types, globals.particle_types_rename))
+    rename_types = dict(
+        zip(globals.particle_types, globals.particle_types_rename)
+    )
     df = df.replace(rename_types)
     rename_types = dict(zip(globals.campaigns, globals.campaigns_rename))
     df = df.replace(rename_types)
