@@ -18,6 +18,7 @@ import sys
 
 # Absolute path to to folder where the data and models live
 # BASE_DIR = '/Volumes/TOSHIBA EXT/raid/data/cpi_data'
+
 BASE_DIR = "/cocpit"
 
 # ai2es version used in docker and git
