@@ -9,7 +9,7 @@ from cocpit.interpretability.misc_funcs import (
     convert_to_grayscale,
     get_positive_negative_saliency,
 )
-from cocpit.interpretability import gradcam, guided_backprop, cam_all_layers
+from cocpit.interpretability import gradcam, guided_backprop
 import matplotlib
 import PIL
 from typing import Tuple
