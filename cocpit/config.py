@@ -17,25 +17,7 @@ import torch
 import sys
 
 # Absolute path to to folder where the data and models live
-# BASE_DIR = '/Volumes/TOSHIBA EXT/raid/data/cpi_data'
-BASE_DIR = "/ai2es"
-
-# /raid/NYSM/archive/nysm/netcdf/proc/ on hulk
-nc_file_dir = f"{BASE_DIR}/5_min_obs"
-
-# /raid/lgaudet/precip/Precip/NYSM_1min_data on hulk
-csv_file_dir = f"{BASE_DIR}/1_min_obs"
-
-# where to write time  matched data
-write_path = f"{BASE_DIR}/matched_parquet/"
-
-# root dir to raw images (before each year subdir)
-photo_dir = f"{BASE_DIR}/cam_photos/"
-
-# where the mesonet obs live in parquet format
-# output from nysm_obs_to_parquet
-parquet_dir_5M = f"{BASE_DIR}/mesonet_parquet_5M"
-parquet_dir_1M = f"{BASE_DIR}/mesonet_parquet_1M"
+BASE_DIR = "/DRIVE_PYTORCH"
 
 # ai2es version used in docker and git
 TAG = "v0.0.0"
@@ -70,7 +52,7 @@ BATCH_SIZE = [64]
 BATCH_SIZE_TUNE = [32, 64, 128, 256]
 
 # number of epochs to train model
-MAX_EPOCHS = [30]
+MAX_EPOCHS = [25]
 MAX_EPOCHS_TUNE = [20, 30, 40]
 
 # dropout rate (in model_config)
@@ -80,13 +62,15 @@ DROP_RATE_TUNE = [0.0, 0.3, 0.5]
 LR_TUNE = [0.001, 0.01, 0.1]
 
 # names of each ice crystal class
-CLASS_NAMES = ["no precipitation", "obstructed", "precipitation"]
+CLASS_NAMES = ["wet", "dry", "snow", "snow_severe"]
+CLASS_NAMES_ALPHABETICAL = ["dry", "snow", "snow_severe", "wet"]
 
 # any abbreviations in folder names where the data lives for each class
 CLASS_NAME_MAP = {
-    "no precipitation": "no_precip",
-    "obstructed": "obstructed",
-    "precipitation": "precip",
+    "wet": "wet",
+    "dry": "dry",
+    "snow": "snow",
+    "snow_severe": "severe snow",
 }
 
 # models to train
@@ -115,7 +99,7 @@ config_ray = {
 
 
 # directory that holds the training data
-DATA_DIR = f"{BASE_DIR}/codebook_dataset/combined_extra/"
+DATA_DIR = "/DRIVE/site_analysis/corridor_LIE_east/gui_label/training_data/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # whether to save the model
@@ -153,10 +137,10 @@ FEATURE_EXTRACT = False
 USE_PRETRAINED = False
 
 # write training loss and accuracy to csv
-SAVE_ACC = True
+SAVE_ACC = False
 
 # directory for saving training accuracy and loss csv's
-ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"
+ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/drive/{TAG}/"
 
 #  filename for saving training accuracy and loss
 ACC_SAVENAME_TRAIN = (
@@ -225,131 +209,3 @@ if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
     experiment.add_tag(TAG)
 else:
     experiment = None
-
-stnid = [
-    "ADDI",
-    "ANDE",
-    "BATA",
-    "BEAC",
-    "BELD",
-    "BELL",
-    "BELM",
-    "BERK",
-    "BING",
-    "BKLN",
-    "BRAN",
-    "BREW",
-    "BROC",
-    "BRON",
-    "BROO",
-    "BSPA",
-    "BUFF",
-    "BURD",
-    "BURT",
-    "CAMD",
-    "CAPE",
-    "CHAZ",
-    "CHES",
-    "CINC",
-    "CLAR",
-    "CLIF",
-    "CLYM",
-    "COBL",
-    "COHO",
-    "COLD",
-    "COPA",
-    "COPE",
-    "CROG",
-    "CSQR",
-    "DELE",
-    "DEPO",
-    "DOVE",
-    "DUAN",
-    "EAUR",
-    "EDIN",
-    "EDWA",
-    "ELDR",
-    "ELLE",
-    "ELMI",
-    "ESSX",
-    "FAYE",
-    "FRED",
-    "GABR",
-    "GFAL",
-    "GFLD",
-    "GROT",
-    "GROV",
-    "HAMM",
-    "HARP",
-    "HARR",
-    "HART",
-    "HERK",
-    "HFAL",
-    "ILAK",
-    "JOHN",
-    "JORD",
-    "KIND",
-    "LAUR",
-    "LOUI",
-    "MALO",
-    "MANH",
-    "MEDI",
-    "MEDU",
-    "MORR",
-    "NBRA",
-    "NEWC",
-    "NHUD",
-    "OLDF",
-    "OLEA",
-    "ONTA",
-    "OPPE",
-    "OSCE",
-    "OSWE",
-    "OTIS",
-    "OWEG",
-    "PENN",
-    "PHIL",
-    "PISE",
-    "POTS",
-    "QUEE",
-    "RAND",
-    "RAQU",
-    "REDF",
-    "REDH",
-    "ROXB",
-    "RUSH",
-    "SARA",
-    "SBRI",
-    "SCHA",
-    "SCHO",
-    "SCHU",
-    "SCIP",
-    "SHER",
-    "SOME",
-    "SOUT",
-    "SPRA",
-    "SPRI",
-    "STAT",
-    "STEP",
-    "SUFF",
-    "TANN",
-    "TICO",
-    "TULL",
-    "TUPP",
-    "TYRO",
-    "VOOR",
-    "WALL",
-    "WALT",
-    "WANT",
-    "WARS",
-    "WARW",
-    "WATE",
-    "WBOU",
-    "WELL",
-    "WEST",
-    "WFMB",
-    "WGAT",
-    "WHIT",
-    "WOLC",
-    "YORK",
-]
