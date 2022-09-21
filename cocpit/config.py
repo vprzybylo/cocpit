@@ -80,12 +80,11 @@ DROP_RATE_TUNE = [0.0, 0.3, 0.5]
 LR_TUNE = [0.001, 0.01, 0.1]
 
 # names of each ice crystal class
-CLASS_NAMES = ["no precipitation", "obstructed", "precipitation"]
+CLASS_NAMES = ["no precipitation", "precipitation"]
 
 # any abbreviations in folder names where the data lives for each class
 CLASS_NAME_MAP = {
     "no precipitation": "no_precip",
-    "obstructed": "obstructed",
     "precipitation": "precip",
 }
 
@@ -115,7 +114,7 @@ config_ray = {
 
 
 # directory that holds the training data
-DATA_DIR = f"{BASE_DIR}/codebook_dataset/combined_extra/"
+DATA_DIR = f"{BASE_DIR}/unsupervised/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # whether to save the model
@@ -183,7 +182,7 @@ CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
 
 # log experiment to comet for tracking?
-LOG_EXP = False
+LOG_EXP = True
 NOTEBOOK = os.path.basename(sys.argv[0]) != "__main__.py"
 load_dotenv()  # loading sensitive keys from .env file
 if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
