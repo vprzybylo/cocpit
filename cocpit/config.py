@@ -7,8 +7,6 @@
 - call using config.VARIABLE_NAME
 isort:skip_file
 """
-
-
 from comet_ml import Experiment  # isort:split
 from ray import tune
 import os
@@ -20,7 +18,7 @@ import sys
 BASE_DIR = "/DRIVE_PYTORCH"
 
 # ai2es version used in docker and git
-TAG = "v0.0.0"
+TAG = "v1.4.0"
 
 # create and save CNN
 BUILD_MODEL = True
@@ -85,9 +83,8 @@ MODEL_NAMES_TUNE = [
     "densenet169",
     "densenet201",
 ]
-MODEL_NAMES = [
-    "vgg16",
-]
+
+MODEL_NAMES = ["vgg16"]
 
 config_ray = {
     "BATCH_SIZE": tune.choice(BATCH_SIZE_TUNE),
@@ -106,27 +103,24 @@ DATA_DIR = "/DRIVE/site_analysis/corridor_LIE_east/gui_label/training_data/"
 SAVE_MODEL = True
 
 # directory to save the trained model to
-MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
+MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/no_mask/{TAG}/"
 
 # directory to save validation data to
 # for later inspection of predictions
-VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/{TAG}/"
+VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/no_mask/{TAG}/"
 
 # model to load
-MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[30]_bs[64]_k4_1model(s).pt"
+MODEL_PATH = f"{BASE_DIR}/saved_models/no_mask/{TAG}/e[30]_bs[64]_k0_vgg16.pt"
 
 MODEL_SAVENAME = (
-    f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_"
-    f"bs{BATCH_SIZE}_"
-    f"k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s).pt"
+    f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_bs{BATCH_SIZE}_k{KFOLD}_vgg16.pt"
 )
 
 VAL_LOADER_SAVENAME = (
     f"{VAL_LOADER_SAVE_DIR}e{MAX_EPOCHS}_val_loader20_"
     f"bs{BATCH_SIZE}_"
     f"k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s).pt"
+    "vgg16.pt"
 )
 
 # Start with a pretrained model and only update the final layer weights

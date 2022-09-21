@@ -1,5 +1,4 @@
 FROM python:3.9-slim-buster
-WORKDIR /data/data
 
 LABEL com.nvidia.volumes.needed="nvidia_driver"
 ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
@@ -18,4 +17,4 @@ RUN pip3 install --upgrade pip
 COPY requirements_prod.txt /requirements_prod.txt
 RUN pip3 install -r /requirements_prod.txt
 
-CMD ["python", "/data/data/__main__.py"]
+CMD ["python", "/cocpit/__main__.py"]

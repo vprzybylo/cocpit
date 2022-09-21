@@ -1,5 +1,4 @@
 FROM python:3.9-slim-buster
-WORKDIR /data/data
 
 LABEL com.nvidia.volumes.needed="nvidia_driver"
 ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
@@ -22,4 +21,4 @@ RUN pip3 install tensorflow tensorflow-datasets jupyterlab pandas numpy matplotl
 EXPOSE 8890
 
 RUN jupyter lab build -y
-CMD ["sh","-c", "jupyter lab --notebook-dir=/data/data/ --ip=0.0.0.0 --no-browser --allow-root --port=8890 --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.allow_origin='*'"]
+CMD ["sh","-c", "jupyter lab --notebook-dir=/cocpit --ip=0.0.0.0 --no-browser --allow-root --port=8890 --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.allow_origin='*'"]

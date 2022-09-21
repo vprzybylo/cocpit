@@ -58,7 +58,10 @@ class GUI:
         try:
             return Image.open(self.all_paths[self.index])
         except FileNotFoundError:
-            print("This file was already moved and cannot be found. Please hit Next.")
+            print(
+                "This file was already moved and cannot be found. Please hit"
+                " Next."
+            )
             return
 
     def make_buttons(self) -> None:
@@ -100,10 +103,13 @@ class GUI:
         """
         clear_output()  # so that the next fig doesnt display below
         image = self.open_image()
-        _, ax1 = plt.subplots(constrained_layout=True, figsize=(5, 7), ncols=1, nrows=1)
+        _, ax1 = plt.subplots(
+            constrained_layout=True, figsize=(5, 7), ncols=1, nrows=1
+        )
         ax1.imshow(image)
         ax1.set_title(
-            f"Human Labeled as: {config.CLASS_NAMES[self.all_labels[self.index]]}\n"
+            "Human Labeled as:"
+            f" {config.CLASS_NAMES[self.all_labels[self.index]]}\n"
         )
         ax1.axis("off")
         plt.show()
@@ -118,10 +124,11 @@ class GUI:
         """
         filename = self.all_paths[self.index].split("/")[-1]
 
-        # data_dir = f"/data/data/cpi_data/training_datasets/hand_labeled_resized_{config.TAG}_sideplanes_copy/"
         data_dir = "/ai2es/night_precip_hand_labeled/2017/"
 
-        print(f"{data_dir}{config.CLASS_NAMES[self.all_labels[self.index]]}/{filename}")
+        print(
+            f"{data_dir}{config.CLASS_NAMES[self.all_labels[self.index]]}/{filename}"
+        )
         print(f"{data_dir}{change.new}/{filename}")
         try:
             shutil.move(

@@ -1,5 +1,4 @@
 FROM arm64v8/python:3.9
-WORKDIR /data/data
 
 RUN apt-get -y update && apt-get install -y curl
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
