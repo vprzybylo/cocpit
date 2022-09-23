@@ -60,7 +60,9 @@ class TestDataSet(Dataset):
             [
                 transforms.Resize((224, 224)),
                 transforms.ToTensor(),
-                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+                transforms.Normalize(
+                    [0.485, 0.456, 0.406], [0.229, 0.224, 0.225]
+                ),
             ]
         )
 
@@ -68,14 +70,14 @@ class TestDataSet(Dataset):
         return len(self.file_list)
 
     def __getitem__(self, idx):
-        if len(self.open_dir) == 1 or self.open_dir == "":
-            print(os.path.join(self.open_dir, self.file_list[idx]))
-            self.path = os.path.join(self.open_dir, self.file_list[idx])
+        if len([self.open_dir]) == 1 or self.open_dir == "":
+            path = os.path.join(self.open_dir, self.file_list[idx])
         else:
-            self.path = os.path.join(self.open_dir[idx], self.file_list[idx])
-        image = Image.open(self.path)
+            path = os.path.join(self.open_dir[idx], self.file_list[idx])
+
+        image = Image.open(path)
         tensor_image = self.transform(image)
-        return (tensor_image, self.path)
+        return (tensor_image, path)
 
 
 def get_data(phase: str) -> ImageFolderWithPaths:
@@ -113,7 +115,9 @@ def get_data(phase: str) -> ImageFolderWithPaths:
         ),
     }
 
-    return ImageFolderWithPaths(root=config.DATA_DIR, transform=transform_dict[phase])
+    return ImageFolderWithPaths(
+        root=config.DATA_DIR, transform=transform_dict[phase]
+    )
 
 
 def balanced_sampler(train_labels: List[int]) -> sampler.WeightedRandomSampler:
@@ -132,7 +136,10 @@ def balanced_sampler(train_labels: List[int]) -> sampler.WeightedRandomSampler:
     class_sample_counts = [0] * len(config.CLASS_NAMES)
     for target in train_labels:
         class_sample_counts[target] += 1
-    print("counts per class in training data (before sampler): ", class_sample_counts)
+    print(
+        "counts per class in training data (before sampler): ",
+        class_sample_counts,
+    )
 
     class_weights = 1.0 / torch.Tensor(class_sample_counts)
     train_samples_weights = [
@@ -146,8 +153,8 @@ def balanced_sampler(train_labels: List[int]) -> sampler.WeightedRandomSampler:
 def seed_worker(worker_id) -> None:
     torch_seed = torch.initial_seed()
     random.seed(torch_seed + worker_id)
-    if torch_seed >= 2**30:  # make sure torch_seed + workder_id < 2**32
-        torch_seed = torch_seed % 2**30
+    if torch_seed >= 2 ** 30:  # make sure torch_seed + workder_id < 2**32
+        torch_seed = torch_seed % 2 ** 30
     np.random.seed(torch_seed + worker_id)
 
 

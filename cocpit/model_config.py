@@ -54,9 +54,11 @@ class ModelConfig:
         """
         Number of model parameters to update
         """
-        return sum(p.numel() for p in self.model.parameters() if p.requires_grad)
+        return sum(
+            p.numel() for p in self.model.parameters() if p.requires_grad
+        )
 
-    def set_optimizer(self, lr=0.01) -> None:
+    def set_optimizer(self, lr=0.01, weight_decay=0.0) -> None:
         """
         Model optimizer for stochastic gradient decent
 
@@ -64,7 +66,11 @@ class ModelConfig:
             lr (float): the learning rate for SGD
         """
         self.optimizer = optim.SGD(
-            self.update_params(), lr=lr, momentum=0.9, nesterov=True
+            self.update_params(),
+            lr=lr,
+            momentum=0.9,
+            nesterov=True,
+            weight_decay=weight_decay,
         )
 
     def set_criterion(self) -> None:

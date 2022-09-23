@@ -76,6 +76,9 @@ MAX_EPOCHS_TUNE = [20, 30, 40]
 # dropout rate (in model_config)
 DROP_RATE_TUNE = [0.0, 0.3, 0.5]
 
+# dropout rate (in model_config)
+WEIGHT_DECAY_TUNE = [1e-5, 1e-3, 1e-2, 1e-1]
+
 # learning rate (in model_config)
 LR_TUNE = [0.001, 0.01, 0.1]
 
@@ -101,13 +104,22 @@ MODEL_NAMES_TUNE = [
     "densenet201",
 ]
 MODEL_NAMES = [
+    "resnet18",
+    "efficient",
+    "resnet34",
+    "resnet152",
+    "alexnet",
     "vgg16",
+    "vgg19",
+    "densenet169",
+    "densenet201",
 ]
 
 config_ray = {
     "BATCH_SIZE": tune.choice(BATCH_SIZE_TUNE),
     "MODEL_NAMES": tune.choice(MODEL_NAMES_TUNE),
     "LR": tune.choice(LR_TUNE),
+    "WEIGHT_DECAY": tune.choice(WEIGHT_DECAY_TUNE),
     "DROP_RATE": tune.choice(DROP_RATE_TUNE),
     "MAX_EPOCHS": tune.choice(MAX_EPOCHS_TUNE),
 }
@@ -128,7 +140,7 @@ MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
 VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/{TAG}/"
 
 # model to load
-MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[30]_bs[64]_k4_1model(s).pt"
+MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[30]_bs[64]_k0_1model(s).pt"
 
 MODEL_SAVENAME = (
     f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_"
@@ -222,6 +234,7 @@ if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
 
     experiment.log_parameters(params)
     experiment.add_tag(TAG)
+    experiment.add_tag("rain gauge 2 class")
 else:
     experiment = None
 

@@ -48,7 +48,10 @@ class GUI:
         try:
             return Image.open(self.all_paths[self.index])
         except FileNotFoundError:
-            print("This file was already moved and cannot be found. Please hit Next.")
+            print(
+                "This file was already moved and cannot be found. Please hit"
+                " Next."
+            )
             return
 
     def make_buttons(self) -> None:
@@ -80,11 +83,13 @@ class GUI:
         # split path from filename if paths coming from ai2es project
         self.filename = self.all_paths[self.index].split("/")[-1]
         output_path = os.path.join(
-            self.folder_dest, config.CLASS_NAME_MAP[b.description], self.filename
+            self.folder_dest,
+            config.CLASS_NAME_MAP[b.description],
+            self.filename,
         )
 
         copyfile(self.all_paths[self.index], output_path)
-        print(f"copying to {output_path}")
+        # print(f"copying to {output_path}")
         self.index = self.index + 1
         self.display_image()
 
@@ -117,7 +122,8 @@ class GUI:
                     )
                 except FileNotFoundError:
                     print(
-                        f"{os.path.join(self.folder_dest, config.CLASS_NAME_MAP[label], self.filename)} not found."
+                        f"{os.path.join(self.folder_dest, config.CLASS_NAME_MAP[label], self.filename)} not"
+                        " found."
                     )
 
     def display_image(self) -> None:
@@ -132,11 +138,14 @@ class GUI:
             )
             if self.precip is not None:
                 ax.set_title(
-                    f"{self.index}/{self.n_paths} \n {self.all_paths[self.index].split('/')[-1]} \n 1 minute accumulated precip [mm]: {self.precip[self.index]}"
+                    f"{self.index}/{self.n_paths} \n"
+                    f" {self.all_paths[self.index].split('/')[-1]} \n 1 minute"
+                    f" accumulated precip [mm]: {self.precip[self.index]}"
                 )
             else:
                 ax.set_title(
-                    f"{self.index}/{self.n_paths} \n {self.all_paths[self.index].split('/')[-1]}"
+                    f"{self.index}/{self.n_paths} \n"
+                    f" {self.all_paths[self.index].split('/')[-1]}"
                 )
             ax.imshow(image)
             ax.axis("off")
