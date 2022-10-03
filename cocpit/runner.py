@@ -8,9 +8,17 @@ from typing import List, Optional
 import pandas as pd
 from cocpit.plotting_scripts import confusion_matrix as confusion_matrix
 from sklearn.metrics import classification_report
-import itertools
-import numpy as np
-from itertools import chain
+import matplotlib.pyplot as plt
+
+
+plt_params = {
+    "axes.labelsize": "x-large",
+    "axes.titlesize": "large",
+    "xtick.labelsize": "large",
+    "ytick.labelsize": "large",
+}
+plt.rcParams["font.family"] = "serif"
+plt.rcParams.update(plt_params)
 
 
 def determine_phases() -> List[str]:
@@ -73,12 +81,26 @@ def class_report(model_name, labels, preds, fold: int) -> None:
     # transpose classes as columns and convert to df
     clf_report = pd.DataFrame(clf_report).iloc[:-1, :].T
 
+    cocpit.plotting_scripts.classification_report.classification_report_classes(
+        clf_report,
+        save_name=config.CLASSIFICATION_REPORT_SAVENAME,
+        save_fig=True,
+    )
+
     # add fold iteration and model name
     clf_report["fold"] = fold
     clf_report["model"] = model_name
 
     if config.SAVE_ACC:
         clf_report.to_csv(config.METRICS_SAVENAME, mode="a")
+
+    # log to comet
+    if config.LOG_EXP:
+        config.experiment.log_image(
+            config.CLASSIFICATION_REPORT_SAVENAME,
+            name="classification report",
+            image_format="pdf",
+        )
 
 
 def main(
@@ -110,7 +132,9 @@ def main(
             # put model in correct mode based on if training or validating
             c.model.train() if phase == "train" else c.model.eval()
             if phase == "train":
-                train = cocpit.train.Train(f, epoch, epochs, model_name, kfold, c)
+                train = cocpit.train.Train(
+                    f, epoch, epochs, model_name, kfold, c
+                )
                 train.run()
             else:
                 val = cocpit.validate.Validation(

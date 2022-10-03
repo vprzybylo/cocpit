@@ -11,6 +11,17 @@ import cocpit.plotting_scripts.grid_shader as grid_shader
 from typing import Dict, Optional
 
 
+# plt_params = {
+#     "axes.labelsize": "x-large",
+#     "axes.titlesize": "x-large",
+#     "xtick.labelsize": "x-large",
+#     "ytick.labelsize": "x-large",
+#     "legend.title_fontsize": 12,
+# }
+plt.rcParams["font.family"] = "serif"
+# plt.rcParams.update(plt_params)
+
+
 def manipulate_df(df: pd.DataFrame, avg: Optional[str]):
     """
     Eliminate some metrics based on averaging
@@ -88,7 +99,11 @@ def model_metric_folds(
 
 
 def plot_dd(
-    ax: plt.Axes, dd: pd.DataFrame, title: str, save_name: str, save_fig: bool = False
+    ax: plt.Axes,
+    dd: pd.DataFrame,
+    title: str,
+    save_name: str,
+    save_fig: bool = False,
 ):
     """
     Plot model with respect to F1-score, precision, and recall
@@ -109,14 +124,18 @@ def plot_dd(
     plt.setp(ax.get_legend().get_texts(), fontsize="14")  # for legend text
     plt.setp(ax.get_legend().get_title(), fontsize="16")  # for legend title
 
-    g.yaxis.grid(True, linestyle="-", which="major", color="lightgrey", alpha=0.5)
+    g.yaxis.grid(
+        True, linestyle="-", which="major", color="lightgrey", alpha=0.5
+    )
     g.set_ylim(0.75, 1.00)
     g.set_title(title)
     if save_fig:
         plt.savefig(save_name, dpi=300, bbox_inches="tight")
 
 
-def classification_report_classes(clf_report, save_name, save_fig=False) -> None:
+def classification_report_classes(
+    clf_report, save_name, save_fig=False
+) -> None:
     """
     Plot precision, recall, and f1-score for each class from 1 model
     Average across folds and include accuracy, macro avg, and weighted avg total
@@ -130,6 +149,7 @@ def classification_report_classes(clf_report, save_name, save_fig=False) -> None
     _, ax = plt.subplots(figsize=(9, 7))
     # .iloc[:-1, :] to exclude support
     clf_report = pd.DataFrame(clf_report).iloc[:-1, :]
+    sns.set(font="Serif")
 
     ax = sns.heatmap(
         clf_report,
@@ -142,8 +162,9 @@ def classification_report_classes(clf_report, save_name, save_fig=False) -> None
         vmin=0.80,
         vmax=1.00,
     )
-    ax.figure.axes[-1].set_ylabel(" ", size=20)
-    sns.set(font_scale=2)
-    ax.set_title("Weighted")
+    ax.figure.axes[-1].set_ylabel(" ")
+    plt.setp(ax.get_yticklabels(), rotation=0)
+    sns.set(font_scale=4)
+    # ax.set_title("Weighted")
     if save_fig:
         plt.savefig(save_name, dpi=300, bbox_inches="tight")
