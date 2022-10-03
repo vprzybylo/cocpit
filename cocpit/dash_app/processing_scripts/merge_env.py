@@ -1,87 +1,89 @@
-'''merge environmental data with particle predictions and properties from ML model based on filename'''
+"""merge environmental data with particle predictions and properties from ML model based on filename"""
 import pandas as pd
 
 
 def merge_env(df, df_env, campaign):
-    '''merge'''
-    df = df.merge(df_env, on='filename')
-    df.to_parquet(f'../../final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet')
+    """merge"""
+    df = df.merge(df_env, on="filename")
+    df.to_parquet(
+        f"../../final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet"
+    )
     print(df)
 
 
 def read_campaign(campaign):
-    '''read df of particle properties from ML model based on campaign'''
+    """read df of particle properties from ML model based on campaign"""
     columns = [
-        'filename',
-        'date',
-        'Frame Width',
-        'Frame Height',
-        'Particle Width',
-        'Particle Height',
-        'Cutoff',
-        'Aggregate',
-        'Budding',
-        'Bullet Rosette',
-        'Column',
-        'Compact Irregular',
-        'Fragment',
-        'Planar Polycrystal',
-        'Rimed',
-        'Sphere',
-        'Classification',
-        'Blur',
-        'Contours',
-        'Edges',
-        'Std',
-        'Contour Area',
-        'Contrast',
-        'Circularity',
-        'Solidity',
-        'Complexity',
-        'Equivalent Diameter',
-        'Convex Perimeter',
-        'Hull Area',
-        'Perimeter',
-        'Aspect Ratio',
-        'Extreme Points',
-        'Area Ratio',
-        'Roundness',
-        'Perimeter-Area Ratio',
+        "filename",
+        "date",
+        "Frame Width",
+        "Frame Height",
+        "Particle Width",
+        "Particle Height",
+        "Cutoff",
+        "Aggregate",
+        "Budding",
+        "Bullet Rosette",
+        "Column",
+        "Compact Irregular",
+        "Fragment",
+        "Planar Polycrystal",
+        "Rimed",
+        "Sphere",
+        "Classification",
+        "Blur",
+        "Contours",
+        "Edges",
+        "Std",
+        "Contour Area",
+        "Contrast",
+        "Circularity",
+        "Solidity",
+        "Complexity",
+        "Equivalent Diameter",
+        "Convex Perimeter",
+        "Hull Area",
+        "Perimeter",
+        "Aspect Ratio",
+        "Extreme Points",
+        "Area Ratio",
+        "Roundness",
+        "Perimeter-Area Ratio",
     ]
 
     dtypes = {
-        'Frame Width': 'float64',
-        'Frame Height': 'float64',
-        'Particle Width': 'float64',
-        'Particle Height': 'float64',
-        'Cutoff': 'float64',
-        'Aggregate': 'float64',
-        'Budding': 'float64',
-        'Bullet Rosette': 'float64',
-        'Column': 'float64',
-        'Compact Irregular': 'float64',
-        'Fragment': 'float64',
-        'Planar Polycrystal': 'float64',
-        'Rimed': 'float64',
-        'Sphere': 'float64',
-        'Blur': 'float64',
-        'Contours': 'float64',
-        'Edges': 'float64',
-        'Std': 'float64',
-        'Contour Area': 'float64',
-        'Contrast': 'float64',
-        'Circularity': 'float64',
-        'Solidity': 'float64',
-        'Complexity': 'float64',
-        'Equivalent Diameter': 'float64',
-        'Convex Perimeter': 'float64',
-        'Hull Area': 'float64',
-        'Perimeter': 'float64',
-        'Aspect Ratio': 'float64',
-        'Extreme Points': 'float64',
-        'Area Ratio': 'float64',
-        'Roundness': 'float64',
-        'Perimeter-Area Ratio': 'float64',
+        "Frame Width": "float16",
+        "Frame Height": "float16",
+        "Particle Width": "float16",
+        "Particle Height": "float16",
+        "Cutoff": "float16",
+        "Aggregate": "float16",
+        "Budding": "float16",
+        "Bullet Rosette": "float16",
+        "Column": "float16",
+        "Compact Irregular": "float16",
+        "Fragment": "float16",
+        "Planar Polycrystal": "float16",
+        "Rimed": "float16",
+        "Sphere": "float16",
+        "Blur": "float16",
+        "Contours": "float16",
+        "Edges": "float16",
+        "Std": "float16",
+        "Contour Area": "float16",
+        "Contrast": "float16",
+        "Circularity": "float16",
+        "Solidity": "float16",
+        "Complexity": "float16",
+        "Equivalent Diameter": "float16",
+        "Convex Perimeter": "float16",
+        "Hull Area": "float16",
+        "Perimeter": "float16",
+        "Aspect Ratio": "float16",
+        "Extreme Points": "float16",
+        "Area Ratio": "float16",
+        "Roundness": "float16",
+        "Perimeter-Area Ratio": "float16",
     }
     return pd.read_csv(
         f"../../final_databases/vgg16/v1.4.0/{campaign}.csv",
@@ -93,27 +95,27 @@ def read_campaign(campaign):
 
 
 def read_env(campaign):
-    '''read environmental data from Carl
+    """read environmental data from Carl
     - Drop date column due to it already being in particle property df
-    - Carl's is truncated down to day not msec'''
+    - Carl's is truncated down to day not msec"""
     columns = [
-        'filename',
-        'Date',
-        'Latitude',
-        'Longitude',
-        'Altitude',
-        'Pressure',
-        'Temperature',
-        'Ice Water Content',
+        "filename",
+        "Date",
+        "Latitude",
+        "Longitude",
+        "Altitude",
+        "Pressure",
+        "Temperature",
+        "Ice Water Content",
     ]
 
     dtypes = {
-        'Latitude': 'float64',
-        'Longitude': 'float64',
-        'Altitude': 'float64',
-        'Pressure': 'float64',
-        'Temperature': 'float64',
-        'Ice Water Content': 'float64',
+        "Latitude": "float16",
+        "Longitude": "float16",
+        "Altitude": "float16",
+        "Pressure": "float16",
+        "Temperature": "float16",
+        "Ice Water Content": "float16",
     }
 
     return pd.read_csv(
@@ -121,7 +123,7 @@ def read_env(campaign):
         names=columns,
         dtype=dtypes,
         skiprows=1,
-    ).drop('Date', axis=1)
+    ).drop("Date", axis=1)
 
 
 def main():
@@ -130,6 +132,6 @@ def main():
     merge_env(df, df_env, campaign)
 
 
-if '__name__ == __main__':
-    campaign = 'MPACE'
+if "__name__ == __main__":
+    campaign = "MPACE"
     main()
