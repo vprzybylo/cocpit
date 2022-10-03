@@ -1,5 +1,6 @@
 import csv
 import time
+from cocpit import config as config
 
 
 class EpochTime:
@@ -12,7 +13,11 @@ class EpochTime:
     def write_times(self, model_name: str, kfold: int = 0) -> None:
         """write time to train with respective modelname, epoch, and kfold to file"""
         time_elapsed = time.time() - self.since_total
-        with open("/data/data/saved_timings/model_timing.csv", "a", newline="") as file:
+        with open(
+            f"{config.BASE_DIR}/saved_timings/model_timing.csv",
+            "a",
+            newline="",
+        ) as file:
             writer = csv.writer(file)
             writer.writerow([model_name, kfold, time_elapsed])
 
