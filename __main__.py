@@ -39,9 +39,7 @@ def _preprocess_sheets(df_path: str, campaign: str) -> None:
     # if sheets were processed using rois in IDL, change 'sheets' to 'ROI_PNGS'
     # sheet_dir and save_dir can't go in config since using campaign var
     sheet_dir = f"{config.BASE_DIR}/cpi_data/campaigns/{campaign}/sheets/"
-    save_dir = (
-        f"{config.BASE_DIR}/cpi_data/campaigns/{campaign}/single_imgs_{config.TAG}/"
-    )
+    save_dir = f"{config.BASE_DIR}/cpi_data/campaigns/{campaign}/single_imgs_{config.TAG}/"
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
@@ -77,14 +75,18 @@ def kfold_training(batch_size: int, model_name: str, epochs: int) -> None:
         print("KFOLD iteration: ", kfold)
 
         # apply appropriate transformations for training and validation sets
-        f = cocpit.fold_setup.FoldSetup(batch_size, kfold, train_indices, val_indices)
+        f = cocpit.fold_setup.FoldSetup(
+            batch_size, kfold, train_indices, val_indices
+        )
         f.split_data()
         f.update_save_names()
         f.create_dataloaders()
         model_setup(f, model_name, epochs)
 
 
-def model_setup(f: cocpit.fold_setup.FoldSetup, model_name: str, epochs: int) -> None:
+def model_setup(
+    f: cocpit.fold_setup.FoldSetup, model_name: str, epochs: int
+) -> None:
     """
     Create instances for model configurations and training/validation. Runs model.
 
@@ -159,7 +161,6 @@ def _geometric_attributes(df_path: str, open_dir: str) -> None:
     """
     Calculates geometric particle properties and appends to the databases
      - e.g., roundness, aspect ratio, area ratio, etc.
-     - see cocpit/geometric_attributes.py, which calls cocpit/pic.py for calculations
 
     Args:
         df_path (str): path to save df to
@@ -199,7 +200,9 @@ def main() -> None:
     for campaign in config.CAMPAIGNS:
         print("campaign: ", campaign)
         # directory where the individual images live for each campaign
-        open_dir = f"/data/data/cpi_data/campaigns/{campaign}/single_imgs_v1.4.0/"
+        open_dir = (
+            f"/cocpit/cpi_data/campaigns/{campaign}/single_imgs_{config.TAG}/"
+        )
 
         # create dir for final databases
         df_path = os.path.join(config.FINAL_DIR, f"{campaign}.csv")
