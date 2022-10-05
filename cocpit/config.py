@@ -50,7 +50,7 @@ BATCH_SIZE = [64]
 BATCH_SIZE_TUNE = [32, 64, 128, 256]
 
 # number of epochs to train model
-MAX_EPOCHS = [3]
+MAX_EPOCHS = [25]
 MAX_EPOCHS_TUNE = [20, 30, 40]
 
 # dropout rate (in model_config)
@@ -99,7 +99,9 @@ config_ray = {
 
 
 # directory that holds the training data
-DATA_DIR = "/DRIVE/site_analysis/corridor_LIE_east/gui_label/training_data/"
+DATA_DIR = (
+    "/DRIVE/site_analysis/corridor_LIE_east/training_data_py/training_data/"
+)
 # DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # whether to save the model
@@ -108,17 +110,18 @@ SAVE_MODEL = True
 # directory to save the trained model to
 MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
 
+# model description
+MODEL_DESC = f"LIE_6class"
+
 # directory to save validation data to
 # for later inspection of predictions
 VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/{TAG}/"
 
-# model to load
-MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[25]_bs[64]_k{KFOLD}_{MODEL_NAMES_SAVE}.pt"
 # {len(MODEL_NAMES)}model(s)
-MODEL_SAVENAME = f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_bs{BATCH_SIZE}_k{KFOLD}_{MODEL_NAMES_SAVE}.pt"
+MODEL_SAVENAME = f"{MODEL_SAVE_DIR}{MODEL_DESC}_e{MAX_EPOCHS}_bs{BATCH_SIZE}_k{KFOLD}_{MODEL_NAMES_SAVE}.pt"
 # {len(MODEL_NAMES)}model(s)
 
-VAL_LOADER_SAVENAME = f"{VAL_LOADER_SAVE_DIR}e{MAX_EPOCHS}_val_loader20_bs{BATCH_SIZE}_k{KFOLD}_{MODEL_NAMES_SAVE}"
+VAL_LOADER_SAVENAME = f"{VAL_LOADER_SAVE_DIR}{MODEL_DESC}_e{MAX_EPOCHS}_val_loader20_bs{BATCH_SIZE}_k{KFOLD}_{MODEL_NAMES_SAVE}"
 # REMOVE vgg16 at end
 
 # Start with a pretrained model and only update the final layer weights
@@ -136,24 +139,24 @@ ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"
 
 #  filename for saving training accuracy and loss
 ACC_SAVENAME_TRAIN = (
-    f"{ACC_SAVE_DIR}train_acc_loss_e{max(MAX_EPOCHS)}_"
+    f"{ACC_SAVE_DIR}{MODEL_DESC}_train_acc_loss_e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
     f"{MODEL_NAMES_SAVE}.csv"
 )
 #  output filename for validation accuracy and loss
 ACC_SAVENAME_VAL = (
-    f"{ACC_SAVE_DIR}val_acc_loss_e{max(MAX_EPOCHS)}_"
+    f"{ACC_SAVE_DIR}{MODEL_DESC}_val_acc_loss_e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
     f"{MODEL_NAMES_SAVE}.csv"
 )
 # output filename for precision, recall, F1 file
 METRICS_SAVENAME = (
-    f"{ACC_SAVE_DIR}val_metrics_e{max(MAX_EPOCHS)}_"
+    f"{ACC_SAVE_DIR}{MODEL_DESC}_val_metrics_e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
     f"{MODEL_NAMES_SAVE}.csv"
 )
 
-CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
+CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/{MODEL_DESC}_e{MAX_EPOCHS}_bs{BATCH_SIZE}_k{KFOLD}_{MODEL_NAMES_SAVE}_conf_matrix.png"
 
 # where to save final databases to
 FINAL_DIR = f"{BASE_DIR}/final_databases/{MODEL_NAMES_SAVE}/{TAG}/"
