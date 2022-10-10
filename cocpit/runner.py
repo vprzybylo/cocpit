@@ -9,7 +9,8 @@ import pandas as pd
 from cocpit.plotting_scripts import confusion_matrix as confusion_matrix
 from sklearn.metrics import classification_report
 import matplotlib.pyplot as plt
-
+import itertools
+import numpy as np
 
 plt_params = {
     "axes.labelsize": "x-large",
@@ -37,14 +38,25 @@ def conf_matrix(labels, preds, norm: Optional[str] = None) -> None:
     if not using kfold, it will only plot the validation dataset (e.g, 20%)
 
     Args:
-       norm (str): 'true', 'pred', or None.
+        labels (List[List]): nested list of truth labels across batches from the last epoch
+        preds (List[List]): nested list of predicted labels across batches from the last epoch
+        norm (str): 'true', 'pred', or None.
             Normalizes confusion matrix over the true (rows),
             predicted (columns) conditions or all the population.
             If None, confusion matrix will not be normalized.
     """
+    # needed to flatten across batches
     _ = confusion_matrix.conf_matrix(
-        [x for xs in labels for x in xs][0],
-        [x for xs in preds for x in xs][0],
+        [
+            item
+            for sublist in list(itertools.chain(*labels))
+            for item in sublist
+        ],
+        [
+            item
+            for sublist in list(itertools.chain(*preds))
+            for item in sublist
+        ],
         norm=norm,
         save_fig=True,
     )
@@ -64,12 +76,24 @@ def class_report(model_name, labels, preds, fold: int) -> None:
     add model name and fold iteration to the report
 
     Args:
+        model_name (str): name of model architecture
+        labels (List[List]): nested list of truth labels across batches from the last epoch
+        preds (List[List]): nested list of predicted labels across batches from the last epoch
         fold (int): which fold to use in resampling procedure
     """
 
+    # needed to flatten across batches and epochs
     clf_report = classification_report(
-        [x for xs in labels for x in xs][0],
-        [x for xs in preds for x in xs][0],
+        [
+            item
+            for sublist in list(itertools.chain(*labels))
+            for item in sublist
+        ],
+        [
+            item
+            for sublist in list(itertools.chain(*preds))
+            for item in sublist
+        ],
         digits=3,
         target_names=config.CLASS_NAMES,
         output_dict=True,
@@ -141,8 +165,9 @@ def main(
                     f, epoch, epochs, model_name, kfold, val_best_acc, c
                 )
                 val_best_acc = val.run()
-                val_labels.append(val.epoch_labels)
-                val_preds.append(val.epoch_preds)
+                if epoch == epochs - 1:
+                    val_labels.append(val.epoch_labels)
+                    val_preds.append(val.epoch_preds)
             t.print_time_one_epoch()
 
     conf_matrix(val_labels, val_preds)
