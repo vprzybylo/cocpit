@@ -70,7 +70,7 @@ BATCH_SIZE = [64]
 BATCH_SIZE_TUNE = [32, 64, 128, 256]
 
 # number of epochs to train model
-MAX_EPOCHS = [30]
+MAX_EPOCHS = [1]
 MAX_EPOCHS_TUNE = [20, 30, 40]
 
 # dropout rate (in model_config)
@@ -83,20 +83,25 @@ WEIGHT_DECAY_TUNE = [1e-5, 1e-3, 1e-2, 1e-1]
 LR_TUNE = [0.001, 0.01, 0.1]
 
 # names of each ice crystal class
-CLASS_NAMES = ["no precipitation", "precipitation"]
+CLASS_NAMES = [
+    "no precipitation",
+    "obstructed",
+    "precipitation",
+]
 
 # any abbreviations in folder names where the data lives for each class
 CLASS_NAME_MAP = {
     "no precipitation": "no_precip",
+    "obstructed": "obstructed",
     "precipitation": "precip",
 }
 
 # models to train
 MODEL_NAMES_TUNE = [
     "resnet18",
-    "efficient",
     "resnet34",
     "resnet152",
+    "efficient",
     "alexnet",
     "vgg16",
     "vgg19",
@@ -104,15 +109,7 @@ MODEL_NAMES_TUNE = [
     "densenet201",
 ]
 MODEL_NAMES = [
-    "resnet18",
-    "efficient",
-    "resnet34",
-    "resnet152",
-    "alexnet",
     "vgg16",
-    "vgg19",
-    "densenet169",
-    "densenet201",
 ]
 
 config_ray = {
@@ -126,11 +123,11 @@ config_ray = {
 
 
 # directory that holds the training data
-DATA_DIR = f"{BASE_DIR}/unsupervised/"
+DATA_DIR = f"{BASE_DIR}/codebook_dataset/combined_extra/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # whether to save the model
-SAVE_MODEL = True
+SAVE_MODEL = False
 
 # directory to save the trained model to
 MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
@@ -146,14 +143,14 @@ MODEL_SAVENAME = (
     f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_"
     f"bs{BATCH_SIZE}_"
     f"k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s).pt"
+    f"{len(MODEL_NAMES)}model(s)_evidential.pt"
 )
 
 VAL_LOADER_SAVENAME = (
     f"{VAL_LOADER_SAVE_DIR}e{MAX_EPOCHS}_val_loader20_"
     f"bs{BATCH_SIZE}_"
     f"k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s).pt"
+    f"{len(MODEL_NAMES)}model(s)_evidential.pt"
 )
 
 # Start with a pretrained model and only update the final layer weights
@@ -164,7 +161,7 @@ FEATURE_EXTRACT = False
 USE_PRETRAINED = False
 
 # write training loss and accuracy to csv
-SAVE_ACC = True
+SAVE_ACC = False
 
 # directory for saving training accuracy and loss csv's
 ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"
@@ -173,28 +170,29 @@ ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"
 ACC_SAVENAME_TRAIN = (
     f"{ACC_SAVE_DIR}train_acc_loss_e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s).csv"
+    f"{len(MODEL_NAMES)}model(s)_evidential.csv"
 )
 #  output filename for validation accuracy and loss
 ACC_SAVENAME_VAL = (
     f"{ACC_SAVE_DIR}val_acc_loss_e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s).csv"
+    f"{len(MODEL_NAMES)}model(s)_evidential.csv"
 )
 # output filename for precision, recall, F1 file
 METRICS_SAVENAME = (
     f"{ACC_SAVE_DIR}val_metrics_e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s).csv"
+    f"{len(MODEL_NAMES)}model(s)_evidential.csv"
 )
 
 CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
+CLASSIFICATION_REPORT_SAVENAME = f"{BASE_DIR}/plots/classification_report.png"
 
 # where to save final databases to
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
 
 # log experiment to comet for tracking?
-LOG_EXP = True
+LOG_EXP = False
 NOTEBOOK = os.path.basename(sys.argv[0]) != "__main__.py"
 load_dotenv()  # loading sensitive keys from .env file
 if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
@@ -234,7 +232,6 @@ if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
 
     experiment.log_parameters(params)
     experiment.add_tag(TAG)
-    experiment.add_tag("rain gauge 2 class")
 else:
     experiment = None
 

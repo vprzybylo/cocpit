@@ -5,6 +5,7 @@ from cocpit import config as config
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 import csv
 from ray import tune
+import torch.nn.functional as F
 
 
 class Validation(Metrics):
@@ -28,25 +29,54 @@ class Validation(Metrics):
         self.c = c
         self.epoch_preds = []  # validation preds for 1 epoch for plotting
         self.epoch_labels = []  # validation labels for 1 epoch for plotting
+        self.epoch_probs = (
+            []
+        )  # validation probabilities for 1 epoch for plotting
+        self.epoch_uncertainties = (
+            []
+        )  # validation uncertainty for 1 epoch for plotting
 
     def predict(self) -> None:
         """make predictions"""
 
         with torch.no_grad():
+
             outputs = self.c.model(self.inputs)
-            self.loss = self.c.criterion(outputs, self.labels)
+            y = torch.eye(len(config.CLASS_NAMES))
+            y = y[self.labels].to(config.DEVICE)
+
+            self.loss = self.c.criterion(
+                outputs, y.float(), self.epoch, annealing_step=0.01
+            )
             _, self.preds = torch.max(outputs, 1)
+            self.probs = F.softmax(outputs, dim=1).max(dim=1).values
+            self.uncertainty(outputs)
+
+    def uncertainty(self, outputs):
+        """
+        Calculate uncertainty, which is inversely proportional to the total evidence
+        Model more confident the more evidence output by relu activation
+        """
+        evidence = F.relu(outputs)
+        alpha = evidence + 1
+        # uncertainty
+        self.u = len(config.CLASS_NAMES) / torch.sum(
+            alpha, dim=1, keepdim=True
+        )
 
     def append_preds(self) -> None:
         """save each batch prediction and labels for plots"""
         self.epoch_preds.append(self.preds.cpu().tolist())
         self.epoch_labels.append(self.labels.cpu().tolist())
+        self.epoch_probs.append(self.probs)
+        self.epoch_uncertainties.append(self.u)
 
     def save_model(self) -> None:
         """save/load best model weights after improvement in val accuracy"""
         if self.epoch_acc > self.val_best_acc and config.SAVE_MODEL:
             print(
-                f"Epoch acc:{self.epoch_acc} > best acc: {self.val_best_acc}. Saving model."
+                f"Epoch acc:{self.epoch_acc} > best acc: {self.val_best_acc}."
+                " Saving model."
             )
             self.val_best_acc = self.epoch_acc
 

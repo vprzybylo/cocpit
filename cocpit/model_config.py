@@ -1,4 +1,5 @@
 import cocpit.config as config
+import cocpit
 import torch
 from torch import nn, optim
 import torchvision
@@ -74,7 +75,7 @@ class ModelConfig:
         )
 
     def set_criterion(self) -> None:
-        self.criterion = nn.CrossEntropyLoss()
+        self.criterion = cocpit.loss.edl_digamma_loss
 
     def set_dropout(self, drop_rate=0.1) -> None:
         """

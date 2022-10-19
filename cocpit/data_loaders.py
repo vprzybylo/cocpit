@@ -151,6 +151,10 @@ def balanced_sampler(train_labels: List[int]) -> sampler.WeightedRandomSampler:
 
 
 def seed_worker(worker_id) -> None:
+    """
+    DataLoader will reseed workers following Randomness in multi-process data loading algorithm.
+    Used in worker_init_fn() to preserve reproducibility
+    """
     torch_seed = torch.initial_seed()
     random.seed(torch_seed + worker_id)
     if torch_seed >= 2 ** 30:  # make sure torch_seed + workder_id < 2**32

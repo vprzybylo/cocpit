@@ -1,10 +1,9 @@
 import numpy as np
 import torch
 from cocpit.performance_metrics import Metrics
-from dataclasses import dataclass
-from typing import Dict
 from cocpit import config as config
 import csv
+import torch.nn.functional as F
 
 
 class Train(Metrics):
@@ -46,10 +45,30 @@ class Train(Metrics):
         """perform forward operator and make predictions"""
         with torch.set_grad_enabled(True):
             outputs = self.c.model(self.inputs)
-            self.loss = self.c.criterion(outputs, self.labels)
+            y = torch.eye(len(config.CLASS_NAMES))
+            y = y[self.labels].to(config.DEVICE)
+            self.loss = self.c.criterion(
+                outputs, y.float(), self.epoch, annealing_step=0.01
+            )
             _, self.preds = torch.max(outputs, 1)
+            # self.probs = F.softmax(outputs, dim=1).max(dim=1)
+            # self.uncertainty(outputs)
             self.loss.backward()  # compute updates for each parameter
             self.c.optimizer.step()  # make the updates for each parameter
+
+    def uncertainty(self, outputs):
+        """
+        Calculate uncertainty, which is inversely proportional to the total evidence
+        Model more confident the more evidence output by relu activation
+        """
+        evidence = F.relu(outputs)
+        alpha = (
+            evidence + 1
+        )  # alpha summed over classes is the Dirichlet strength
+        # uncertainty
+        self.u = len(config.CLASS_NAMES) / torch.sum(
+            alpha, dim=1, keepdim=True
+        )
 
     def iterate_batches(self, print_label_count: bool = False) -> None:
         """iterate over a batch in a dataloader and train
