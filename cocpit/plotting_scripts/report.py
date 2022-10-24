@@ -104,11 +104,18 @@ def class_report(model_name, labels, preds, fold: int) -> None:
         )
 
 
+# %%
 def uncertainty_prob_scatter(u, p):
-    plt.scatter(
-        [torch.Tensor(t).cpu() for t in p], [torch.Tensor(t).cpu() for t in u]
+    _, ax = plt.subplots()
+    ax.scatter(
+        [torch.Tensor(t).cpu().numpy() for t in p][0],
+        [torch.Tensor(t).cpu().numpy() for t in u][0],
     )
     plt.savefig("/ai2es/plots/uncertainty_probability_scatter.png")
+    plt.show()
+
+
+# %%
 
 
 def hist(var):

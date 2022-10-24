@@ -1,9 +1,11 @@
+"""Train model across batches"""
 import numpy as np
 import torch
 from cocpit.performance_metrics import Metrics
 from cocpit import config as config
 import csv
 import torch.nn.functional as F
+from typing import Any
 
 
 class Train(Metrics):
@@ -25,7 +27,9 @@ class Train(Metrics):
         self.kfold = kfold
         self.c = c
 
-    def label_counts(self, label_cnts: np.ndarray, labels: torch.Tensor):
+    def label_counts(
+        self, label_cnts: np.ndarray, labels: torch.Tensor
+    ) -> np.ndarray:
         """
         Calculate the # of labels per batch to ensure weighted random sampler is correct
 
@@ -45,10 +49,13 @@ class Train(Metrics):
         """perform forward operator and make predictions"""
         with torch.set_grad_enabled(True):
             outputs = self.c.model(self.inputs)
-            y = torch.eye(len(config.CLASS_NAMES))
-            y = y[self.labels].to(config.DEVICE)
+            y_true = torch.eye(len(config.CLASS_NAMES))
+            y_true = y_true[self.labels].to(config.DEVICE)
             self.loss = self.c.criterion(
-                outputs, y.float(), self.epoch, annealing_step=0.01
+                outputs,
+                y_true.float(),
+                self.epoch,
+                annealing_step=config.ANNEALING_STEP,
             )
             _, self.preds = torch.max(outputs, 1)
             # self.probs = F.softmax(outputs, dim=1).max(dim=1)
@@ -56,7 +63,7 @@ class Train(Metrics):
             self.loss.backward()  # compute updates for each parameter
             self.c.optimizer.step()  # make the updates for each parameter
 
-    def uncertainty(self, outputs):
+    def uncertainty(self, outputs) -> None:
         """
         Calculate uncertainty, which is inversely proportional to the total evidence
         Model more confident the more evidence output by relu activation
@@ -116,7 +123,8 @@ class Train(Metrics):
                 )
                 file.close()
 
-    def run(self):
+    def run(self) -> None:
+        """Train model and save output"""
         self.iterate_batches()
         self.epoch_metrics()
         self.log_epoch_metrics("epoch_acc_train", "epoch_loss_train")

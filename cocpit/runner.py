@@ -7,7 +7,7 @@ import cocpit.config as config  # isort:split
 from typing import List
 from cocpit.plotting_scripts import report as report
 import matplotlib.pyplot as plt
-
+import pickle
 
 plt_params = {
     "axes.labelsize": "x-large",
@@ -81,11 +81,17 @@ def main(
     val_preds = report.flatten(val_preds)
 
     # plots
-    report.conf_matrix(val_labels, val_preds)
-    report.class_report(model_name, val_labels, val_preds, kfold)
-    report.uncertainty_prob_scatter(val_probs, val_uncertainties)
-    report.hist(val_probs)
-    report.hist(val_uncertainties)
+    # report.conf_matrix(val_labels, val_preds)
+    # report.class_report(model_name, val_labels, val_preds, kfold)
+    with open("val_probs.pickle", "wb") as handle:
+        pickle.dump(val_probs, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    with open("val_uncertainties.pickle", "wb") as handle:
+        pickle.dump(
+            val_uncertainties, handle, protocol=pickle.HIGHEST_PROTOCOL
+        )
+    # report.uncertainty_prob_scatter(val_probs, val_uncertainties)
+    # report.hist(val_probs)
+    # report.hist(val_uncertainties)
 
     try:
         t.print_time_all_epochs()

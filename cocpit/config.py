@@ -21,21 +21,21 @@ import sys
 BASE_DIR = "/ai2es"
 
 # /raid/NYSM/archive/nysm/netcdf/proc/ on hulk
-nc_file_dir = f"{BASE_DIR}/5_min_obs"
+NC_FILE_DIR = f"{BASE_DIR}/5_min_obs"
 
 # /raid/lgaudet/precip/Precip/NYSM_1min_data on hulk
-csv_file_dir = f"{BASE_DIR}/1_min_obs"
+CSV_FILE_DIR = f"{BASE_DIR}/1_min_obs"
 
 # where to write time  matched data
-write_path = f"{BASE_DIR}/matched_parquet/"
+WRITE_PATH = f"{BASE_DIR}/matched_parquet/"
 
 # root dir to raw images (before each year subdir)
-photo_dir = f"{BASE_DIR}/cam_photos/"
+PHOTO_DIR = f"{BASE_DIR}/cam_photos/"
 
 # where the mesonet obs live in parquet format
 # output from nysm_obs_to_parquet
-parquet_dir_5M = f"{BASE_DIR}/mesonet_parquet_5M"
-parquet_dir_1M = f"{BASE_DIR}/mesonet_parquet_1M"
+PARQUET_DIR_5M = f"{BASE_DIR}/mesonet_parquet_5M"
+PARQUET_DIR_1M = f"{BASE_DIR}/mesonet_parquet_1M"
 
 # ai2es version used in docker and git
 TAG = "v0.0.0"
@@ -70,7 +70,7 @@ BATCH_SIZE = [64]
 BATCH_SIZE_TUNE = [32, 64, 128, 256]
 
 # number of epochs to train model
-MAX_EPOCHS = [1]
+MAX_EPOCHS = [30]
 MAX_EPOCHS_TUNE = [20, 30, 40]
 
 # dropout rate (in model_config)
@@ -81,6 +81,10 @@ WEIGHT_DECAY_TUNE = [1e-5, 1e-3, 1e-2, 1e-1]
 
 # learning rate (in model_config)
 LR_TUNE = [0.001, 0.01, 0.1]
+
+# effect of the KL divergence in the loss
+# (e.g., >= epoch 10, prediction error term and evidence adjustment term equally weighted)
+ANNEALING_STEP = 10
 
 # names of each ice crystal class
 CLASS_NAMES = [
@@ -112,7 +116,7 @@ MODEL_NAMES = [
     "vgg16",
 ]
 
-config_ray = {
+CONFIG_RAY = {
     "BATCH_SIZE": tune.choice(BATCH_SIZE_TUNE),
     "MODEL_NAMES": tune.choice(MODEL_NAMES_TUNE),
     "LR": tune.choice(LR_TUNE),
@@ -127,7 +131,7 @@ DATA_DIR = f"{BASE_DIR}/codebook_dataset/combined_extra/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # whether to save the model
-SAVE_MODEL = False
+SAVE_MODEL = True
 
 # directory to save the trained model to
 MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
@@ -161,7 +165,7 @@ FEATURE_EXTRACT = False
 USE_PRETRAINED = False
 
 # write training loss and accuracy to csv
-SAVE_ACC = False
+SAVE_ACC = True
 
 # directory for saving training accuracy and loss csv's
 ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"
@@ -192,7 +196,7 @@ CLASSIFICATION_REPORT_SAVENAME = f"{BASE_DIR}/plots/classification_report.png"
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
 
 # log experiment to comet for tracking?
-LOG_EXP = False
+LOG_EXP = True
 NOTEBOOK = os.path.basename(sys.argv[0]) != "__main__.py"
 load_dotenv()  # loading sensitive keys from .env file
 if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
@@ -206,7 +210,7 @@ if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
         workspace=WORKSPACE,
     )
 
-    params = {
+    PARAMS = {
         variable: eval(variable)
         for variable in [
             "TAG",
@@ -230,12 +234,13 @@ if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
         ]
     }
 
-    experiment.log_parameters(params)
+    experiment.log_parameters(PARAMS)
     experiment.add_tag(TAG)
+    experiment.add_tag("evidential")
 else:
     experiment = None
 
-stnid = [
+STNID = [
     "ADDI",
     "ANDE",
     "BATA",

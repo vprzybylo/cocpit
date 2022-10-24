@@ -1,3 +1,4 @@
+"""validate on batches"""
 import os
 import torch
 from cocpit.performance_metrics import Metrics
@@ -6,6 +7,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 import csv
 from ray import tune
 import torch.nn.functional as F
+import numpy as np
 
 
 class Validation(Metrics):
@@ -42,17 +44,17 @@ class Validation(Metrics):
         with torch.no_grad():
 
             outputs = self.c.model(self.inputs)
-            y = torch.eye(len(config.CLASS_NAMES))
-            y = y[self.labels].to(config.DEVICE)
+            y_true = torch.eye(len(config.CLASS_NAMES))
+            y_true = y_true[self.labels].to(config.DEVICE)
 
             self.loss = self.c.criterion(
-                outputs, y.float(), self.epoch, annealing_step=0.01
+                outputs, y_true.float(), self.epoch, annealing_step=10
             )
             _, self.preds = torch.max(outputs, 1)
             self.probs = F.softmax(outputs, dim=1).max(dim=1).values
             self.uncertainty(outputs)
 
-    def uncertainty(self, outputs):
+    def uncertainty(self, outputs) -> None:
         """
         Calculate uncertainty, which is inversely proportional to the total evidence
         Model more confident the more evidence output by relu activation
@@ -63,6 +65,7 @@ class Validation(Metrics):
         self.u = len(config.CLASS_NAMES) / torch.sum(
             alpha, dim=1, keepdim=True
         )
+        # print("uncertainty", self.u)
 
     def append_preds(self) -> None:
         """save each batch prediction and labels for plots"""
@@ -71,7 +74,7 @@ class Validation(Metrics):
         self.epoch_probs.append(self.probs)
         self.epoch_uncertainties.append(self.u)
 
-    def save_model(self) -> None:
+    def save_model(self) -> float:
         """save/load best model weights after improvement in val accuracy"""
         if self.epoch_acc > self.val_best_acc and config.SAVE_MODEL:
             print(

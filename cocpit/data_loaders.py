@@ -55,7 +55,7 @@ class TestDataSet(Dataset):
     def __init__(self, open_dir: Union[str, List[str]], file_list: List[str]):
 
         self.open_dir = open_dir
-        self.file_list = list(file_list)
+        self.file_list = file_list
         self.transform = transforms.Compose(
             [
                 transforms.Resize((224, 224)),
@@ -70,6 +70,7 @@ class TestDataSet(Dataset):
         return len(self.file_list)
 
     def __getitem__(self, idx):
+        """return image and path at index"""
         if len([self.open_dir]) == 1 or self.open_dir == "":
             path = os.path.join(self.open_dir, self.file_list[idx])
         else:
@@ -92,7 +93,7 @@ def get_data(phase: str) -> ImageFolderWithPaths:
         data (tuple): (image, label, path)
     """
 
-    transform_dict = {
+    transform = {
         "train": transforms.Compose(
             [
                 transforms.Resize((224, 224)),
@@ -116,7 +117,7 @@ def get_data(phase: str) -> ImageFolderWithPaths:
     }
 
     return ImageFolderWithPaths(
-        root=config.DATA_DIR, transform=transform_dict[phase]
+        root=config.DATA_DIR, transform=transform[phase]
     )
 
 
@@ -150,7 +151,7 @@ def balanced_sampler(train_labels: List[int]) -> sampler.WeightedRandomSampler:
     )
 
 
-def seed_worker(worker_id) -> None:
+def seed_worker(worker_id: int) -> None:
     """
     DataLoader will reseed workers following Randomness in multi-process data loading algorithm.
     Used in worker_init_fn() to preserve reproducibility
@@ -182,8 +183,8 @@ def create_loader(
         torch.utils.data.DataLoader: a dataset to be iterated over using sampling strategy
 
     """
-    g = torch.Generator()
-    g.manual_seed(0)
+    gen = torch.Generator()
+    gen.manual_seed(0)
 
     return torch.utils.data.DataLoader(
         data,
@@ -192,7 +193,7 @@ def create_loader(
         num_workers=config.NUM_WORKERS,
         pin_memory=pin_memory,
         worker_init_fn=seed_worker,
-        generator=g,
+        generator=gen,
     )
 
 
