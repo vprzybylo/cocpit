@@ -89,6 +89,11 @@ def main(
         pickle.dump(
             val_uncertainties, handle, protocol=pickle.HIGHEST_PROTOCOL
         )
+    with open("val_labels.pickle", "wb") as handle:
+        pickle.dump(val_labels, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    with open("val_preds.pickle", "wb") as handle:
+        pickle.dump(val_preds, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
     # report.uncertainty_prob_scatter(val_probs, val_uncertainties)
     # report.hist(val_probs)
     # report.hist(val_uncertainties)

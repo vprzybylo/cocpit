@@ -5,7 +5,6 @@ import numpy as np
 import torch
 import torch.utils.data.sampler as samp
 
-import cocpit
 import cocpit.data_loaders as data_loaders
 
 import cocpit.config as config  # isort: split
@@ -65,7 +64,9 @@ class FoldSetup:
         """
         data = data_loaders.get_data("train")
         self.train_data = torch.utils.data.Subset(data, self.train_indices)
-        self.train_labels = list(map(data.targets.__getitem__, self.train_indices))
+        self.train_labels = list(
+            map(data.targets.__getitem__, self.train_indices)
+        )
 
         data = data_loaders.get_data("val")
         self.val_data = torch.utils.data.Subset(data, self.val_indices)
@@ -92,7 +93,9 @@ class FoldSetup:
             f"_{len(config.MODEL_NAMES)}model(s).pt"
         )
 
-    def train_loader(self, balance_weights: bool = True) -> torch.utils.data.DataLoader:
+    def train_loader(
+        self, balance_weights: bool = True
+    ) -> torch.utils.data.DataLoader:
         """
         - Create train loader that iterates images in batches
         - Balance the distribution of sampled images given imbalance
@@ -130,7 +133,10 @@ class FoldSetup:
 
     def create_dataloaders(self) -> None:
         """Create dict of train/val dataloaders based on split and sampler from StratifiedKFold"""
-        self.dataloaders = {"train": self.train_loader(), "val": self.val_loader()}
+        self.dataloaders = {
+            "train": self.train_loader(),
+            "val": self.val_loader(),
+        }
 
     def nofold_indices(self) -> None:
         """
@@ -139,7 +145,9 @@ class FoldSetup:
         - Shuffle first and then split dataset
         """
 
-        total_files = sum(len(files) for r, d, files in os.walk(config.DATA_DIR))
+        total_files = sum(
+            len(files) for r, d, files in os.walk(config.DATA_DIR)
+        )
         print(f"len files {total_files}")
 
         # randomly split indices for training and validation indices according to valid_size
@@ -149,5 +157,7 @@ class FoldSetup:
             random.shuffle(self.train_indices)
         else:
             self.train_indices, self.val_indices = train_test_split(
-                list(range(total_files)), test_size=config.VALID_SIZE, random_state=42
+                list(range(total_files)),
+                test_size=config.VALID_SIZE,
+                random_state=42,
             )

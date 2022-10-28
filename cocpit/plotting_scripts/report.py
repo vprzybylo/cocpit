@@ -11,9 +11,10 @@ import pandas as pd
 from cocpit import config as config
 from cocpit.plotting_scripts import classification_report as cr
 from cocpit.plotting_scripts import confusion_matrix as cm
-
+import seaborn as sns
 
 def flatten(var):
+    """flatten vars from batches"""
     return (
         [item for sublist in list(itertools.chain(*var)) for item in sublist],
     )
@@ -104,21 +105,26 @@ def class_report(model_name, labels, preds, fold: int) -> None:
         )
 
 
-# %%
 def uncertainty_prob_scatter(u, p):
+    """Plot probabilities vs uncertainties"""
     _, ax = plt.subplots()
-    ax.scatter(
-        [torch.Tensor(t).cpu().numpy() for t in p][0],
-        [torch.Tensor(t).cpu().numpy() for t in u][0],
-    )
+    max_probs = [torch.Tensor(t).cpu() for t in p][0].numpy()
+    uncertainty = [torch.Tensor(t).cpu() for t in u][0].numpy()
+    ax.scatter(max_probs,uncertainty)
+    # ax.set_ylim([0.0,1.0])
+    # ax.set_xlim([0.5, 1.0])
+    ax.set_xlabel("Softmax Probability", fontsize=16)
+    ax.set_ylabel("Evidential Uncertainty", fontsize=16)
+    ax.set_title(f'Validation Dataset: $n$ = {len(max_probs)}', fontsize=18)
     plt.savefig("/ai2es/plots/uncertainty_probability_scatter.png")
-    plt.show()
 
-
-# %%
+    _, ax = plt.subplots()
+    sns.kdeplot(max_probs, uncertainty)
+    plt.savefig("/ai2es/plots/uncertainty_probability_kde.png")
 
 
 def hist(var):
+    """plot histogram of uncertainty or probability"""
     _, ax = plt.subplots(1, 1)
     _ = ax.hist(
         [np.array(t) for t in torch.Tensor(var).cpu()],

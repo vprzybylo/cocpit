@@ -5,6 +5,7 @@ import torch
 from torch import nn, optim
 import torchvision
 from typing import List, Any
+from torch.optim import lr_scheduler
 
 
 class ModelConfig:
@@ -12,6 +13,7 @@ class ModelConfig:
     Model configurations for:
         - dropout
         - optimizer
+        - learning rate scheduler
         - device settings (cpu/gpu)
         - parameters to update
     Args:
@@ -22,6 +24,7 @@ class ModelConfig:
     def __init__(self, model: torchvision.models):
         self.model = model
         self.optimizer: torchvision.optimizer = None
+        self.scheduler: torch.optim.lr_scheduler = None
 
     def update_params(self, feature_extract: bool = False) -> List[Any]:
         """
