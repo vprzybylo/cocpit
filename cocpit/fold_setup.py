@@ -22,13 +22,12 @@ class FoldSetup:
     Setup training and validation dataloaders based on k-fold cross validation. Called in __main__.py
 
     Args:
-        batch_size (int): number of images read into memory at a time
         kfold (int): fold index in k-fold cross validation loop
         train_indices (List[int]): list of indices of data for training
         val_indices (List[int]): list of indices of data for validation
     """
 
-    batch_size: int
+    model_name: str
     kfold: int
     train_indices: List[int] = field(default_factory=list)
     val_indices: List[int] = field(default_factory=list)
@@ -83,18 +82,18 @@ class FoldSetup:
             f"{config.VAL_LOADER_SAVE_DIR}e{config.MAX_EPOCHS}"
             f"_val_loader20_bs{config.BATCH_SIZE}"
             f"_k{str(self.kfold)}"
-            f"_{len(config.MODEL_NAMES)}model(s).pt"
+            f"_{self.model_name}.pt"
         )
 
         config.MODEL_SAVENAME = (
             f"{config.MODEL_SAVE_DIR}e{config.MAX_EPOCHS}"
             f"_bs{config.BATCH_SIZE}"
             f"_k{str(self.kfold)}"
-            f"_{len(config.MODEL_NAMES)}model(s).pt"
+            f"_{self.model_name}.pt"
         )
 
     def train_loader(
-        self, balance_weights: bool = True
+        self, batch_size: int, balance_weights: bool = True
     ) -> torch.utils.data.DataLoader:
         """
         - Create train loader that iterates images in batches
@@ -111,7 +110,7 @@ class FoldSetup:
             else None
         )
         return data_loaders.create_loader(
-            self.train_data, batch_size=self.batch_size, sampler=sampler
+            self.train_data, batch_size=batch_size, sampler=sampler
         )
 
     def val_loader(self) -> None:
@@ -131,10 +130,15 @@ class FoldSetup:
                 data_loaders.save_valloader(self.val_data)
         return val_loader
 
-    def create_dataloaders(self) -> None:
-        """Create dict of train/val dataloaders based on split and sampler from StratifiedKFold"""
+    def create_dataloaders(self, batch_size: int) -> None:
+        """
+        Create dict of train/val dataloaders based on split and sampler from StratifiedKFold
+
+        Args:
+            batch_size (int): number of training samples into memory
+        """
         self.dataloaders = {
-            "train": self.train_loader(),
+            "train": self.train_loader(batch_size),
             "val": self.val_loader(),
         }
 

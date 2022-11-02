@@ -87,7 +87,6 @@ def main(
     f: cocpit.fold_setup.FoldSetup,
     c: cocpit.model_config.ModelConfig,
     model_name: str,
-    epochs: int,
     kfold: int,
 ) -> None:
     """
@@ -112,23 +111,31 @@ def main(
     set_plt_params()
 
     # BEST EPOCH FROM ABOVE
-    for epoch in range(epochs):
+    for epoch in range(best_params["MAX_EPOCHS"]):
         since_epoch = time.time()
         t = cocpit.timing.EpochTime(since_total, since_epoch)
         for phase in determine_phases():
             # put model in correct mode based on if training or validating
             c.model.train() if phase == "train" else c.model.eval()
+
             if phase == "train":
                 train = cocpit.train.Train(
-                    f, epoch, epochs, model_name, kfold, c
+                    f, epoch, best_params["MAX_EPOCHS"], model_name, kfold, c
                 )
-                train.run()
+                train.run(best_params["BATCH_SIZE"])
+
             else:
                 val = cocpit.validate.Validation(
-                    f, epoch, epochs, model_name, kfold, val_best_acc, c
+                    f,
+                    epoch,
+                    best_params["MAX_EPOCHS"],
+                    model_name,
+                    kfold,
+                    val_best_acc,
+                    c,
                 )
-                val_best_acc = val.run()
-                if epoch == epochs - 1:
+                val_best_acc = val.run(best_params["BATCH_SIZE"])
+                if epoch == best_params["MAX_EPOCHS"] - 1:
                     val_labels.append(val.epoch_labels)
                     val_preds.append(val.epoch_preds)
                     val_uncertainties.append(val.epoch_uncertainties)

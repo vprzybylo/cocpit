@@ -118,6 +118,14 @@ MODEL_NAMES = [
     "vgg16",
 ]
 
+CONFIG_RAY = {
+    "BATCH_SIZE": tune.choice(BATCH_SIZE_TUNE),
+    "LR": tune.choice(LR_TUNE),
+    "WEIGHT_DECAY": tune.choice(WEIGHT_DECAY_TUNE),
+    "DROP_RATE": tune.choice(DROP_RATE_TUNE),
+    "MAX_EPOCHS": tune.choice(MAX_EPOCHS_TUNE),
+}
+
 # directory that holds the training data
 DATA_DIR = f"{BASE_DIR}/codebook_dataset/combined_extra/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"

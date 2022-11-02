@@ -2,10 +2,12 @@
 import numpy as np
 import torch
 from cocpit.performance_metrics import Metrics
+import cocpit
 from cocpit import config as config
 import csv
 import torch.nn.functional as F
 from typing import Any
+from torch import nn
 
 
 class Train(Metrics):
@@ -50,25 +52,16 @@ class Train(Metrics):
         with torch.set_grad_enabled(True):
             outputs = self.c.model(self.inputs)
             if config.EVIDENTIAL:
-                self.evidential_loss()
+                self.loss = cocpit.loss.categorical_evidential_loss(
+                    outputs, self.labels, self.epochs
+                )
             else:
-                self.loss = self.c.criterion(outputs, self.labels)
+                self.loss = nn.CrossEntropyLoss(outputs, self.labels)
             _, self.preds = torch.max(outputs, 1)
             # self.probs = F.softmax(outputs, dim=1).max(dim=1)
             # self.uncertainty(outputs)
             self.loss.backward()  # compute updates for each parameter
             self.c.optimizer.step()  # make the updates for each parameter
-
-    def categorical_evidential_loss(self, outputs):
-        """EDL loss found in loss.py"""
-        y_true = torch.eye(len(config.CLASS_NAMES))
-        y_true = y_true[self.labels].to(config.DEVICE)
-        self.loss = self.c.criterion(
-            outputs,
-            y_true.float(),
-            self.epoch,
-            annealing_step=config.ANNEALING_STEP,
-        )
 
     def uncertainty(self, outputs) -> None:
         """
@@ -84,14 +77,18 @@ class Train(Metrics):
             alpha, dim=1, keepdim=True
         )
 
-    def iterate_batches(self, print_label_count: bool = False) -> None:
+    def iterate_batches(
+        self, batch_size: int, print_label_count: bool = False
+    ) -> None:
         """iterate over a batch in a dataloader and train
 
         Args:
+            batch_size (int): size of the samples fed into memory
             print_label_count (bool): if True print class counts when iterating batches
         """
 
         label_cnts_total = np.zeros(len(config.CLASS_NAMES))
+        self.f.create_dataloaders(batch_size)
         for self.batch, ((inputs, labels, _), _) in enumerate(
             self.f.dataloaders["train"]
         ):
@@ -130,9 +127,9 @@ class Train(Metrics):
                 )
                 file.close()
 
-    def run(self) -> None:
+    def run(self, batch_size: int) -> None:
         """Train model and save output"""
-        self.iterate_batches()
+        self.iterate_batches(batch_size)
         self.epoch_metrics()
         self.log_epoch_metrics("epoch_acc_train", "epoch_loss_train")
         self.print_epoch_metrics("Train")

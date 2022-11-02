@@ -88,3 +88,14 @@ def edl_digamma_loss(
     return torch.mean(
         edl_loss(torch.digamma, target, alpha, epoch_num, annealing_step)
     )
+
+
+def categorical_evidential_loss(outputs, labels, epoch):
+    y_true = torch.eye(len(config.CLASS_NAMES))
+    y_true = y_true[labels].to(config.DEVICE)
+    return edl_digamma_loss(
+        outputs,
+        y_true.float(),
+        epoch,
+        annealing_step=config.ANNEALING_STEP,
+    )

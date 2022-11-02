@@ -5,7 +5,6 @@ import torch
 from torch import nn, optim
 import torchvision
 from typing import List, Any
-from torch.optim import lr_scheduler
 
 
 class ModelConfig:
@@ -24,7 +23,6 @@ class ModelConfig:
     def __init__(self, model: torchvision.models):
         self.model = model
         self.optimizer: torchvision.optimizer = None
-        self.scheduler: torch.optim.lr_scheduler = None
 
     def update_params(self, feature_extract: bool = False) -> List[Any]:
         """
@@ -80,13 +78,6 @@ class ModelConfig:
             nesterov=True,
             weight_decay=weight_decay,
         )
-
-    def set_criterion(self) -> None:
-        """loss function to be minimized or maximized depending on definition"""
-        if config.EVIDENTIAL:
-            self.criterion = cocpit.loss.edl_digamma_loss
-        else:
-            self.criterion = nn.CrossEntropyLoss()
 
     def set_dropout(self, drop_rate: float = 0.1) -> None:
         """

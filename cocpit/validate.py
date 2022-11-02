@@ -3,11 +3,12 @@ import os
 import torch
 from cocpit.performance_metrics import Metrics
 from cocpit import config as config
+import cocpit
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 import csv
 from ray import tune
 import torch.nn.functional as F
-import numpy as np
+from torch import nn
 
 
 class Validation(Metrics):
@@ -44,15 +45,12 @@ class Validation(Metrics):
         with torch.no_grad():
 
             outputs = self.c.model(self.inputs)
-            y_true = torch.eye(len(config.CLASS_NAMES))
-            y_true = y_true[self.labels].to(config.DEVICE)
-
-            self.loss = self.c.criterion(
-                outputs,
-                y_true.float(),
-                self.epoch,
-                annealing_step=config.ANNEALING_STEP,
-            )
+            if config.EVIDENTIAL:
+                self.loss = cocpit.loss.categorical_evidential_loss(
+                    outputs, self.labels, self.epochs
+                )
+            else:
+                self.loss = nn.CrossEntropyLoss(outputs, self.labels)
             _, self.preds = torch.max(outputs, 1)
             self.probs = F.softmax(outputs, dim=1).max(dim=1).values
             self.uncertainty(outputs)
@@ -105,8 +103,14 @@ class Validation(Metrics):
         )
         scheduler.step(self.epoch_acc)
 
-    def iterate_batches(self) -> None:
-        """iterate over a batch in a dataloader and make predictions"""
+    def iterate_batches(self, batch_size: int) -> None:
+        """
+        iterate over a batch in a dataloader and make predictions
+
+        Args:
+            batch_size (int): size of the samples fed into memory
+        """
+        self.f.create_dataloaders(batch_size)
         for self.batch, ((inputs, labels, _), _) in enumerate(
             self.f.dataloaders["val"]
         ):
@@ -144,12 +148,12 @@ class Validation(Metrics):
                 )
                 file.close()
 
-    def run(self) -> None:
+    def run(self, batch_size) -> None:
         """
         Run model on validation data and calculate metrics
         Reset acc, loss, labels, and predictions for each epoch, model, phase, and fold
         """
-        self.iterate_batches()
+        self.iterate_batches(batch_size)
         self.epoch_metrics()
         if not config.TUNE:
             self.reduce_lr()
