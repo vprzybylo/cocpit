@@ -48,7 +48,10 @@ class Validation(Metrics):
             y_true = y_true[self.labels].to(config.DEVICE)
 
             self.loss = self.c.criterion(
-                outputs, y_true.float(), self.epoch, annealing_step=10
+                outputs,
+                y_true.float(),
+                self.epoch,
+                annealing_step=config.ANNEALING_STEP,
             )
             _, self.preds = torch.max(outputs, 1)
             self.probs = F.softmax(outputs, dim=1).max(dim=1).values

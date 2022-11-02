@@ -83,7 +83,10 @@ class ModelConfig:
 
     def set_criterion(self) -> None:
         """loss function to be minimized or maximized depending on definition"""
-        self.criterion = cocpit.loss.edl_digamma_loss
+        if config.EVIDENTIAL:
+            self.criterion = cocpit.loss.edl_digamma_loss
+        else:
+            self.criterion = nn.CrossEntropyLoss()
 
     def set_dropout(self, drop_rate: float = 0.1) -> None:
         """

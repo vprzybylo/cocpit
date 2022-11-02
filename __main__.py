@@ -21,6 +21,22 @@ import pandas as pd
 import torch
 
 
+def makedirs(path: str, isfile: bool = False) -> None:
+    """
+    Creates a directory given a path to either a directory or file.
+    If a directory is provided, creates that directory. If a file is provided (i.e. isfiled == True),
+    creates the parent directory for that file.
+
+    Args:
+        path: str: Path to a directory or file.
+        isfile: bool: Whether the provided path is a directory or file.
+    """
+    if isfile:
+        path = os.path.dirname(path)
+    if path != "":
+        os.makedirs(path, exist_ok=True)
+
+
 def _preprocess_sheets(df_path: str, campaign: str) -> None:
     """
     - Separate individual images from sheets of images to be saved

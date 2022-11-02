@@ -3,12 +3,10 @@ calculation and plotting functions for reporting performance metrics
 """
 
 import matplotlib.pyplot as plt
-
 import pandas as pd
 import seaborn as sns
-
 import cocpit.plotting_scripts.grid_shader as grid_shader
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 
 # plt_params = {
@@ -22,7 +20,9 @@ plt.rcParams["font.family"] = "serif"
 # plt.rcParams.update(plt_params)
 
 
-def manipulate_df(df: pd.DataFrame, avg: Optional[str]):
+def manipulate_df(
+    df: pd.DataFrame, avg: Optional[str]
+) -> Tuple[pd.DataFrame, str]:
     """
     Eliminate some metrics based on averaging
 
@@ -104,7 +104,7 @@ def plot_dd(
     title: str,
     save_name: str,
     save_fig: bool = False,
-):
+) -> None:
     """
     Plot model with respect to F1-score, precision, and recall
 
@@ -134,7 +134,7 @@ def plot_dd(
 
 
 def classification_report_classes(
-    clf_report, save_name, save_fig=False
+    clf_report: dict, save_name: str, save_fig: bool = False
 ) -> None:
     """
     Plot precision, recall, and f1-score for each class from 1 model

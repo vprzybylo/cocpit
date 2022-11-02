@@ -9,7 +9,12 @@ from typing import List
 
 
 def kl_divergence(alpha) -> float:
-    """measures the difference between two probability distributions"""
+    """
+    Compute KL for Dirichlet defined by alpha to uniform dirichlet
+
+    Args:
+        alpha: predicted parameters for Dirichlet
+    """
 
     ones = torch.ones(
         [1, len(config.CLASS_NAMES)], dtype=torch.float32, device=config.DEVICE

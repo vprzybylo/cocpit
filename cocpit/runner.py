@@ -1,22 +1,27 @@
 """
-train the CNN model(s)
+train the CNN model(s) and record performance
 """
 import time
 import cocpit
 import cocpit.config as config  # isort:split
-from typing import List
+from typing import List, Any
 from cocpit.plotting_scripts import report as report
 import matplotlib.pyplot as plt
-import pickle
+import itertools
+from tune_sklearn import TuneGridSearchCV
+import numpy as np
 
-plt_params = {
-    "axes.labelsize": "x-large",
-    "axes.titlesize": "large",
-    "xtick.labelsize": "large",
-    "ytick.labelsize": "large",
-}
-plt.rcParams["font.family"] = "serif"
-plt.rcParams.update(plt_params)
+
+def set_plt_params() -> None:
+    """set matplotlib params"""
+    plt_params = {
+        "axes.labelsize": "x-large",
+        "axes.titlesize": "large",
+        "xtick.labelsize": "large",
+        "ytick.labelsize": "large",
+    }
+    plt.rcParams["font.family"] = "serif"
+    plt.rcParams.update(plt_params)
 
 
 def determine_phases() -> List[str]:
@@ -25,6 +30,57 @@ def determine_phases() -> List[str]:
     Returns:
         List[str]: either training or training and validation phase"""
     return ["train"] if config.VALID_SIZE < 0.1 else ["train", "val"]
+
+
+def flatten(var: np.ndarray[Any, Any]) -> List[Any]:
+    """flatten vars from batches"""
+    return (
+        [item for sublist in list(itertools.chain(*var)) for item in sublist],
+    )
+
+
+def tune_grid_search_cv(
+    f: cocpit.fold_setup.FoldSetup,
+    c: cocpit.model_config.ModelConfig,
+    model_name: str,
+) -> TuneGridSearchCV.best_params_:
+    """
+    inner loop for nested cross validation
+
+    https://www.google.com/search?q=nested+cross+validation&sxsrf=ALiCzsaNa6dvY2-5dB56tcxlNCekUJ2P5Q:1666988629129&tbm=isch&source=iu&ictx=1&vet=1&sa=X&ved=2ahUKEwi3vNXI4IP7AhVfMlkFHbpoB5oQ_h16BAgTEAc&biw=1571&bih=880&dpr=2.2#imgrc=sPazlEcy0--WvM
+    """
+
+    tune_search = TuneGridSearchCV(
+        c.model,
+        config.CONFIG_RAY,
+        early_stopping=True,
+        max_iters=10,
+        use_gpu=True,
+        scoring="balanced_accuracy",
+        verbose=1,
+        n_jobs=config.NUM_WORKERS,
+    )  # cv =5 by default
+
+    start = time.time()
+    tune_search.fit(f.train_data, f.train_labels)
+    end = time.time()
+    print("Tune Fit Time:", end - start)
+    pred = tune_search.predict(f.val_data)
+    accuracy = np.count_nonzero(
+        np.array(pred) == np.array(f.val_labels)
+    ) / len(pred)
+    print("Tune Accuracy:", accuracy)
+    return tune_search.best_params_
+
+
+def record_performance(model_name, kfold, uncertainties, probs, labels, preds):
+    """record performance plots and uncertainties"""
+    r = report.Report(uncertainties, probs, labels, preds)
+    r.conf_matrix(labels, preds)
+    r.class_report(model_name, labels, preds, kfold)
+    r.uncertainty_prob_scatter(probs, uncertainties)
+    r.hist(probs, f"{config.PLOT_DIR}/histogram_probs.png")
+    r.hist(uncertainties, f"{config.PLOT_DIR}/histogram_uncertainties.png")
 
 
 def main(
@@ -51,6 +107,11 @@ def main(
     val_preds = []
     val_uncertainties = []
     val_probs = []
+
+    best_params = tune_grid_search_cv(f, c)
+    set_plt_params()
+
+    # BEST EPOCH FROM ABOVE
     for epoch in range(epochs):
         since_epoch = time.time()
         t = cocpit.timing.EpochTime(since_total, since_epoch)
@@ -75,29 +136,15 @@ def main(
             t.print_time_one_epoch()
 
     # flatten across batches
-    val_uncertainties = report.flatten(val_uncertainties)
-    val_probs = report.flatten(val_probs)
-    val_labels = report.flatten(val_labels)
-    val_preds = report.flatten(val_preds)
+    val_uncertainties = flatten(val_uncertainties)
+    val_probs = flatten(val_probs)
+    val_labels = flatten(val_labels)
+    val_preds = flatten(val_preds)
+    report.pickle_uncertainties()
 
-    # plots
-    # report.conf_matrix(val_labels, val_preds)
-    # report.class_report(model_name, val_labels, val_preds, kfold)
-    with open("val_probs.pickle", "wb") as handle:
-        pickle.dump(val_probs, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    with open("val_uncertainties.pickle", "wb") as handle:
-        pickle.dump(
-            val_uncertainties, handle, protocol=pickle.HIGHEST_PROTOCOL
-        )
-    with open("val_labels.pickle", "wb") as handle:
-        pickle.dump(val_labels, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    with open("val_preds.pickle", "wb") as handle:
-        pickle.dump(val_preds, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-    # report.uncertainty_prob_scatter(val_probs, val_uncertainties)
-    # report.hist(val_probs)
-    # report.hist(val_uncertainties)
-
+    record_performance(
+        model_name, kfold, val_uncertainties, val_probs, val_labels, val_preds
+    )
     try:
         t.print_time_all_epochs()
         t.write_times(model_name, kfold)
