@@ -38,7 +38,7 @@ PARQUET_DIR_5M = f"{BASE_DIR}/mesonet_parquet_5M"
 PARQUET_DIR_1M = f"{BASE_DIR}/mesonet_parquet_1M"
 
 # ai2es version used in docker and git
-TAG = "v0.0.0"
+TAG = "v3.2.0"
 
 # create and save CNN
 BUILD_MODEL = True
@@ -84,7 +84,9 @@ LR_TUNE = [0.001, 0.01, 0.1]
 
 # effect of the KL divergence in the loss
 # (e.g., >= epoch 10, prediction error term and evidence adjustment term equally weighted)
-ANNEALING_STEP = 10
+# evidential deep learning model outputs sample uncertainty and minimizes evidence for out of distribution samples
+EVIDENTIAL = True
+ANNEALING_STEP = 10 if EVIDENTIAL else 0
 
 # names of each ice crystal class
 CLASS_NAMES = [
@@ -116,19 +118,17 @@ MODEL_NAMES = [
     "vgg16",
 ]
 
-CONFIG_RAY = {
-    "BATCH_SIZE": tune.choice(BATCH_SIZE_TUNE),
-    "MODEL_NAMES": tune.choice(MODEL_NAMES_TUNE),
-    "LR": tune.choice(LR_TUNE),
-    "WEIGHT_DECAY": tune.choice(WEIGHT_DECAY_TUNE),
-    "DROP_RATE": tune.choice(DROP_RATE_TUNE),
-    "MAX_EPOCHS": tune.choice(MAX_EPOCHS_TUNE),
-}
-
-
 # directory that holds the training data
 DATA_DIR = f"{BASE_DIR}/codebook_dataset/combined_extra/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
+
+# directory where plots should be saved
+PLOT_DIR = (
+    f"{BASE_DIR}/evidential/plots" if EVIDENTIAL else f"{BASE_DIR}/plots"
+)
+
+# where to save final databases to
+FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
 
 # whether to save the model
 SAVE_MODEL = True
@@ -147,14 +147,14 @@ MODEL_SAVENAME = (
     f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_"
     f"bs{BATCH_SIZE}_"
     f"k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s)_evidential.pt"
+    f"{len(MODEL_NAMES)}model(s).pt"
 )
 
 VAL_LOADER_SAVENAME = (
     f"{VAL_LOADER_SAVE_DIR}e{MAX_EPOCHS}_val_loader20_"
     f"bs{BATCH_SIZE}_"
     f"k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s)_evidential.pt"
+    f"{len(MODEL_NAMES)}model(s).pt"
 )
 
 # Start with a pretrained model and only update the final layer weights
@@ -168,32 +168,31 @@ USE_PRETRAINED = False
 SAVE_ACC = True
 
 # directory for saving training accuracy and loss csv's
-ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"
+ACC_SAVE_DIR = (
+    f"{BASE_DIR}/saved_accuracies/{TAG}/evidential/"
+    if EVIDENTIAL
+    else f"{BASE_DIR}/saved_accuracies/{TAG}/"
+)
+
 
 #  filename for saving training accuracy and loss
 ACC_SAVENAME_TRAIN = (
     f"{ACC_SAVE_DIR}train_acc_loss_e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s)_evidential.csv"
+    f"{len(MODEL_NAMES)}model(s).csv"
 )
 #  output filename for validation accuracy and loss
 ACC_SAVENAME_VAL = (
     f"{ACC_SAVE_DIR}val_acc_loss_e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s)_evidential.csv"
+    f"{len(MODEL_NAMES)}model(s).csv"
 )
 # output filename for precision, recall, F1 file
 METRICS_SAVENAME = (
     f"{ACC_SAVE_DIR}val_metrics_e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s)_evidential.csv"
+    f"{len(MODEL_NAMES)}model(s).csv"
 )
-
-CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
-CLASSIFICATION_REPORT_SAVENAME = f"{BASE_DIR}/plots/classification_report.png"
-
-# where to save final databases to
-FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
 
 # log experiment to comet for tracking?
 LOG_EXP = False

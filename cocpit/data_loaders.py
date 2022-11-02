@@ -31,8 +31,14 @@ class ImageFolderWithPaths(datasets.ImageFolder):
 
     # Override the __getitem__ method. This is the method that dataloader calls
     def __getitem__(self, index):
-        # this is what ImageFolder normally returns
+        """
+        Original tuple normally returns List of all classes and dictionary mapping each class to an index.
+        Also appends path to
+        """
         original_tuple = super(ImageFolderWithPaths, self).__getitem__(index)
+        print(original_tuple)
+        # append path to class for stratify
+
         # the image file path
         path = self.imgs[index][0]
         # make a new tuple that includes original and the path

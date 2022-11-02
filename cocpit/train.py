@@ -49,19 +49,26 @@ class Train(Metrics):
         """perform forward operator and make predictions"""
         with torch.set_grad_enabled(True):
             outputs = self.c.model(self.inputs)
-            y_true = torch.eye(len(config.CLASS_NAMES))
-            y_true = y_true[self.labels].to(config.DEVICE)
-            self.loss = self.c.criterion(
-                outputs,
-                y_true.float(),
-                self.epoch,
-                annealing_step=config.ANNEALING_STEP,
-            )
+            if config.EVIDENTIAL:
+                self.evidential_loss()
+            else:
+                self.loss = self.c.criterion(outputs, self.labels)
             _, self.preds = torch.max(outputs, 1)
             # self.probs = F.softmax(outputs, dim=1).max(dim=1)
             # self.uncertainty(outputs)
             self.loss.backward()  # compute updates for each parameter
             self.c.optimizer.step()  # make the updates for each parameter
+
+    def categorical_evidential_loss(self, outputs):
+        """EDL loss found in loss.py"""
+        y_true = torch.eye(len(config.CLASS_NAMES))
+        y_true = y_true[self.labels].to(config.DEVICE)
+        self.loss = self.c.criterion(
+            outputs,
+            y_true.float(),
+            self.epoch,
+            annealing_step=config.ANNEALING_STEP,
+        )
 
     def uncertainty(self, outputs) -> None:
         """
