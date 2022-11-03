@@ -36,7 +36,7 @@ class ImageFolderWithPaths(datasets.ImageFolder):
         Also appends path to
         """
         original_tuple = super(ImageFolderWithPaths, self).__getitem__(index)
-        print(original_tuple)
+        # print(original_tuple)
         # append path to class for stratify
 
         # the image file path

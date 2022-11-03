@@ -57,7 +57,8 @@ NUM_WORKERS = 10
 # how many folds used in training (cross-validation)
 # kold = 0 turns this off and splits the data according to valid_size
 # cannot = 1
-KFOLD = 0
+KFOLD_INNER = 3  # test/train split
+KFOLD_OUTER = 3  # train/val split
 
 # percent of the training dataset to use as validation
 VALID_SIZE = 0.20
