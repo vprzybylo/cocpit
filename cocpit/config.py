@@ -119,14 +119,6 @@ MODEL_NAMES = [
     "vgg16",
 ]
 
-CONFIG_RAY = {
-    "BATCH_SIZE": tune.choice(BATCH_SIZE_TUNE),
-    "LR": tune.choice(LR_TUNE),
-    "WEIGHT_DECAY": tune.choice(WEIGHT_DECAY_TUNE),
-    "DROP_RATE": tune.choice(DROP_RATE_TUNE),
-    "MAX_EPOCHS": tune.choice(MAX_EPOCHS_TUNE),
-}
-
 # directory that holds the training data
 DATA_DIR = f"{BASE_DIR}/codebook_dataset/combined_extra/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
@@ -155,14 +147,14 @@ MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[30]_bs[64]_k0_1model(s).pt"
 MODEL_SAVENAME = (
     f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_"
     f"bs{BATCH_SIZE}_"
-    f"k{KFOLD}_"
+    f"k{KFOLD_OUTER}_"
     f"{len(MODEL_NAMES)}model(s).pt"
 )
 
 VAL_LOADER_SAVENAME = (
     f"{VAL_LOADER_SAVE_DIR}e{MAX_EPOCHS}_val_loader20_"
     f"bs{BATCH_SIZE}_"
-    f"k{KFOLD}_"
+    f"k{KFOLD_OUTER}_"
     f"{len(MODEL_NAMES)}model(s).pt"
 )
 
@@ -187,19 +179,19 @@ ACC_SAVE_DIR = (
 #  filename for saving training accuracy and loss
 ACC_SAVENAME_TRAIN = (
     f"{ACC_SAVE_DIR}train_acc_loss_e{max(MAX_EPOCHS)}_"
-    f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
+    f"bs{max(BATCH_SIZE)}_k{KFOLD_OUTER}_"
     f"{len(MODEL_NAMES)}model(s).csv"
 )
 #  output filename for validation accuracy and loss
 ACC_SAVENAME_VAL = (
     f"{ACC_SAVE_DIR}val_acc_loss_e{max(MAX_EPOCHS)}_"
-    f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
+    f"bs{max(BATCH_SIZE)}_k{KFOLD_OUTER}_"
     f"{len(MODEL_NAMES)}model(s).csv"
 )
 # output filename for precision, recall, F1 file
 METRICS_SAVENAME = (
     f"{ACC_SAVE_DIR}val_metrics_e{max(MAX_EPOCHS)}_"
-    f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
+    f"bs{max(BATCH_SIZE)}_k{KFOLD_OUTER}_"
     f"{len(MODEL_NAMES)}model(s).csv"
 )
 

@@ -126,7 +126,7 @@ class Validation(Metrics):
             if (self.batch + 1) % 5 == 0:
                 self.print_batch_metrics("val")
 
-    def write_output(self, filename: str) -> None:
+    def write_output(self, filename: str, batch_size: int) -> None:
         """
         Write acc and loss to csv file within model, epoch, kfold iteration
 
@@ -141,14 +141,14 @@ class Validation(Metrics):
                         self.model_name,
                         self.epoch,
                         self.kfold,
-                        self.f.batch_size,
+                        batch_size,
                         self.epoch_acc.cpu().numpy(),
                         self.epoch_loss,
                     ]
                 )
                 file.close()
 
-    def run(self, batch_size) -> None:
+    def run(self, batch_size: int) -> None:
         """
         Run model on validation data and calculate metrics
         Reset acc, loss, labels, and predictions for each epoch, model, phase, and fold
@@ -161,5 +161,5 @@ class Validation(Metrics):
 
         self.log_epoch_metrics("epoch_acc_val", "epoch_loss_val")
         self.print_epoch_metrics("Validation")
-        self.write_output(config.ACC_SAVENAME_VAL)
+        self.write_output(config.ACC_SAVENAME_VAL, batch_size)
         return val_best_acc

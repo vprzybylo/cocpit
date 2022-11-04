@@ -105,7 +105,7 @@ class Train(Metrics):
             if (self.batch + 1) % 5 == 0:
                 self.print_batch_metrics("train")
 
-    def write_output(self, filename: str) -> None:
+    def write_output(self, filename: str, batch_size: int) -> None:
         """
         Write acc and loss to csv file within model, epoch, kfold iteration
 
@@ -120,7 +120,7 @@ class Train(Metrics):
                         self.model_name,
                         self.epoch,
                         self.kfold,
-                        self.f.batch_size,
+                        batch_size,
                         self.epoch_acc.cpu().numpy(),
                         self.epoch_loss,
                     ]
@@ -133,4 +133,4 @@ class Train(Metrics):
         self.epoch_metrics()
         self.log_epoch_metrics("epoch_acc_train", "epoch_loss_train")
         self.print_epoch_metrics("Train")
-        self.write_output(config.ACC_SAVENAME_TRAIN)
+        self.write_output(config.ACC_SAVENAME_TRAIN, batch_size)
