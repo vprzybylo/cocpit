@@ -56,7 +56,8 @@ class Train(Metrics):
                     outputs, self.labels, self.epochs
                 )
             else:
-                self.loss = nn.CrossEntropyLoss(outputs, self.labels)
+                self.criterion = nn.CrossEntropyLoss()
+                self.loss = self.criterion(outputs, self.labels)
             _, self.preds = torch.max(outputs, 1)
             # self.probs = F.softmax(outputs, dim=1).max(dim=1)
             # self.uncertainty(outputs)

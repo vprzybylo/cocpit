@@ -86,7 +86,7 @@ LR_TUNE = [0.001, 0.01, 0.1]
 # effect of the KL divergence in the loss
 # (e.g., >= epoch 10, prediction error term and evidence adjustment term equally weighted)
 # evidential deep learning model outputs sample uncertainty and minimizes evidence for out of distribution samples
-EVIDENTIAL = True
+EVIDENTIAL = False
 ANNEALING_STEP = 10 if EVIDENTIAL else 0
 
 # names of each ice crystal class
