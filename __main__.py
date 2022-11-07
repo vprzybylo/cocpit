@@ -12,8 +12,7 @@ More information is available at:
 - https://github.com/vprzybylo/cocpit
 """
 import cocpit
-
-from cocpit import config as config
+import cocpit.config as config
 import os
 import time
 from sklearn.model_selection import StratifiedKFold

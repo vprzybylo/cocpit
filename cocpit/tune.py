@@ -64,7 +64,7 @@ def train_val_kfold_split(
     f: cocpit.fold_setup.FoldSetup,
     c: model_config.ModelConfig,
     model_name: str,
-    kfold: int,
+    k_outer: int,
     epochs: Optional[int] = None,
     batch_size: Optional[int] = None,
 ):
@@ -82,35 +82,33 @@ def train_val_kfold_split(
         n_splits=config.KFOLD_INNER, shuffle=True, random_state=42
     )
     data = cocpit.data_loaders.get_data("val")
-    for kfold, (train_indices, val_indices) in enumerate(
+    for k_inner, (train_indices, val_indices) in enumerate(
         skf.split(data.imgs, data.targets)
     ):
         f = cocpit.fold_setup.FoldSetup(
-            model_name, kfold, train_indices, val_indices
+            model_name, k_inner, train_indices, val_indices
         )
         f.split_data()
         f.update_save_names()
 
         c = model_setup(model_name, trial)
-        (
-            val_best_acc,
-            _,
-            _,
-            _,
-            _,
-        ) = run_after_split(f, c, model_name, kfold, epochs, batch_size, trial)
+        (val_best_acc, _, _, _, _,) = run_after_split(
+            f, c, model_name, k_outer, k_inner, epochs, batch_size, trial
+        )
+        val_best_accs.append(val_best_acc.cpu())
 
-        val_best_accs.append(val_best_acc)
-    return np.mean(val_best_accs.cpu())
+    return np.mean(val_best_accs)
 
 
-def run_after_split(f, c, model_name, kfold, epochs, batch_size, trial=None):
+def run_after_split(
+    f, c, model_name, k_outer, k_inner, epochs, batch_size, trial=None
+):
     since_total = time.time()
-    val_best_acc = 0.0
-    val_labels = []
-    val_preds = []
-    val_uncertainties = []
-    val_probs = []
+    best_acc = 0.0
+    labels = []
+    preds = []
+    uncertainties = []
+    probs = []
 
     for epoch in range(epochs):
         since_epoch = time.time()
@@ -121,7 +119,7 @@ def run_after_split(f, c, model_name, kfold, epochs, batch_size, trial=None):
 
             if phase == "train":
                 train = cocpit.train.Train(
-                    f, epoch, epochs, model_name, kfold, c
+                    f, epoch, epochs, model_name, k_outer, k_inner, c
                 )
                 train.run(batch_size)
 
@@ -131,35 +129,36 @@ def run_after_split(f, c, model_name, kfold, epochs, batch_size, trial=None):
                     epoch,
                     epochs,
                     model_name,
-                    kfold,
-                    val_best_acc,
+                    k_outer,
+                    k_inner,
+                    best_acc,
                     c,
                 )
-                val_best_acc = val.run(batch_size)
+                best_acc = val.run(batch_size)
                 if epoch == batch_size - 1:
-                    val_labels.append(val.epoch_labels)
-                    val_preds.append(val.epoch_preds)
-                    val_uncertainties.append(val.epoch_uncertainties)
-                    val_probs.append(val.epoch_probs)
-                if not trial:
-                    trial.report(val_best_acc)
+                    labels.append(val.epoch_labels)
+                    preds.append(val.epoch_preds)
+                    uncertainties.append(val.epoch_uncertainties)
+                    probs.append(val.epoch_probs)
+                if trial:
+                    trial.report(best_acc)
                     if trial.should_prune():
                         raise optuna.exceptions.TrialPruned()
             t.print_time_one_epoch()
 
     # flatten across batches
-    val_uncertainties = flatten(val_uncertainties)
-    val_probs = flatten(val_probs)
-    val_labels = flatten(val_labels)
-    val_preds = flatten(val_preds)
+    uncertainties = flatten(uncertainties)
+    probs = flatten(probs)
+    labels = flatten(labels)
+    preds = flatten(preds)
 
     try:
         t.print_time_all_epochs()
-        t.write_times(model_name, kfold)
+        t.write_times(model_name, k_inner)
     except NameError:
         print("Number of epochs needs to increase")
 
-    return val_best_acc, val_uncertainties, val_probs, val_labels, val_preds
+    return best_acc, uncertainties, probs, labels, preds
 
 
 def report_best_trial(study, model_name):
@@ -195,8 +194,13 @@ def inner_kfold_tune(model_name: str, func: Callable) -> None:
     """
 
     set_plt_params()
+    sampler = optuna.samplers.TPESampler(
+        seed=10
+    )  # Make the sampler behave in a deterministic way.
     study = optuna.create_study(
-        direction="maximize", pruner=optuna.pruners.MedianPruner()
+        direction="maximize",
+        pruner=optuna.pruners.MedianPruner(),
+        sampler=sampler,
     )
     study.optimize(func, n_trials=1, timeout=600)
 

@@ -6,7 +6,6 @@ import cocpit
 from cocpit import config as config
 import csv
 import torch.nn.functional as F
-from typing import Any
 from torch import nn
 
 
@@ -18,15 +17,17 @@ class Train(Metrics):
         epoch (int): epoch index in training loop
         epochs (int): total epochs for training loop
         model_name (str): name of model architecture
-        kfold (int): number of folds use in k-fold cross validation
+        k_outer (int): index of outer k-fold cross validation (test/train)
+        k_inner (int): index of inner k-fold cross validation (val/train)
         c (model_config.ModelConfig): instance of ModelConfig class
     """
 
-    def __init__(self, f, epoch, epochs, model_name, kfold, c):
+    def __init__(self, f, epoch, epochs, model_name, k_outer, k_inner, c):
 
         super().__init__(f, epoch, epochs)
         self.model_name: str = model_name
-        self.kfold = kfold
+        self.k_outer = k_outer
+        self.k_inner = k_inner
         self.c = c
 
     def label_counts(
@@ -120,7 +121,8 @@ class Train(Metrics):
                     [
                         self.model_name,
                         self.epoch,
-                        self.kfold,
+                        self.k_outer,
+                        self.k_inner,
                         batch_size,
                         self.epoch_acc.cpu().numpy(),
                         self.epoch_loss,

@@ -19,15 +19,27 @@ class Validation(Metrics):
         epoch (int): epoch index in training loop
         epochs (int): total epochs for training loop
         model_name (str): name of model architecture
-        kfold (int): number of folds use in k-fold cross validation
+        k_outer (int): index of outer k-fold cross validation (test/train)
+        k_inner (int): index of inner k-fold cross validation (val/train)
         val_best_acc (float): highest validation accuracy across epochs
         c (model_config.ModelConfig): instance of ModelConfig class
     """
 
-    def __init__(self, f, epoch, epochs, model_name, kfold, val_best_acc, c):
+    def __init__(
+        self,
+        f,
+        epoch,
+        epochs,
+        model_name,
+        k_outer,
+        k_inner,
+        val_best_acc,
+        c,
+    ):
         super().__init__(f, epoch, epochs)
         self.model_name = model_name
-        self.kfold = kfold
+        self.k_outer = k_outer
+        self.k_inner = k_inner
         self.val_best_acc = val_best_acc
         self.c = c
         self.epoch_preds = []  # validation preds for 1 epoch for plotting
@@ -85,8 +97,6 @@ class Validation(Metrics):
             )
             self.val_best_acc = self.epoch_acc
 
-            if not os.path.exists(config.MODEL_SAVE_DIR):
-                os.makedirs(config.MODEL_SAVE_DIR)
             torch.save(self.c.model, config.MODEL_SAVENAME)
         if config.TUNE:
             tune.report(loss=self.epoch_loss, accuracy=self.epoch_acc)
@@ -141,7 +151,8 @@ class Validation(Metrics):
                     [
                         self.model_name,
                         self.epoch,
-                        self.kfold,
+                        self.k_outer,
+                        self.k_inner,
                         batch_size,
                         self.epoch_acc.cpu().numpy(),
                         self.epoch_loss,

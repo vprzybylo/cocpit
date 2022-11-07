@@ -1,17 +1,15 @@
 """
 plot classification report, confusion matrix, and uncertainty histogram after validation
 """
-
-from re import A
+from cocpit import config as config
+from cocpit.plotting_scripts import classification_report as cr
+from cocpit.plotting_scripts import confusion_matrix as cm
 import numpy as np
 import torch
 import matplotlib.pyplot as plt
 from typing import Optional, Any, List
 from sklearn.metrics import classification_report
 import pandas as pd
-from cocpit import config as config
-from cocpit.plotting_scripts import classification_report as cr
-from cocpit.plotting_scripts import confusion_matrix as cm
 import seaborn as sns
 import pickle
 from dataclasses import dataclass

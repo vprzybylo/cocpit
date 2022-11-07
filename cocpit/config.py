@@ -57,8 +57,8 @@ NUM_WORKERS = 10
 # how many folds used in training (cross-validation)
 # kold = 0 turns this off and splits the data according to valid_size
 # cannot = 1
-KFOLD_INNER = 3  # test/train split
-KFOLD_OUTER = 3  # train/val split
+KFOLD_INNER = 2  # test/train split
+KFOLD_OUTER = 2  # train/val split
 
 # percent of the training dataset to use as validation
 VALID_SIZE = 0.20
@@ -120,7 +120,7 @@ MODEL_NAMES = [
 ]
 
 # directory that holds the training data
-DATA_DIR = f"{BASE_DIR}/codebook_dataset/combined_extra/"
+DATA_DIR = f"{BASE_DIR}/codebook_dataset/truncated/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # directory where plots should be saved
@@ -196,7 +196,7 @@ METRICS_SAVENAME = (
 )
 
 # log experiment to comet for tracking?
-LOG_EXP = False
+LOG_EXP = False  # not working when true with nested cv
 NOTEBOOK = os.path.basename(sys.argv[0]) != "__main__.py"
 load_dotenv()  # loading sensitive keys from .env file
 if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
@@ -209,11 +209,13 @@ if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
         project_name=PROJECT_NAME,
         workspace=WORKSPACE,
     )
+    print(experiment)
 
     PARAMS = {
         variable: eval(variable)
         for variable in [
             "TAG",
+            "EVIDENTIAL",
             "KFOLD",
             "BATCH_SIZE",
             "MAX_EPOCHS",
@@ -236,7 +238,7 @@ if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
 
     experiment.log_parameters(PARAMS)
     experiment.add_tag(TAG)
-    experiment.add_tag("evidential")
+    experiment.add_tag(f"evidential: {EVIDENTIAL}")
 else:
     experiment = None
 
