@@ -30,7 +30,9 @@ def test_loader(open_dir, df):
     return data_loaders.create_loader(test_data, batch_size=100, sampler=None)
 
 
-def test_predictions(loader, model) -> Tuple[DefaultDict[str, List[float]], List[str]]:
+def test_predictions(
+    loader, model
+) -> Tuple[DefaultDict[str, List[float]], List[str]]:
     """
     Make predictions from loader
 
@@ -107,7 +109,7 @@ def main(df, open_dir, model) -> pd.DataFrame:
     loader = test_loader(open_dir, df)
     class_probs, top_class = test_predictions(loader, model)
     for column in sorted(class_probs.keys()):
-        df[column] = class_probs[column]
+        df[f"{column} [%]"] = class_probs[column]
 
     # append predictions to dataframe
     df["classification"] = top_class
@@ -115,7 +117,10 @@ def main(df, open_dir, model) -> pd.DataFrame:
     percent_category(df, category="sphere")
 
     # don't include fragments or sphere classifications in dataframes
-    df[(df["classification"] != "fragment") & (df["classification"] != "sphere")]
+    df[
+        (df["classification"] != "fragment")
+        & (df["classification"] != "sphere")
+    ]
 
     # send_message()
 
