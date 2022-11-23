@@ -1,0 +1,164 @@
+[![Forks][forks-shield]][forks-url]
+[![GitHub stars][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![PyPI download month][download-shield]][download-url]
+[![GitHub release][release-shield]][release-url]
+[![pre-commit enabled][pre-commit-shield]][pre-commit project]
+[![Black codestyle][black-shield]][black project]
+[![Read the documentation][readthedocs-shield]][readthedocs page]
+
+[download-shield]:https://img.shields.io/github/downloads/vprzybylo/cocpit/total?style=plastic
+[download-url]: https://github.com/vprzybylo/cocpit/downloads
+[release-shield]: https://img.shields.io/github/v/release/vprzybylo/cocpit?style=plastic
+[release-url]:https://github.com/vprzybylo/cocpit/releases/
+[forks-shield]: https://img.shields.io/github/forks/vprzybylo/cocpit?label=Fork&style=plastic
+[forks-url]: https://github.com/vprzybylo/cocpit/network/members
+[stars-shield]: https://img.shields.io/github/stars/vprzybylo/cocpit?style=plastic
+[stars-url]: https://github.com/vprzybylo/cocpit/stargazers
+[issues-shield]: https://img.shields.io/github/issues/vprzybylo/cocpit?style=plastic
+[issues-url]: https://github.com/vprzybylo/cocpit/issues
+[license-shield]: https://img.shields.io/github/license/vprzybylo/COCPIT?style=plastic
+[license-url]: https://github.com/vprzybylo/cocpit/blob/master/LICENSE.md
+[readthedocs-shield]: https://img.shields.io/readthedocs/thapbi-pict.svg?logo=readthedocs?style=plastic
+[readthedocs page]: http://169.226.59.67:8081/cocpit.html
+[pre-commit-shield]: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white?style=plastic
+[pre-commit project]: https://pre-commit.com/
+[black-shield]: https://img.shields.io/badge/code%20style-black-black?style=plastic
+[black project]: https://github.com/psf/black
+
+<br />
+<p align="center">
+  <a>
+    <img src="https://github.com/vprzybylo/cocpit/blob/master/README_graphics/logo.png" alt="Logo" width="150" height="150">
+  </a>
+
+  <h3 align="center">COCPIT</h3>
+
+
+  <p align="center">
+    Classification of Cloud Particle Imagery and Thermodynamics
+    <br />
+    <a href="http://169.226.59.67:8081/cocpit.html"><strong>Explore the docs »</strong></a>
+    <br />
+    <a href="https://journals.ametsoc.org/view/journals/atot/39/4/JTECH-D-21-0094.1.xml"><strong>Read our paper »</strong></a>
+    <br />
+    ·
+    <a href="https://github.com/vprzybylo/cocpit/issues">
+    Report Bug</a>
+    ·
+    <a href="https://github.com/vprzybylo/cocpit/issues">Request Feature</a>
+  </p>
+</p>
+
+
+# Table of Contents
+
+* [About](#about)
+* [Built With](#built-with)
+* [License](#license)
+* [Contact](#contact)
+* [Acknowledgements](#acknowledgements)
+
+## About
+
+A tool for the characterization of cloud particle images from the (<a href="http://www.specinc.com/cloud-particle-imager">CPI</a>) probe using convolutional neural networks.  Ice particles are also collocated spatio-temporally with environmental properties from aircraft probes to gain an understanding of particle geometric, geographic, and environmental relationships.
+
+A web interface to be released soon will allow users to instantly evaluate and filter the database classifications for multiple field campaigns without accompanying image storage or computational hardware needs.
+
+Cloud probe images are classified into 9 categories, but further development may extend these classes:
+
+| Category         | Description                                                                                                                                                                 |
+|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| aggregate         | A combination of several different monomers with a spread out shape in comparison to a compact irregular. Largely irregular.                                                |
+| blank             | No target or contrast.  Typically, few pixels.                                                                                                                              |
+| blurry/fragment   | Indistinguishable frame due to motion or a particle that largely intersects the image border, is too small to distinguish, or is too pixelated.                             |
+| budding rosette   | A rosette shape with short branches.                                                                                                                                        |
+| bullet rosette    | A rosette shape with long branches.                                                                                                                                         |
+| column            | Rectangular with one axis longer than the other and no signs of aggregation.                                                                                                |
+| compact irregular | A small, condensed particle with few to no distinguishable monomers that has an arbitrary shape.                                                                            |
+| plate             | Hexagonal and largely independent of aggregation unless the secondary particle is relatively insignificant in size. The surface is smooth and can have transparent regions. |
+| rimed             | Evidence of the collection of supercooled water droplets visually apparent as jagged edges                                                                                  |
+| sphere            | circular water droplets                                                                                                                                                     |
+<p align="center">
+<a>
+<img src="https://github.com/vprzybylo/cocpit/blob/master/README_graphics/example_image_categories-1.png" alt="class_categories" width="1000" height="1000">
+</a>
+</p>
+
+### Additional descriptors that can be processed on the images:
+
+* found in cocpit/geometry.py
+
+| Predictor            | Description                                                                                                                                                                                              |
+|----------------------|------------------------------------------
+|                      |                                                                                                                                                                                                          |
+| Height               | Height of the image in pixels.                                                                                                                                                                           |
+| Width                | Width of the image in pixels.                                                                                                                                                                            |
+| Laplacian            | The variance (standard deviation squared) of a convolved matrix across a single channel image. Lower values are "blurry".                                                                                |
+| Number of Contours   | Number of contours or closed boundaries from a black and white thresholded image.                                                                                                                        |
+| Edges                | Number of edges or localized pixels that meet a contrast gradient requirement in a binary image using the Canny edge detection algorithm.                                                                |
+| standard dev. of edges    | Standard deviation or spread in image edge locations.                                                                                                                                                    |
+| Contour Area         | Area of the largest contour of a binary image in pixels.                                                                                                                                                 |
+| Contrast             | Standard deviation of the image pixel values.                                                                                                                                                            |
+| Circularity          | 4*pi*area/perimeter^2                                                                                                                                                                              |
+| Solidity             | Area of a convex hull surrounding the largest contour divided by the largest contour area.                                                                                                               |
+| Complexity           | How intricate the particle is. See Schmitt (2010) for the mathematical representation.                                                                                                                   |
+| Equivalent Diameter  | Diameter of a circle with the same area as the largest contour.                                                                                                                                          |
+| Convex Perimeter     | Perimeter of the convex hull of the largest contour.                                                                                                                                                     |
+| Hull Area            | Area of a convex hull surrounding the largest contour.                                                                                                                                                   |
+| Perimeter            | Arc-length of the largest contour.                                                                                                                                                                       |
+| Aspect Ratio         | Aspect ratio calculated from a rectangle always <= 1.                                                                                                                                                 |
+| Cutoff               | Percentage of pixels that intersect the border or perimeter of the image.                                                                                                                                |
+| Extreme Points       | How separated the outer most points are on the largest contour using the minimum and maximum x and y extent. The standard deviation in these points represents the spread of the particle.               |
+| Area Ratio           | The area of the largest contour divided by the area of an encompassing circle - useful for spheres that have reflection spots that are not captured by the largest contour and leave a horseshoe pattern |
+| Roundness            | Similar to circularity but divided by the convex perimeter that surrounds the largest contour squared instead of the actual convoluted perimeter.                                                        |
+| Perimeter-Area Ratio | Perimeter divided by the area of the largest contour.                                                                                                                                                    |
+
+## Supported campaigns
+
+  |**Campaign**       |**Location**                       |**Date**            |**Aircraft**            | **\# of images**
+  ------------------ |---------------------------------- |------------------- |------------------------ |------------------
+  **AIRS-II**        |Ottawa, Canada                     |Nov 2003-Feb 2004   |NSF C-130                |504,675
+  **ARM IOP**        |Western U.S.                       |Mar 2000            |UND Citation             |448,266
+  **ATTREX**         |Western Pacific                    |Feb--Mar 2014       |Global Hawk              |129,232
+  **CRYSTAL-FACE**   |Southern Florida                   |Jul 2002            |NASA's WB-57             |225,439
+  **CRYSTAL-FACE**   |Southern Florida                   |Jul 2002            |UND Citation             |2,483,54
+  **Ice-L**          |Colorado and Wyoming               |Nov-Dec 2007        |NSF C-130                |1,794,81
+  **IPHEX**          |Southern Appalachian Mountains     |May-June 2014       |UND Citation             |1,593,53
+  **MACPEX**         |Central North America (SGP site)   |Mar-Apr 2011        |WB-57 & Learjet          |80,677
+  **MC3E**           |Central Oklahoma                   |April-June 2011     |UND Citation             |1,614,037
+  **MidCix**         |Western U.S.                       |Apr-May 2004        |NASA's WB-57 & Learjet   |515,895
+  **MPACE**          |Alaska                             |Sept-Oct 2004       |UND Citation             |1,177,746
+  **OLYMPEX**        |Olympic Mountains                  |Nov 2015-May 2016   |UND Citation             |1,308,027
+  **POSIDON**        |Western Pacific                    |Oct 2016            |NASA's WB-57             |210,497
+
+**TOTAL IMAGES: 12,086,384**
+
+### Built With
+
+* <a href="https://www.python.org/"><a href="https://pytorch.org/docs/stable/torchvision/models.html">Python</a> </a>
+* <a href="https://pytorch.org/docs/stable/torchvision/models.html">Pytorch</a>
+* <a href="http://www.specinc.com/sites/default/files/software_and_manuals/CPI_Post Processing Software Manual_rev1.2_20120116.pdf">cpiview</a>
+  * Desktop-developed software will need to be used to extract ''sheets'' of CPI images from region of interest (ROI) files output from the CPI probe should new data be wished to be processed and classified.
+  * ![flowchart](https://github.com/vprzybylo/cocpit/blob/master/README_graphics/flow_chart_sheets-1.png)
+
+* <a href="https://www.nvidia.com/en-us/">nvidia</a>
+  * Resources used: NVIDIA DGX-1 server utilizing Tesla V100 GPUs. This system is housed in the University at Albanys Tier-3 Data Center, and managed/maintained by the xCITE (ExTREME Collaboration, Innovation and TEchnology) laboratory. The base DGX-1 V100 system contains 8 Tesla V100 GPUs with a combined total of 40,960 CUDA (graphics) cores, 5120 Tensor cores, and 256GB of GPU memory, all linked by NVIDIAs 300GB/s NVLINK interconnect. The DGX-1 is optimized for data loading, data transformations, and training, which are all critical to the ML processes required by this project.
+
+
+## License
+
+Distributed under the MIT License.  See `LICENSE` for more information.
+
+## Contact
+
+Vanessa Przybylo - vprzybylo@albany.edu
+
+
+Project Link: [https://vprzybylo.github.io/cocpit/](https://vprzybylo.github.io/cocpit/)
+
+
+## Acknowledgements
+* V. Przybylo, K. Sulia, C. Schmitt, and Z. Lebo (collaborators on this project) would like to thank the Department of Energy for support under DOE Grant Number DE-SC0021033.
+* Development support given by the Atmospheric Sciences Research Center ExTreme Collaboration, Innovation, and TEchnology (xCITE) Laboratory.
