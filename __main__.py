@@ -151,7 +151,7 @@ def _ice_classification(df_path: str, open_dir: str) -> None:
     # load df of quality ice particles to make predictions on
     df = pd.read_csv(df_path)
     df = cocpit.run_model.main(df, open_dir, model)
-    # df.to_csv(df_path, index=False)
+    df.to_csv(df_path, index=False)
 
     print("done classifying all images!")
     print("time to classify ice = %.2f seconds" % (time.time() - start_time))

@@ -101,7 +101,7 @@ CLASS_NAMES = [
     "fragment",
     "planar polycrystal",
     "rimed",
-    "rimed column",
+    # "rimed column",
     "sphere",
 ]
 
@@ -115,7 +115,7 @@ CLASS_NAME_MAP = {
     "fragment": "fragment",
     "planar polycrystal": "planar_polycrystal",
     "rimed": "rimed",
-    "rimed column": "rimed_col",
+    # "rimed column": "rimed_col",
     "sphere": "sphere",
 }
 
@@ -195,10 +195,11 @@ CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
 
 # where to save final databases to
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
+if not os.path.exists(FINAL_DIR):
+    os.makedirs(FINAL_DIR)
 
 # log experiment to comet for tracking?
 LOG_EXP = False
-
 NOTEBOOK = os.path.basename(sys.argv[0]) != "__main__.py"
 load_dotenv()  # loading sensitive keys from .env file
 if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
