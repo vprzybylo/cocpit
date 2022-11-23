@@ -3,10 +3,13 @@ Holds epoch and batch metrics for both the training and validation datasets
 Logs metrics to console and/or comet-ml interface (see config.py to turn on)
 """
 
+from dataclasses import dataclass, field
+from typing import Dict
+
 import torch
 
-from cocpit import config as config
 import cocpit
+from cocpit import config as config
 
 
 class Metrics:
@@ -94,9 +97,8 @@ class Metrics:
             phase (str): "Train" or "Validation"
         """
         print(
-            f"{phase}, Batch"
-            f" {self.batch + 1}/{len(self.f.dataloaders[phase])},           "
-            f" Loss: {self.loss.item():.3f}, Accuracy: {self.batch_acc:.3f}"
+            f"{phase}, Batch {self.batch + 1}/{len(self.f.dataloaders[phase])},\
+            Loss: {self.loss.item():.3f}, Accuracy: {self.batch_acc:.3f}"
         )
 
     def print_epoch_metrics(self, phase: str) -> None:
@@ -108,7 +110,7 @@ class Metrics:
         """
 
         print(
-            f"{phase} Epoch {self.epoch + 1}/{self.epochs},               "
-            f" Loss: {self.epoch_loss:.3f},                Accuracy:"
-            f" {self.epoch_acc.cpu().item():.3f}"
+            f"{phase} Epoch {self.epoch + 1}/{self.epochs},\
+                Loss: {self.epoch_loss:.3f},\
+                Accuracy: {self.epoch_acc.cpu().item():.3f}"
         )

@@ -3,14 +3,15 @@ import os
 from functools import partial
 from multiprocessing import Pool
 from typing import List, Tuple
+
 import cv2
 import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
 from twilio.rest import Client
-from cocpit.auto_str import auto_str
 
 import cocpit.config as config  # isort:split
+from cocpit.auto_str import auto_str
 
 
 @auto_str
@@ -179,7 +180,9 @@ class Image:
 
                 # find contours within cropped regions
                 (cnts, _) = cv2.findContours(
-                    self.thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE
+                    self.thresh.copy(),
+                    cv2.RETR_EXTERNAL,
+                    cv2.CHAIN_APPROX_NONE,
                 )
 
                 # make sure the thresholding picks up a contour in the rectangle
@@ -194,12 +197,15 @@ class Image:
 
                     # calculate particle length and width
                     self.largest_contour(cnts)
-                    particle_width, particle_height = self.particle_dimensions()
+                    (
+                        particle_width,
+                        particle_height,
+                    ) = self.particle_dimensions()
 
                     # resize the cropped images to be the same size for CNN
-                    cropped = cv2.resize(
-                        cropped, (1000, 1000), interpolation=cv2.INTER_AREA
-                    )
+                    # cropped = cv2.resize(
+                    #     cropped, (1000, 1000), interpolation=cv2.INTER_AREA
+                    # )
 
                     # get cutoff of each particle and append to list to append to df
                     self.cutoffs.append(cutoff)
@@ -215,7 +221,12 @@ class Image:
 
 
 def run(
-    file, open_dir, save_dir, show_original=False, show_dilate=False, show_cropped=False
+    file,
+    open_dir,
+    save_dir,
+    show_original=False,
+    show_dilate=False,
+    show_cropped=False,
 ):
     """
     main method calls
@@ -250,11 +261,11 @@ def make_df(
     cutoffs_formatted = ["%.2f" % elem for elem in cutoffs]
     df_dict = {
         "filename": files,
-        "frame width": widths,
-        "frame height": heights,
-        "particle width": particle_widths,
-        "particle height": particle_heights,
-        "cutoff": cutoffs_formatted,
+        "frame width [pixels]": widths,
+        "frame height [pixels]": heights,
+        "particle width [microns]": particle_widths,
+        "particle height [microns]": particle_heights,
+        "cutoff [%]": cutoffs_formatted,
     }
     df = pd.DataFrame(df_dict)
 
@@ -322,5 +333,13 @@ def main(
     particle_heights = np.concatenate(results[:, 4])
     cutoffs = np.concatenate(results[:, 5])
 
-    make_df(save_df, files, widths, heights, particle_widths, particle_heights, cutoffs)
+    make_df(
+        save_df,
+        files,
+        widths,
+        heights,
+        particle_widths,
+        particle_heights,
+        cutoffs,
+    )
     # send_message()

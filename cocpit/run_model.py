@@ -1,15 +1,16 @@
 import os
 from collections import defaultdict
+from typing import DefaultDict, List, Tuple
 
 import numpy as np
 import pandas as pd
 import torch
 from dotenv import load_dotenv
 from twilio.rest import Client
-from cocpit import config as config
+
 import cocpit.data_loaders as data_loaders
 import cocpit.predictions as predictions
-from typing import Tuple, List, DefaultDict
+from cocpit import config as config
 
 torch.cuda.empty_cache()
 
@@ -107,7 +108,7 @@ def main(df, open_dir, model) -> pd.DataFrame:
     loader = test_loader(open_dir, df)
     class_probs, top_class = test_predictions(loader, model)
     for column in sorted(class_probs.keys()):
-        df[column] = class_probs[column]
+        df[f"{column} [%]"] = class_probs[column]
 
     # append predictions to dataframe
     df["classification"] = top_class

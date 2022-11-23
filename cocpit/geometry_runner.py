@@ -1,4 +1,6 @@
-import cocpit.config as config
+"""runner to calculate geometric properties"""
+
+from cocpit import image as image
 
 import cocpit.geometry as geometry  # isort: split
 import multiprocessing
@@ -6,9 +8,8 @@ import time
 from functools import partial
 from typing import List
 
+import numpy as np
 import pandas as pd
-
-from cocpit import image as image
 
 
 def keys() -> List[str]:
@@ -18,13 +19,13 @@ def keys() -> List[str]:
         List[str]: attribute names
     """
     return [
-        "perim",
-        "hull_area",
-        "convex_perim",
+        "perim [pixels]",
+        "hull_area [pixels]",
+        "convex_perim [pixels]",
         "blur",
-        "contours",
+        "contours [#]",
         "contrast",
-        "cnt_area",
+        "cnt_area [pixels]",
         "circularity",
         "solidity",
         "complexity",
@@ -48,7 +49,7 @@ def properties_null() -> List[int]:
     return [-999 for _ in keys()]
 
 
-def properties(img: geometry.Geometry) -> List[float]:
+def properties(img: image.Image, geom: geometry.Geometry) -> List[float]:
     """
     Calculated properties
 
@@ -61,22 +62,22 @@ def properties(img: geometry.Geometry) -> List[float]:
     # img.mask_background()
 
     return [
-        img.perim,
-        img.hull_area,
-        img.convex_perim,
-        img.laplacian,
+        geom.perim,
+        geom.hull_area,
+        geom.convex_perim,
+        geom.laplacian,
         len(img.contours),
         img.im.std(),
         img.area,
-        img.circularity,
-        img.solidity,
-        img.complexity,
-        img.equiv_d,
-        img.phi,
-        img.extreme_points,
-        img.filled_circular_area_ratio,
-        img.roundness,
-        img.perim_area_ratio,
+        geom.circularity,
+        geom.solidity,
+        geom.complexity,
+        geom.equiv_d,
+        geom.phi,
+        geom.extreme_points,
+        geom.filled_circular_area_ratio,
+        geom.roundness,
+        geom.perim_area_ratio,
     ]
 
 
@@ -88,10 +89,22 @@ def get_attributes(filename: str, open_dir: str) -> pd.DataFrame:
         filename (str): filename of the image to load
         open_dir (str): directory to open the image in
     """
-    img = geometry.Geometry(open_dir, filename)
+    img = image.Image(
+        open_dir,
+        filename,
+    )
 
-    if len(img.contours) != 0:
-        values = properties(img) if img.area != 0.0 else properties_null()
+    if len(img.contours) > 0:
+        img.find_largest_contour()
+        img.find_largest_area()
+    else:
+        img.largest_contour = np.nan
+        img.area = np.nan
+
+    geom = geometry.Geometry(img.gray, img.largest_contour)
+    if len(img.contours) != 0 and img.area != 0.0:
+        geom.runner()
+        values = properties(img, geom) if img.area != 0.0 else properties_null()
         return pd.DataFrame(dict(zip(keys(), values)), index=[0])
 
 

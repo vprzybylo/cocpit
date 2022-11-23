@@ -1,16 +1,18 @@
 """
 train the CNN model(s) and record performance
 """
-import time
-import cocpit
-from cocpit import model_config as model_config
-import cocpit.config as config  # isort:split
-from typing import List, Any, Callable, Optional
-import matplotlib.pyplot as plt
 import itertools
+import time
+from typing import Any, Callable, List, Optional
+
+import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.model_selection import StratifiedKFold
 import optuna
+from sklearn.model_selection import StratifiedKFold
+
+import cocpit
+import cocpit.config as config  # isort:split
+from cocpit import model_config as model_config
 
 
 def set_plt_params() -> None:
@@ -35,9 +37,7 @@ def determine_phases() -> List[str]:
 
 def flatten(var: np.ndarray) -> List[Any]:
     """flatten vars from batches"""
-    return (
-        [item for sublist in list(itertools.chain(*var)) for item in sublist],
-    )
+    return ([item for sublist in list(itertools.chain(*var)) for item in sublist],)
 
 
 def model_setup(model_name: str, trial=False):
@@ -72,22 +72,16 @@ def train_val_kfold_split(
     inner loop for nested cross validation
     returning best hyperparams
     """
-    batch_size = trial.suggest_categorical(
-        "batch_size", [32, 64, 128, 256, 512]
-    )
+    batch_size = trial.suggest_categorical("batch_size", [32, 64, 128, 256, 512])
     epochs = trial.suggest_int("epochs", 25, 55, step=10, log=False)
 
     val_best_accs = []
-    skf = StratifiedKFold(
-        n_splits=config.KFOLD_INNER, shuffle=True, random_state=42
-    )
+    skf = StratifiedKFold(n_splits=config.KFOLD_INNER, shuffle=True, random_state=42)
     data = cocpit.data_loaders.get_data("val")
     for k_inner, (train_indices, val_indices) in enumerate(
         skf.split(data.imgs, data.targets)
     ):
-        f = cocpit.fold_setup.FoldSetup(
-            model_name, k_inner, train_indices, val_indices
-        )
+        f = cocpit.fold_setup.FoldSetup(model_name, k_inner, train_indices, val_indices)
         f.split_data()
         f.update_save_names()
 
@@ -95,14 +89,12 @@ def train_val_kfold_split(
         (val_best_acc, _, _, _, _,) = run_after_split(
             f, c, model_name, k_outer, k_inner, epochs, batch_size, trial
         )
-        val_best_accs.append(val_best_acc.cpu())
+        val_best_accs.append(val_best_acc.cpu().numpy())
 
     return np.mean(val_best_accs)
 
 
-def run_after_split(
-    f, c, model_name, k_outer, k_inner, epochs, batch_size, trial=None
-):
+def run_after_split(f, c, model_name, k_outer, k_inner, epochs, batch_size, trial=None):
     since_total = time.time()
     best_acc = 0.0
     labels = []
@@ -141,7 +133,7 @@ def run_after_split(
                     uncertainties.append(val.epoch_uncertainties)
                     probs.append(val.epoch_probs)
                 if trial:
-                    trial.report(best_acc)
+                    trial.report(best_acc, epoch)
                     if trial.should_prune():
                         raise optuna.exceptions.TrialPruned()
             t.print_time_one_epoch()
@@ -202,9 +194,12 @@ def inner_kfold_tune(model_name: str, func: Callable) -> None:
         pruner=optuna.pruners.MedianPruner(),
         sampler=sampler,
     )
-    study.optimize(func, n_trials=1, timeout=600)
+    study.optimize(func, n_trials=3, timeout=600)
 
     best_trial = report_best_trial(study, model_name)
     fig = optuna.visualization.plot_param_importances(study)
-    fig.savefig(f"{config.PLOT_DIR}/hyperparameter_importance.png")
+    fig.write_image(f"{config.PLOT_DIR}/hyperparameter_importance.png")
+    fig = optuna.visualization.plot_optimization_history(study)
+    fig.write_image(f"{config.PLOT_DIR}/optimization_history.png")
+
     return best_trial

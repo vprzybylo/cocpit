@@ -5,15 +5,15 @@ import numpy as np
 import torch
 import torch.utils.data.sampler as samp
 
+import cocpit
 import cocpit.data_loaders as data_loaders
 
 import cocpit.config as config  # isort: split
 from collections import Counter
+from dataclasses import dataclass, field
+from typing import Dict, List
 
 from sklearn.model_selection import train_test_split
-
-from dataclasses import dataclass, field
-from typing import List, Dict
 
 
 @dataclass
@@ -22,12 +22,13 @@ class FoldSetup:
     Setup training and validation dataloaders based on k-fold cross validation. Called in __main__.py
 
     Args:
+        batch_size (int): number of images read into memory at a time
         kfold (int): fold index in k-fold cross validation loop
         train_indices (List[int]): list of indices of data for training
         val_indices (List[int]): list of indices of data for validation
     """
 
-    model_name: str
+    batch_size: int
     kfold: int
     train_indices: List[int] = field(default_factory=list)
     val_indices: List[int] = field(default_factory=list)
@@ -63,9 +64,7 @@ class FoldSetup:
         """
         data = data_loaders.get_data("train")
         self.train_data = torch.utils.data.Subset(data, self.train_indices)
-        self.train_labels = list(
-            map(data.targets.__getitem__, self.train_indices)
-        )
+        self.train_labels = list(map(data.targets.__getitem__, self.train_indices))
 
         data = data_loaders.get_data("val")
         self.val_data = torch.utils.data.Subset(data, self.val_indices)
@@ -82,19 +81,17 @@ class FoldSetup:
             f"{config.VAL_LOADER_SAVE_DIR}e{config.MAX_EPOCHS}"
             f"_val_loader20_bs{config.BATCH_SIZE}"
             f"_k{str(self.kfold)}"
-            f"_{self.model_name}.pt"
+            f"_{len(config.MODEL_NAMES)}model(s).pt"
         )
 
         config.MODEL_SAVENAME = (
             f"{config.MODEL_SAVE_DIR}e{config.MAX_EPOCHS}"
             f"_bs{config.BATCH_SIZE}"
             f"_k{str(self.kfold)}"
-            f"_{self.model_name}.pt"
+            f"_{len(config.MODEL_NAMES)}model(s).pt"
         )
 
-    def train_loader(
-        self, batch_size: int, balance_weights: bool = True
-    ) -> torch.utils.data.DataLoader:
+    def train_loader(self, balance_weights: bool = True) -> torch.utils.data.DataLoader:
         """
         - Create train loader that iterates images in batches
         - Balance the distribution of sampled images given imbalance
@@ -110,7 +107,7 @@ class FoldSetup:
             else None
         )
         return data_loaders.create_loader(
-            self.train_data, batch_size=batch_size, sampler=sampler
+            self.train_data, batch_size=self.batch_size, sampler=sampler
         )
 
     def val_loader(self) -> None:
@@ -130,17 +127,9 @@ class FoldSetup:
                 data_loaders.save_valloader(self.val_data)
         return val_loader
 
-    def create_dataloaders(self, batch_size: int) -> None:
-        """
-        Create dict of train/val dataloaders based on split and sampler from StratifiedKFold
-
-        Args:
-            batch_size (int): number of training samples into memory
-        """
-        self.dataloaders = {
-            "train": self.train_loader(batch_size),
-            "val": self.val_loader(),
-        }
+    def create_dataloaders(self) -> None:
+        """Create dict of train/val dataloaders based on split and sampler from StratifiedKFold"""
+        self.dataloaders = {"train": self.train_loader(), "val": self.val_loader()}
 
     def nofold_indices(self) -> None:
         """
@@ -149,9 +138,7 @@ class FoldSetup:
         - Shuffle first and then split dataset
         """
 
-        total_files = sum(
-            len(files) for r, d, files in os.walk(config.DATA_DIR)
-        )
+        total_files = sum(len(files) for r, d, files in os.walk(config.DATA_DIR))
         print(f"len files {total_files}")
 
         # randomly split indices for training and validation indices according to valid_size
@@ -161,7 +148,5 @@ class FoldSetup:
             random.shuffle(self.train_indices)
         else:
             self.train_indices, self.val_indices = train_test_split(
-                list(range(total_files)),
-                test_size=config.VALID_SIZE,
-                random_state=42,
+                list(range(total_files)), test_size=config.VALID_SIZE, random_state=42
             )

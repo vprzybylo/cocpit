@@ -51,7 +51,9 @@ class Image:
         desired_size (int): the images are resized as a square according to desired_size
         """
         self.im = cv2.resize(
-            self.image_og, (desired_size, desired_size), interpolation=cv2.INTER_AREA
+            self.image_og,
+            (desired_size, desired_size),
+            interpolation=cv2.INTER_AREA,
         )
 
     def find_contours(self) -> None:
@@ -68,6 +70,16 @@ class Image:
 
     #         plt.imshow(self.thresh)
     #         plt.show()
+
+    def find_largest_contour(self) -> None:
+        """define largest contour"""
+        self.largest_contour = sorted(self.contours, key=cv2.contourArea, reverse=True)[
+            0
+        ]
+
+    def find_largest_area(self) -> None:
+        """define largest contour area"""
+        self.area = cv2.contourArea(self.largest_contour)
 
     def morph_contours(self) -> None:
         """
@@ -96,7 +108,6 @@ class Image:
         - Places the largest contour on an array of all the same color
         """
         mask = np.zeros(self.im.shape[:2], dtype="uint8")
-        # draw = cv2.drawContours(mask, [self.largest_contour], 0, (255,255,255), -1)
         self.im = cv2.bitwise_and(self.im, self.im, mask=mask)
 
     #         plt.imshow(self.im)

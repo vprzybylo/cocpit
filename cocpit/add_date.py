@@ -1,6 +1,6 @@
-"""Add date to dataframe from filename"""
-import pandas as pd
 from dataclasses import dataclass
+
+import pandas as pd
 
 
 @dataclass
@@ -19,23 +19,19 @@ class Date:
         - Create a date column from filename column
         - Note that the date format may need to change for each campaign
         """
-        self.df["date"] = (
-            self.df["filename"]
-            .str.split(".")
-            .str[0]
-            .str.split("_")
-            .str[:-1]
-            .str.join("_")
-        )
+        date_list = self.df["filename"].str.split(".").str[0].str.split("_")
+        self.df["date"] = date_list.str[:-1].str.join("_")
         # print(date_list.str[:-1].str.join("_"))
 
     def convert_date_format(self) -> None:
         """
         Convert date column to datetime format
         """
+        print(self.df["date"][self.df["date"].str.len() != 16])
         self.df["date"] = pd.to_datetime(
             self.df["date"], format="%Y_%m%d_%H%M%S", errors="raise"
         )
+        print("convert column", self.df["date"])
 
     def move_to_front(self) -> None:
         """Move the date to head of list using index, pop and insert"""

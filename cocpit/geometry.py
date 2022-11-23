@@ -1,16 +1,10 @@
 """Calculates geometric attributes of a particle in an image"""
-
-from typing import Optional
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
-from cocpit import image
 
 
-class Geometry(image.Image):
+class Geometry:
     """
-    Calculates geometric attributes of a particle in an image
-
     Args:
         phi (float): aspect ratio from rectangle
         extreme_points (float): computes how separated the outer most points are on the largest contour. Higher std. deviation = more spread out
@@ -38,71 +32,30 @@ class Geometry(image.Image):
         equiv_d (float): equivalent diameter of a circle with the same area as the largest contour
     """
 
-    def __init__(self, open_dir, filename):
-        super().__init__(open_dir, filename)
-        self.largest_contour = sorted(
-            self.contours, key=cv2.contourArea, reverse=True
-        )[0]
-        self.calc_phi()
-        self.calc_extreme_points()
-        self.area = cv2.contourArea(self.largest_contour)
-        self.perim = cv2.arcLength(self.largest_contour, False)
-        self.calc_complexity()
-        self.hull = cv2.convexHull(self.largest_contour)
-        self.convex_perim = cv2.arcLength(self.hull, True)
-        self.hull_area = cv2.contourArea(self.hull)
-        self.calc_filled_circular_area_ratio()
-        self.laplacian = cv2.Laplacian(self.gray, cv2.CV_64F).var()
-        self.circularity = (4.0 * np.pi * self.area) / self.perim ** 2
-        self.roundness = (4.0 * np.pi * self.area) / (self.convex_perim ** 2)
-        self.perim_area_ratio = self.perim / self.area
-        self.solidity = self.area / self.hull_area
-        self.equiv_d = np.sqrt(4 * self.area / np.pi)
+    def __init__(self, gray, largest_contour):
+        self.gray = gray
+        self.largest_contour = largest_contour
 
     def calc_phi(self) -> None:
         """Calculate aspect ratio from rectangle"""
         # box ONLY around the largest contour
         rect = cv2.minAreaRect(self.largest_contour)
         # get length and width of contour
-        x_len = rect[1][0]
-        y_len = rect[1][1]
-        rect_length = max(x_len, y_len)
-        rect_width = min(x_len, y_len)
+        x = rect[1][0]
+        y = rect[1][1]
+        rect_length = max(x, y)
+        rect_width = min(x, y)
         self.phi = rect_width / rect_length
-
-    def create_ellipse(self) -> Optional[float]:
-        """
-        Fit ellipse to particle
-
-        Returns:
-            Aspect ratio [0-1]
-        """
-        if len(self.largest_contour) >= 5:
-            ellipse = cv2.fitEllipse(self.largest_contour)
-            self.ellipse = cv2.ellipse(self.im, ellipse, (255, 255, 255), 5)
-            # Get width and height of rotated ellipse
-            widthE = ellipse[1][0]
-            heightE = ellipse[1][1]
-            return heightE / widthE if widthE > heightE else widthE / heightE
-        return None
 
     def calc_extreme_points(self) -> None:
         """
         Computes how separated the outer most points are on the largest contour.
         Higher std. deviation = more spread out
         """
-        left = tuple(
-            self.largest_contour[self.largest_contour[:, :, 0].argmin()][0]
-        )
-        right = tuple(
-            self.largest_contour[self.largest_contour[:, :, 0].argmax()][0]
-        )
-        top = tuple(
-            self.largest_contour[self.largest_contour[:, :, 1].argmin()][0]
-        )
-        bottom = tuple(
-            self.largest_contour[self.largest_contour[:, :, 1].argmax()][0]
-        )
+        left = tuple(self.largest_contour[self.largest_contour[:, :, 0].argmin()][0])
+        right = tuple(self.largest_contour[self.largest_contour[:, :, 0].argmax()][0])
+        top = tuple(self.largest_contour[self.largest_contour[:, :, 1].argmin()][0])
+        bottom = tuple(self.largest_contour[self.largest_contour[:, :, 1].argmax()][0])
         self.extreme_points = np.std([left, right, top, bottom])
 
     def calc_filled_circular_area_ratio(self) -> None:
@@ -112,7 +65,7 @@ class Geometry(image.Image):
         spots that are not captured by the largest contour and leave a horseshoe pattern
         """
         _, radius = cv2.minEnclosingCircle(self.largest_contour)
-        self.filled_circular_area_ratio = self.area / (np.pi * radius ** 2)
+        self.filled_circular_area_ratio = self.area / (np.pi * radius**2)
 
     def calc_complexity(self) -> None:
         """
@@ -126,8 +79,26 @@ class Geometry(image.Image):
         """
 
         _, radius = cv2.minEnclosingCircle(self.largest_contour)
-        Ac = np.pi * radius ** 2
+        Ac = np.pi * radius**2
 
         self.complexity = 10 * (
-            0.1 - (self.area / (np.sqrt(self.area / Ac) * self.perim ** 2))
+            0.1 - (self.area / (np.sqrt(self.area / Ac) * self.perim**2))
         )
+
+    def runner(self):
+        """perform all calculations"""
+        self.calc_phi()
+        self.calc_extreme_points()
+        self.area = cv2.contourArea(self.largest_contour)
+        self.perim = cv2.arcLength(self.largest_contour, False)
+        self.calc_complexity()
+        self.hull = cv2.convexHull(self.largest_contour)
+        self.convex_perim = cv2.arcLength(self.hull, True)
+        self.hull_area = cv2.contourArea(self.hull)
+        self.calc_filled_circular_area_ratio()
+        self.laplacian = cv2.Laplacian(self.gray, cv2.CV_64F).var()
+        self.circularity = (4.0 * np.pi * self.area) / self.perim**2
+        self.roundness = (4.0 * np.pi * self.area) / (self.convex_perim**2)
+        self.perim_area_ratio = self.perim / self.area
+        self.solidity = self.area / self.hull_area
+        self.equiv_d = np.sqrt(4 * self.area / np.pi)

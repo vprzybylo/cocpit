@@ -1,11 +1,8 @@
-"""Define model configurations"""
-import cocpit.config as config
-import cocpit
 import torch
-from torch import nn, optim
 import torchvision
-from typing import List, Any
-import torch.optim as optim
+from torch import nn, optim
+
+import cocpit.config as config
 
 
 class ModelConfig:
@@ -13,7 +10,6 @@ class ModelConfig:
     Model configurations for:
         - dropout
         - optimizer
-        - learning rate scheduler
         - device settings (cpu/gpu)
         - parameters to update
     Args:
@@ -25,7 +21,7 @@ class ModelConfig:
         self.model = model
         self.optimizer: torchvision.optimizer = None
 
-    def update_params(self, feature_extract: bool = False) -> List[Any]:
+    def update_params(self, feature_extract: bool = False):
         """
         When feature extracting, we only want to update the parameters
         of the last layer, or in other words, we only want to update the
@@ -59,31 +55,27 @@ class ModelConfig:
         """
         Number of model parameters to update
         """
-        return sum(
-            p.numel() for p in self.model.parameters() if p.requires_grad
+        return sum(p.numel() for p in self.model.parameters() if p.requires_grad)
+
+    def set_optimizer(self, lr=0.01, weight_decay=0.0) -> None:
+        """
+        Model optimizer for stochastic gradient decent
+
+        Args:
+            lr (float): the learning rate for SGD
+        """
+        self.optimizer = optim.SGD(
+            self.update_params(),
+            lr=lr,
+            momentum=0.9,
+            nesterov=True,
+            weight_decay=weight_decay,
         )
 
-    def create_optimizer(self, trial, lr=0.01, weight_decay=0.0):
-        """optimize the choice of optimizers as well as their parameters"""
+    def set_criterion(self) -> None:
+        self.criterion = nn.CrossEntropyLoss()
 
-        if trial:
-            optimizer_name = trial.suggest_categorical(
-                "optimizer", ["Adam", "RMSprop", "SGD"]
-            )
-            lr = trial.suggest_float("lr", 1e-5, 1e-1, log=True)
-            self.optimizer = getattr(optim, optimizer_name)(
-                self.model.parameters(), lr=lr
-            )
-        else:
-            self.optimizer = optim.SGD(
-                self.update_params(),
-                lr=lr,
-                momentum=0.9,
-                nesterov=True,
-                weight_decay=weight_decay,
-            )
-
-    def set_dropout(self, trial, drop_rate=0.1) -> None:
+    def set_dropout(self, drop_rate=0.1) -> None:
         """
         Apply dropout rate: a technique to fight overfitting and improve neural network generalization
 
@@ -92,11 +84,7 @@ class ModelConfig:
         """
         for m in self.model.modules():
             if isinstance(m, nn.Dropout):
-                m.p = (
-                    trial.suggest_float("dropout", 0.2, 0.5)
-                    if trial
-                    else drop_rate
-                )
+                m.p = drop_rate
 
     def to_device(self) -> None:
         """
