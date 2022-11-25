@@ -3,14 +3,15 @@ import os
 from functools import partial
 from multiprocessing import Pool
 from typing import List, Tuple
+
 import cv2
 import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
 from twilio.rest import Client
-from cocpit.auto_str import auto_str
 
 import cocpit.config as config  # isort:split
+from cocpit.auto_str import auto_str
 
 
 @auto_str
@@ -137,6 +138,12 @@ class Image:
         return (count / (2 * self.height + 2 * self.width)) * 100
 
     def save_image(self, cropped):
+        """
+        Save cropped image
+
+        Args:
+            cropped (np.array): cropped image from sheet
+        """
         if not os.path.exists(self.save_dir):
             print("making dir ", self.save_dir)
             os.makedirs(self.save_dir)
@@ -166,9 +173,7 @@ class Image:
                 rect = cv2.boundingRect(c)
                 x, y, self.width, self.height = rect
 
-                cropped = self.image_og[
-                    y : y + self.height, x : x + self.width
-                ]
+                cropped = self.image_og[y : y + self.height, x : x + self.width]
 
                 if show_cropped:
                     cv2.imshow("cropped", cropped)
@@ -177,9 +182,7 @@ class Image:
                 # converts ROI cropped regions to b/w
                 # overwrites self.thresh from whole sheet to particle rectangle
                 gray = cv2.cvtColor(cropped, cv2.COLOR_BGR2GRAY)
-                self.thresh = cv2.threshold(
-                    gray, 40, 255, cv2.THRESH_BINARY_INV
-                )[1]
+                self.thresh = cv2.threshold(gray, 40, 255, cv2.THRESH_BINARY_INV)[1]
 
                 # find contours within cropped regions
                 (cnts, _) = cv2.findContours(
@@ -215,9 +218,7 @@ class Image:
                     self.file_out = self.file[:-4] + "_" + str(i) + ".png"
                     self.files.append(self.file_out)
                     self.widths.append(self.width)  # of rectangular roi frame
-                    self.heights.append(
-                        self.height
-                    )  # of rectangular roi frame
+                    self.heights.append(self.height)  # of rectangular roi frame
                     self.particle_heights.append(particle_height)
                     self.particle_widths.append(particle_width)
 

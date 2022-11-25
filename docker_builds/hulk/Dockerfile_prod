@@ -18,4 +18,4 @@ RUN pip3 install --upgrade pip
 COPY requirements_prod.txt /requirements_prod.txt
 RUN pip3 install -r /requirements_prod.txt
 
-CMD ["python", "/data/data/__main__.py"]
+CMD ["python", f"{config.BASE_DIR}/__main__.py"]

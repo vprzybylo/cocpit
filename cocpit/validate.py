@@ -1,10 +1,12 @@
-import os
-import torch
-from cocpit.performance_metrics import Metrics
-from cocpit import config as config
-from torch.optim.lr_scheduler import ReduceLROnPlateau
 import csv
+import os
+
+import torch
 from ray import tune
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+
+from cocpit import config as config
+from cocpit.performance_metrics import Metrics
 
 
 class Validation(Metrics):
@@ -46,7 +48,8 @@ class Validation(Metrics):
         """save/load best model weights after improvement in val accuracy"""
         if self.epoch_acc > self.val_best_acc and config.SAVE_MODEL:
             print(
-                f"Epoch acc:{self.epoch_acc} > best acc: {self.val_best_acc}. Saving model."
+                f"Epoch acc:{self.epoch_acc} > best acc: {self.val_best_acc}."
+                " Saving model."
             )
             self.val_best_acc = self.epoch_acc
 

@@ -1,4 +1,5 @@
 import shutil
+from typing import List, Union
 
 import ipywidgets
 import matplotlib.pyplot as plt
@@ -6,7 +7,7 @@ import numpy as np
 from IPython.display import clear_output
 from ipywidgets import Button
 from PIL import Image
-from typing import List, Union
+
 import cocpit.config as config
 from cocpit.auto_str import auto_str
 
@@ -118,7 +119,7 @@ class GUI:
         """
         filename = self.all_paths[self.index].split("/")[-1]
 
-        # data_dir = f"/data/data/cpi_data/training_datasets/hand_labeled_resized_{config.TAG}_sideplanes_copy/"
+        # data_dir = ff"{config.BASE_DIR}/cpi_data/training_datasets/hand_labeled_resized_{config.TAG}_sideplanes_copy/"
         data_dir = "/ai2es/night_precip_hand_labeled/2017/"
 
         print(f"{data_dir}{config.CLASS_NAMES[self.all_labels[self.index]]}/{filename}")

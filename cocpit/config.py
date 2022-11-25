@@ -9,7 +9,7 @@ isort:skip_file
 
 
 from comet_ml import Experiment  # isort:split
-
+from ray import tune
 import os
 from dotenv import load_dotenv
 import torch
@@ -35,10 +35,10 @@ ADD_DATE = False
 
 # only run once in loop if building model
 # arbitrary campaign name used
-CAMPAIGNS = (
-    ["OLYMPEX"]
-    if BUILD_MODEL
-    else [
+if BUILD_MODEL:
+    CAMPAIGNS = ["OLYMPEX"]
+else:
+    CAMPAIGNS = [
         "MACPEX",
         "ATTREX",
         "ISDAC",
@@ -54,7 +54,6 @@ CAMPAIGNS = (
         "OLYMPEX",
         "POSIDON",
     ]
-)
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -81,6 +80,26 @@ CUTOFF = 10
 # how many folds used in training (cross-validation)
 # kold = 0 turns this off and splits the data according to valid_size
 KFOLD = 5
+
+# ray tune hyperoptimization
+TUNE = False
+
+# images read into memory at a time during training
+BATCH_SIZE = [64]
+BATCH_SIZE_TUNE = [32, 64, 128, 256]
+
+# number of epochs to train model
+MAX_EPOCHS = [30]
+MAX_EPOCHS_TUNE = [20, 30, 40]
+
+# dropout rate (in model_config)
+DROP_RATE_TUNE = [0.0, 0.3, 0.5]
+
+# dropout rate (in model_config)
+WEIGHT_DECAY_TUNE = [1e-5, 1e-3, 1e-2, 1e-1]
+
+# learning rate (in model_config)
+LR_TUNE = [0.001, 0.01, 0.1]
 
 # percent of the training dataset to use as validation
 VALID_SIZE = 0.20
@@ -131,6 +150,28 @@ MODEL_NAMES = [
     #     "densenet169",
     #     "densenet201",
 ]
+# models to train
+MODEL_NAMES_TUNE = [
+    "resnet18",
+    "resnet34",
+    "resnet152",
+    "efficient",
+    "alexnet",
+    "vgg16",
+    "vgg19",
+    "densenet169",
+    "densenet201",
+]
+
+CONFIG_RAY = {
+    "BATCH_SIZE": tune.choice(BATCH_SIZE_TUNE),
+    "MODEL_NAMES": tune.choice(MODEL_NAMES_TUNE),
+    "LR": tune.choice(LR_TUNE),
+    "WEIGHT_DECAY": tune.choice(WEIGHT_DECAY_TUNE),
+    "DROP_RATE": tune.choice(DROP_RATE_TUNE),
+    "MAX_EPOCHS": tune.choice(MAX_EPOCHS_TUNE),
+}
+
 
 # model to load
 MODEL_PATH = f"{BASE_DIR}/saved_models/no_mask/{TAG}/e[15]_bs[64]_k1_vgg16.pt"
@@ -148,15 +189,13 @@ MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/no_mask/{TAG}/"
 # for later inspection of predictions
 VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/no_mask/{TAG}/"
 
-MODEL_SAVENAME = (
-    f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_" f"bs{BATCH_SIZE}_k{KFOLD}_" f"vgg16.pt"
-)
+MODEL_SAVENAME = f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_bs{BATCH_SIZE}_k{KFOLD}_vgg16.pt"
 
 VAL_LOADER_SAVENAME = (
     f"{VAL_LOADER_SAVE_DIR}e{MAX_EPOCHS}_"
-    f"val_loader20_"
+    "val_loader20_"
     f"bs{BATCH_SIZE}_k{KFOLD}_"
-    f"vgg16.pt"
+    "vgg16.pt"
 )
 
 # Start with a pretrained model and only update the final layer weights
@@ -192,6 +231,7 @@ METRICS_SAVENAME = (
 )
 
 CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
+CLASSIFICATION_REPORT_SAVENAME = f"{BASE_DIR}/plots/classification_report.png"
 
 # where to save final databases to
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
