@@ -8,7 +8,6 @@
 isort:skip_file
 """
 
-
 from comet_ml import Experiment  # isort:split
 from ray import tune
 import os
@@ -21,21 +20,21 @@ import sys
 BASE_DIR = "/ai2es"
 
 # /raid/NYSM/archive/nysm/netcdf/proc/ on hulk
-nc_file_dir = f"{BASE_DIR}/5_min_obs"
+NC_FILE_DIR = f"{BASE_DIR}/5_min_obs"
 
 # /raid/lgaudet/precip/Precip/NYSM_1min_data on hulk
-csv_file_dir = f"{BASE_DIR}/1_min_obs"
+CSV_FILE_DIR = f"{BASE_DIR}/1_min_obs"
 
-# where to write time  matched data
-write_path = f"{BASE_DIR}/matched_parquet/"
+# where to write time matched data
+WRITE_PATH = f"{BASE_DIR}/matched_parquet/"
 
 # root dir to raw images (before each year subdir)
-photo_dir = f"{BASE_DIR}/cam_photos/"
+PHOTO_DIR = f"{BASE_DIR}/cam_photos/"
 
 # where the mesonet obs live in parquet format
 # output from nysm_obs_to_parquet
-parquet_dir_5M = f"{BASE_DIR}/mesonet_parquet_5M"
-parquet_dir_1M = f"{BASE_DIR}/mesonet_parquet_1M"
+PARQUET_DIR_5M = f"{BASE_DIR}/mesonet_parquet_5M"
+PARQUET_DIR_1M = f"{BASE_DIR}/mesonet_parquet_1M"
 
 # ai2es version used in docker and git
 TAG = "v0.0.0"
@@ -132,29 +131,8 @@ DATA_DIR = f"{BASE_DIR}/unsupervised/"
 # whether to save the model
 SAVE_MODEL = True
 
-# directory to save the trained model to
-MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
-
-# directory to save validation data to
-# for later inspection of predictions
-VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/{TAG}/"
-
 # model to load
 MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[30]_bs[64]_k0_1model(s).pt"
-
-MODEL_SAVENAME = (
-    f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_"
-    f"bs{BATCH_SIZE}_"
-    f"k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s).pt"
-)
-
-VAL_LOADER_SAVENAME = (
-    f"{VAL_LOADER_SAVE_DIR}e{MAX_EPOCHS}_val_loader20_"
-    f"bs{BATCH_SIZE}_"
-    f"k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s).pt"
-)
 
 # Start with a pretrained model and only update the final layer weights
 # from which we derive predictions
@@ -165,30 +143,6 @@ USE_PRETRAINED = False
 
 # write training loss and accuracy to csv
 SAVE_ACC = True
-
-# directory for saving training accuracy and loss csv's
-ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"
-
-#  filename for saving training accuracy and loss
-ACC_SAVENAME_TRAIN = (
-    f"{ACC_SAVE_DIR}train_acc_loss_e{max(MAX_EPOCHS)}_"
-    f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s).csv"
-)
-#  output filename for validation accuracy and loss
-ACC_SAVENAME_VAL = (
-    f"{ACC_SAVE_DIR}val_acc_loss_e{max(MAX_EPOCHS)}_"
-    f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s).csv"
-)
-# output filename for precision, recall, F1 file
-METRICS_SAVENAME = (
-    f"{ACC_SAVE_DIR}val_metrics_e{max(MAX_EPOCHS)}_"
-    f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s).csv"
-)
-
-CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
 
 # where to save final databases to
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
@@ -220,15 +174,8 @@ if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
             "MODEL_NAMES",
             "DATA_DIR",
             "SAVE_MODEL",
-            "MODEL_SAVE_DIR",
-            "VAL_LOADER_SAVE_DIR",
             "SAVE_ACC",
             "NUM_WORKERS",
-            "ACC_SAVENAME_TRAIN",
-            "ACC_SAVENAME_VAL",
-            "METRICS_SAVENAME",
-            "MODEL_SAVENAME",
-            "VAL_LOADER_SAVENAME",
         ]
     }
 

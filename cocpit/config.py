@@ -180,23 +180,8 @@ MODEL_PATH = f"{BASE_DIR}/saved_models/no_mask/{TAG}/e[15]_bs[64]_k1_vgg16.pt"
 DATA_DIR = f"{BASE_DIR}/cpi_data/training_datasets/{TAG}/hand_labeled_noaug/"
 
 # whether to save the model
-SAVE_MODEL = False
+SAVE_MODEL = True
 # directory to save the trained model to
-
-MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/no_mask/{TAG}/"
-
-# directory to save validation data to
-# for later inspection of predictions
-VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/no_mask/{TAG}/"
-
-MODEL_SAVENAME = f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_bs{BATCH_SIZE}_k{KFOLD}_vgg16.pt"
-
-VAL_LOADER_SAVENAME = (
-    f"{VAL_LOADER_SAVE_DIR}e{MAX_EPOCHS}_"
-    "val_loader20_"
-    f"bs{BATCH_SIZE}_k{KFOLD}_"
-    "vgg16.pt"
-)
 
 # Start with a pretrained model and only update the final layer weights
 # from which we derive predictions
@@ -206,32 +191,7 @@ FEATURE_EXTRACT = False
 USE_PRETRAINED = False
 
 # write training loss and accuracy to csv
-SAVE_ACC = False
-
-# directory for saving training accuracy and loss csv's
-ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"
-
-#  filename for saving training accuracy and loss
-ACC_SAVENAME_TRAIN = (
-    f"{ACC_SAVE_DIR}train_acc_loss_e{max(MAX_EPOCHS)}_"
-    f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s).csv"
-)
-#  output filename for validation accuracy and loss
-ACC_SAVENAME_VAL = (
-    f"{ACC_SAVE_DIR}val_acc_loss_e{max(MAX_EPOCHS)}_"
-    f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s).csv"
-)
-# output filename for precision, recall, F1 file
-METRICS_SAVENAME = (
-    f"{ACC_SAVE_DIR}val_metrics_e{max(MAX_EPOCHS)}_"
-    f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
-    f"{len(MODEL_NAMES)}model(s).csv"
-)
-
-CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
-CLASSIFICATION_REPORT_SAVENAME = f"{BASE_DIR}/plots/classification_report.png"
+SAVE_ACC = True
 
 # where to save final databases to
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
@@ -264,15 +224,8 @@ if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
             "VALID_SIZE",
             "MODEL_NAMES",
             "DATA_DIR",
-            "MODEL_SAVE_DIR",
-            "VAL_LOADER_SAVE_DIR",
             "SAVE_ACC",
             "NUM_WORKERS",
-            "ACC_SAVENAME_TRAIN",
-            "ACC_SAVENAME_VAL",
-            "METRICS_SAVENAME",
-            "MODEL_SAVENAME",
-            "VAL_LOADER_SAVENAME",
         ]
     }
 

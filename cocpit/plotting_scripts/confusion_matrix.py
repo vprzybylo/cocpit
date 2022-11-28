@@ -1,14 +1,21 @@
+"""make confusion matrix"""
 import copy
+
 import matplotlib as mpl
 import numpy as np
 import sklearn
 from sklearn.metrics import confusion_matrix
+
 import cocpit.config as config  # isort: split
-import seaborn as sns
+from typing import Optional
+
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 
-def mask_cm_small_values(cm, value=0.005):
+def mask_cm_small_values(
+    cm: sklearn.metrics.confusion_matrix, value: float = 0.005
+) -> np.array:
     """
     Mask small values to plot white
 
@@ -82,8 +89,9 @@ def heatmap_axes(hm: sns.heatmap, ax: plt.Axes, fontsize: int = 24) -> None:
 def conf_matrix(
     all_labels: np.ndarray,
     all_preds: np.ndarray,
-    norm=None,
-    save_fig=True,
+    norm: Optional[str] = None,
+    save_fig: bool = True,
+    savename: str = f"{config.BASE_DIR}/plots/conf_matrix.png",
 ) -> sklearn.metrics.confusion_matrix:
     """
     Plot and save a confusion matrix from a saved validation dataloader
@@ -111,5 +119,5 @@ def conf_matrix(
         ax.set_title("Unweighted", fontsize=24)
 
     if save_fig:
-        fig.savefig(config.CONF_MATRIX_SAVENAME, bbox_inches="tight")
+        fig.savefig(savename, bbox_inches="tight")
     return cm
