@@ -14,6 +14,9 @@ from dotenv import load_dotenv
 import torch
 import sys
 
+# Small description to ID
+# DESC = "LIE_Corr_6class_foldsv0tr1"
+
 # Absolute path to to folder where the data and models live
 BASE_DIR = "/DRIVE_PYTORCH"
 
@@ -41,6 +44,7 @@ KFOLD = 0
 
 # percent of the training dataset to use as validation
 VALID_SIZE = 0.20
+VAL_PREDEFINED = True  # set to True if want to use specific val/train e.g. what was used in tensorflow model build. Must set DATA_DIR_PREDEFINED_VAL too
 
 # ray tune hyperoptimization
 TUNE = False
@@ -50,7 +54,7 @@ BATCH_SIZE = [64]
 BATCH_SIZE_TUNE = [32, 64, 128, 256]
 
 # number of epochs to train model
-MAX_EPOCHS = [25]
+MAX_EPOCHS = [48]
 MAX_EPOCHS_TUNE = [20, 30, 40]
 
 # dropout rate (in model_config)
@@ -60,8 +64,15 @@ DROP_RATE_TUNE = [0.0, 0.3, 0.5]
 LR_TUNE = [0.001, 0.01, 0.1]
 
 # names of each ice crystal class
-CLASS_NAMES = ["wet", "dry", "snow", "snow_severe"]
-CLASS_NAMES_ALPHABETICAL = ["dry", "snow", "snow_severe", "wet"]
+CLASS_NAMES = ["wet", "dry", "snow", "snow_severe", "obs", "poor_viz"]
+CLASS_NAMES_ALPHABETICAL = [
+    "dry",
+    "obs",
+    "poor_viz",
+    "snow",
+    "snow_severe",
+    "wet",
+]
 
 # any abbreviations in folder names where the data lives for each class
 CLASS_NAME_MAP = {
@@ -69,6 +80,8 @@ CLASS_NAME_MAP = {
     "dry": "dry",
     "snow": "snow",
     "snow_severe": "severe snow",
+    "obs": "obstructed",
+    "poor_viz": "poor visibility",
 }
 
 # models to train
@@ -99,10 +112,11 @@ config_ray = {
 
 
 # directory that holds the training data
-DATA_DIR = (
-    "/DRIVE/site_analysis/corridor_LIE_east/training_data_py/training_data/"
-)
+DATA_DIR = "/DRIVE/site_analysis/pytorch_ims/Corr_LIE_East__baseline_vgg16__multiple__6class__kfold5_strat__test/data/crop"
+# "/DRIVE/site_analysis/corridor_LIE_east/training_data_py/training_data/"
+# "/DRIVE/site_analysis/corridor_LIE_east/gui_label/training_data/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
+DATA_DIR_PREDEFINED_VAL = "/DRIVE/site_analysis/pytorch_ims/Corr_LIE_East__baseline_vgg16__multiple__6class__kfold5_strat__test/filename_phase_list/"
 
 # whether to save the model
 SAVE_MODEL = True
