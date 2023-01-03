@@ -1,0 +1,13 @@
+Bootstrap: docker
+FROM: python:3.9-slim-buster
+
+%files
+requirements_dash.txt requirements_dash.txt
+
+%post
+pip install --upgrade pip
+pip install -r requirements_dash.txt
+
+
+%runscript
+python /home/vanessa/hulk/cocpit/cocpit/dash_app/app.py

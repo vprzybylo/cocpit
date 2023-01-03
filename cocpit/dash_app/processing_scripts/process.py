@@ -1,8 +1,8 @@
 """CPI campaign data processing functions for dataframes"""
 
-import pandas as pd
 import globals
 import numpy as np
+import pandas as pd
 
 
 def read_campaign(campaign):
@@ -14,7 +14,7 @@ def read_campaign(campaign):
     campaign = campaign.replace(" ", "_").replace("(", "").replace(")", "")
 
     df = pd.read_parquet(
-        f"/cocpit/final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
+        f"/home/vanessa/hulk/cocpit/final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
         engine="fastparquet",
     )
     return df
@@ -38,9 +38,7 @@ def remove_bad_data(df):
 
 def rename(df):
     """remove underscores in particle properties in classification column"""
-    rename_types = dict(
-        zip(globals.particle_types, globals.particle_types_rename)
-    )
+    rename_types = dict(zip(globals.particle_types, globals.particle_types_rename))
     df = df.replace(rename_types)
     rename_types = dict(zip(globals.campaigns, globals.campaigns_rename))
     df = df.replace(rename_types)

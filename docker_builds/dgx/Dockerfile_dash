@@ -1,0 +1,7 @@
+FROM python:3.9-slim-buster
+
+RUN pip3 install --upgrade pip
+COPY requirements_dash.txt requirements_dash.txt
+RUN pip3 install -r requirements_dash.txt
+
+CMD [ "python", "/home/vanessa/hulk/cocpit/cocpit/dash_app/app.py" ]

@@ -1,0 +1,38 @@
+Bootstrap: docker
+From: nvidia/cuda:11.8.0-devel-ubuntu22.04
+Stage: spython-base
+
+%environment
+export PATH="/usr/bin/python:/usr/local/bin/code-server-4.7.1-linux-amd64/bin:$PATH"
+export TZ=US
+
+%files
+/home/vanessa/hulk/cocpit/requirements_dev.txt requirements_dev.txt
+/home/vanessa/hulk/cocpit/setup.py setup.py
+/home/vanessa/hulk/cocpit/README.md README.md
+
+%post
+export DEBIAN_FRONTEND=noninteractive
+curl -sL https://deb.nodesource.com/setup_14.x | bash -
+apt-get -y update && apt-get install -y --no-install-recommends \
+wget \
+gcc \
+tzdata \
+python3-pip \
+nodejs \
+git \
+vim \
+make \
+ffmpeg \
+libsm6 \
+sudo \
+&& apt-get clean all && rm -rf /var/lib/apt/lists/*
+
+pip3 install --upgrade pip setuptools wheel
+pip3 install -r requirements_dev.txt
+pip3 install -e . --user
+
+mkdir -p /usr/local/bin
+cd /usr/local/bin
+wget https://github.com/cdr/code-server/releases/download/v4.7.1/code-server-4.7.1-linux-amd64.tar.gz  && \
+tar -xzvf code-server-4.7.1-linux-amd64.tar.gz

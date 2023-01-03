@@ -15,71 +15,51 @@ from dotenv import load_dotenv
 import torch
 import sys
 
-# cocpit version used in docker and git
-TAG = "v3.1.0"
+# Absolute path to to folder where the data and models live
+# BASE_DIR = '/Volumes/TOSHIBA EXT/raid/data/cpi_data'
+BASE_DIR = "/ai2es"
 
-# extract each image from sheet of images
-PREPROCESS_SHEETS = False
+# /raid/NYSM/archive/nysm/netcdf/proc/ on hulk
+NC_FILE_DIR = f"{BASE_DIR}/5_min_obs"
+
+# /raid/lgaudet/precip/Precip/NYSM_1min_data on hulk
+CSV_FILE_DIR = f"{BASE_DIR}/1_min_obs"
+
+# where to write time matched data
+WRITE_PATH = f"{BASE_DIR}/matched_parquet/"
+
+# root dir to raw images (before each year subdir)
+PHOTO_DIR = f"{BASE_DIR}/cam_photos/"
+
+# where the mesonet obs live in parquet format
+# output from nysm_obs_to_parquet
+PARQUET_DIR_5M = f"{BASE_DIR}/mesonet_parquet_5M"
+PARQUET_DIR_1M = f"{BASE_DIR}/mesonet_parquet_1M"
+
+# ai2es version used in docker and git
+TAG = "v0.0.0"
 
 # create and save CNN
 BUILD_MODEL = True
 
-# run the category classification on quality images of ice particles
-ICE_CLASSIFICATION = False
-
-# calculates geometric particle properties and appends to databases
-GEOMETRIC_ATTRIBUTES = False
-
-# adds a column for the date from the filename
-ADD_DATE = False
-
-# only run once in loop if building model
-# arbitrary campaign name used
-if BUILD_MODEL:
-    CAMPAIGNS = ["OLYMPEX"]
-else:
-    CAMPAIGNS = [
-        "MACPEX",
-        "ATTREX",
-        "ISDAC",
-        "CRYSTAL_FACE_UND",
-        "AIRS_II",
-        "ARM",
-        "CRYSTAL_FACE_NASA",
-        "ICE_L",
-        "IPHEX",
-        "MC3E",
-        "MIDCIX",
-        "MPACE",
-        "OLYMPEX",
-        "POSIDON",
-    ]
+# classify images on new data?
+CLASSIFICATION = False
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Absolute path to to folder where the data and models live
-# BASE_DIR = '/Volumes/TOSHIBA EXT/raid/data/cpi_data'
-BASE_DIR = "/home/vanessa/hulk/cocpit"
-
-# model to load
-MODEL_PATH = f"{BASE_DIR}/saved_models/no_mask/{TAG}/e[15]_bs[64]_k0_vgg16.pt"
-
 # workers for parallelization
-NUM_CPUS = 10
+NUM_CPUS = 5
 
 # number of cpus used to load data in pytorch dataloaders
 NUM_WORKERS = 10
 
-# whether to save the individual extracted images
-# used in process_png_sheets_with_text.py
-SAVE_IMAGES = True
-
-# percent of image that can intersect the border
-CUTOFF = 10
-
 # how many folds used in training (cross-validation)
 # kold = 0 turns this off and splits the data according to valid_size
-KFOLD = 5
+# cannot = 1
+KFOLD = 0
+
+# percent of the training dataset to use as validation
+VALID_SIZE = 0.20
 
 # ray tune hyperoptimization
 TUNE = False
@@ -101,61 +81,33 @@ WEIGHT_DECAY_TUNE = [1e-5, 1e-3, 1e-2, 1e-1]
 # learning rate (in model_config)
 LR_TUNE = [0.001, 0.01, 0.1]
 
-# percent of the training dataset to use as validation
-VALID_SIZE = 0.20
-
-# images read into memory at a time during training
-BATCH_SIZE = [64]
-
-# number of epochs to train model
-MAX_EPOCHS = [2]
-
 # names of each ice crystal class
-CLASS_NAMES = [
-    "aggregate",
-    "budding rosette",
-    "bullet rosette",
-    "column",
-    "compact irregular",
-    "fragment",
-    "planar polycrystal",
-    "rimed",
-    # "rimed column",
-    "sphere",
-]
+CLASS_NAMES = ["no precipitation", "obstruction", "precipitation"]
 
 # any abbreviations in folder names where the data lives for each class
 CLASS_NAME_MAP = {
-    "aggregate": "agg",
-    "budding rosette": "budding",
-    "bullet rosette": "bullet",
-    "column": "column",
-    "compact irregular": "compact_irreg",
-    "fragment": "fragment",
-    "planar polycrystal": "planar_polycrystal",
-    "rimed": "rimed",
-    # "rimed column": "rimed_col",
-    "sphere": "sphere",
+    "no precipitation": "no_precip",
+    "obstruction": "obstruction",
+    "precipitation": "precip",
 }
 
 # models to train
-MODEL_NAMES = [
-    #     "efficient",
-    #     "resnet18",
-    #     "resnet34",
-    #     "resnet152",
-    #     "alexnet",
-    "vgg16",
-    #      "vgg19",
-    #     "densenet169",
-    #     "densenet201",
-]
-# models to train
 MODEL_NAMES_TUNE = [
     "resnet18",
+    "efficient",
     "resnet34",
     "resnet152",
+    "alexnet",
+    "vgg16",
+    "vgg19",
+    "densenet169",
+    "densenet201",
+]
+MODEL_NAMES = [
+    "resnet18",
     "efficient",
+    "resnet34",
+    "resnet152",
     "alexnet",
     "vgg16",
     "vgg19",
@@ -163,7 +115,7 @@ MODEL_NAMES_TUNE = [
     "densenet201",
 ]
 
-CONFIG_RAY = {
+config_ray = {
     "BATCH_SIZE": tune.choice(BATCH_SIZE_TUNE),
     "MODEL_NAMES": tune.choice(MODEL_NAMES_TUNE),
     "LR": tune.choice(LR_TUNE),
@@ -173,15 +125,15 @@ CONFIG_RAY = {
 }
 
 
-# model to load
-MODEL_PATH = f"{BASE_DIR}/saved_models/no_mask/{TAG}/e[15]_bs[64]_k1_vgg16.pt"
-
 # directory that holds the training data
-DATA_DIR = f"{BASE_DIR}/cpi_data/training_datasets/{TAG}/hand_labeled_noaug/"
+DATA_DIR = f"{BASE_DIR}/unsupervised/"
+# DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # whether to save the model
 SAVE_MODEL = True
-# directory to save the trained model to
+
+# model to load
+MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[30]_bs[64]_k0_1model(s).pt"
 
 # Start with a pretrained model and only update the final layer weights
 # from which we derive predictions
@@ -195,8 +147,6 @@ SAVE_ACC = True
 
 # where to save final databases to
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
-if not os.path.exists(FINAL_DIR):
-    os.makedirs(FINAL_DIR)
 
 # log experiment to comet for tracking?
 LOG_EXP = False
@@ -224,6 +174,7 @@ if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
             "VALID_SIZE",
             "MODEL_NAMES",
             "DATA_DIR",
+            "SAVE_MODEL",
             "SAVE_ACC",
             "NUM_WORKERS",
         ]
@@ -231,5 +182,134 @@ if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
 
     experiment.log_parameters(params)
     experiment.add_tag(TAG)
+    experiment.add_tag("rain gauge 2 class")
 else:
     experiment = None
+
+stnid = [
+    "ADDI",
+    "ANDE",
+    "BATA",
+    "BEAC",
+    "BELD",
+    "BELL",
+    "BELM",
+    "BERK",
+    "BING",
+    "BKLN",
+    "BRAN",
+    "BREW",
+    "BROC",
+    "BRON",
+    "BROO",
+    "BSPA",
+    "BUFF",
+    "BURD",
+    "BURT",
+    "CAMD",
+    "CAPE",
+    "CHAZ",
+    "CHES",
+    "CINC",
+    "CLAR",
+    "CLIF",
+    "CLYM",
+    "COBL",
+    "COHO",
+    "COLD",
+    "COPA",
+    "COPE",
+    "CROG",
+    "CSQR",
+    "DELE",
+    "DEPO",
+    "DOVE",
+    "DUAN",
+    "EAUR",
+    "EDIN",
+    "EDWA",
+    "ELDR",
+    "ELLE",
+    "ELMI",
+    "ESSX",
+    "FAYE",
+    "FRED",
+    "GABR",
+    "GFAL",
+    "GFLD",
+    "GROT",
+    "GROV",
+    "HAMM",
+    "HARP",
+    "HARR",
+    "HART",
+    "HERK",
+    "HFAL",
+    "ILAK",
+    "JOHN",
+    "JORD",
+    "KIND",
+    "LAUR",
+    "LOUI",
+    "MALO",
+    "MANH",
+    "MEDI",
+    "MEDU",
+    "MORR",
+    "NBRA",
+    "NEWC",
+    "NHUD",
+    "OLDF",
+    "OLEA",
+    "ONTA",
+    "OPPE",
+    "OSCE",
+    "OSWE",
+    "OTIS",
+    "OWEG",
+    "PENN",
+    "PHIL",
+    "PISE",
+    "POTS",
+    "QUEE",
+    "RAND",
+    "RAQU",
+    "REDF",
+    "REDH",
+    "ROXB",
+    "RUSH",
+    "SARA",
+    "SBRI",
+    "SCHA",
+    "SCHO",
+    "SCHU",
+    "SCIP",
+    "SHER",
+    "SOME",
+    "SOUT",
+    "SPRA",
+    "SPRI",
+    "STAT",
+    "STEP",
+    "SUFF",
+    "TANN",
+    "TICO",
+    "TULL",
+    "TUPP",
+    "TYRO",
+    "VOOR",
+    "WALL",
+    "WALT",
+    "WANT",
+    "WARS",
+    "WARW",
+    "WATE",
+    "WBOU",
+    "WELL",
+    "WEST",
+    "WFMB",
+    "WGAT",
+    "WHIT",
+    "WOLC",
+    "YORK",
+]
