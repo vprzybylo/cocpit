@@ -44,12 +44,13 @@ class Validation(Metrics):
         with torch.no_grad():
 
             outputs = self.c.model(self.inputs)
-            y_true = torch.eye(len(config.CLASS_NAMES))
-            y_true = y_true[self.labels].to(config.DEVICE)
-
-            self.loss = self.c.criterion(
-                outputs, y_true.float(), self.epoch, annealing_step=10
-            )
+            if config.EVIDENTIAL:
+                self.loss = cocpit.loss.categorical_evidential_loss(
+                    outputs, self.labels, self.epochs
+                )
+            else:
+                self.criterion = nn.CrossEntropyLoss()
+                self.loss = self.criterion(outputs, self.labels)
             _, self.preds = torch.max(outputs, 1)
             self.probs = F.softmax(outputs, dim=1).max(dim=1).values
             self.uncertainty(outputs)
