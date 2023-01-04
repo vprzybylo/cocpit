@@ -2,6 +2,7 @@ import os
 import random
 
 import numpy as np
+import pandas as pd
 import torch
 import torch.utils.data.sampler as samp
 
@@ -65,7 +66,9 @@ class FoldSetup:
         """
         data = data_loaders.get_data("train")
         self.train_data = torch.utils.data.Subset(data, self.train_indices)
-        self.train_labels = list(map(data.targets.__getitem__, self.train_indices))
+        self.train_labels = list(
+            map(data.targets.__getitem__, self.train_indices)
+        )
 
         data = data_loaders.get_data("val")
         self.val_data = torch.utils.data.Subset(data, self.val_indices)
@@ -92,7 +95,9 @@ class FoldSetup:
             f"_{len(config.MODEL_NAMES)}model(s).pt"
         )
 
-    def train_loader(self, balance_weights: bool = True) -> torch.utils.data.DataLoader:
+    def train_loader(
+        self, balance_weights: bool = True
+    ) -> torch.utils.data.DataLoader:
         """
         - Create train loader that iterates images in batches
         - Balance the distribution of sampled images given imbalance
@@ -130,24 +135,69 @@ class FoldSetup:
 
     def create_dataloaders(self) -> None:
         """Create dict of train/val dataloaders based on split and sampler from StratifiedKFold"""
-        self.dataloaders = {"train": self.train_loader(), "val": self.val_loader()}
+        self.dataloaders = {
+            "train": self.train_loader(),
+            "val": self.val_loader(),
+        }
 
     def nofold_indices(self) -> None:
         """
-        - If not applying cross-fold validation, split training dataset
+        - If using predefined val, find the indices of those corresponding images first
+        - Otherwise, If not applying cross-fold validation, split training dataset
         based on config.VALID_SIZE
         - Shuffle first and then split dataset
         """
 
-        total_files = sum(len(files) for r, d, files in os.walk(config.DATA_DIR))
-        print(f"len files {total_files}")
+        # if using predifined val, set indicies list based on csv list of train and val saved from work in DRIVE
+        if config.VAL_PREDEFINED:
+            name_files = []
+            for r, d, files in os.walk(config.DATA_DIR):
+                for name in files:
+                    name_files.append(name)
+            print(f" total images is : {len(name_files)}")
 
-        # randomly split indices for training and validation indices according to valid_size
-        if config.VALID_SIZE < 0.01:
-            # use all of the data
-            self.train_indices = np.arange(0, total_files)
-            random.shuffle(self.train_indices)
-        else:
-            self.train_indices, self.val_indices = train_test_split(
-                list(range(total_files)), test_size=config.VALID_SIZE, random_state=42
+            # read in set train and val list
+            tr = pd.read_csv(f"{config.DATA_DIR_PREDEFINED_VAL}train.csv")
+            v = pd.read_csv(f"{config.DATA_DIR_PREDEFINED_VAL}val.csv")
+            trset = set(tr["img_name"])
+            valset = set(v["img_name"])
+
+            # create list of indices
+            vallistfinal = []
+            trainlistfinal = []
+            for ind, name in enumerate(name_files):
+                if name in trset:
+                    # print(ind)
+                    # print(name)
+                    trainlistfinal.append(ind)
+
+                if name in valset:
+                    # print(ind)
+                    # print(name)
+                    vallistfinal.append(ind)
+
+            print(f"number of val ims from predefined: {len(vallistfinal)}")
+            print(
+                f"number of train ims from predefined: {len(trainlistfinal)}"
             )
+
+            self.val_indices = vallistfinal
+            self.train_indices = trainlistfinal
+
+        else:
+            total_files = sum(
+                len(files) for r, d, files in os.walk(config.DATA_DIR)
+            )
+            print(f"len files {total_files}")
+
+            # randomly split indices for training and validation indices according to valid_size
+            if config.VALID_SIZE < 0.01:
+                # use all of the data
+                self.train_indices = np.arange(0, total_files)
+                random.shuffle(self.train_indices)
+            else:
+                self.train_indices, self.val_indices = train_test_split(
+                    list(range(total_files)),
+                    test_size=config.VALID_SIZE,
+                    random_state=42,
+                )

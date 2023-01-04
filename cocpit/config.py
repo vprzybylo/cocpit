@@ -14,6 +14,9 @@ from dotenv import load_dotenv
 import torch
 import sys
 
+# Small description to ID
+# DESC = "LIE_Corr_6class_foldsv0tr1"
+
 # Absolute path to to folder where the data and models live
 BASE_DIR = "/DRIVE_PYTORCH"
 
@@ -41,6 +44,7 @@ KFOLD = 0
 
 # percent of the training dataset to use as validation
 VALID_SIZE = 0.20
+VAL_PREDEFINED = True  # set to True if want to use specific val/train e.g. what was used in tensorflow model build. Must set DATA_DIR_PREDEFINED_VAL too
 
 # ray tune hyperoptimization
 TUNE = False
@@ -60,7 +64,7 @@ DROP_RATE_TUNE = [0.0, 0.3, 0.5]
 LR_TUNE = [0.001, 0.01, 0.1]
 
 # names of each ice crystal class
-CLASS_NAMES = ["wet", "dry", "snow", "snow_severe", "poor_viz", "obs"]
+CLASS_NAMES = ["wet", "dry", "snow", "snow_severe", "obs", "poor_viz"]
 CLASS_NAMES_ALPHABETICAL = [
     "dry",
     "obs",
@@ -76,6 +80,8 @@ CLASS_NAME_MAP = {
     "dry": "dry",
     "snow": "snow",
     "snow_severe": "severe snow",
+    "obs": "obstructed",
+    "poor_viz": "poor visibility",
 }
 
 # models to train
@@ -106,8 +112,11 @@ config_ray = {
 
 
 # directory that holds the training data
-DATA_DIR = "/DRIVE/site_analysis/corridor_LIE_east/gui_label/training_data/"
+DATA_DIR = "/DRIVE/site_analysis/pytorch_ims/Corr_LIE_East__baseline_vgg16__multiple__6class__kfold5_strat__test/data/crop"
+# "/DRIVE/site_analysis/corridor_LIE_east/training_data_py/training_data/"
+# "/DRIVE/site_analysis/corridor_LIE_east/gui_label/training_data/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
+DATA_DIR_PREDEFINED_VAL = "/DRIVE/site_analysis/pytorch_ims/Corr_LIE_East__baseline_vgg16__multiple__6class__kfold5_strat__test/filename_phase_list/"
 
 # whether to save the model
 SAVE_MODEL = True
@@ -115,17 +124,18 @@ SAVE_MODEL = True
 # directory to save the trained model to
 MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
 
+# model description
+MODEL_DESC = f"LIE_6class"
+
 # directory to save validation data to
 # for later inspection of predictions
 VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/{TAG}/"
 
-# model to load
-MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[25]_bs[64]_k{KFOLD}_{MODEL_NAMES_SAVE}.pt"
 # {len(MODEL_NAMES)}model(s)
-MODEL_SAVENAME = f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_bs{BATCH_SIZE}_k{KFOLD}_{MODEL_NAMES_SAVE}.pt"
+MODEL_SAVENAME = f"{MODEL_SAVE_DIR}{MODEL_DESC}_e{MAX_EPOCHS}_bs{BATCH_SIZE}_k{KFOLD}_{MODEL_NAMES_SAVE}.pt"
 # {len(MODEL_NAMES)}model(s)
 
-VAL_LOADER_SAVENAME = f"{VAL_LOADER_SAVE_DIR}e{MAX_EPOCHS}_val_loader20_bs{BATCH_SIZE}_k{KFOLD}_{MODEL_NAMES_SAVE}"
+VAL_LOADER_SAVENAME = f"{VAL_LOADER_SAVE_DIR}{MODEL_DESC}_e{MAX_EPOCHS}_val_loader20_bs{BATCH_SIZE}_k{KFOLD}_{MODEL_NAMES_SAVE}"
 # REMOVE vgg16 at end
 
 # Start with a pretrained model and only update the final layer weights
@@ -143,24 +153,24 @@ ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"
 
 #  filename for saving training accuracy and loss
 ACC_SAVENAME_TRAIN = (
-    f"{ACC_SAVE_DIR}train_acc_loss_e{max(MAX_EPOCHS)}_"
+    f"{ACC_SAVE_DIR}{MODEL_DESC}_train_acc_loss_e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
     f"{MODEL_NAMES_SAVE}.csv"
 )
 #  output filename for validation accuracy and loss
 ACC_SAVENAME_VAL = (
-    f"{ACC_SAVE_DIR}val_acc_loss_e{max(MAX_EPOCHS)}_"
+    f"{ACC_SAVE_DIR}{MODEL_DESC}_val_acc_loss_e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
     f"{MODEL_NAMES_SAVE}.csv"
 )
 # output filename for precision, recall, F1 file
 METRICS_SAVENAME = (
-    f"{ACC_SAVE_DIR}val_metrics_e{max(MAX_EPOCHS)}_"
+    f"{ACC_SAVE_DIR}{MODEL_DESC}_val_metrics_e{max(MAX_EPOCHS)}_"
     f"bs{max(BATCH_SIZE)}_k{KFOLD}_"
     f"{MODEL_NAMES_SAVE}.csv"
 )
 
-CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
+CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/{MODEL_DESC}_e{MAX_EPOCHS}_bs{BATCH_SIZE}_k{KFOLD}_{MODEL_NAMES_SAVE}_conf_matrix.png"
 
 # where to save final databases to
 FINAL_DIR = f"{BASE_DIR}/final_databases/{MODEL_NAMES_SAVE}/{TAG}/"
