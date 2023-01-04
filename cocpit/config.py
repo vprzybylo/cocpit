@@ -50,7 +50,7 @@ BATCH_SIZE = [64]
 BATCH_SIZE_TUNE = [32, 64, 128, 256]
 
 # number of epochs to train model
-MAX_EPOCHS = [3]
+MAX_EPOCHS = [48]
 MAX_EPOCHS_TUNE = [20, 30, 40]
 
 # dropout rate (in model_config)
@@ -60,8 +60,15 @@ DROP_RATE_TUNE = [0.0, 0.3, 0.5]
 LR_TUNE = [0.001, 0.01, 0.1]
 
 # names of each ice crystal class
-CLASS_NAMES = ["wet", "dry", "snow", "snow_severe"]
-CLASS_NAMES_ALPHABETICAL = ["dry", "snow", "snow_severe", "wet"]
+CLASS_NAMES = ["wet", "dry", "snow", "snow_severe", "poor_viz", "obs"]
+CLASS_NAMES_ALPHABETICAL = [
+    "dry",
+    "obs",
+    "poor_viz",
+    "snow",
+    "snow_severe",
+    "wet",
+]
 
 # any abbreviations in folder names where the data lives for each class
 CLASS_NAME_MAP = {
