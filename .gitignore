@@ -42,6 +42,9 @@ final_databases*
 configs
 git-sizer
 __pycache__
+carly_csvs
+*.sif
+carly_cropped
 cocpit.img
 pytorch-grad-cam
 .vscode
