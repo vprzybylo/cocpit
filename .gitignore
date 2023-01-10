@@ -8,11 +8,13 @@ setup.py
 ETOP*
 test.ipynb
 tmp*
+carly_cropped/*
 final_databases
 .DS_store
 .virtual_documents
 file_system_store
 data
+495_Eastbound*
 cpi_data
 test_sheets
 initial_databases
