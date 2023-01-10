@@ -155,26 +155,12 @@ class FoldSetup:
                 for name in files:
                     name_files.append(name)
             print(f" total images is : {len(name_files)}")
+            df_data_dir = pd.DataFrame({"filenames": name_files})
 
-            # read in set train and val list
-            tr = pd.read_csv(f"{config.DATA_DIR_PREDEFINED_VAL}train.csv")
-            v = pd.read_csv(f"{config.DATA_DIR_PREDEFINED_VAL}val.csv")
-            trset = set(tr["img_name"])
-            valset = set(v["img_name"])
-
-            # create list of indices
-            vallistfinal = []
-            trainlistfinal = []
-            for ind, name in enumerate(name_files):
-                if name in trset:
-                    # print(ind)
-                    # print(name)
-                    trainlistfinal.append(ind)
-
-                if name in valset:
-                    # print(ind)
-                    # print(name)
-                    vallistfinal.append(ind)
+            tr = pd.read_csv(config.DATA_DIR_PREDEFINED_TRAIN)
+            v = pd.read_csv(config.DATA_DIR_PREDEFINED_VAL)
+            trainlistfinal = df_data_dir.index[df_data_dir['filenames'].isin(tr)].tolist()
+            vallistfinal = df_data_dir.index[df_data_dir['filenames'].isin(v)].tolist()
 
             print(f"number of val ims from predefined: {len(vallistfinal)}")
             print(
