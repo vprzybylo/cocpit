@@ -9,6 +9,7 @@ ETOP*
 test.ipynb
 tmp*
 carly_cropped/*
+*.sif
 final_databases
 .DS_store
 .virtual_documents

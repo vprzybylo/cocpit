@@ -178,12 +178,14 @@ def preprocess_image(pil_im, resize_im=True):
     std = [0.229, 0.224, 0.225]
 
     im_as_arr = np.float32(pil_im)
+
     im_as_arr = im_as_arr.transpose(2, 0, 1)  # Convert array to D,W,H
+    print(np.shape(im_as_arr))
     # Normalize the channels
     for channel, _ in enumerate(im_as_arr):
-        im_as_arr[channel] /= 255
-        im_as_arr[channel] -= mean[channel]
-        im_as_arr[channel] /= std[channel]
+        im_as_arr[channel, :, :] /= 255
+        im_as_arr[channel, :, :] -= mean[channel]
+        im_as_arr[channel, :, :] /= std[channel]
     # Convert to float tensor
     im_as_ten = torch.from_numpy(im_as_arr).float()
     # Add one more channel to the beginning. Tensor shape = 1,3,224,224
