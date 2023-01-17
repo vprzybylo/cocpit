@@ -18,13 +18,13 @@ def keys() -> List[str]:
         List[str]: attribute names
     """
     return [
-        "perim",
-        "hull_area",
-        "convex_perim",
+        "perim [pixels]",
+        "hull_area [pixels]",
+        "convex_perim [pixels]",
         "blur",
-        "contours",
+        "contours [#]",
         "contrast",
-        "cnt_area",
+        "cnt_area [pixels]",
         "circularity",
         "solidity",
         "complexity",

@@ -181,7 +181,6 @@ DATA_DIR = f"{BASE_DIR}/cpi_data/training_datasets/{TAG}/hand_labeled_noaug/"
 
 # whether to save the model
 SAVE_MODEL = True
-# directory to save the trained model to
 
 # Start with a pretrained model and only update the final layer weights
 # from which we derive predictions

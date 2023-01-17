@@ -1,0 +1,8 @@
+dash_extensions
+dash_bootstrap_components
+dash_loading_spinners
+dash-mantine-components
+fastparquet
+netCDF4
+pandas
+python-dotenv

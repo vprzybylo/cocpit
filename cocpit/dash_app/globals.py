@@ -1,38 +1,37 @@
 from datetime import date
 
-
 campaigns = [
-    "AIRS_II",
-    "ARM",
-    "ATTREX",
+    # "AIRS_II",
+    # "ARM",
+    # "ATTREX",
     "CRYSTAL_FACE_UND",
     "CRYSTAL_FACE_NASA",
-    "ICE_L",
-    "IPHEX",
-    "ISDAC",
-    "MACPEX",
-    "MC3E",
-    "MIDCIX",
+    # "ICE_L",
+    # "IPHEX",
+    # "ISDAC",
+    # "MACPEX",
+    # "MC3E",
+    # "MIDCIX",
     "MPACE",
-    "POSIDON",
-    "OLYMPEX",
+    # "POSIDON",
+    # "OLYMPEX",
 ]
 
 campaigns_rename = [
-    "AIRS II",
-    "ARM",
-    "ATTREX",
+    # "AIRS II",
+    # "ARM",
+    # "ATTREX",
     "CRYSTAL FACE (UND)",
     "CRYSTAL FACE (NASA)",
-    "ICE L",
-    "IPHEX",
-    "ISDAC",
-    "MACPEX",
-    "MC3E",
-    "MIDCIX",
+    # "ICE L",
+    # "IPHEX",
+    # "ISDAC",
+    # "MACPEX",
+    # "MC3E",
+    # "MIDCIX",
     "MPACE",
-    "POSIDON",
-    "OLYMPEX",
+    # "POSIDON",
+    # "OLYMPEX",
 ]
 
 particle_types = [
@@ -55,24 +54,24 @@ particle_types_rename = [
     "rimed",
 ]
 
-env_properties = ['Ice Water Content', 'Temperature', 'Pressure']
+env_properties = ["Ice Water Content", "Temperature", "Pressure"]
 
 particle_properties = [
-    'Contour Area',
-    'Circularity',
-    'Solidity',
-    'Complexity',
-    'Equivalent Diameter',
-    'Convex Perimeter',
-    'Hull Area',
-    'Perimeter',
-    'Aspect Ratio',
-    'Area Ratio',
-    'Roundness',
-    'Perimeter-Area Ratio',
+    "Contour Area",
+    "Circularity",
+    "Solidity",
+    "Complexity",
+    "Equivalent Diameter",
+    "Convex Perimeter",
+    "Hull Area",
+    "Perimeter",
+    "Aspect Ratio",
+    "Area Ratio",
+    "Roundness",
+    "Perimeter-Area Ratio",
 ]
 
-vertical_vars = ['Ice Water Content', 'Temperature', 'Pressure']
+vertical_vars = ["Ice Water Content", "Temperature", "Pressure"]
 
 campaign_start_dates = {
     "AIRS II": date(2003, 11, 14),
@@ -143,24 +142,24 @@ max_dates = {
 }
 
 Ctopo = [
-    [0, 'rgb(0, 0, 70)'],
-    [0.2, 'rgb(0,90,150)'],
-    [0.4, 'rgb(150,180,230)'],
-    [0.5, 'rgb(210,230,250)'],
-    [0.50001, 'rgb(0,120,0)'],
-    [0.57, 'rgb(220,180,130)'],
-    [0.65, 'rgb(120,100,0)'],
-    [0.75, 'rgb(80,70,0)'],
-    [0.9, 'rgb(200,200,200)'],
-    [1.0, 'rgb(255,255,255)'],
+    [0, "rgb(0, 0, 70)"],
+    [0.2, "rgb(0,90,150)"],
+    [0.4, "rgb(150,180,230)"],
+    [0.5, "rgb(210,230,250)"],
+    [0.50001, "rgb(0,120,0)"],
+    [0.57, "rgb(220,180,130)"],
+    [0.65, "rgb(120,100,0)"],
+    [0.75, "rgb(80,70,0)"],
+    [0.9, "rgb(200,200,200)"],
+    [1.0, "rgb(255,255,255)"],
 ]
 
 campaign_image_count = {
     "AIRS II": 1,
     "ARM": 1,
     "ATTREX": 1,
-    "CRYSTAL FACE (UND)": '396139',
-    "CRYSTAL FACE (NASA)": '61859',
+    "CRYSTAL FACE (UND)": "396139",
+    "CRYSTAL FACE (NASA)": "61859",
     "ICE L": 1,
     "IPHEX": 1,
     "ISDAC": 1,
@@ -176,8 +175,8 @@ campaign_flight_count = {
     "AIRS II": 1,
     "ARM": 1,
     "ATTREX": 1,
-    "CRYSTAL FACE (UND)": '10',
-    "CRYSTAL FACE (NASA)": '10',
+    "CRYSTAL FACE (UND)": "10",
+    "CRYSTAL FACE (NASA)": "10",
     "ICE L": 1,
     "IPHEX": 1,
     "ISDAC": 1,
@@ -193,8 +192,8 @@ campaign_flight_hours = {
     "AIRS II": 1,
     "ARM": 1,
     "ATTREX": 1,
-    "CRYSTAL FACE (UND)": '10',
-    "CRYSTAL FACE (NASA)": '10',
+    "CRYSTAL FACE (UND)": "10",
+    "CRYSTAL FACE (NASA)": "10",
     "ICE L": 1,
     "IPHEX": 1,
     "ISDAC": 1,
@@ -218,11 +217,11 @@ part_type_count = {
 
 
 color_discrete_map = {
-    'aggregate': 'rgb(130, 63, 63)',
-    'budding rosette': 'rgb(198, 137, 100)',
-    'bullet rosette': 'rgb(217, 175, 107)',
-    'compact irregular': 'rgb(82,106,131)',
-    'column': 'rgb(124, 124, 124)',
-    'planar polycrystal': 'rgb(114, 98, 136)',
-    'rimed': 'rgb(82, 113, 91)',
+    "aggregate": "rgb(130, 63, 63)",
+    "budding rosette": "rgb(198, 137, 100)",
+    "bullet rosette": "rgb(217, 175, 107)",
+    "compact irregular": "rgb(82,106,131)",
+    "column": "rgb(124, 124, 124)",
+    "planar polycrystal": "rgb(114, 98, 136)",
+    "rimed": "rgb(82, 113, 91)",
 }

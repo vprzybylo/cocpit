@@ -1,5 +1,6 @@
-from cocpit import config as config
 import pandas as pd
+
+from cocpit import config as config
 
 
 def main(cutoff: float = 10.0) -> None:
@@ -10,7 +11,9 @@ def main(cutoff: float = 10.0) -> None:
         cutoff (float): Percent of particle that can intersect the border
     """
     for campaign in config.CAMPAIGNS:
-        df = pd.read_csv("/data/data/final_databases/vgg19/" + campaign + ".csv")
+        df = pd.read_csv(
+            f"{config.BASE_DIR}/final_databases/vgg19/" + campaign + ".csv"
+        )
         len_df_less_cutoff = len(df[df["cutoff"] >= cutoff])
         print(
             campaign,

@@ -1,16 +1,18 @@
 """
 train the CNN model(s)
 """
+import itertools
 import time
+from typing import List, Optional
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from sklearn.metrics import classification_report
+
 import cocpit
 import cocpit.config as config  # isort:split
-from typing import List, Optional
-import pandas as pd
 from cocpit.plotting_scripts import confusion_matrix as confusion_matrix
-from sklearn.metrics import classification_report
-import matplotlib.pyplot as plt
-import itertools
-import numpy as np
 
 plt_params = {
     "axes.labelsize": "x-large",
@@ -30,7 +32,12 @@ def determine_phases() -> List[str]:
     return ["train"] if config.VALID_SIZE < 0.1 else ["train", "val"]
 
 
-def conf_matrix(labels, preds, norm: Optional[str] = None) -> None:
+def conf_matrix(
+    labels: List[List],
+    preds: List[List],
+    norm: Optional[str] = None,
+    savename: str = f"{config.BASE_DIR}/plots/conf_matrix.png",
+) -> None:
     """
     log a confusion matrix to comet ml after the last epoch
         - found under the graphics tab
@@ -47,16 +54,8 @@ def conf_matrix(labels, preds, norm: Optional[str] = None) -> None:
     """
     # needed to flatten across batches
     _ = confusion_matrix.conf_matrix(
-        [
-            item
-            for sublist in list(itertools.chain(*labels))
-            for item in sublist
-        ],
-        [
-            item
-            for sublist in list(itertools.chain(*preds))
-            for item in sublist
-        ],
+        [item for sublist in list(itertools.chain(*labels)) for item in sublist],
+        [item for sublist in list(itertools.chain(*preds)) for item in sublist],
         norm=norm,
         save_fig=True,
     )
@@ -64,13 +63,19 @@ def conf_matrix(labels, preds, norm: Optional[str] = None) -> None:
     # log to comet
     if config.LOG_EXP:
         config.experiment.log_image(
-            config.CONF_MATRIX_SAVENAME,
+            savename,
             name="confusion matrix",
             image_format="pdf",
         )
 
 
-def class_report(model_name, labels, preds, fold: int) -> None:
+def class_report(
+    model_name: str,
+    labels: List[List],
+    preds: List[List],
+    fold: int,
+    savename: str = f"{config.BASE_DIR}/plots/classification_report.png",
+) -> None:
     """
     create classification report from sklearn
     add model name and fold iteration to the report
@@ -84,30 +89,18 @@ def class_report(model_name, labels, preds, fold: int) -> None:
 
     # needed to flatten across batches and epochs
     clf_report = classification_report(
-        [
-            item
-            for sublist in list(itertools.chain(*labels))
-            for item in sublist
-        ],
-        [
-            item
-            for sublist in list(itertools.chain(*preds))
-            for item in sublist
-        ],
+        [item for sublist in list(itertools.chain(*labels)) for item in sublist],
+        [item for sublist in list(itertools.chain(*preds)) for item in sublist],
         digits=3,
         target_names=config.CLASS_NAMES,
         output_dict=True,
     )
-    clf_report_df = pd.DataFrame(clf_report)
-    if config.SAVE_ACC:
-        clf_report_df.to_csv(config.METRICS_SAVENAME, mode="a")
 
     # transpose classes as columns and convert to df
     clf_report = pd.DataFrame(clf_report).iloc[:-1, :].T
-
     cocpit.plotting_scripts.classification_report.classification_report_classes(
         clf_report,
-        save_name=config.CLASSIFICATION_REPORT_SAVENAME,
+        save_name=savename,
         save_fig=True,
     )
 
@@ -116,12 +109,19 @@ def class_report(model_name, labels, preds, fold: int) -> None:
     clf_report["model"] = model_name
 
     if config.SAVE_ACC:
-        clf_report.to_csv(config.METRICS_SAVENAME, mode="a")
+        # directory for saving training accuracy and loss csv's
+        ACC_SAVE_DIR = f"{config.BASE_DIR}/saved_accuracies/{config.TAG}/"
+        # output filename for precision, recall, F1 file
+        METRICS_SAVENAME = (
+            f"{ACC_SAVE_DIR}val_metrics_e{max(config.MAX_EPOCHS)}_"
+            f"bs{max(config.BATCH_SIZE)}_k{config.KFOLD}_"
+            f"{len(config.MODEL_NAMES)}model(s).csv"
+        )
+        clf_report.to_csv(METRICS_SAVENAME, mode="a")
 
     # log to comet
     if config.LOG_EXP:
         config.experiment.log_image(
-            config.CLASSIFICATION_REPORT_SAVENAME,
             name="classification report",
             image_format="pdf",
         )
@@ -156,9 +156,7 @@ def main(
             # put model in correct mode based on if training or validating
             c.model.train() if phase == "train" else c.model.eval()
             if phase == "train":
-                train = cocpit.train.Train(
-                    f, epoch, epochs, model_name, kfold, c
-                )
+                train = cocpit.train.Train(f, epoch, epochs, model_name, kfold, c)
                 train.run()
             else:
                 val = cocpit.validate.Validation(

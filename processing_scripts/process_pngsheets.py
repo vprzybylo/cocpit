@@ -5,7 +5,9 @@ import imutils
 import matplotlib.pyplot as plt
 import numpy as np
 
-directory = "/data/data/cpi_data/OLYMPEX/sheets/"
+from cocpit import config as config
+
+directory = f"{config.BASE_DIR}/cpi_data/OLYMPEX/sheets/"
 for filename in os.listdir(directory):
     # filename = '1017-203110_717')
     image = cv2.imread(directory + filename)

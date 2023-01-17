@@ -2,27 +2,18 @@
 calculation and plotting functions for reporting performance metrics
 """
 
-import matplotlib.pyplot as plt
+from typing import Dict, Optional, Tuple
 
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import sklearn
 
 import cocpit.plotting_scripts.grid_shader as grid_shader
-from typing import Dict, Optional
+from cocpit import config as config
 
 
-# plt_params = {
-#     "axes.labelsize": "x-large",
-#     "axes.titlesize": "x-large",
-#     "xtick.labelsize": "x-large",
-#     "ytick.labelsize": "x-large",
-#     "legend.title_fontsize": 12,
-# }
-plt.rcParams["font.family"] = "serif"
-# plt.rcParams.update(plt_params)
-
-
-def manipulate_df(df: pd.DataFrame, avg: Optional[str]):
+def manipulate_df(df: pd.DataFrame, avg: Optional[str]) -> Tuple[pd.DataFrame, str]:
     """
     Eliminate some metrics based on averaging
 
@@ -104,7 +95,7 @@ def plot_dd(
     title: str,
     save_name: str,
     save_fig: bool = False,
-):
+) -> None:
     """
     Plot model with respect to F1-score, precision, and recall
 
@@ -124,9 +115,7 @@ def plot_dd(
     plt.setp(ax.get_legend().get_texts(), fontsize="14")  # for legend text
     plt.setp(ax.get_legend().get_title(), fontsize="16")  # for legend title
 
-    g.yaxis.grid(
-        True, linestyle="-", which="major", color="lightgrey", alpha=0.5
-    )
+    g.yaxis.grid(True, linestyle="-", which="major", color="lightgrey", alpha=0.5)
     g.set_ylim(0.75, 1.00)
     g.set_title(title)
     if save_fig:
@@ -134,7 +123,9 @@ def plot_dd(
 
 
 def classification_report_classes(
-    clf_report, save_name, save_fig=False
+    clf_report: sklearn.metrics.classification_report,
+    savename: str = f"{config.BASE_DIR}/plots/classification_report.png",
+    save_fig: bool = False,
 ) -> None:
     """
     Plot precision, recall, and f1-score for each class from 1 model
@@ -143,7 +134,6 @@ def classification_report_classes(
     Args:
         clf_report: classification report from sklearn
         or from metrics_report() above
-        save_name (str): plot filename to save as
         save_fig (bool): whether to save the figure
     """
     _, ax = plt.subplots(figsize=(9, 7))
@@ -167,4 +157,4 @@ def classification_report_classes(
     sns.set(font_scale=4)
     # ax.set_title("Weighted")
     if save_fig:
-        plt.savefig(save_name, dpi=300, bbox_inches="tight")
+        plt.savefig(savename, dpi=300, bbox_inches="tight")

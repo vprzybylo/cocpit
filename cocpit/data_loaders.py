@@ -4,16 +4,18 @@ Retrives data loaders from Pytorch
 
 import cocpit.config as config  # isort: split
 import os
+import random
+from typing import List, Optional, Union
+
+import numpy as np
 import torch
 import torch.utils.data
 import torch.utils.data.sampler as sampler
 from PIL import Image, ImageFile
 from torch.utils.data import Dataset
 from torchvision import datasets, transforms
-from typing import List, Union, Optional
+
 from cocpit.auto_str import auto_str
-import numpy as np
-import random
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -32,7 +34,7 @@ class ImageFolderWithPaths(datasets.ImageFolder):
     # Override the __getitem__ method. This is the method that dataloader calls
     def __getitem__(self, index):
         # this is what ImageFolder normally returns
-        original_tuple = super(ImageFolderWithPaths, self).__getitem__(index)
+        original_tuple = super().__getitem__(index)
         # the image file path
         path = self.imgs[index][0]
         # make a new tuple that includes original and the path
@@ -60,9 +62,7 @@ class TestDataSet(Dataset):
             [
                 transforms.Resize((224, 224)),
                 transforms.ToTensor(),
-                transforms.Normalize(
-                    [0.485, 0.456, 0.406], [0.229, 0.224, 0.225]
-                ),
+                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
             ]
         )
 
@@ -115,9 +115,7 @@ def get_data(phase: str) -> ImageFolderWithPaths:
         ),
     }
 
-    return ImageFolderWithPaths(
-        root=config.DATA_DIR, transform=transform_dict[phase]
-    )
+    return ImageFolderWithPaths(root=config.DATA_DIR, transform=transform_dict[phase])
 
 
 def balanced_sampler(train_labels: List[int]) -> sampler.WeightedRandomSampler:
@@ -150,11 +148,12 @@ def balanced_sampler(train_labels: List[int]) -> sampler.WeightedRandomSampler:
     )
 
 
-def seed_worker(worker_id) -> None:
+def seed_worker(worker_id: int) -> None:
+    """https://pytorch.org/docs/stable/notes/randomness.html"""
     torch_seed = torch.initial_seed()
     random.seed(torch_seed + worker_id)
-    if torch_seed >= 2 ** 30:  # make sure torch_seed + workder_id < 2**32
-        torch_seed = torch_seed % 2 ** 30
+    if torch_seed >= 2**30:  # make sure torch_seed + workder_id < 2**32
+        torch_seed = torch_seed % 2**30
     np.random.seed(torch_seed + worker_id)
 
 
@@ -199,6 +198,17 @@ def save_valloader(val_data: torch.utils.data.Subset) -> None:
     Args:
         val_data (torch.utils.data.Subset): the validation dataset
     """
-    if not os.path.exists(config.VAL_LOADER_SAVE_DIR):
-        os.makedirs(config.VAL_LOADER_SAVE_DIR)
-    torch.save(val_data, config.VAL_LOADER_SAVENAME)
+    # directory to save validation data to
+    # for later inspection of predictions
+    VAL_LOADER_SAVE_DIR = f"{config.BASE_DIR}/saved_val_loaders/{config.TAG}/"
+
+    VAL_LOADER_SAVENAME = (
+        f"{VAL_LOADER_SAVE_DIR}e{config.MAX_EPOCHS}_"
+        f"bs{config.BATCH_SIZE}_"
+        f"k{config.KFOLD}_"
+        f"{len(config.MODEL_NAMES)}model(s).pt"
+    )
+
+    if not os.path.exists(VAL_LOADER_SAVE_DIR):
+        os.makedirs(VAL_LOADER_SAVE_DIR)
+    torch.save(val_data, VAL_LOADER_SAVENAME)

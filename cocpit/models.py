@@ -53,42 +53,42 @@ class Model:
 
     def resnet18(self) -> None:
         """resnet 18 architecture"""
-        self.model = torchvision.models.resnet18(pretrained=config.USE_PRETRAINED)
+        self.model = torchvision.models.resnet18()
         self.resnet_classifier()
 
     def resnet34(self) -> None:
         """resnet 34 architecture"""
-        self.model = torchvision.models.resnet34(pretrained=config.USE_PRETRAINED)
+        self.model = torchvision.models.resnet34()
         self.resnet_classifier()
 
     def resnet152(self) -> None:
         """resnet 152 architecture"""
-        self.model = torchvision.models.resnet152(pretrained=config.USE_PRETRAINED)
+        self.model = torchvision.models.resnet152()
         self.resnet_classifier()
 
     def alexnet(self) -> None:
         """alexnet architecture"""
-        self.model = torchvision.models.alexnet(pretrained=config.USE_PRETRAINED)
+        self.model = torchvision.models.alexnet()
         self.vgg_classifier()
 
     def vgg16(self) -> None:
         """VGG 16 architecture"""
-        self.model = torchvision.models.vgg16_bn(pretrained=config.USE_PRETRAINED)
+        self.model = torchvision.models.vgg16_bn()
         self.vgg_classifier()
 
     def vgg19(self) -> None:
         """VGG 19 architecture"""
-        self.model = torchvision.models.vgg19_bn(pretrained=config.USE_PRETRAINED)
+        self.model = torchvision.models.vgg19_bn()
         self.vgg_classifier()
 
     def densenet169(self) -> None:
         """Densenet 169 architecture"""
-        self.model = torchvision.models.densenet169(pretrained=config.USE_PRETRAINED)
+        self.model = torchvision.models.densenet169()
         self.densenet_classifier()
 
     def densenet201(self) -> None:
         """Densenet 201 architecture"""
-        self.model = torchvision.models.densenet201(pretrained=config.USE_PRETRAINED)
+        self.model = torchvision.models.densenet201()
         self.densenet_classifier()
 
     def efficient(self) -> None:

@@ -1,10 +1,13 @@
+"""Training methods"""
+import csv
+import os
+
 import numpy as np
 import torch
-from cocpit.performance_metrics import Metrics
-from dataclasses import dataclass
-from typing import Dict
+
+import cocpit
 from cocpit import config as config
-import csv
+from cocpit.performance_metrics import Metrics
 
 
 class Train(Metrics):
@@ -19,14 +22,21 @@ class Train(Metrics):
         c (model_config.ModelConfig): instance of ModelConfig class
     """
 
-    def __init__(self, f, epoch, epochs, model_name, kfold, c):
-
+    def __init__(
+        self,
+        f: cocpit.fold_setup.FoldSetup,
+        epoch: int,
+        epochs: int,
+        model_name: str,
+        kfold: int,
+        c: cocpit.model_config.ModelConfig,
+    ):
         super().__init__(f, epoch, epochs)
-        self.model_name: str = model_name
+        self.model_name = model_name
         self.kfold = kfold
         self.c = c
 
-    def label_counts(self, label_cnts: np.ndarray, labels: torch.Tensor):
+    def label_counts(self, label_cnts: np.ndarray, labels: torch.Tensor) -> np.ndarray:
         """
         Calculate the # of labels per batch to ensure weighted random sampler is correct
 
@@ -34,7 +44,7 @@ class Train(Metrics):
             label_cnts (np.ndarray): number of labels per class from all batches before
             labels (torch.Tensor): class/label names
         Returns:
-            label_cnts (List[int]): sum of label counts from prior batches plus current batch
+            label_cnts (np.ndarray): sum of label counts from prior batches plus current batch
         """
 
         for n, _ in enumerate(config.CLASS_NAMES):
@@ -75,31 +85,40 @@ class Train(Metrics):
             if (self.batch + 1) % 5 == 0:
                 self.print_batch_metrics("train")
 
-    def write_output(self, filename: str) -> None:
+    def write_output(self) -> None:
         """
         Write acc and loss to csv file within model, epoch, kfold iteration
-
-        Args:
-            filename: config.ACC_SAVENAME_TRAIN or config.ACC_SAVENAME_VAL depending on phase
         """
-        if config.SAVE_ACC:
-            with open(filename, "a", newline="") as file:
-                writer = csv.writer(file)
-                writer.writerow(
-                    [
-                        self.model_name,
-                        self.epoch,
-                        self.kfold,
-                        self.f.batch_size,
-                        self.epoch_acc.cpu().numpy(),
-                        self.epoch_loss,
-                    ]
-                )
-                file.close()
+        #  directory for saving training accuracy and loss csv's
+        ACC_SAVE_DIR = f"{config.BASE_DIR}/saved_accuracies/{config.TAG}/"
+        if not os.path.exists(ACC_SAVE_DIR):
+            os.makedirs(ACC_SAVE_DIR)
+        # filename for saving training accuracy and loss
+        ACC_SAVENAME_TRAIN = (
+            f"{ACC_SAVE_DIR}train_acc_loss_e{max(config.MAX_EPOCHS)}_"
+            f"bs{max(config.BATCH_SIZE)}_k{config.KFOLD}_"
+            f"{len(config.MODEL_NAMES)}model(s).csv"
+        )
 
-    def run(self):
+        with open(ACC_SAVENAME_TRAIN, "a", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(
+                [
+                    self.model_name,
+                    self.epoch,
+                    self.kfold,
+                    self.f.batch_size,
+                    self.epoch_acc.cpu().numpy(),
+                    self.epoch_loss,
+                ]
+            )
+            file.close()
+
+    def run(self) -> None:
+        """call above functions to run training"""
         self.iterate_batches()
         self.epoch_metrics()
         self.log_epoch_metrics("epoch_acc_train", "epoch_loss_train")
         self.print_epoch_metrics("Train")
-        self.write_output(config.ACC_SAVENAME_TRAIN)
+        if config.SAVE_ACC:
+            self.write_output()

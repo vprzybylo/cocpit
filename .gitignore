@@ -1,4 +1,6 @@
 !*.dvc
+apptainer
+*.sif
 .nginx
 nbextension-scratchpad
 .env

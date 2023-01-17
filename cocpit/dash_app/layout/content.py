@@ -64,9 +64,7 @@ def content():
                                 children=[
                                     dbc.Card(
                                         children=[
-                                            dbc.CardHeader(
-                                                "Particle Location"
-                                            ),
+                                            dbc.CardHeader("Particle Location"),
                                             dbc.CardBody(
                                                 children=[
                                                     dcc.Graph(
@@ -86,9 +84,7 @@ def content():
                                                         " empty region to"
                                                         " reset view with all"
                                                         " data points.",
-                                                        className=(
-                                                            "p text-center"
-                                                        ),
+                                                        className=("p text-center"),
                                                     ),
                                                 ],
                                             ),
@@ -97,8 +93,7 @@ def content():
                                     ),
                                 ],
                                 className=(
-                                    "col-xs-12 col-sm-12 col-md-12 col-lg-6"
-                                    " col-xl-6"
+                                    "col-xs-12 col-sm-12 col-md-12 col-lg-6" " col-xl-6"
                                 ),
                             ),
                             html.Div(
@@ -122,17 +117,14 @@ def content():
                                     )
                                 ],
                                 className=(
-                                    "col-xs-12 col-sm-12 col-md-12 col-lg-6"
-                                    " col-xl-6"
+                                    "col-xs-12 col-sm-12 col-md-12 col-lg-6" " col-xl-6"
                                 ),
                             ),
                             html.Div(
                                 children=[
                                     dbc.Card(
                                         [
-                                            dbc.CardHeader(
-                                                "Vertical Distribution"
-                                            ),
+                                            dbc.CardHeader("Vertical Distribution"),
                                             dbc.CardBody(
                                                 children=[
                                                     dcc.Graph(
@@ -146,22 +138,17 @@ def content():
                                     )
                                 ],
                                 className=(
-                                    "col-xs-12 col-sm-12 col-md-12 col-lg-6"
-                                    " col-xl-6"
+                                    "col-xs-12 col-sm-12 col-md-12 col-lg-6" " col-xl-6"
                                 ),
                             ),
                             html.Div(
                                 children=[
                                     dbc.Card(
                                         [
-                                            dbc.CardHeader(
-                                                "Particle Type Percentage"
-                                            ),
+                                            dbc.CardHeader("Particle Type Percentage"),
                                             dbc.CardBody(
                                                 children=[
-                                                    dcc.Graph(
-                                                        id="pie", figure={}
-                                                    )
+                                                    dcc.Graph(id="pie", figure={})
                                                 ]
                                             ),
                                         ],
@@ -169,35 +156,34 @@ def content():
                                     )
                                 ],
                                 className=(
-                                    "col-xs-12 col-sm-6 col-md-6 col-lg-3"
-                                    " col-xl-3"
+                                    "col-xs-12 col-sm-6 col-md-6 col-lg-6" " col-xl-6"
                                 ),
                             ),
-                            html.Div(
-                                children=[
-                                    dbc.Card(
-                                        [
-                                            dbc.CardHeader(
-                                                "Normalized Particle Area"
-                                                " Percentage by Count"
-                                            ),
-                                            dbc.CardBody(
-                                                children=[
-                                                    dcc.Graph(
-                                                        id="pie-area",
-                                                        figure={},
-                                                    )
-                                                ]
-                                            ),
-                                        ],
-                                        className="card-body",
-                                    )
-                                ],
-                                className=(
-                                    "col-xs-12 col-sm-6 col-md-6 col-lg-3"
-                                    " col-xl-3"
-                                ),
-                            ),
+                            # html.Div(
+                            #     children=[
+                            #         dbc.Card(
+                            #             [
+                            #                 dbc.CardHeader(
+                            #                     "Normalized Particle Area"
+                            #                     " Percentage by Count"
+                            #                 ),
+                            #                 dbc.CardBody(
+                            #                     children=[
+                            #                         dcc.Graph(
+                            #                             id="pie-area",
+                            #                             figure={},
+                            #                         )
+                            #                     ]
+                            #                 ),
+                            #             ],
+                            #             className="card-body",
+                            #         )
+                            #     ],
+                            #     className=(
+                            #         "col-xs-12 col-sm-6 col-md-6 col-lg-3"
+                            #         " col-xl-3"
+                            #     ),
+                            # ),
                         ],
                     ),
                 ],
@@ -210,9 +196,7 @@ def content():
                                 children=[
                                     dbc.Card(
                                         [
-                                            dbc.CardHeader(
-                                                "Geometric Property"
-                                            ),
+                                            dbc.CardHeader("Geometric Property"),
                                             dbc.CardBody(
                                                 children=[
                                                     dcc.Graph(
@@ -226,17 +210,14 @@ def content():
                                     )
                                 ],
                                 className=(
-                                    "col-xs-12 col-sm-12 col-md-12 col-lg-6"
-                                    " col-xl-6"
+                                    "col-xs-12 col-sm-12 col-md-12 col-lg-6" " col-xl-6"
                                 ),
                             ),
                             dbc.Col(
                                 children=[
                                     dbc.Card(
                                         [
-                                            dbc.CardHeader(
-                                                "Environmental Property"
-                                            ),
+                                            dbc.CardHeader("Environmental Property"),
                                             dbc.CardBody(
                                                 children=[
                                                     dcc.Graph(
@@ -250,8 +231,7 @@ def content():
                                     )
                                 ],
                                 className=(
-                                    "col-xs-12 col-sm-12 col-md-12 col-lg-6"
-                                    " col-xl-6"
+                                    "col-xs-12 col-sm-12 col-md-12 col-lg-6" " col-xl-6"
                                 ),
                             ),
                         ],

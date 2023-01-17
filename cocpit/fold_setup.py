@@ -10,11 +10,10 @@ import cocpit.data_loaders as data_loaders
 
 import cocpit.config as config  # isort: split
 from collections import Counter
+from dataclasses import dataclass, field
+from typing import Dict, List
 
 from sklearn.model_selection import train_test_split
-
-from dataclasses import dataclass, field
-from typing import List, Dict
 
 
 @dataclass
@@ -78,15 +77,21 @@ class FoldSetup:
         """
         Update config save names for model and validation dataloader
         so that each fold gets saved"""
+        MODEL_SAVE_DIR = f"{config.BASE_DIR}/saved_models/{config.TAG}/"
+
+        VAL_LOADER_SAVE_DIR = (
+            f"{config.BASE_DIR}/saved_val_loaders/no_mask/{config.TAG}/"
+        )
+
         config.VAL_LOADER_SAVENAME = (
-            f"{config.VAL_LOADER_SAVE_DIR}e{config.MAX_EPOCHS}"
+            f"{VAL_LOADER_SAVE_DIR}e{config.MAX_EPOCHS}"
             f"_val_loader20_bs{config.BATCH_SIZE}"
             f"_k{str(self.kfold)}"
             f"_{len(config.MODEL_NAMES)}model(s).pt"
         )
 
         config.MODEL_SAVENAME = (
-            f"{config.MODEL_SAVE_DIR}e{config.MAX_EPOCHS}"
+            f"{MODEL_SAVE_DIR}e{config.MAX_EPOCHS}"
             f"_bs{config.BATCH_SIZE}"
             f"_k{str(self.kfold)}"
             f"_{len(config.MODEL_NAMES)}model(s).pt"
@@ -130,7 +135,10 @@ class FoldSetup:
 
     def create_dataloaders(self) -> None:
         """Create dict of train/val dataloaders based on split and sampler from StratifiedKFold"""
-        self.dataloaders = {"train": self.train_loader(), "val": self.val_loader()}
+        self.dataloaders = {
+            "train": self.train_loader(),
+            "val": self.val_loader(),
+        }
 
     def nofold_indices(self) -> None:
         """
@@ -149,5 +157,7 @@ class FoldSetup:
             random.shuffle(self.train_indices)
         else:
             self.train_indices, self.val_indices = train_test_split(
-                list(range(total_files)), test_size=config.VALID_SIZE, random_state=42
+                list(range(total_files)),
+                test_size=config.VALID_SIZE,
+                random_state=42,
             )
