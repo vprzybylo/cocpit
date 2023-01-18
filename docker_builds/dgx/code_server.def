@@ -5,11 +5,12 @@ Stage: spython-base
 %environment
 export PATH="/usr/bin/python:/usr/local/bin/code-server-4.7.1-linux-amd64/bin:$PATH"
 export TZ=US
+export PYTHONPATH="/usr/local/bin/cocpit:$PYTHONPATH"
 
 %files
-/home/vanessa/hulk/cocpit/requirements_dev.txt requirements_dev.txt
-/home/vanessa/hulk/cocpit/setup.py setup.py
-/home/vanessa/hulk/cocpit/README.md README.md
+requirements_dev.txt /usr/local/bin/requirements_dev.txt
+setup.py /usr/local/bin/setup.py
+README.md /usr/local/bin/README.md
 
 %post
 export DEBIAN_FRONTEND=noninteractive
@@ -28,11 +29,9 @@ libsm6 \
 sudo \
 && apt-get clean all && rm -rf /var/lib/apt/lists/*
 
-pip3 install --upgrade pip setuptools wheel
-pip3 install -r requirements_dev.txt
-pip3 install -e . --user
-
 mkdir -p /usr/local/bin
 cd /usr/local/bin
+pip install -e . --user
+
 wget https://github.com/cdr/code-server/releases/download/v4.7.1/code-server-4.7.1-linux-amd64.tar.gz  && \
 tar -xzvf code-server-4.7.1-linux-amd64.tar.gz

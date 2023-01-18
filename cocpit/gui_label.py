@@ -46,7 +46,7 @@ class GUI:
             FileNotFoundError: File already moved and cannot be opened
         """
         try:
-            return Image.open(self.all_paths[self.index])
+            return Image.open(f'{config.BASE_DIR}/{self.all_paths[self.index]}')
         except FileNotFoundError:
             print(
                 "This file was already moved and cannot be found. Please hit"
@@ -139,13 +139,14 @@ class GUI:
             if self.precip is not None:
                 ax.set_title(
                     f"{self.index}/{self.n_paths} \n"
-                    f" {self.all_paths[self.index].split('/')[-1]} \n 1 minute"
+                    f"{config.BASE_DIR}/{self.all_paths[self.index].split('/')[-1]} \n 1 minute"
                     f" accumulated precip [mm]: {self.precip[self.index]}"
                 )
+                
             else:
                 ax.set_title(
                     f"{self.index}/{self.n_paths} \n"
-                    f" {self.all_paths[self.index].split('/')[-1]}"
+                    f"{config.BASE_DIR}/{self.all_paths[self.index].split('/')[-1]} \n 1 minute"
                 )
             ax.imshow(image)
             ax.axis("off")
