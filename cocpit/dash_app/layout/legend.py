@@ -4,6 +4,7 @@ import globals
 
 
 def legend():
+    """Particle type legend and count"""
     return html.Div(
         children=[
             dbc.CardGroup(

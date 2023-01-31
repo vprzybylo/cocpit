@@ -195,6 +195,7 @@ def register(app):
         [State("navbar-collapse", "is_open")],
     )
     def toggle_navbar_collapse(n, is_open):
+        """collapses navbar when hamburger menu is clicked"""
         if n:
             is_open = not is_open
             if is_open is True:

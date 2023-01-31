@@ -67,7 +67,7 @@ class GuidedBackprop:
         # Loop through layers, hook up ReLUs
         for pos, module in self.model.module.features._modules.items():
             if isinstance(module, ReLU):
-                module.register_backward_hook(relu_backward_hook_function)
+                module.register_full_backward_hook(relu_backward_hook_function)
                 module.register_forward_hook(relu_forward_hook_function)
 
     def target_class(self, target_class: int) -> None:

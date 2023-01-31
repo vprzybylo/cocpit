@@ -66,7 +66,7 @@ class Interp:
         GBP = guided_backprop.GuidedBackprop(self.model)
         guided_grads = GBP.generate_gradients(self.prep_img)
         self.grayscale_guided_grads = convert_to_grayscale(guided_grads)
-        self.grayscale_guided_grads = np.squeeze(self.grayscale_guided_grads, axis=0)
+        # self.grayscale_guided_grads = np.squeeze(self.grayscale_guided_grads, axis=0)
         self.pos_saliency, self.neg_saliency = get_positive_negative_saliency(
             guided_grads
         )

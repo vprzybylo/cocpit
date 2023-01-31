@@ -5,6 +5,7 @@ from datetime import date
 
 
 def navbar_collapse():
+    """navbar for selections, which collapses"""
     return dbc.Navbar(
         children=[
             dbc.Row(
