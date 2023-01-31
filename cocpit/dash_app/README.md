@@ -1,5 +1,9 @@
 # DASH app 
 
+## Data Storage
+    The code lives in /home/vanessa/hulk/cocpit/cocpit/dash_app
+    Environmental data provided by Carl Schmitt lives at https://drive.google.com/drive/folders/1x05HbKzr0UoGYmGbiwjdowizawYdtgLI?usp=sharing
+    
 ## Folder Structure
 ```
 ├── README.md
