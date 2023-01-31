@@ -1,7 +1,7 @@
 # DASH app 
 
 ## Folder Structure
-
+```
 ├── README.md
 ├── app.py
     - main app to run using python
@@ -45,3 +45,4 @@
         - executable script
     ├── process.py
         - cleans df and updates figure layouts
+```
