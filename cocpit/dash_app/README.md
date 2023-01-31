@@ -3,6 +3,10 @@
 ## Data Storage
     The code lives in /home/vanessa/hulk/cocpit/cocpit/dash_app
     Environmental data provided by Carl Schmitt lives at https://drive.google.com/drive/folders/1x05HbKzr0UoGYmGbiwjdowizawYdtgLI?usp=sharing
+        """From Carl: I used the "other" probes to determine the percentage of Particle number, Particle projected area, or Particle mass that was from particles larger than 1000 microns.  PSD IWC is also in all of the files, but I am a bit concerned about reliability there."""
+
+## Units of csv
+    filename,date,frame width [pixels],frame height [pixels],particle width [microns],particle height [microns],cutoff [%],aggregate [%],budding rosette [%],bullet rosette [%],column [%],compact irregular [%],fragment [%],planar polycrystal [%],rimed [%],sphere [%],classification,perim [pixels],hull_area [pixels],convex_perim [pixels],blur,contours [#],contrast,cnt_area [pixels],circularity,solidity,complexity,equiv_d,phi,extreme_points,filled_circular_area_ratio,roundness,perim_area_ratio
     
 ## Folder Structure
 ```
