@@ -29,34 +29,34 @@ def register(app):
         )
         return process.update_layout(pie, contour=True)
 
-    @app.callback(
-        Output("pie-area", "figure"),
-        Input("df-area", "data"),
-        Input("df-classification", "data"),
-    )
-    def pie_area(df_area, df_classification):
-        """pie chart for percentage of particle types for a given campaign"""
-        # df_area[''].value_counts()
+    # @app.callback(
+    #     Output("pie-area", "figure"),
+    #     Input("df-area", "data"),
+    #     Input("df-classification", "data"),
+    # )
+    # def pie_area(df_area, df_classification):
+    #     """pie chart for percentage of particle types for a given campaign"""
+    #     # df_area[''].value_counts()
 
-        labels = df_area["Classification"].unique()
-        values = df_area.groupby(by="Classification", sort=True).sort_values(
-            "a"
-        )["Contour Area"].sum() / df_classification.value_counts(sort=True)
-        print(df_classification.value_counts(sort=True))
-        print(
-            df_area.groupby(by="Classification", sort=True)
-            .sort_values("a")["Contour Area"]
-            .sum()
-        )
-        print(values)
-        pie = px.pie(
-            labels,
-            values=values,
-            names=labels,
-            color=labels,
-            color_discrete_map=globals.color_discrete_map,
-        )
-        return process.update_layout(pie, contour=True)
+    #     labels = df_area["Classification"].unique()
+    #     values = df_area.groupby(by="Classification", sort=True).sort_values(
+    #         "a"
+    #     )["Contour Area"].sum() / df_classification.value_counts(sort=True)
+    #     print(df_classification.value_counts(sort=True))
+    #     print(
+    #         df_area.groupby(by="Classification", sort=True)
+    #         .sort_values("a")["Contour Area"]
+    #         .sum()
+    #     )
+    #     print(values)
+    #     pie = px.pie(
+    #         labels,
+    #         values=values,
+    #         names=labels,
+    #         color=labels,
+    #         color_discrete_map=globals.color_discrete_map,
+    #     )
+    #     return process.update_layout(pie, contour=True)
 
     @app.callback(
         Output("prop-fig", "figure"),

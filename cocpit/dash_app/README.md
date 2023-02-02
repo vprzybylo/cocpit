@@ -4,7 +4,10 @@
     The code lives in /home/vanessa/hulk/cocpit/cocpit/dash_app
     Final databases from the ML classification model live in /home/vanessa/hulk/cocpit/final_databases/vgg16/v1.4.0
     Environmental data provided by Carl Schmitt lives at https://drive.google.com/drive/folders/1x05HbKzr0UoGYmGbiwjdowizawYdtgLI?usp=sharing
-        """From Carl: I used the "other" probes to determine the percentage of Particle number, Particle projected area, or Particle mass that was from particles larger than 1000 microns.  PSD IWC is also in all of the files, but I am a bit concerned about reliability there."""
+        """From Carl: I used the "other" probes to determine the percentage of Particle number, Particle projected area, or Particle mass that was from particles larger than 1000 microns.
+        PSD IWC is also in all of the files, but I am a bit concerned about reliability there.  
+        Also, in general, I use CVI/CSI for IWC, but the CSI was down on two days of MIDCIX, so I substituted CU on May 3 and HU on May 6.
+        If you see anything weird on those days with IWC, it could be biases due to the other sources."""
     The classification databases and environmental databases are merged using /home/vanessa/hulk/cocpit/cocpit/dash_app/processing_scripts/merge_env.py 
     and saved to /home/vanessa/hulk/cocpit/final_databases/vgg16/v1.4.0/merged_env for each campaign
 

@@ -24,7 +24,7 @@ def register(app):
         ],
     )
     def density_contour(df_classification, df_lat, df_lon):
-        """2d histogram of particles in space with particle type plotted as color"""
+        """2D histogram of particles (top down view)"""
 
         # group individual points into grids
         gridx = np.linspace(df_lon.min(), df_lon.max())
@@ -61,7 +61,8 @@ def register(app):
             zoom=5,
             mapbox_style="stamen-terrain",
         )
-        fig.update_traces(hovertemplate="# per gridbox: %{z}")  #
+        fig.layout.coloraxis.colorbar.title = "Number <br>of Images"
+        fig.update_traces(hovertemplate="# per gridbox: %{z}")
 
         return process.update_layout(fig, contour=True, margin=5)
 
@@ -76,9 +77,9 @@ def register(app):
     def map_top_down(df_classification, df_lat, df_lon):
         """aircraft location and particle type overlaid on map"""
 
-        df_classification = df_classification.sort_index()
-        df_lat = df_lat.sort_index()
-        df_lon = df_lon.sort_index()
+        # df_classification = df_classification.sort_index()
+        # df_lat = df_lat.sort_index()
+        # df_lon = df_lon.sort_index()
 
         fig = px.scatter_mapbox(
             lat=df_lat,
@@ -105,10 +106,10 @@ def register(app):
     )
     def vert_distribution(df_alt, df_classification):
 
-        #df_alt = df_alt.replace([-999.99, -999.0, np.inf, -np.inf], np.nan)
-        #df_classification = df_classification[df_alt != np.nan]
-        #df_lon = df_lon[df_alt != np.nan]
-        #df_alt = df_alt.dropna()
+        # df_alt = df_alt.replace([-999.99, -999.0, np.inf, -np.inf], np.nan)
+        # df_classification = df_classification[df_alt != np.nan]
+        # df_lon = df_lon[df_alt != np.nan]
+        # df_alt = df_alt.dropna()
 
         vert_dist = px.violin(
             x=df_classification,
