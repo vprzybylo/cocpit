@@ -4,11 +4,17 @@ import pandas as pd
 
 def merge_env(df, df_env, campaign):
     """merge"""
+
+    print(df['filename'], df_env['filename'])
     df = df.merge(df_env, on="filename")
-    df.to_parquet(
-        f"../../final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet"
-    )
     print(df)
+    df.to_parquet(
+        f"/home/vanessa/hulk/cocpit/final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet"
+    )
+    df.to_csv(
+        f"/home/vanessa/hulk/cocpit/final_databases/vgg16/v1.4.0/merged_env/{campaign}.csv"
+    )
+    
 
 
 def read_campaign(campaign):
@@ -50,8 +56,9 @@ def read_campaign(campaign):
         "Roundness",
         "Perimeter-Area Ratio",
     ]
-    dtype = 'float16'
+    dtype = "float16"
     dtypes = {
+        "filename": "string",
         "Frame Width": dtype,
         "Frame Height": dtype,
         "Particle Width": dtype,
@@ -85,8 +92,9 @@ def read_campaign(campaign):
         "Roundness": dtype,
         "Perimeter-Area Ratio": dtype,
     }
+
     return pd.read_csv(
-        f"../../final_databases/vgg16/v1.4.0/{campaign}.csv",
+        f"/home/vanessa/hulk/cocpit/final_databases/vgg16/v1.4.0/{campaign}.csv",
         names=columns,
         low_memory=False,
         skiprows=1,
@@ -97,7 +105,8 @@ def read_campaign(campaign):
 def read_env(campaign):
     """read environmental data from Carl
     - Drop date column due to it already being in particle property df
-    - Carl's is truncated down to day not msec"""
+    - Carl's is truncated down to day not msec
+    """
     columns = [
         "filename",
         "Date",
@@ -107,9 +116,14 @@ def read_env(campaign):
         "Pressure",
         "Temperature",
         "Ice Water Content",
+        "Particle Size Distribution",
+        "concentration ratio",
+        "area ratio",
+        "mass ratio",
     ]
-
+    dtype = "float16"
     dtypes = {
+        "filename": "string",
         "Latitude": dtype,
         "Longitude": dtype,
         "Altitude": dtype,
@@ -119,7 +133,7 @@ def read_env(campaign):
     }
 
     return pd.read_csv(
-        f"../../final_databases/vgg16/v1.4.0/environment/{campaign}.csv",
+        f"/home/vanessa/hulk/cocpit/final_databases/vgg16/v1.4.0/environment/{campaign}_atmospheric_V05.csv",
         names=columns,
         dtype=dtypes,
         skiprows=1,
@@ -133,5 +147,5 @@ def main():
 
 
 if "__name__ == __main__":
-    campaign = "MPACE"
+    campaign = "MIDCIX"
     main()

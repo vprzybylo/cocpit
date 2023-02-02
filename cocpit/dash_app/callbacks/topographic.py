@@ -1,8 +1,8 @@
-'''
+"""
 plot topographic map
 scatter plot overlaid where particle images were captured
 includes callbacks
-'''
+"""
 import plotly.graph_objects as go
 import os
 import pandas as pd
@@ -16,25 +16,15 @@ import numpy as np
 
 def register(app):
     @app.callback(
-        Output('density-contour', 'figure'),
+        Output("density-contour", "figure"),
         [
-            Input('df-classification', 'data'),
-            Input('df-lat', 'data'),
-            Input('df-lon', 'data'),
+            Input("df-classification", "data"),
+            Input("df-lat", "data"),
+            Input("df-lon", "data"),
         ],
     )
     def density_contour(df_classification, df_lat, df_lon):
-        '''2d histogram of particles in space with particle type plotted as color'''
-
-        # re-sort by original index so that rimed isn't plotted on top
-        #   - was blocking all other colors/particle types
-        # the df was originally sorted alphabetically
-        #   - so that particle type colors are always consistent across viiolin figures
-        df_classification = df_classification.sort_index()
-        df_lat = df_lat.sort_index()
-        df_lon = df_lon.sort_index()
-        lat_center = df_lat[df_lat != -999.99].mean()
-        lon_center = df_lon[df_lon != -999.99].mean()
+        """2d histogram of particles in space with particle type plotted as color"""
 
         # group individual points into grids
         gridx = np.linspace(df_lon.min(), df_lon.max())
@@ -67,11 +57,11 @@ def register(app):
             z=counts,
             color_continuous_scale=px.colors.sequential.OrRd_r,
             radius=10,
-            center=dict(lat=lat_center, lon=lon_center),
+            center=dict(lat=df_lat.mean(), lon=df_lon.mean()),
             zoom=5,
             mapbox_style="stamen-terrain",
         )
-        fig.update_traces(hovertemplate='# per gridbox: %{z}')  #
+        fig.update_traces(hovertemplate="# per gridbox: %{z}")  #
 
         return process.update_layout(fig, contour=True, margin=5)
 
@@ -84,11 +74,8 @@ def register(app):
         ],
     )
     def map_top_down(df_classification, df_lat, df_lon):
-        '''aircraft location and particle type overlaid on map'''
+        """aircraft location and particle type overlaid on map"""
 
-        # Find Lat Long center
-        lat_center = df_lat[df_lat != -999.99].mean()
-        lon_center = df_lon[df_lon != -999.99].mean()
         df_classification = df_classification.sort_index()
         df_lat = df_lat.sort_index()
         df_lon = df_lon.sort_index()
@@ -104,8 +91,8 @@ def register(app):
         # Specify layout information
         fig.update_layout(
             mapbox=dict(
-                accesstoken=os.getenv('MAPBOX_TOKEN'),
-                center=dict(lon=lon_center, lat=lat_center),
+                accesstoken=os.getenv("MAPBOX_TOKEN"),
+                center=dict(lon=df_lon.mean(), lat=df_lat.mean()),
                 zoom=5,
             ),
         )
@@ -113,16 +100,15 @@ def register(app):
 
     @app.callback(
         Output("vert-dist", "figure"),
-        Input("df-lon", "data"),
         Input("df-alt", "data"),
         Input("df-classification", "data"),
     )
-    def vert_distribution(df_lon, df_alt, df_classification):
+    def vert_distribution(df_alt, df_classification):
 
-        df_alt = df_alt.replace([-999.99, -999.0, np.inf, -np.inf], np.nan)
-        df_classification = df_classification[df_alt != np.nan]
-        df_lon = df_lon[df_alt != np.nan]
-        df_alt = df_alt.dropna()
+        #df_alt = df_alt.replace([-999.99, -999.0, np.inf, -np.inf], np.nan)
+        #df_classification = df_classification[df_alt != np.nan]
+        #df_lon = df_lon[df_alt != np.nan]
+        #df_alt = df_alt.dropna()
 
         vert_dist = px.violin(
             x=df_classification,
@@ -131,7 +117,7 @@ def register(app):
             color_discrete_map=globals.color_discrete_map,
             labels={
                 "x": "Particle Type",
-                "y": 'Altitude',
+                "y": "Altitude",
             },
         )
 

@@ -13,16 +13,15 @@ def read_campaign(campaign):
     # filenames don't have spaces or parentheses
     campaign = campaign.replace(" ", "_").replace("(", "").replace(")", "")
 
-    df = pd.read_parquet(
+    return pd.read_parquet(
         f"/home/vanessa/hulk/cocpit/final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
         engine="fastparquet",
     )
-    return df
 
 
 def remove_bad_data(df):
     """remove bad data for particle properties"""
-
+    print('1', len(df))
     df = df[
         # (df['Latitude'] != 0)
         # & (df['Longitude'] != 0)
@@ -32,7 +31,9 @@ def remove_bad_data(df):
         & (df["Particle Height"] != 0.0)
         & (df["Particle Width"] != 0.0)
     ]
-
+    print('2', len(df))
+    df = df.replace([-999.99, -999.0], np.nan).dropna()
+    print('3', len(df))
     return df
 
 
@@ -46,7 +47,7 @@ def rename(df):
 
 
 def update_layout(fig, contour=False, margin=20, height=300):
-    """update figures to have white background, and include and center sample size in title"""
+    """update figures to have white background"""
     fig.update_layout(
         {
             "plot_bgcolor": "rgba(0, 0, 0, 0)",
@@ -59,9 +60,7 @@ def update_layout(fig, contour=False, margin=20, height=300):
         height=height,
     )
 
-    fig.update_xaxes(showline=True, linewidth=1, linecolor="black")
-    if contour:
-        fig.update_layout(legend=dict(itemsizing="constant"))
-        return fig.update_yaxes(showline=True, linewidth=1, linecolor="black")
-    else:
+    if not contour:
         return fig.update_traces(width=1, points=False)
+    fig.update_layout(legend=dict(itemsizing="constant"))
+    return fig.update_yaxes(showline=True, linewidth=1, linecolor="black")

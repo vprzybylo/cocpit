@@ -84,9 +84,7 @@ def register(app):
         df = df[df["Classification"].isin(part_type)]
         df["max_dim"] = np.maximum(df["Particle Width"], df["Particle Height"])
         df["min_dim"] = np.minimum(df["Particle Width"], df["Particle Height"])
-        df = df[
-            (df["min_dim"] >= int(min_size)) & (df["max_dim"] <= int(max_size))
-        ]
+        df = df[(df["min_dim"] >= int(min_size)) & (df["max_dim"] <= int(max_size))]
         df = df[df["date"].between(start_date, end_date)]
         df = df[df["Temperature"].between(int(min_temp), int(max_temp))]
         df = df[df["Pressure"].between(int(min_pres[0]), int(max_pres[0]))]
@@ -103,7 +101,7 @@ def register(app):
         df = df.sort_values(by=["Classification"])
         return (
             df["Classification"],
-            df[["Classification", "Contour Area"]],
+            df["Contour Area"],
             df["Latitude"],
             df["Longitude"],
             df["Altitude"],

@@ -2,7 +2,7 @@ from datetime import date
 
 campaigns = [
     # "AIRS_II",
-    # "ARM",
+    "ARM",
     # "ATTREX",
     "CRYSTAL_FACE_UND",
     "CRYSTAL_FACE_NASA",
@@ -11,15 +11,15 @@ campaigns = [
     # "ISDAC",
     # "MACPEX",
     # "MC3E",
-    # "MIDCIX",
+    "MIDCIX",
     "MPACE",
     # "POSIDON",
-    # "OLYMPEX",
+    "OLYMPEX",
 ]
 
 campaigns_rename = [
     # "AIRS II",
-    # "ARM",
+    "ARM",
     # "ATTREX",
     "CRYSTAL FACE (UND)",
     "CRYSTAL FACE (NASA)",
@@ -28,10 +28,10 @@ campaigns_rename = [
     # "ISDAC",
     # "MACPEX",
     # "MC3E",
-    # "MIDCIX",
+    "MIDCIX",
     "MPACE",
     # "POSIDON",
-    # "OLYMPEX",
+    "OLYMPEX",
 ]
 
 particle_types = [
@@ -87,7 +87,7 @@ campaign_start_dates = {
     "MIDCIX": date(2004, 4, 19),
     "MPACE": date(2004, 10, 5),
     "POSIDON": date(2016, 10, 12),
-    "OLYMPEX": date(2015, 11, 12),
+    "OLYMPEX": date(2015, 11, 13),
 }
 
 campaign_end_dates = {
@@ -101,10 +101,10 @@ campaign_end_dates = {
     "ISDAC": date(2008, 4, 29),
     "MACPEX": date(2011, 4, 25),
     "MC3E": date(2011, 6, 2),
-    "MIDCIX": date(2004, 5, 6),
+    "MIDCIX": date(2004, 4, 30),
     "MPACE": date(2004, 10, 21),
     "POSIDON": date(2016, 10, 28),
-    "OLYMPEX": date(2015, 12, 20),
+    "OLYMPEX": date(2015, 12, 5),
 }
 
 min_dates = {
@@ -121,7 +121,7 @@ min_dates = {
     "MIDCIX": date(2004, 4, 19),
     "MPACE": date(2004, 10, 5),
     "POSIDON": date(2016, 10, 12),
-    "OLYMPEX": date(2015, 11, 12),
+    "OLYMPEX": date(2015, 11, 13),
 }
 
 max_dates = {
@@ -138,7 +138,7 @@ max_dates = {
     "MIDCIX": date(2004, 5, 6),
     "MPACE": date(2004, 10, 21),
     "POSIDON": date(2016, 10, 28),
-    "OLYMPEX": date(2015, 12, 20),
+    "OLYMPEX": date(2015, 12, 5),
 }
 
 Ctopo = [
@@ -153,58 +153,7 @@ Ctopo = [
     [0.9, "rgb(200,200,200)"],
     [1.0, "rgb(255,255,255)"],
 ]
-
-campaign_image_count = {
-    "AIRS II": 1,
-    "ARM": 1,
-    "ATTREX": 1,
-    "CRYSTAL FACE (UND)": "396139",
-    "CRYSTAL FACE (NASA)": "61859",
-    "ICE L": 1,
-    "IPHEX": 1,
-    "ISDAC": 1,
-    "MACPEX": 1,
-    "MC3E": 1,
-    "MIDCIX": 1,
-    "MPACE": 1,
-    "POSIDON": 1,
-    "OLYMPEX": 1,
-}
-
-campaign_flight_count = {
-    "AIRS II": 1,
-    "ARM": 1,
-    "ATTREX": 1,
-    "CRYSTAL FACE (UND)": "10",
-    "CRYSTAL FACE (NASA)": "10",
-    "ICE L": 1,
-    "IPHEX": 1,
-    "ISDAC": 1,
-    "MACPEX": 1,
-    "MC3E": 1,
-    "MIDCIX": 1,
-    "MPACE": 1,
-    "POSIDON": 1,
-    "OLYMPEX": 1,
-}
-
-campaign_flight_hours = {
-    "AIRS II": 1,
-    "ARM": 1,
-    "ATTREX": 1,
-    "CRYSTAL FACE (UND)": "10",
-    "CRYSTAL FACE (NASA)": "10",
-    "ICE L": 1,
-    "IPHEX": 1,
-    "ISDAC": 1,
-    "MACPEX": 1,
-    "MC3E": 1,
-    "MIDCIX": 1,
-    "MPACE": 1,
-    "POSIDON": 1,
-    "OLYMPEX": 1,
-}
-
+# default for UND to preload
 part_type_count = {
     "agg": 2350,
     "budding": 158,
