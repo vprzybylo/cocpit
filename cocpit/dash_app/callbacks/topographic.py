@@ -8,7 +8,6 @@ import os
 import pandas as pd
 import plotly.express as px
 from processing_scripts import process
-from callbacks.topo_map import TopoMap as TopoMap
 from dash_extensions.enrich import Input, Output
 import globals
 import numpy as np

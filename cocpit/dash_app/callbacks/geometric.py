@@ -17,9 +17,9 @@ def register(app):
     )
     def pie(df_classification):
         """pie chart for percentage of particle types for a given campaign"""
-        print(df_classification.columns)
-        df_classification = df_classification.set_index('Time')
-        print(df_classification)
+        # print(df_classification)
+        # df_classification = df_classification
+        # print(df_classification)
         values = df_classification.value_counts()
         labels = values.keys()
         pie = px.pie(
@@ -93,7 +93,7 @@ def register(app):
     )
     def psd_figure(classification, psd):
         """particle size distribution ice water content violin plot"""
-       
+
         psd_fig = px.violin(
             x=classification,
             y=psd,
