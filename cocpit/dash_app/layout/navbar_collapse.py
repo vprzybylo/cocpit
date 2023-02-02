@@ -87,7 +87,7 @@ def navbar_collapse():
                                                         "Environmental"
                                                         " Variable"
                                                     ),
-                                                    value="Ice Water Content",
+                                                    value="Ice Water Content [g/m3]",
                                                     className="h4 dropdown",
                                                 ),
                                                 className=(

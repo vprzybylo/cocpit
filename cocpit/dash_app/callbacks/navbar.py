@@ -12,10 +12,10 @@ def hone_box_select(selected_data, df):
     if selected_data and selected_data["points"]:
         sel_data = pd.DataFrame(selected_data["points"])
         df = df[
-            (df["Longitude"] < sel_data["lon"].max())
-            & (df["Longitude"] > sel_data["lon"].min())
-            & (df["Latitude"] > sel_data["lat"].min())
-            & (df["Latitude"] < sel_data["lat"].max())
+            (df["Longitude [degrees]"] < sel_data["lon"].max())
+            & (df["Longitude [degrees]"] > sel_data["lon"].min())
+            & (df["Latitude [degrees]"] > sel_data["lat"].min())
+            & (df["Latitude [degrees]"] < sel_data["lat"].max())
         ]
     return df
 
@@ -32,6 +32,7 @@ def register(app):
             ServersideOutput("df-prop", "data"),
             ServersideOutput("df-env", "data"),
             ServersideOutput("df-temp", "data"),
+            ServersideOutput("df-psd", "data"),
             ServersideOutput("len-df", "data"),
             ServersideOutput("store-df", "data"),
             Output("agg-count", "children"),
@@ -82,12 +83,12 @@ def register(app):
         df = process.remove_bad_data(df)
 
         df = df[df["Classification"].isin(part_type)]
-        df["max_dim"] = np.maximum(df["Particle Width"], df["Particle Height"])
-        df["min_dim"] = np.minimum(df["Particle Width"], df["Particle Height"])
+        df["max_dim"] = np.maximum(df["Particle Width [micrometers]"], df["Particle Height [micrometers]"])
+        df["min_dim"] = np.minimum(df["Particle Width [micrometers]"], df["Particle Height [micrometers]"])
         df = df[(df["min_dim"] >= int(min_size)) & (df["max_dim"] <= int(max_size))]
         df = df[df["date"].between(start_date, end_date)]
-        df = df[df["Temperature"].between(int(min_temp), int(max_temp))]
-        df = df[df["Pressure"].between(int(min_pres[0]), int(max_pres[0]))]
+        df = df[df["Temperature [C]"].between(int(min_temp), int(max_temp))]
+        df = df[df["Pressure [hPa]"].between(int(min_pres[0]), int(max_pres[0]))]
 
         df = hone_box_select(selected_data, df)
 
@@ -101,14 +102,15 @@ def register(app):
         df = df.sort_values(by=["Classification"])
         return (
             df["Classification"],
-            df["Contour Area"],
-            df["Latitude"],
-            df["Longitude"],
-            df["Altitude"],
+            df["Contour Area [pixels]"],
+            df["Latitude [degrees]"],
+            df["Longitude [degrees]"],
+            df["Altitude [m]"],
             df["date"],
             df[part_prop],
             df[env_prop],
-            df["Temperature"],
+            df["Temperature [C]"],
+            df["PSD IWC [g/m3]"],
             len(df),
             df,
             f"n= {agg_count}",

@@ -17,7 +17,9 @@ def register(app):
     )
     def pie(df_classification):
         """pie chart for percentage of particle types for a given campaign"""
-
+        print(df_classification.columns)
+        df_classification = df_classification.set_index('Time')
+        print(df_classification)
         values = df_classification.value_counts()
         labels = values.keys()
         pie = px.pie(
@@ -66,7 +68,7 @@ def register(app):
             Input("property-dropdown", "value"),
         ],
     )
-    def percent_part_type(classification, prop, prop_name):
+    def geo_fig(classification, prop, prop_name):
         """box plots of geometric attributes of ice crystals
         with respect to particle classification on sidebar menu filters"""
 
@@ -81,3 +83,25 @@ def register(app):
             },
         )
         return process.update_layout(prop_fig)
+
+    @app.callback(
+        Output("psd-fig", "figure"),
+        [
+            Input("df-classification", "data"),
+            Input("df-psd", "data"),
+        ],
+    )
+    def psd_figure(classification, psd):
+        """particle size distribution ice water content violin plot"""
+       
+        psd_fig = px.violin(
+            x=classification,
+            y=psd,
+            color=classification,
+            color_discrete_map=globals.color_discrete_map,
+            labels={
+                "x": "Particle Type",
+                "y": "PSD Ice Water Content",
+            },
+        )
+        return process.update_layout(psd_fig)

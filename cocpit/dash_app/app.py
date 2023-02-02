@@ -48,4 +48,4 @@ if __name__ == "__main__":
     topographic.register(app)
     environment.register(app)
     geometric.register(app)
-    app.run_server(port=8050, host="0.0.0.0", debug=False)
+    app.run_server(port=8050, host="0.0.0.0")

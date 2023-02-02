@@ -54,24 +54,22 @@ particle_types_rename = [
     "rimed",
 ]
 
-env_properties = ["Ice Water Content", "Temperature", "Pressure"]
+env_properties = ["Ice Water Content [g/m3]", "Temperature [C]", "Pressure [hPa]"]
 
 particle_properties = [
-    "Contour Area",
+    "Contour Area [pixels]",
     "Circularity",
     "Solidity",
     "Complexity",
     "Equivalent Diameter",
     "Convex Perimeter",
     "Hull Area",
-    "Perimeter",
+    "Perimeter [pixels]",
     "Aspect Ratio",
     "Area Ratio",
     "Roundness",
     "Perimeter-Area Ratio",
 ]
-
-vertical_vars = ["Ice Water Content", "Temperature", "Pressure"]
 
 campaign_start_dates = {
     "AIRS II": date(2003, 11, 14),

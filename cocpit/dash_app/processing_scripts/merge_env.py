@@ -22,26 +22,26 @@ def read_campaign(campaign):
     columns = [
         "filename",
         "date",
-        "Frame Width",
-        "Frame Height",
-        "Particle Width",
-        "Particle Height",
-        "Cutoff",
-        "Aggregate",
-        "Budding",
-        "Bullet Rosette",
-        "Column",
-        "Compact Irregular",
-        "Fragment",
-        "Planar Polycrystal",
-        "Rimed",
-        "Sphere",
+        "Frame Width [pixels]",
+        "Frame Height [pixels]",
+        "Particle Width [micrometers]",
+        "Particle Height [micrometers]",
+        "Cutoff [%]",
+        "Aggregate [%]",
+        "Budding [%]",
+        "Bullet Rosette [%]",
+        "Column [%]",
+        "Compact Irregular [%]",
+        "Fragment [%]",
+        "Planar Polycrystal [%]",
+        "Rimed [%]",
+        "Sphere [%]",
         "Classification",
         "Blur",
-        "Contours",
+        "Contours [#]",
         "Edges",
         "Std",
-        "Contour Area",
+        "Contour Area [pixels]",
         "Contrast",
         "Circularity",
         "Solidity",
@@ -49,56 +49,19 @@ def read_campaign(campaign):
         "Equivalent Diameter",
         "Convex Perimeter",
         "Hull Area",
-        "Perimeter",
+        "Perimeter [pixels]",
         "Aspect Ratio",
         "Extreme Points",
         "Area Ratio",
         "Roundness",
         "Perimeter-Area Ratio",
     ]
-    dtype = "float16"
-    dtypes = {
-        "filename": "string",
-        "Frame Width": dtype,
-        "Frame Height": dtype,
-        "Particle Width": dtype,
-        "Particle Height": dtype,
-        "Cutoff": dtype,
-        "Aggregate": dtype,
-        "Budding": dtype,
-        "Bullet Rosette": dtype,
-        "Column": dtype,
-        "Compact Irregular": dtype,
-        "Fragment": dtype,
-        "Planar Polycrystal": dtype,
-        "Rimed": dtype,
-        "Sphere": dtype,
-        "Blur": dtype,
-        "Contours": dtype,
-        "Edges": dtype,
-        "Std": dtype,
-        "Contour Area": dtype,
-        "Contrast": dtype,
-        "Circularity": dtype,
-        "Solidity": dtype,
-        "Complexity": dtype,
-        "Equivalent Diameter": dtype,
-        "Convex Perimeter": dtype,
-        "Hull Area": dtype,
-        "Perimeter": dtype,
-        "Aspect Ratio": dtype,
-        "Extreme Points": dtype,
-        "Area Ratio": dtype,
-        "Roundness": dtype,
-        "Perimeter-Area Ratio": dtype,
-    }
 
     return pd.read_csv(
         f"/home/vanessa/hulk/cocpit/final_databases/vgg16/v1.4.0/{campaign}.csv",
         names=columns,
         low_memory=False,
         skiprows=1,
-        dtype=dtypes,
     )
 
 
@@ -110,32 +73,21 @@ def read_env(campaign):
     columns = [
         "filename",
         "Date",
-        "Latitude",
-        "Longitude",
-        "Altitude",
-        "Pressure",
-        "Temperature",
-        "Ice Water Content",
-        "Particle Size Distribution",
+        "Latitude [degrees]",
+        "Longitude [degrees]",
+        "Altitude [m]",
+        "Pressure [hPa]",
+        "Temperature [C]",
+        "Ice Water Content [g/m3]",
+        "PSD IWC [g/m3]",
         "concentration ratio",
         "area ratio",
         "mass ratio",
     ]
-    dtype = "float16"
-    dtypes = {
-        "filename": "string",
-        "Latitude": dtype,
-        "Longitude": dtype,
-        "Altitude": dtype,
-        "Pressure": dtype,
-        "Temperature": dtype,
-        "Ice Water Content": dtype,
-    }
 
     return pd.read_csv(
         f"/home/vanessa/hulk/cocpit/final_databases/vgg16/v1.4.0/environment/{campaign}_atmospheric_V05.csv",
         names=columns,
-        dtype=dtypes,
         skiprows=1,
     ).drop("Date", axis=1)
 
@@ -147,5 +99,5 @@ def main():
 
 
 if "__name__ == __main__":
-    campaign = "MIDCIX"
+    campaign = "MPACE"
     main()

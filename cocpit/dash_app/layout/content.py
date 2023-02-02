@@ -21,6 +21,7 @@ def content():
             dcc.Store(id="df-date", storage_type=storage),
             dcc.Store(id="df-env", storage_type=storage),
             dcc.Store(id="df-temp", storage_type=storage),
+            dcc.Store(id="df-psd", storage_type=storage),
             dcc.Store(id="df-prop", storage_type=storage),
             dcc.Store(id="len-df", storage_type=storage),
             # dls.Hash(
@@ -234,6 +235,57 @@ def content():
                                     "col-xs-12 col-sm-12 col-md-12 col-lg-6" " col-xl-6"
                                 ),
                             ),
+                        ],
+                    ),
+                ]
+            ),
+            html.Hr(),
+            dls.Hash(
+                [
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                children=[
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader("Particle Size Distribution"),
+                                            dbc.CardBody(
+                                                children=[
+                                                    dcc.Graph(
+                                                        id="psd-fig",
+                                                        figure={},
+                                                    )
+                                                ]
+                                            ),
+                                        ],
+                                        className="card-body",
+                                    )
+                                ],
+                                className=(
+                                    "col-xs-12 col-sm-12 col-md-12 col-lg-6" " col-xl-6"
+                                ),
+                            ),
+                            # dbc.Col(
+                            #     children=[
+                            #         dbc.Card(
+                            #             [
+                            #                 dbc.CardHeader("Mass-Dimensional Relationship"),
+                            #                 dbc.CardBody(
+                            #                     children=[
+                            #                         dcc.Graph(
+                            #                             id="md-fig",
+                            #                             figure={},
+                            #                         )
+                            #                     ]
+                            #                 ),
+                            #             ],
+                            #             className="card-body",
+                            #         )
+                            #     ],
+                            #     className=(
+                            #         "col-xs-12 col-sm-12 col-md-12 col-lg-6" " col-xl-6"
+                            #     ),
+                            # ),
                         ],
                     ),
                 ]
