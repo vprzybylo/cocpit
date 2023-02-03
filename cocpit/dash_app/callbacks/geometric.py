@@ -22,8 +22,10 @@ def register(app):
         # print(df_classification)
         values = df_classification.value_counts()
         labels = values.keys()
+        print("labels", labels)
+        print("values", values)
         pie = px.pie(
-            labels,
+            values,
             values=values,
             names=labels,
             color=labels,

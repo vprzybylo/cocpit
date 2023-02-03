@@ -76,10 +76,9 @@ def register(app):
     def map_top_down(df_classification, df_lat, df_lon):
         """aircraft location and particle type overlaid on map"""
 
-        df_classification = df_classification.sort_index()
-        df_lat = df_lat.sort_index()
-        df_lon = df_lon.sort_index()
-
+        # df_classification = df_classification.sort_index()
+        # df_lat = df_lat.sort_index()
+        # df_lon = df_lon.sort_index()
         fig = px.scatter_mapbox(
             lat=df_lat,
             lon=df_lon,

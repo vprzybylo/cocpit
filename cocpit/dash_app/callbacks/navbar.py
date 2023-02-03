@@ -1,4 +1,4 @@
-"""handles preprocessing and saving data based on navbar selctions"""
+"""handles preprocessing and saving data based on navbar selections"""
 
 from dash_extensions.enrich import Input, Output, State, ServersideOutput, dcc
 from processing_scripts import process
@@ -83,8 +83,12 @@ def register(app):
         df = process.remove_bad_data(df)
 
         df = df[df["Classification"].isin(part_type)]
-        df["max_dim"] = np.maximum(df["Particle Width [micrometers]"], df["Particle Height [micrometers]"])
-        df["min_dim"] = np.minimum(df["Particle Width [micrometers]"], df["Particle Height [micrometers]"])
+        df["max_dim"] = np.maximum(
+            df["Particle Width [micrometers]"], df["Particle Height [micrometers]"]
+        )
+        df["min_dim"] = np.minimum(
+            df["Particle Width [micrometers]"], df["Particle Height [micrometers]"]
+        )
         df = df[(df["min_dim"] >= int(min_size)) & (df["max_dim"] <= int(max_size))]
         df = df[df["date"].between(start_date, end_date)]
         df = df[df["Temperature [C]"].between(int(min_temp), int(max_temp))]
@@ -99,7 +103,7 @@ def register(app):
         compact_count = len(df[df["Classification"] == "compact irregular"])
         planar_count = len(df[df["Classification"] == "planar polycrystal"])
         rimed_count = len(df[df["Classification"] == "rimed"])
-        df = df.sort_values(by=["Classification"])
+        # df = df.sort_values(by=["Classification"])
         return (
             df["Classification"],
             df["Contour Area [pixels]"],
