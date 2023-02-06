@@ -75,14 +75,15 @@ def register(app):
     )
     def map_top_down(df_classification, df_lat, df_lon):
         """aircraft location and particle type overlaid on map"""
-
-        # df_classification = df_classification.sort_index()
-        # df_lat = df_lat.sort_index()
-        # df_lon = df_lon.sort_index()
+        df_concat = pd.concat([df_classification, df_lat, df_lon], axis=1)
+        grouped_count = df_concat.groupby(["Latitude [degrees]", "Longitude [degrees]"], as_index = False)['Classification'].count()
+        grouped_max = df_concat.groupby(["Latitude [degrees]", "Longitude [degrees]"], as_index = False)['Classification'].max()
+        print(grouped_max)
         fig = px.scatter_mapbox(
-            lat=df_lat,
-            lon=df_lon,
-            color=df_classification,
+            lat=grouped_count["Latitude [degrees]"],
+            lon=grouped_count["Longitude [degrees]"],
+            size=grouped_count['Classification'],
+            color=grouped_max['Classification'],
             color_discrete_map=globals.color_discrete_map,
             mapbox_style="stamen-terrain",
         )

@@ -16,7 +16,7 @@ def read_campaign(campaign):
     return pd.read_parquet(
         f"/home/vanessa/hulk/cocpit/final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet",
         engine="fastparquet",
-    )
+    )  
 
 
 def remove_bad_data(df):

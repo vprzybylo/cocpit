@@ -5,9 +5,7 @@ import pandas as pd
 def merge_env(df, df_env, campaign):
     """merge"""
 
-    print(df['filename'], df_env['filename'])
     df = df.merge(df_env, on="filename")
-    print(df)
     df.to_parquet(
         f"/home/vanessa/hulk/cocpit/final_databases/vgg16/v1.4.0/merged_env/{campaign}.parquet"
     )

@@ -17,13 +17,10 @@ def register(app):
     )
     def pie(df_classification):
         """pie chart for percentage of particle types for a given campaign"""
-        # print(df_classification)
-        # df_classification = df_classification
-        # print(df_classification)
+
         values = df_classification.value_counts()
         labels = values.keys()
-        print("labels", labels)
-        print("values", values)
+
         pie = px.pie(
             values,
             values=values,
