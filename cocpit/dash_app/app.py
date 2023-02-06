@@ -7,7 +7,7 @@ from dash import dcc
 from dotenv import load_dotenv
 from layout import content, header, legend, banners, sidebar, navbar_collapse
 from dash_extensions.enrich import Dash
-
+import dash_loading_spinners as dls
 
 def main():
     load_dotenv()
@@ -33,19 +33,21 @@ if __name__ == "__main__":
 
     app = main()
     app.title = "COCPIT"
-    app.layout = dbc.Container(
-        [
-            # sidebar.sidebar(),
-            header.header(),
-            navbar_collapse.navbar_collapse(),
-            banners.banners(),
-            legend.legend(),
-            content.content(),
-        ],
-        fluid=True,
+    app.layout = dls.ThreeDots(
+        dbc.Container(
+            [
+                # sidebar.sidebar(),
+                header.header(),
+                navbar_collapse.navbar_collapse(),
+                banners.banners(),
+                legend.legend(),
+                content.content(),
+            ],
+            fluid=True,
+        ),
     )
     navbar.register(app)
     topographic.register(app)
     environment.register(app)
     geometric.register(app)
-    app.run_server(port=8050, host="0.0.0.0", dev_tools_hot_reload=True, debug=True)
+    app.run_server(port=8050, host="0.0.0.0", debug=True, )

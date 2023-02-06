@@ -171,4 +171,5 @@ color_discrete_map = {
     "column": "rgb(124, 124, 124)",
     "planar polycrystal": "rgb(114, 98, 136)",
     "rimed": "rgb(82, 113, 91)",
+    "Multiple Modes": "rgb(192,192,192)",
 }
