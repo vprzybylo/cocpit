@@ -112,11 +112,11 @@ config_ray = {
 
 
 # directory that holds the training data
-DATA_DIR = "/DRIVE/site_analysis/pytorch_ims/Corr_LIE_East__baseline_vgg16__multiple__6class__kfold5_strat__test/data/crop"
+DATA_DIR = "/home/csutter/DRIVE/site_analysis/pytorch_ims/Corr_LIE_East__base_vgg16__multiple__6class__kfold5_bysite_val2/data/crop"
 # "/DRIVE/site_analysis/corridor_LIE_east/training_data_py/training_data/"
 # "/DRIVE/site_analysis/corridor_LIE_east/gui_label/training_data/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
-DATA_DIR_PREDEFINED_VAL = "/home/csutter/DRIVE/site_analysis/pytorch_ims/Corr_LIE_East__baseline_vgg16__multiple__6class__kfold5_strat__test/filename_phase_list/"
+DATA_DIR_PREDEFINED_VAL = "/home/csutter/DRIVE/site_analysis/pytorch_ims/Corr_LIE_East__base_vgg16__multiple__6class__kfold5_bysite_val2/filename_phase_list/"
 
 # whether to save the model
 SAVE_MODEL = True
