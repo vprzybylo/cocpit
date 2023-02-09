@@ -215,3 +215,30 @@ def register(app):
                 return is_open, {}
         else:
             return is_open, {}
+
+    @app.callback(
+        [
+            Output("navbar-collapse", "is_open"),
+            Output("navbar-collapse", "style"),
+        ],
+        [Input("navbar-toggler", "n_clicks")],
+        [State("navbar-collapse", "is_open")],
+    )
+
+    def toggle_navbar_collapse(n, is_open):
+        """collapses navbar when hamburger menu is clicked"""
+        if n:
+            is_open = not is_open
+            if is_open is True:
+                return (
+                    is_open,
+                    {
+                        "overflow-y": "scroll",
+                        "max-height": "50vh",
+                    },
+                )
+
+            else:
+                return is_open, {}
+        else:
+            return is_open, {}

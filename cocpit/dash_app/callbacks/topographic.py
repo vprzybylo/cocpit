@@ -108,8 +108,8 @@ def register(app):
         )
 
         fig.update_traces(
-            hovertemplate='Latitude: %{customdata[0]}<br>'+
-                        'Longitude %{customdata[1]}<br>'+
+            hovertemplate='Latitude: %{customdata[0]:.2f}<br>'+
+                        'Longitude %{customdata[1]:.2f}<br>'+
                         'Image count: %{customdata[2]}<br>'+
                         'Majority classification: %{customdata[3]}<br>')
 
