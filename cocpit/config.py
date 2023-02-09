@@ -116,7 +116,7 @@ DATA_DIR = "/DRIVE/site_analysis/pytorch_ims/Corr_LIE_East__baseline_vgg16__mult
 # "/DRIVE/site_analysis/corridor_LIE_east/training_data_py/training_data/"
 # "/DRIVE/site_analysis/corridor_LIE_east/gui_label/training_data/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
-DATA_DIR_PREDEFINED_VAL = "/DRIVE/site_analysis/pytorch_ims/Corr_LIE_East__baseline_vgg16__multiple__6class__kfold5_strat__test/filename_phase_list/"
+DATA_DIR_PREDEFINED_VAL = "/home/csutter/DRIVE/site_analysis/pytorch_ims/Corr_LIE_East__baseline_vgg16__multiple__6class__kfold5_strat__test/filename_phase_list/"
 
 # whether to save the model
 SAVE_MODEL = True
@@ -125,7 +125,7 @@ SAVE_MODEL = True
 MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
 
 # model description
-MODEL_DESC = f"LIE_6class"
+MODEL_DESC = f"LIE_6class_testing29"
 
 # directory to save validation data to
 # for later inspection of predictions
