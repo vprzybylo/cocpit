@@ -18,7 +18,7 @@ import sys
 # DESC = "LIE_Corr_6class_foldsv0tr1"
 
 # Absolute path to to folder where the data and models live
-BASE_DIR = "/DRIVE_PYTORCH"
+BASE_DIR = "/home/csutter/DRIVE_PYTORCH"
 
 # version used in docker and git
 TAG = "v0.0.0"
