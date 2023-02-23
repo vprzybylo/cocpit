@@ -84,7 +84,7 @@ def read_env(campaign):
     ]
 
     return pd.read_csv(
-        f"/home/vanessa/hulk/cocpit/final_databases/vgg16/v1.4.0/environment/{campaign}_atmospheric_V05.csv",
+        f"/home/vanessa/hulk/cocpit/final_databases/vgg16/v1.4.0/environment/{campaign}_atmospheric.csv",
         names=columns,
         skiprows=1,
     ).drop("Date", axis=1)
@@ -97,5 +97,5 @@ def main():
 
 
 if "__name__ == __main__":
-    campaign = "MPACE"
+    campaign = "MC3E"
     main()

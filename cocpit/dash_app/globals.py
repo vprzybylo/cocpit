@@ -10,7 +10,7 @@ campaigns = [
     # "IPHEX",
     # "ISDAC",
     # "MACPEX",
-    # "MC3E",
+    "MC3E",
     "MIDCIX",
     "MPACE",
     # "POSIDON",
