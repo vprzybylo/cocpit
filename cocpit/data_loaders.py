@@ -13,72 +13,30 @@ from torchvision import datasets, transforms
 from typing import List, Union, Optional
 from cocpit.auto_str import auto_str
 import numpy as np
+import pandas as pd
 import random
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
-@auto_str
-class ImageFolderWithPaths(datasets.ImageFolder):
-    """
-    - Custom dataset that includes image file paths.
-    - Used in get_data in this module
-
-    Args:
-        root (str): data directory
-        transform (transforms.Compose): transformations based on train, val, or test
-    """
-
-    # Override the __getitem__ method. This is the method that dataloader calls
-    def __getitem__(self, index):
-        # this is what ImageFolder normally returns
-        original_tuple = super(ImageFolderWithPaths, self).__getitem__(index)
-        # the image file path
-        path = self.imgs[index][0]
-        # make a new tuple that includes original and the path
-        tuple_with_path = original_tuple + (path,)
-        return (tuple_with_path, index)
-
-
-@auto_str
-class TestDataSet(Dataset):
-    """
-    - Create dataloader for new or unseen testing data
-    - Used in notenooks/check_classifications.ipynb for example instantiation
-    - Applies transformations such as resizing and normalization
-
-    Args:
-        open_dir (Optional[str, List[str]]): directory holding the data to open
-        file_list (List[str]): list of filenames
-    """
-
-    def __init__(self, open_dir: Union[str, List[str]], file_list: List[str]):
-
-        self.open_dir = open_dir
-        self.file_list = list(file_list)
-        self.transform = transforms.Compose(
-            [
-                transforms.Resize((224, 224)),
-                transforms.ToTensor(),
-                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-            ]
-        )
+class DatasetCSV(torch.utils.data.Dataset):
+    def __init__(self, root, transform, labels, imgs):
+        self.root = root
+        self.transform = transform
+        self.labels = labels
+        self.imgs = imgs
 
     def __len__(self):
-        return len(self.file_list)
+        return len(self.labels)
 
-    def __getitem__(self, idx):
-        if len(self.open_dir) == 1 or self.open_dir == "":
-            print(os.path.join(self.open_dir, self.file_list[idx]))
-            self.path = os.path.join(self.open_dir, self.file_list[idx])
-        else:
-            self.path = os.path.join(self.open_dir[idx], self.file_list[idx])
-        image = Image.open(self.path)
-        tensor_image = self.transform(image)
-        return (tensor_image, self.path)
+    def __getitem__(self, index):
+        image = Image.open(os.path.join(self.root, self.imgs.iloc[index]))
+        self.tensor_image = self.transform(image)
+        self.label = self.labels[index]
+        return self.tensor_image, self.label
 
 
-def get_data(phase: str) -> ImageFolderWithPaths:
+def get_data(phase: str) -> DatasetCSV:
     """
     - Use the Pytorch ImageFolder class to read in training data
     - Training data needs to be organized all in one folder with subfolders for each class
@@ -112,8 +70,22 @@ def get_data(phase: str) -> ImageFolderWithPaths:
             ]
         ),
     }
+    if phase == "train":
+        df_from_csv = pd.read_csv(config.DATA_DIR_PREDEFINED_TRAIN)
+    elif phase == "val":
+        df_from_csv = pd.read_csv(config.DATA_DIR_PREDEFINED_VAL)
+    else:
+        df_from_csv = pd.read_csv(config.DATA_DIR_PREDEFINED_TEST)
 
-    return ImageFolderWithPaths(root=config.DATA_DIR, transform=transform_dict[phase])
+    labels = df_from_csv["cat"]
+    imgs = df_from_csv["path"]
+
+    return DatasetCSV(
+        root=config.DATA_DIR,
+        transform=transform_dict[phase],
+        labels=labels,
+        imgs=imgs,
+    )
 
 
 def balanced_sampler(train_labels: List[int]) -> sampler.WeightedRandomSampler:
@@ -129,15 +101,24 @@ def balanced_sampler(train_labels: List[int]) -> sampler.WeightedRandomSampler:
         class_sample_counts (List): number of samples per class
         train_samples_weights (torch.DoubleTensor): weights for each class for sampling
     """
-    class_sample_counts = [0] * len(config.CLASS_NAMES)
-    for target in train_labels:
-        class_sample_counts[target] += 1
-    print("counts per class in training data (before sampler): ", class_sample_counts)
+    # class_sample_counts = [0] * len(config.CLASS_NAMES)
 
-    class_weights = 1.0 / torch.Tensor(class_sample_counts)
+    # for target in train_labels.values:
+    #     print(target)
+    #     class_sample_counts[target] += 1
+
+    class_sample_counts = train_labels.value_counts()
+    print(
+        "counts per class in training data (before sampler): ",
+        class_sample_counts,
+    )
+
+    class_weights = 1.0 / class_sample_counts
+
     train_samples_weights = [
-        float(class_weights[class_id]) for class_id in train_labels
+        float(class_weights[class_id]) for class_id in train_labels.values
     ]
+
     return sampler.WeightedRandomSampler(
         train_samples_weights, len(train_samples_weights), replacement=True
     )
@@ -146,8 +127,8 @@ def balanced_sampler(train_labels: List[int]) -> sampler.WeightedRandomSampler:
 def seed_worker(worker_id) -> None:
     torch_seed = torch.initial_seed()
     random.seed(torch_seed + worker_id)
-    if torch_seed >= 2**30:  # make sure torch_seed + workder_id < 2**32
-        torch_seed = torch_seed % 2**30
+    if torch_seed >= 2 ** 30:  # make sure torch_seed + workder_id < 2**32
+        torch_seed = torch_seed % 2 ** 30
     np.random.seed(torch_seed + worker_id)
 
 

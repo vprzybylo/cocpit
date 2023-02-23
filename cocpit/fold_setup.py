@@ -64,15 +64,8 @@ class FoldSetup:
         Args:
             composition (bool): whether to print the class totals for each dataset
         """
-        data = data_loaders.get_data("train")
-        self.train_data = torch.utils.data.Subset(data, self.train_indices)
-        self.train_labels = list(
-            map(data.targets.__getitem__, self.train_indices)
-        )
-
-        data = data_loaders.get_data("val")
-        self.val_data = torch.utils.data.Subset(data, self.val_indices)
-        self.val_labels = list(map(data.targets.__getitem__, self.val_indices))
+        self.train_data = data_loaders.get_data("train")
+        self.val_data = data_loaders.get_data("val")
 
         if composition:
             self.print_composition()
@@ -108,7 +101,7 @@ class FoldSetup:
             torch.utils.data.DataLoader: an iterable dataloader for training
         """
         sampler = (
-            data_loaders.balanced_sampler(self.train_labels)
+            data_loaders.balanced_sampler(self.train_data.labels)
             if balance_weights
             else None
         )
@@ -139,51 +132,3 @@ class FoldSetup:
             "train": self.train_loader(),
             "val": self.val_loader(),
         }
-
-    def nofold_indices(self) -> None:
-        """
-        - If using predefined val, find the indices of those corresponding images first
-        - Otherwise, If not applying cross-fold validation, split training dataset
-        based on config.VALID_SIZE
-        - Shuffle first and then split dataset
-        """
-
-        # if using predifined val, set indicies list based on csv list of train and val saved from work in DRIVE
-        if config.VAL_PREDEFINED:
-            name_files = []
-            for r, d, files in os.walk(config.DATA_DIR):
-                for name in files:
-                    name_files.append(name)
-            print(f" total images is : {len(name_files)}")
-            df_data_dir = pd.DataFrame({"filenames": name_files})
-
-            tr = pd.read_csv(config.DATA_DIR_PREDEFINED_TRAIN)
-            v = pd.read_csv(config.DATA_DIR_PREDEFINED_VAL)
-            trainlistfinal = df_data_dir.index[df_data_dir['filenames'].isin(tr)].tolist()
-            vallistfinal = df_data_dir.index[df_data_dir['filenames'].isin(v)].tolist()
-
-            print(f"number of val ims from predefined: {len(vallistfinal)}")
-            print(
-                f"number of train ims from predefined: {len(trainlistfinal)}"
-            )
-
-            self.val_indices = vallistfinal
-            self.train_indices = trainlistfinal
-
-        else:
-            total_files = sum(
-                len(files) for r, d, files in os.walk(config.DATA_DIR)
-            )
-            print(f"len files {total_files}")
-
-            # randomly split indices for training and validation indices according to valid_size
-            if config.VALID_SIZE < 0.01:
-                # use all of the data
-                self.train_indices = np.arange(0, total_files)
-                random.shuffle(self.train_indices)
-            else:
-                self.train_indices, self.val_indices = train_test_split(
-                    list(range(total_files)),
-                    test_size=config.VALID_SIZE,
-                    random_state=42,
-                )

@@ -46,7 +46,8 @@ class Validation(Metrics):
         """save/load best model weights after improvement in val accuracy"""
         if self.epoch_acc > self.val_best_acc and config.SAVE_MODEL:
             print(
-                f"Epoch acc:{self.epoch_acc} > best acc: {self.val_best_acc}. Saving model."
+                f"Epoch acc:{self.epoch_acc} > best acc: {self.val_best_acc}."
+                " Saving model."
             )
             self.val_best_acc = self.epoch_acc
 
@@ -71,7 +72,7 @@ class Validation(Metrics):
 
     def iterate_batches(self) -> None:
         """iterate over a batch in a dataloader and make predictions"""
-        for self.batch, ((inputs, labels, _), _) in enumerate(
+        for self.batch, (inputs, labels) in enumerate(
             self.f.dataloaders["val"]
         ):
 

@@ -59,7 +59,7 @@ class Train(Metrics):
         """
 
         label_cnts_total = np.zeros(len(config.CLASS_NAMES))
-        for self.batch, ((inputs, labels, _), _) in enumerate(
+        for self.batch, (inputs, labels) in enumerate(
             self.f.dataloaders["train"]
         ):
             if print_label_count:
