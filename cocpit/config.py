@@ -105,7 +105,8 @@ MODEL_NAMES_TUNE = [
     "densenet201",
 ]
 MODEL_NAMES = [
-    "vgg16",
+    "resnet18",
+    "alexnet"
 ]
 
 config_ray = {
@@ -160,10 +161,10 @@ FEATURE_EXTRACT = False
 USE_PRETRAINED = False
 
 # write training loss and accuracy to csv
-SAVE_ACC = False
+SAVE_ACC = True
 
 # directory for saving training accuracy and loss csv's
-ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/drive/{TAG}/"
+ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"
 
 #  filename for saving training accuracy and loss
 ACC_SAVENAME_TRAIN = (
@@ -190,7 +191,7 @@ CONF_MATRIX_SAVENAME = f"{BASE_DIR}/plots/conf_matrix.png"
 FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
 
 # log experiment to comet for tracking?
-LOG_EXP = False
+LOG_EXP = True
 NOTEBOOK = os.path.basename(sys.argv[0]) != "__main__.py"
 load_dotenv()  # loading sensitive keys from .env file
 if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
