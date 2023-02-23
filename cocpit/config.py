@@ -8,8 +8,9 @@
 isort:skip_file
 """
 
-from comet_ml import Experiment  # isort:split
 
+from comet_ml import Experiment  # isort:split
+from ray import tune
 import os
 from dotenv import load_dotenv
 import torch
@@ -17,23 +18,8 @@ import sys
 
 # Absolute path to to folder where the data and models live
 # BASE_DIR = '/Volumes/TOSHIBA EXT/raid/data/cpi_data'
-BASE_DIR = "/home/vanessa/hulk/ai2es"
 
-# /raid/NYSM/archive/nysm/netcdf/proc/ on hulk
-NC_FILE_DIR = f"{BASE_DIR}/5_min_obs"
-
-# /raid/lgaudet/precip/Precip/NYSM_1min_data on hulk
-CSV_FILE_DIR= f"{BASE_DIR}/1_min_obs"
-
-# where to write time  matched data
-WRITE_PATH = f"{BASE_DIR}/matched_parquet/"
-
-# root dir to raw images (before each year subdir)
-PHOTO_DIR = f"{BASE_DIR}/cam_photos/"
-
-# where the mesonet obs live in parquet format
-# output from nysm_obs_to_parquet
-PARQUET_DIR = f"{BASE_DIR}/mesonet_parquet_1M"
+BASE_DIR = "/DRIVE_PYTORCH"
 
 # ai2es version used in docker and git
 TAG = "v0.0.0"
@@ -47,54 +33,79 @@ CLASSIFICATION = False
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # workers for parallelization
-NUM_CPUS = 10
+NUM_CPUS = 5
 
 # number of cpus used to load data in pytorch dataloaders
-NUM_WORKERS = 5
+NUM_WORKERS = 10
 
 # how many folds used in training (cross-validation)
 # kold = 0 turns this off and splits the data according to valid_size
 # cannot = 1
-KFOLD = 5
+KFOLD = 0
 
 # percent of the training dataset to use as validation
 VALID_SIZE = 0.20
 
+# ray tune hyperoptimization
+TUNE = False
+
 # images read into memory at a time during training
 BATCH_SIZE = [64]
+BATCH_SIZE_TUNE = [32, 64, 128, 256]
 
 # number of epochs to train model
-MAX_EPOCHS = [2]
+MAX_EPOCHS = [25]
+MAX_EPOCHS_TUNE = [20, 30, 40]
+
+# dropout rate (in model_config)
+DROP_RATE_TUNE = [0.0, 0.3, 0.5]
+
+# learning rate (in model_config)
+LR_TUNE = [0.001, 0.01, 0.1]
 
 # names of each ice crystal class
-CLASS_NAMES = ["no precipitation", "obstructed", "precipitation"]
+CLASS_NAMES = ["wet", "dry", "snow", "snow_severe"]
+CLASS_NAMES_ALPHABETICAL = ["dry", "snow", "snow_severe", "wet"]
 
 # any abbreviations in folder names where the data lives for each class
 CLASS_NAME_MAP = {
-    "no precipitation": "no_precip",
-    "obstructed": "obstructed",
-    "precipitation": "precip",
+    "wet": "wet",
+    "dry": "dry",
+    "snow": "snow",
+    "snow_severe": "severe snow",
 }
 
 # models to train
-MODEL_NAMES = [
+MODEL_NAMES_TUNE = [
     "resnet18",
-    # "efficient",
-    # "resnet34",
-    # "resnet152",
-    # "alexnet",
-    # "vgg16",
-    # "vgg19",
-    # "densenet169",
-    # "densenet201",
+    "efficient",
+    "resnet34",
+    "resnet152",
+    "alexnet",
+    "vgg16",
+    "vgg19",
+    "densenet169",
+    "densenet201",
+]
+MODEL_NAMES = [
+    "vgg16",
 ]
 
+config_ray = {
+    "BATCH_SIZE": tune.choice(BATCH_SIZE_TUNE),
+    "MODEL_NAMES": tune.choice(MODEL_NAMES_TUNE),
+    "LR": tune.choice(LR_TUNE),
+    "DROP_RATE": tune.choice(DROP_RATE_TUNE),
+    "MAX_EPOCHS": tune.choice(MAX_EPOCHS_TUNE),
+}
+
+
 # directory that holds the training data
-DATA_DIR = f"{BASE_DIR}/night_precip_hand_labeled/2017/"
+DATA_DIR = "/DRIVE/site_analysis/corridor_LIE_east/gui_label/training_data/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # whether to save the model
-SAVE_MODEL = False
+SAVE_MODEL = True
 
 # directory to save the trained model to
 MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
@@ -104,7 +115,7 @@ MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
 VAL_LOADER_SAVE_DIR = f"{BASE_DIR}/saved_val_loaders/{TAG}/"
 
 # model to load
-MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[15]_bs[64]_k0_9model(s).pt"
+MODEL_PATH = f"{BASE_DIR}/saved_models/{TAG}/e[30]_bs[64]_k4_1model(s).pt"
 
 MODEL_SAVENAME = (
     f"{MODEL_SAVE_DIR}e{MAX_EPOCHS}_"
@@ -120,11 +131,18 @@ VAL_LOADER_SAVENAME = (
     f"{len(MODEL_NAMES)}model(s).pt"
 )
 
+# Start with a pretrained model and only update the final layer weights
+# from which we derive predictions
+FEATURE_EXTRACT = False
+
+# Update all of the model’s parameters (retrain). Default = False
+USE_PRETRAINED = False
+
 # write training loss and accuracy to csv
 SAVE_ACC = False
 
 # directory for saving training accuracy and loss csv's
-ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"
+ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/drive/{TAG}/"
 
 #  filename for saving training accuracy and loss
 ACC_SAVENAME_TRAIN = (
@@ -152,13 +170,9 @@ FINAL_DIR = f"{BASE_DIR}/final_databases/vgg16/{TAG}/"
 
 # log experiment to comet for tracking?
 LOG_EXP = False
-if os.path.basename(sys.argv[0]) == "__main__.py":
-    NOTEBOOK = False
-else:
-    NOTEBOOK = True
-
+NOTEBOOK = os.path.basename(sys.argv[0]) != "__main__.py"
 load_dotenv()  # loading sensitive keys from .env file
-if LOG_EXP and NOTEBOOK is False and BUILD_MODEL:
+if LOG_EXP and not NOTEBOOK and BUILD_MODEL:
     print("logging to comet ml...")
     API_KEY = os.getenv("API_KEY")
     WORKSPACE = os.getenv("WORKSPACE")
@@ -169,157 +183,31 @@ if LOG_EXP and NOTEBOOK is False and BUILD_MODEL:
         workspace=WORKSPACE,
     )
 
-    params = {}
-    for variable in [
-        "TAG",
-        "KFOLD",
-        "BATCH_SIZE",
-        "MAX_EPOCHS",
-        "CLASS_NAMES",
-        "VALID_SIZE",
-        "MODEL_NAMES",
-        "DATA_DIR",
-        "MODEL_SAVE_DIR",
-        "VAL_LOADER_SAVE_DIR",
-        "SAVE_ACC",
-        "NUM_WORKERS",
-        "ACC_SAVENAME_TRAIN",
-        "ACC_SAVENAME_VAL",
-        "METRICS_SAVENAME",
-        "MODEL_SAVENAME",
-        "VAL_LOADER_SAVENAME",
-    ]:
-        params[variable] = eval(variable)
+    params = {
+        variable: eval(variable)
+        for variable in [
+            "TAG",
+            "KFOLD",
+            "BATCH_SIZE",
+            "MAX_EPOCHS",
+            "CLASS_NAMES",
+            "VALID_SIZE",
+            "MODEL_NAMES",
+            "DATA_DIR",
+            "SAVE_MODEL",
+            "MODEL_SAVE_DIR",
+            "VAL_LOADER_SAVE_DIR",
+            "SAVE_ACC",
+            "NUM_WORKERS",
+            "ACC_SAVENAME_TRAIN",
+            "ACC_SAVENAME_VAL",
+            "METRICS_SAVENAME",
+            "MODEL_SAVENAME",
+            "VAL_LOADER_SAVENAME",
+        ]
+    }
 
     experiment.log_parameters(params)
     experiment.add_tag(TAG)
 else:
     experiment = None
-
-stnid = [
-    "ADDI",
-    "ANDE",
-    "BATA",
-    "BEAC",
-    "BELD",
-    "BELL",
-    "BELM",
-    "BERK",
-    "BING",
-    "BKLN",
-    "BRAN",
-    "BREW",
-    "BROC",
-    "BRON",
-    "BROO",
-    "BSPA",
-    "BUFF",
-    "BURD",
-    "BURT",
-    "CAMD",
-    "CAPE",
-    "CHAZ",
-    "CHES",
-    "CINC",
-    "CLAR",
-    "CLIF",
-    "CLYM",
-    "COBL",
-    "COHO",
-    "COLD",
-    "COPA",
-    "COPE",
-    "CROG",
-    "CSQR",
-    "DELE",
-    "DEPO",
-    "DOVE",
-    "DUAN",
-    "EAUR",
-    "EDIN",
-    "EDWA",
-    "ELDR",
-    "ELLE",
-    "ELMI",
-    "ESSX",
-    "FAYE",
-    "FRED",
-    "GABR",
-    "GFAL",
-    "GFLD",
-    "GROT",
-    "GROV",
-    "HAMM",
-    "HARP",
-    "HARR",
-    "HART",
-    "HERK",
-    "HFAL",
-    "ILAK",
-    "JOHN",
-    "JORD",
-    "KIND",
-    "LAUR",
-    "LOUI",
-    "MALO",
-    "MANH",
-    "MEDI",
-    "MEDU",
-    "MORR",
-    "NBRA",
-    "NEWC",
-    "NHUD",
-    "OLDF",
-    "OLEA",
-    "ONTA",
-    "OPPE",
-    "OSCE",
-    "OSWE",
-    "OTIS",
-    "OWEG",
-    "PENN",
-    "PHIL",
-    "PISE",
-    "POTS",
-    "QUEE",
-    "RAND",
-    "RAQU",
-    "REDF",
-    "REDH",
-    "ROXB",
-    "RUSH",
-    "SARA",
-    "SBRI",
-    "SCHA",
-    "SCHO",
-    "SCHU",
-    "SCIP",
-    "SHER",
-    "SOME",
-    "SOUT",
-    "SPRA",
-    "SPRI",
-    "STAT",
-    "STEP",
-    "SUFF",
-    "TANN",
-    "TICO",
-    "TULL",
-    "TUPP",
-    "TYRO",
-    "VOOR",
-    "WALL",
-    "WALT",
-    "WANT",
-    "WARS",
-    "WARW",
-    "WATE",
-    "WBOU",
-    "WELL",
-    "WEST",
-    "WFMB",
-    "WGAT",
-    "WHIT",
-    "WOLC",
-    "YORK",
-]
