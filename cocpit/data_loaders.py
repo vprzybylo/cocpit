@@ -20,8 +20,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 class DatasetCSV(torch.utils.data.Dataset):
-    def __init__(self, root, transform, labels, imgs):
-        self.root = root
+    def __init__(self, transform, labels, imgs):
         self.transform = transform
         self.labels = labels
         self.imgs = imgs
@@ -30,7 +29,7 @@ class DatasetCSV(torch.utils.data.Dataset):
         return len(self.labels)
 
     def __getitem__(self, index):
-        image = Image.open(os.path.join(self.root, self.imgs.iloc[index]))
+        image = Image.open(os.path.join(self.imgs.iloc[index]))
         self.tensor_image = self.transform(image)
         self.label = self.labels[index]
         return self.tensor_image, self.label
@@ -81,7 +80,6 @@ def get_data(phase: str) -> DatasetCSV:
     imgs = df_from_csv["path"]
 
     return DatasetCSV(
-        root=config.DATA_DIR,
         transform=transform_dict[phase],
         labels=labels,
         imgs=imgs,

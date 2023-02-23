@@ -19,10 +19,10 @@ import sys
 # Absolute path to to folder where the data and models live
 # BASE_DIR = '/Volumes/TOSHIBA EXT/raid/data/cpi_data'
 
-BASE_DIR = "/DRIVE_PYTORCH"
+BASE_DIR = "/home/vanessa/hulk/DRIVE_PYTORCH"
 
 # ai2es version used in docker and git
-TAG = "v0.0.0"
+TAG = "v3.2.0"
 
 # create and save CNN
 BUILD_MODEL = True
@@ -63,9 +63,26 @@ DROP_RATE_TUNE = [0.0, 0.3, 0.5]
 # learning rate (in model_config)
 LR_TUNE = [0.001, 0.01, 0.1]
 
-# names of each ice crystal class
-CLASS_NAMES = ["wet", "dry", "snow", "snow_severe"]
-CLASS_NAMES_ALPHABETICAL = ["dry", "snow", "snow_severe", "wet"]
+# names of each class
+CLASS_NAMES = ["wet", "dry", "snow", "snow_severe", "obs", "poor_viz"]
+CLASS_NAMES_ALPHABETICAL = [
+    "dry",
+    "obs",
+    "poor_viz",
+    "snow",
+    "snow_severe",
+    "wet",
+]
+
+# any abbreviations in folder names where the data lives for each class
+CLASS_NAME_MAP = {
+    "wet": "wet",
+    "dry": "dry",
+    "snow": "snow",
+    "snow_severe": "severe snow",
+    "obs": "obstructed",
+    "poor_viz": "poor visibility",
+}
 
 # any abbreviations in folder names where the data lives for each class
 CLASS_NAME_MAP = {
@@ -103,6 +120,10 @@ config_ray = {
 # directory that holds the training data
 DATA_DIR = "/DRIVE/site_analysis/corridor_LIE_east/gui_label/training_data/"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
+
+DATA_DIR_PREDEFINED_TRAIN = "/home/vanessa/hulk/carly_drive/site_analysis/pytorch_ims/Corr_LIE_East__base_vgg16__multiple__6class__kfold5_bysite_val2/filename_phase_list/train_df.csv"
+DATA_DIR_PREDEFINED_VAL = "/home/vanessa/hulk/carly_drive/site_analysis/pytorch_ims/Corr_LIE_East__base_vgg16__multiple__6class__kfold5_bysite_val2/filename_phase_list/val_df.csv"
+
 
 # whether to save the model
 SAVE_MODEL = True
