@@ -23,7 +23,7 @@ BASE_DIR = "/home/vanessa/hulk/ai2es"
 NC_FILE_DIR = f"{BASE_DIR}/5_min_obs"
 
 # /raid/lgaudet/precip/Precip/NYSM_1min_data on hulk
-CSV_FILE_DIR= f"{BASE_DIR}/1_min_obs"
+CSV_FILE_DIR = f"{BASE_DIR}/1_min_obs"
 
 # where to write time  matched data
 WRITE_PATH = f"{BASE_DIR}/matched_parquet/"
@@ -37,6 +37,8 @@ PARQUET_DIR = f"{BASE_DIR}/mesonet_parquet_1M"
 
 # ai2es version used in docker and git
 TAG = "v0.0.0"
+
+FEATURE_EXTRACT = False
 
 # create and save CNN
 BUILD_MODEL = True
@@ -57,6 +59,26 @@ NUM_WORKERS = 5
 # cannot = 1
 KFOLD = 5
 
+# ray tune hyperoptimization
+TUNE = False
+
+# images read into memory at a time during training
+BATCH_SIZE = [64]
+BATCH_SIZE_TUNE = [32, 64, 128, 256]
+
+# number of epochs to train model
+MAX_EPOCHS = [30]
+MAX_EPOCHS_TUNE = [20, 30, 40]
+
+# dropout rate (in model_config)
+DROP_RATE_TUNE = [0.0, 0.3, 0.5]
+
+# dropout rate (in model_config)
+WEIGHT_DECAY_TUNE = [1e-5, 1e-3, 1e-2, 1e-1]
+
+# learning rate (in model_config)
+LR_TUNE = [0.001, 0.01, 0.1]
+
 # percent of the training dataset to use as validation
 VALID_SIZE = 0.20
 
@@ -64,7 +86,7 @@ VALID_SIZE = 0.20
 BATCH_SIZE = [64]
 
 # number of epochs to train model
-MAX_EPOCHS = [2]
+MAX_EPOCHS = [30]
 
 # names of each ice crystal class
 CLASS_NAMES = ["no precipitation", "obstructed", "precipitation"]
@@ -78,23 +100,23 @@ CLASS_NAME_MAP = {
 
 # models to train
 MODEL_NAMES = [
-    "resnet18",
+    # "resnet18",
     # "efficient",
     # "resnet34",
     # "resnet152",
     # "alexnet",
-    # "vgg16",
+    "vgg16",
     # "vgg19",
     # "densenet169",
     # "densenet201",
 ]
 
 # directory that holds the training data
-DATA_DIR = f"{BASE_DIR}/night_precip_hand_labeled/2017/"
+DATA_DIR = f"{BASE_DIR}/codebook_dataset/combined_extra"
 # DATA_DIR = f"{BASE_DIR}/training_small/"
 
 # whether to save the model
-SAVE_MODEL = False
+SAVE_MODEL = True
 
 # directory to save the trained model to
 MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
@@ -121,7 +143,7 @@ VAL_LOADER_SAVENAME = (
 )
 
 # write training loss and accuracy to csv
-SAVE_ACC = False
+SAVE_ACC = True
 
 # directory for saving training accuracy and loss csv's
 ACC_SAVE_DIR = f"{BASE_DIR}/saved_accuracies/{TAG}/"
@@ -195,3 +217,131 @@ if LOG_EXP and NOTEBOOK is False and BUILD_MODEL:
     experiment.add_tag(TAG)
 else:
     experiment = None
+
+stnid = [
+    "ADDI",
+    "ANDE",
+    "BATA",
+    "BEAC",
+    "BELD",
+    "BELL",
+    "BELM",
+    "BERK",
+    "BING",
+    "BKLN",
+    "BRAN",
+    "BREW",
+    "BROC",
+    "BRON",
+    "BROO",
+    "BSPA",
+    "BUFF",
+    "BURD",
+    "BURT",
+    "CAMD",
+    "CAPE",
+    "CHAZ",
+    "CHES",
+    "CINC",
+    "CLAR",
+    "CLIF",
+    "CLYM",
+    "COBL",
+    "COHO",
+    "COLD",
+    "COPA",
+    "COPE",
+    "CROG",
+    "CSQR",
+    "DELE",
+    "DEPO",
+    "DOVE",
+    "DUAN",
+    "EAUR",
+    "EDIN",
+    "EDWA",
+    "ELDR",
+    "ELLE",
+    "ELMI",
+    "ESSX",
+    "FAYE",
+    "FRED",
+    "GABR",
+    "GFAL",
+    "GFLD",
+    "GROT",
+    "GROV",
+    "HAMM",
+    "HARP",
+    "HARR",
+    "HART",
+    "HERK",
+    "HFAL",
+    "ILAK",
+    "JOHN",
+    "JORD",
+    "KIND",
+    "LAUR",
+    "LOUI",
+    "MALO",
+    "MANH",
+    "MEDI",
+    "MEDU",
+    "MORR",
+    "NBRA",
+    "NEWC",
+    "NHUD",
+    "OLDF",
+    "OLEA",
+    "ONTA",
+    "OPPE",
+    "OSCE",
+    "OSWE",
+    "OTIS",
+    "OWEG",
+    "PENN",
+    "PHIL",
+    "PISE",
+    "POTS",
+    "QUEE",
+    "RAND",
+    "RAQU",
+    "REDF",
+    "REDH",
+    "ROXB",
+    "RUSH",
+    "SARA",
+    "SBRI",
+    "SCHA",
+    "SCHO",
+    "SCHU",
+    "SCIP",
+    "SHER",
+    "SOME",
+    "SOUT",
+    "SPRA",
+    "SPRI",
+    "STAT",
+    "STEP",
+    "SUFF",
+    "TANN",
+    "TICO",
+    "TULL",
+    "TUPP",
+    "TYRO",
+    "VOOR",
+    "WALL",
+    "WALT",
+    "WANT",
+    "WARS",
+    "WARW",
+    "WATE",
+    "WBOU",
+    "WELL",
+    "WEST",
+    "WFMB",
+    "WGAT",
+    "WHIT",
+    "WOLC",
+    "YORK",
+]

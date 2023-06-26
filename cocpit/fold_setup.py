@@ -11,7 +11,7 @@ import cocpit.data_loaders as data_loaders
 import cocpit.config as config  # isort: split
 from collections import Counter
 from dataclasses import dataclass, field
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from sklearn.model_selection import train_test_split
 
@@ -116,7 +116,7 @@ class FoldSetup:
             self.train_data, batch_size=self.batch_size, sampler=sampler
         )
 
-    def val_loader(self) -> None:
+    def val_loader(self) -> Optional[torch.utils.data.DataLoader]:
         """
         - Create validation loader to be iterated in batches
         - Option to use the entire labeled dataset if config.VALID_SIZE small

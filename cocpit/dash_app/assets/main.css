@@ -367,7 +367,8 @@ p {
   --bs-black-rgb: 0, 0, 0;
   --bs-body-color-rgb: 33, 37, 41;
   --bs-body-bg-rgb: 255, 255, 255;
-  --bs-font-sans-serif: "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --bs-font-sans-serif: "Arial", 
+  "Helvetica Neue", "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
   --bs-body-font-family: var(--bs-font-sans-serif);
@@ -444,7 +445,7 @@ h2,
 h3,
 .h3 {
   font-size: calc(1.2rem + 0.2vw) !important;
-  font-family: 'Georgia', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-family: 'Lucida Sans Regular','Lucida Sans', 'Georgia', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', Verdana, sans-serif;
   font-weight: 500 !important;
 }
 
@@ -453,7 +454,7 @@ h3,
   h3,
   .h3 {
     font-size: 1.5rem !important;
-    font-family: 'Georgia', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: 'Lucida Sans Regular','Lucida Sans', 'Georgia', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', Verdana, sans-serif;
 
     font-weight: 400 !important;
   }
@@ -462,7 +463,7 @@ h3,
 h4,
 .h4 {
   font-size: calc(1.0rem + 0.2vw) !important;
-  font-family: 'Georgia';
+  font-family: 'Lucida Sans Regular','Lucida Sans', 'Georgia', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', Verdana, sans-serif;
   /* font-weight: 400 !important; */
 
 }
@@ -471,7 +472,7 @@ h4,
 
   h4,
   .h4 {
-    font-family: 'Georgia', 'Lucida Grande';
+    font-family: 'Lucida Sans Regular','Lucida Sans', 'Georgia', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', Verdana, sans-serif;
     /* font-weight: 400 !important; */
     font-size: 1.0rem !important;
   }

@@ -24,7 +24,7 @@ def content():
             dcc.Store(id="df-psd", storage_type=storage),
             dcc.Store(id="df-prop", storage_type=storage),
             dcc.Store(id="len-df", storage_type=storage),
-            # dls.Hash(
+            # dls.ThreeDots(
             #     [
             #     html.Div(
             #         className='row justify-content-around',
@@ -57,7 +57,7 @@ def content():
             #     ),
             # ],
             # ),
-            dls.Hash(
+            dls.ThreeDots(
                 [
                     dbc.Row(
                         [
@@ -78,13 +78,15 @@ def content():
                                                         " select icon to"
                                                         " update all figures"
                                                         " based on selected"
-                                                        " location. \n        "
-                                                        "                     "
-                                                        "                     "
-                                                        "       Select an"
+                                                        " location."
+                                                        "Select an"
                                                         " empty region to"
-                                                        " reset view with all"
-                                                        " data points.",
+                                                        " reset the view with all"
+                                                        " data points. \n",
+                                                        className=("p text-center"),
+                                                    ),
+                                                    html.P(
+                                                        "Due to methodological constraints on the time resolution, multiple images are plotted at the same location. The number of overlaid images and majority classification (if applicable) are shown by hovering over a data point.",
                                                         className=("p text-center"),
                                                     ),
                                                 ],
@@ -189,7 +191,7 @@ def content():
                     ),
                 ],
             ),
-            dls.Hash(
+            dls.ThreeDots(
                 [
                     dbc.Row(
                         [
@@ -240,7 +242,7 @@ def content():
                 ]
             ),
             html.Hr(),
-            dls.Hash(
+            dls.ThreeDots(
                 [
                     dbc.Row(
                         [
@@ -297,3 +299,4 @@ def content():
             ),
         ],
     )
+    

@@ -75,17 +75,43 @@ def register(app):
     )
     def map_top_down(df_classification, df_lat, df_lon):
         """aircraft location and particle type overlaid on map"""
+        
+        df_concat = pd.concat([df_classification, df_lat, df_lon], axis=1)
+        
+        
+        grouped_count = df_concat.groupby(["Latitude [degrees]", "Longitude [degrees]"], as_index=False)['Classification'].agg('count')
 
-        # df_classification = df_classification.sort_index()
-        # df_lat = df_lat.sort_index()
-        # df_lon = df_lon.sort_index()
+        grouped_mode = df_concat.groupby(["Latitude [degrees]", "Longitude [degrees]"], as_index=False)['Classification'].agg(pd.Series.mode)
+        
+        mode_list = grouped_mode['Classification'].values.tolist()
+        mask_multimode = []
+        for element in mode_list:
+            if isinstance(element, np.ndarray):
+                mask_multimode.append('Multiple Modes')
+            else:
+                mask_multimode.append(element)
+
+        grouped_mode['Classification'] = mask_multimode
+
         fig = px.scatter_mapbox(
-            lat=df_lat,
-            lon=df_lon,
-            color=df_classification,
+            lat=grouped_count["Latitude [degrees]"],
+            lon=grouped_count["Longitude [degrees]"],
+            size=grouped_count['Classification'],
+            color=grouped_mode['Classification'],
             color_discrete_map=globals.color_discrete_map,
             mapbox_style="stamen-terrain",
+            custom_data=[grouped_count["Latitude [degrees]"],
+                grouped_count["Longitude [degrees]"],
+                grouped_count['Classification'],
+                grouped_mode['Classification'],
+            ]
         )
+
+        fig.update_traces(
+            hovertemplate='Latitude: %{customdata[0]:.2f}<br>'+
+                        'Longitude %{customdata[1]:.2f}<br>'+
+                        'Image count: %{customdata[2]}<br>'+
+                        'Majority classification: %{customdata[3]}<br>')
 
         # Specify layout information
         fig.update_layout(
