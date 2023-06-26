@@ -125,7 +125,7 @@ class LoaderPredictions:
         VAL_LOADER_SAVE_DIR = f"{config.BASE_DIR}/saved_val_loaders/{config.TAG}/"
 
         VAL_LOADER_SAVENAME = (
-            f"{VAL_LOADER_SAVE_DIR}e{config.MAX_EPOCHS}_val_loader20_"
+            f"{VAL_LOADER_SAVE_DIR}e{config.MAX_EPOCHS}_"
             f"bs{config.BATCH_SIZE}_"
             f"k{config.KFOLD}_"
             f"{len(config.MODEL_NAMES)}model(s).pt"

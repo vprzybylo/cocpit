@@ -100,7 +100,7 @@ def class_report(
     clf_report = pd.DataFrame(clf_report).iloc[:-1, :].T
     cocpit.plotting_scripts.classification_report.classification_report_classes(
         clf_report,
-        save_name=savename,
+        savename=savename,
         save_fig=True,
     )
 
