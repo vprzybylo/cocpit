@@ -30,7 +30,7 @@ CSV_FILE_DIR = f"{BASE_DIR}/1_min_obs"
 WRITE_PATH = f"{BASE_DIR}/matched_parquet/"
 
 # root dir to raw images (before each year subdir)
-PHOTO_DIR = f"{BASE_DIR}/cam_photos/"
+PHOTO_DIR = f"{BASE_DIR}/codebook_dataset/combined_extra/"
 
 # where the mesonet obs live in parquet format
 # output from nysm_obs_to_parquet
@@ -38,7 +38,7 @@ PARQUET_DIR_5M = f"{BASE_DIR}/mesonet_parquet_5M"
 PARQUET_DIR_1M = f"{BASE_DIR}/mesonet_parquet_1M"
 
 # ai2es version used in docker and git
-TAG = "v0.0.0"
+TAG = "v1.0.0"
 
 # create and save CNN
 BUILD_MODEL = True
