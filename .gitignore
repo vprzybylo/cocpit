@@ -9,7 +9,9 @@ setup.py
 ETOP*
 test.ipynb
 tmp*
+carly_cropped
 final_databases
+*.sif
 .DS_store
 .virtual_documents
 file_system_store
