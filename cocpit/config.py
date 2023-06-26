@@ -19,7 +19,7 @@ import sys
 # Absolute path to to folder where the data and models live
 # BASE_DIR = '/Volumes/TOSHIBA EXT/raid/data/cpi_data'
 
-BASE_DIR = "/home/vanessa/hulk/DRIVE_PYTORCH"
+BASE_DIR = "/home/csutter/DRIVE_PYTORCH"
 
 # ai2es version used in docker and git
 TAG = "v3.2.0"
@@ -54,7 +54,7 @@ BATCH_SIZE = [64]
 BATCH_SIZE_TUNE = [32, 64, 128, 256]
 
 # number of epochs to train model
-MAX_EPOCHS = [25]
+MAX_EPOCHS = [2]
 MAX_EPOCHS_TUNE = [20, 30, 40]
 
 # dropout rate (in model_config)
@@ -120,10 +120,9 @@ config_ray = {
 
 # directory that holds the training data
 DATA_DIR = "/DRIVE/site_analysis/corridor_LIE_east/gui_label/training_data/"
-# DATA_DIR = f"{BASE_DIR}/training_small/"
-
-DATA_DIR_PREDEFINED_TRAIN = "/home/vanessa/hulk/carly_drive/site_analysis/pytorch_ims/Corr_LIE_East__base_vgg16__multiple__6class__kfold5_bysite_val2/filename_phase_list/train_df.csv"
-DATA_DIR_PREDEFINED_VAL = "/home/vanessa/hulk/carly_drive/site_analysis/pytorch_ims/Corr_LIE_East__base_vgg16__multiple__6class__kfold5_bysite_val2/filename_phase_list/val_df.csv"
+DATA_DIR_PREDEFINED_TRAIN = "/home/csutter/DRIVE/site_analysis/pytorch_ims/Corr_LIE_East__base_vgg16__multiple__6class__kfold5_bysite_val2/filename_phase_list/train_df_cs.csv"
+DATA_DIR_PREDEFINED_VAL = "/home/csutter/DRIVE/site_analysis/pytorch_ims/Corr_LIE_East__base_vgg16__multiple__6class__kfold5_bysite_val2/filename_phase_list/val_df_cs.csv"
+DATA_DIR_PREDEFINED_TEST = ""
 
 
 # whether to save the model
