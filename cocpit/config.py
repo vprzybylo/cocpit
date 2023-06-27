@@ -18,7 +18,7 @@ import sys
 
 # Absolute path to to folder where the data and models live
 # BASE_DIR = '/Volumes/TOSHIBA EXT/raid/data/cpi_data'
-BASE_DIR = "/ai2es"
+BASE_DIR = "/home/vanessa/hulk/ai2es"
 
 # /raid/NYSM/archive/nysm/netcdf/proc/ on hulk
 NC_FILE_DIR = f"{BASE_DIR}/5_min_obs"
@@ -70,7 +70,7 @@ BATCH_SIZE = [64]
 BATCH_SIZE_TUNE = [32, 64, 128, 256]
 
 # number of epochs to train model
-MAX_EPOCHS = [30]
+MAX_EPOCHS = [10]
 MAX_EPOCHS_TUNE = [20, 30, 40]
 
 # dropout rate (in model_config)
@@ -137,6 +137,9 @@ SAVE_MODEL = True
 
 # directory to save the trained model to
 MODEL_SAVE_DIR = f"{BASE_DIR}/saved_models/{TAG}/"
+
+# If the validation dataset is coming from a csv
+VAL_PREDEFINED = False
 
 # directory to save validation data to
 # for later inspection of predictions
