@@ -5,6 +5,7 @@ from cocpit.performance_metrics import Metrics
 from cocpit import config as config
 import csv
 import torch.nn.functional as F
+import torch.nn as nn
 from typing import Any
 
 

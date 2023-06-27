@@ -7,6 +7,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 import csv
 from ray import tune
 import torch.nn.functional as F
+import torch.nn as nn
 import numpy as np
 
 
