@@ -101,7 +101,7 @@ def conf_matrix(
         cm (sklearn.metrics.confusion_matrix): confusion matrix
     """
     fig, ax = plt.subplots(figsize=(12, 10))
-    cm = confusion_matrix(all_labels[0], all_preds[0], normalize=norm)
+    cm = confusion_matrix(all_labels, all_preds, normalize=norm)
     # cm = mask_cm_small_values(cm)
     hm = heatmap(cm)
     heatmap_axes(hm, ax)
