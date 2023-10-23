@@ -5,7 +5,6 @@ import numpy as np
 import torch
 import torch.utils.data.sampler as samp
 
-import cocpit
 import cocpit.data_loaders as data_loaders
 
 import cocpit.config as config  # isort: split
@@ -64,7 +63,9 @@ class FoldSetup:
         """
         data = data_loaders.get_data("train")
         self.train_data = torch.utils.data.Subset(data, self.train_indices)
-        self.train_labels = list(map(data.targets.__getitem__, self.train_indices))
+        self.train_labels = list(
+            map(data.targets.__getitem__, self.train_indices)
+        )
 
         data = data_loaders.get_data("val")
         self.val_data = torch.utils.data.Subset(data, self.val_indices)
@@ -97,7 +98,9 @@ class FoldSetup:
             f"_{len(config.MODEL_NAMES)}model(s).pt"
         )
 
-    def train_loader(self, balance_weights: bool = True) -> torch.utils.data.DataLoader:
+    def train_loader(
+        self, balance_weights: bool = True
+    ) -> torch.utils.data.DataLoader:
         """
         - Create train loader that iterates images in batches
         - Balance the distribution of sampled images given imbalance
@@ -147,8 +150,33 @@ class FoldSetup:
         - Shuffle first and then split dataset
         """
 
-        total_files = sum(len(files) for r, d, files in os.walk(config.DATA_DIR))
-        print(f"len files {total_files}")
+        # if using predifined val, set indicies list based on csv list of train and val saved from work in DRIVE
+        if config.VAL_PREDEFINED:
+            name_files = []
+            for r, d, files in os.walk(config.DATA_DIR):
+                for name in files:
+                    name_files.append(name)
+            print(f" total images is : {len(name_files)}")
+            df_data_dir = pd.DataFrame({"filenames": name_files})
+
+            tr = pd.read_csv(config.DATA_DIR_PREDEFINED_TRAIN)
+            v = pd.read_csv(config.DATA_DIR_PREDEFINED_VAL)
+            trainlistfinal = df_data_dir.index[df_data_dir['filenames'].isin(tr)].tolist()
+            vallistfinal = df_data_dir.index[df_data_dir['filenames'].isin(v)].tolist()
+
+            print(f"number of val ims from predefined: {len(vallistfinal)}")
+            print(
+                f"number of train ims from predefined: {len(trainlistfinal)}"
+            )
+
+            self.val_indices = vallistfinal
+            self.train_indices = trainlistfinal
+
+        else:
+            total_files = sum(
+                len(files) for r, d, files in os.walk(config.DATA_DIR)
+            )
+            print(f"len files {total_files}")
 
         # randomly split indices for training and validation indices according to valid_size
         if config.VALID_SIZE < 0.01:

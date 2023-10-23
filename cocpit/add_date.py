@@ -1,3 +1,4 @@
+"""Add date to dataframe from filename"""
 import pandas as pd
 from dataclasses import dataclass
 
@@ -18,8 +19,14 @@ class Date:
         - Create a date column from filename column
         - Note that the date format may need to change for each campaign
         """
-        date_list = self.df["filename"].str.split(".").str[0].str.split("_")
-        self.df["date"] = date_list.str[:-1].str.join("_")
+        self.df["date"] = (
+            self.df["filename"]
+            .str.split(".")
+            .str[0]
+            .str.split("_")
+            .str[:-1]
+            .str.join("_")
+        )
         # print(date_list.str[:-1].str.join("_"))
 
     def convert_date_format(self) -> None:

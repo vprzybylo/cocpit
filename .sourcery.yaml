@@ -31,20 +31,20 @@ rules:
 # ==================================================================================
 # [Google Python Style Guide rules](https://docs.sourcery.ai/Reference/Custom-Rules/gpsg/)
 # ==================================================================================
-#
+# 
 # The following rules instruct Sourcery to help making sure that the Google Python Style
 # Guide is respected in this project.
-#
-# The [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html) was
-# created by [Google](https://github.com/google) and published under the
+# 
+# The [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html) was 
+# created by [Google](https://github.com/google) and published under the 
 # [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/legalcode) license.
 
 # ----------------------------------------------------------------------------------
 # [2.2 Import Rules](https://docs.sourcery.ai/Reference/Custom-Rules/gpsg/#22-import-rules)
 # ----------------------------------------------------------------------------------
-#
+# 
 # The rules in this section keep imports intuitive and consistent.
-#
+# 
 # Individual examples for these rules in action can be found at
 # [examples/individual_rules/import_rules.py](./examples/individual_rules/import_rules.py)
 
@@ -207,9 +207,9 @@ rules:
 # ----------------------------------------------------------------------------------
 # [2.4 Exception Rules](https://docs.sourcery.ai/Reference/Custom-Rules/gpsg/#24-exception-rules)
 # ----------------------------------------------------------------------------------
-#
+# 
 # The rule in this section ensures that exceptions are consistently named.
-#
+# 
 # Individual examples for this rule in action can be found at
 # [examples/individual_rules/exception_rules.py](./examples/individual_rules/exception_rules.py)
 
@@ -251,9 +251,9 @@ rules:
 # ----------------------------------------------------------------------------------
 # [2.5 Global Variable Rules](https://docs.sourcery.ai/Reference/Custom-Rules/gpsg/#25-global-variable-rules)
 # ----------------------------------------------------------------------------------
-#
+# 
 # The rule in this section prevents global variables from being defined.
-#
+# 
 # Individual examples for this rule in action can be found at
 # [examples/individual_rules/global_variable_rules.py](./examples/individual_rules/global_variable_rules.py)
 
@@ -283,9 +283,9 @@ rules:
 # ----------------------------------------------------------------------------------
 # [2.8 Default Iterator and Operator Rules](https://docs.sourcery.ai/Reference/Custom-Rules/gpsg/#28-default-iterator-and-operator-rules)
 # ----------------------------------------------------------------------------------
-#
+# 
 # The rule in this section suggests the use of correct iterator and operator types.
-#
+# 
 # Individual examples for this rule in action can be found at
 # [examples/individual_rules/default_iterator_and_operator_rules.py](./examples/individual_rules/default_iterator_and_operator_rules.py)
 
@@ -345,10 +345,10 @@ rules:
 # ----------------------------------------------------------------------------------
 # [2.10 Lambda Function Rules](https://docs.sourcery.ai/Reference/Custom-Rules/gpsg/#210-lambda-function-rules)
 # ----------------------------------------------------------------------------------
-#
-# The rules in this section ensure that `lambda`s are kept simple and short, or
+# 
+# The rules in this section ensure that `lambda`s are kept simple and short, or 
 # suggest the use of other, more Pythonic constructs.
-#
+# 
 # Individual examples for these rules in action can be found at
 # [examples/individual_rules/lambda_function_rules.py](./examples/individual_rules/lambda_function_rules.py)
 
@@ -403,9 +403,9 @@ rules:
 # ----------------------------------------------------------------------------------
 # [2.11 Conditional Expression Rules](https://docs.sourcery.ai/Reference/Custom-Rules/gpsg/#211-conditional-expression-rules)
 # ----------------------------------------------------------------------------------
-#
+# 
 # The rule in this section ensures conditional expressions are kept short and simple.
-#
+# 
 # Individual examples for this rule in action can be found at
 # [examples/individual_rules/conditional_expression_rules.py](./examples/individual_rules/conditional_expression_rules.py)
 
@@ -428,9 +428,9 @@ rules:
 # ----------------------------------------------------------------------------------
 # [2.17 Decorator Rules](https://docs.sourcery.ai/Reference/Custom-Rules/gpsg/#217-decorator-rules)
 # ----------------------------------------------------------------------------------
-#
+# 
 # The rule in this section prevents [`staticmethod`](https://docs.python.org/3/library/functions.html#staticmethod) from being used.
-#
+# 
 # Individual examples for this rule in action can be found at
 # [examples/individual_rules/decorator_rules.py](./examples/individual_rules/decorator_rules.py)
 
@@ -465,10 +465,10 @@ rules:
 # ----------------------------------------------------------------------------------
 # [2.21 Type Annotation Rules](https://docs.sourcery.ai/Reference/Custom-Rules/gpsg/#221-type-annotation-rules)
 # ----------------------------------------------------------------------------------
-#
+# 
 # The rules in this section suggest the addition of type annotations to functions and
 # methods.
-#
+# 
 # Individual examples for these rules in action can be found at
 # [examples/individual_rules/type_annotations_rules.py](./examples/individual_rules/type_annotations_rules.py)
 
@@ -551,10 +551,10 @@ rules:
 # ----------------------------------------------------------------------------------
 # [3.8 Docstring and Comment Rules](https://docs.sourcery.ai/Reference/Custom-Rules/gpsg/#38-docstring-and-comment-rules)
 # ----------------------------------------------------------------------------------
-#
+# 
 # The rules in this section ensure that functions, methods, classes and modules contain
 # docstrings.
-#
+# 
 # Individual examples for these rules in action can be found at
 # [examples/individual_rules/docstring_and_comment_rules.py](./examples/individual_rules/docstring_and_comment_rules.py)
 
@@ -682,10 +682,10 @@ rules:
 # ----------------------------------------------------------------------------------
 # [3.15 Getter and Setter Rules](https://docs.sourcery.ai/Reference/Custom-Rules/gpsg/#315-getter-and-setter-rules)
 # ----------------------------------------------------------------------------------
-#
+# 
 # The rule in this section prevents the definition of trivial getters and setters (i.e.,
 # methods that have no extra logic apart from reading or writing an attribute).
-#
+# 
 # Individual examples for this rule in action can be found at
 # [examples/individual_rules/getter_and_setter_rules.py](./examples/individual_rules/getter_and_setter_rules.py)
 
@@ -784,13 +784,92 @@ rules:
 # ----------------------------------------------------------------------------------
 # [3.16 Naming Rules](https://docs.sourcery.ai/Reference/Custom-Rules/gpsg/#316-naming-rules)
 # ----------------------------------------------------------------------------------
-#
+# 
 # The rules in this section help ensure that variable, function and class names are
 # consistent, concise and descriptive.
-#
+# 
 # Individual examples for these rules in action can be found at
 # [examples/individual_rules/naming_rules.py](./examples/individual_rules/naming_rules.py)
 
+- id: avoid-single-character-names-variables
+  pattern: ${var} = ${value}
+  condition: var.character_count() == 1
+  description: Avoid single character names
+  explanation: |
+    Avoid single character names, except for specifically allowed cases:
+
+    - counters or iterators (e.g. `i`, `j`, `k`, `v`, et al.)
+    - `e` as an exception identifier in `try`/`except` statements.
+    - `f` as a file handle in `with` statements
+    - private `TypeVar`s with no constraints (e.g. `_T`, `_U`, `_V`)
+
+    From Google Style Guide [3.16.1](https://google.github.io/styleguide/pyguide.html#3161-names-to-avoid)
+  tests:
+    - match: i = 0
+    - no-match: initial_value = 0
+    - match: A = get_account()
+    - no-match: account = get_account()
+    - no-match: |
+        for i in range(10):
+            print(i)
+    - no-match: |
+        try:
+            explode_computer()
+        except ExplosionError as e:
+            pass
+    - no-match: |
+        with open("file.txt") as f:
+            contents = f.read()
+    - no-match: |
+        from typing import TypeVar
+
+        _T = TypeVar("_T")
+
+- id: avoid-single-character-names-functions
+  pattern: |
+    def ${function_name}(...):
+      ...
+  condition: function_name.character_count() == 1
+  description: Avoid single character names
+  explanation: |
+    Avoid single character names, except for specifically allowed cases:
+
+    - counters or iterators (e.g. `i`, `j`, `k`, `v`, et al.)
+    - `e` as an exception identifier in `try`/`except` statements.
+    - `f` as a file handle in `with` statements
+    - private `TypeVar`s with no constraints (e.g. `_T`, `_U`, `_V`)
+
+    From Google Style Guide [3.16.1](https://google.github.io/styleguide/pyguide.html#3161-names-to-avoid)
+  tests:
+    - match: |
+        def f():
+            pass
+    - match: |
+        async def f():
+            pass
+    - no-match: |
+        def function_with_good_and_descriptive_name():
+            pass
+    - match: |
+        def g(a, b: int = 0, **kwargs) -> str:
+            if b > 5:
+              return str(a) + str(b) + str(kwargs)
+            return "b <= 4"
+    - no-match: |
+        def perform_calculation(a, b: int = 0, **kwargs) -> str:
+            if b > 5:
+              return str(a) + str(b) + str(kwargs)
+            return "b <= 4"
+    - match: |
+        class MyClass:
+          def m(self, a: int, b: float) -> str:
+            print(a)
+            return repr(b)
+    - no-match: |
+        class MyClass:
+          def good_method(self, a: int, b: float) -> str:
+            print(a)
+            return repr(b)
 
 - id: name-type-suffix
   pattern: ${name} = ${value}
@@ -1027,9 +1106,9 @@ rules:
 # ----------------------------------------------------------------------------------
 # [3.18 Function Length Rules](https://docs.sourcery.ai/Reference/Custom-Rules/gpsg/#318-function-length-rules)
 # ----------------------------------------------------------------------------------
-#
+# 
 # The rule in this section ensures that functions and methods are short.
-#
+# 
 # Individual examples for this rule in action can be found at
 # [examples/individual_rules/function_length_rules.py](./examples/individual_rules/function_length_rules.py)
 
@@ -1051,3 +1130,4 @@ rules:
     - no-match: |
         def f(a, b) -> int:
             x()
+       

@@ -1,7 +1,11 @@
+"""Define model configurations"""
 import cocpit.config as config
+import cocpit
 import torch
 from torch import nn, optim
 import torchvision
+from typing import List, Any
+from torch.optim import lr_scheduler
 
 
 class ModelConfig:
@@ -9,6 +13,7 @@ class ModelConfig:
     Model configurations for:
         - dropout
         - optimizer
+        - learning rate scheduler
         - device settings (cpu/gpu)
         - parameters to update
     Args:
@@ -19,8 +24,9 @@ class ModelConfig:
     def __init__(self, model: torchvision.models):
         self.model = model
         self.optimizer: torchvision.optimizer = None
+        self.scheduler: torch.optim.lr_scheduler = None
 
-    def update_params(self, feature_extract: bool = False):
+    def update_params(self, feature_extract: bool = False) -> List[Any]:
         """
         When feature extracting, we only want to update the parameters
         of the last layer, or in other words, we only want to update the
@@ -58,7 +64,9 @@ class ModelConfig:
             p.numel() for p in self.model.parameters() if p.requires_grad
         )
 
-    def set_optimizer(self, lr=0.01, weight_decay=0.0) -> None:
+    def set_optimizer(
+        self, lr: float = 0.01, weight_decay: float = 0.0
+    ) -> None:
         """
         Model optimizer for stochastic gradient decent
 
@@ -74,9 +82,10 @@ class ModelConfig:
         )
 
     def set_criterion(self) -> None:
-        self.criterion = nn.CrossEntropyLoss()
+        """loss function to be minimized or maximized depending on definition"""
+        self.criterion = cocpit.loss.edl_digamma_loss
 
-    def set_dropout(self, drop_rate=0.1) -> None:
+    def set_dropout(self, drop_rate: float = 0.1) -> None:
         """
         Apply dropout rate: a technique to fight overfitting and improve neural network generalization
 

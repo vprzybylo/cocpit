@@ -1,16 +1,17 @@
-"""Validation methods"""
-import csv
+"""validate on batches"""
 import os
 from typing import List
 
 import torch
-from ray import tune
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-
-from cocpit import config as config
-from cocpit import fold_setup as fold_setup
-from cocpit import model_config as model_config
 from cocpit.performance_metrics import Metrics
+from cocpit import config as config
+from cocpit import fold_setup, model_config, loss
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+import csv
+from ray import tune
+import torch.nn.functional as F
+import torch.nn as nn
+import numpy as np
 
 
 class Validation(Metrics):
@@ -45,45 +46,72 @@ class Validation(Metrics):
         self.kfold = kfold
         self.val_best_acc = val_best_acc
         self.c = c
-        self.epoch_preds = epoch_preds
-        self.epoch_labels = epoch_labels
+        self.epoch_preds = epoch_preds  # validation preds for 1 epoch for plotting
+        self.epoch_labels = epoch_labels  # validation labels for 1 epoch for plotting
+        self.epoch_probs = (
+            []
+        )  # validation probabilities for 1 epoch for plotting
+        self.epoch_uncertainties = (
+            []
+        )  # validation uncertainty for 1 epoch for plotting
 
     def predict(self) -> None:
-        """make predictions"""
+        """Make predictions"""
 
         with torch.no_grad():
+
             outputs = self.c.model(self.inputs)
-            self.loss = self.c.criterion(outputs, self.labels)
+            if config.EVIDENTIAL:
+                y = torch.eye(len(config.CLASS_NAMES)).to(config.DEVICE)
+                y = y[self.labels]
+                self.loss = loss.edl_digamma_loss(
+                    outputs, y.float(), self.epochs
+                )
+            else:
+                self.criterion = nn.CrossEntropyLoss()
+                self.loss = self.criterion(outputs, self.labels)
             _, self.preds = torch.max(outputs, 1)
+            self.probs = F.softmax(outputs, dim=1).max(dim=1).values
+            self.uncertainty(outputs)
+
+    def uncertainty(self, outputs: torch.Tensor) -> None:
+        """
+        Calculate uncertainty, which is inversely proportional to the total evidence
+        Model is more confident the more evidence output by relu activation
+
+        Args:
+            outputs (torch.Tensor): model outputs
+        """
+        evidence = F.relu(outputs)
+        alpha = evidence + 1
+        # uncertainty
+        self.u = len(config.CLASS_NAMES) / torch.sum(
+            alpha, dim=1, keepdim=True
+        )
+        # print("uncertainty", self.u)
 
     def append_preds(self) -> None:
-        """save each batch prediction and labels for plots"""
+        """Save each batch prediction and labels for plots"""
         self.epoch_preds.append(self.preds.cpu().tolist())
         self.epoch_labels.append(self.labels.cpu().tolist())
+        self.epoch_probs.append(self.probs)
+        self.epoch_uncertainties.append(self.u)
 
-    def save_model(self) -> torch.Tensor:
-        """save/load best model weights after improvement in val accuracy"""
+    def save_model(self) -> float:
+        """Save/load best model weights after improvement in val accuracy"""
         if self.epoch_acc > self.val_best_acc and config.SAVE_MODEL:
             print(
                 f"Epoch acc:{self.epoch_acc} > best acc: {self.val_best_acc}."
                 " Saving model."
             )
             self.val_best_acc = self.epoch_acc
-
-            MODEL_SAVE_DIR = f"{config.BASE_DIR}/saved_models/{config.TAG}/"
-            MODEL_SAVENAME = (
-                f"{MODEL_SAVE_DIR}e{config.MAX_EPOCHS}_"
-                f"bs{config.BATCH_SIZE}_"
-                f"k{config.KFOLD}_"
-                f"{len(config.MODEL_NAMES)}model(s).pt"
-            )
-            if not os.path.exists(MODEL_SAVE_DIR):
-                os.makedirs(MODEL_SAVE_DIR)
-            torch.save(self.c.model, MODEL_SAVENAME)
+            if not os.path.exists(config.MODEL_SAVE_DIR):
+                os.makedirs(config.MODEL_SAVE_DIR)
+            torch.save(self.c.model, config.MODEL_SAVENAME)
         return self.val_best_acc
 
     def reduce_lr(self) -> None:
-        """reduce learning rate upon plateau in epoch validation accuracy"""
+        """Reduce learning rate upon plateau in epoch validation accuracy"""
         scheduler = ReduceLROnPlateau(
             self.c.optimizer,
             mode="max",
@@ -95,7 +123,7 @@ class Validation(Metrics):
         scheduler.step(self.epoch_acc)
 
     def iterate_batches(self) -> None:
-        """iterate over a batch in a dataloader and make predictions"""
+        """Iterate over a batch in a dataloader and make predictions"""
         for self.batch, ((inputs, labels, _), _) in enumerate(
             self.f.dataloaders["val"]
         ):
@@ -115,15 +143,8 @@ class Validation(Metrics):
         """
         Write acc and loss to csv file within model, epoch, kfold iteration
         """
-        # directory for saving training accuracy and loss csv's
-        ACC_SAVE_DIR = f"{config.BASE_DIR}/saved_accuracies/{config.TAG}/"
-        # output filename for validation accuracy and loss
-        ACC_SAVENAME_VAL = (
-            f"{ACC_SAVE_DIR}val_acc_loss_e{max(config.MAX_EPOCHS)}_"
-            f"bs{max(config.BATCH_SIZE)}_k{config.KFOLD}_"
-            f"{len(config.MODEL_NAMES)}model(s).csv"
-        )
-        with open(ACC_SAVENAME_VAL, "a", newline="") as file:
+
+        with open(config.ACC_SAVENAME_VAL, "a", newline="") as file:
             writer = csv.writer(file)
             writer.writerow(
                 [
@@ -142,9 +163,8 @@ class Validation(Metrics):
         Run model on validation data and calculate metrics
         Reset acc, loss, labels, and predictions for each epoch, model, phase, and fold
 
-        Returns
-        -------
-        val_best_acc (torch.Tensor): best validation accuracy for the epoch
+        Returns:
+            val_best_acc (torch.Tensor): best validation accuracy for the epoch
         """
         self.iterate_batches()
         self.epoch_metrics()

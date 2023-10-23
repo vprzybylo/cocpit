@@ -1,14 +1,16 @@
-"""Training methods"""
-import csv
-import os
-
+"""Train model across batches"""
 import numpy as np
 import torch
 
 import cocpit
 from cocpit import config as config
 from cocpit.performance_metrics import Metrics
-
+from cocpit import config as config
+import csv
+import torch.nn.functional as F
+import torch.nn as nn
+from typing import Any
+import os
 
 class Train(Metrics):
     """Perform training methods on batched dataset
@@ -36,7 +38,9 @@ class Train(Metrics):
         self.kfold = kfold
         self.c = c
 
-    def label_counts(self, label_cnts: np.ndarray, labels: torch.Tensor) -> np.ndarray:
+    def label_counts(
+        self, label_cnts: np.ndarray, labels: torch.Tensor
+    ) -> np.ndarray:
         """
         Calculate the # of labels per batch to ensure weighted random sampler is correct
 
@@ -53,16 +57,43 @@ class Train(Metrics):
         return label_cnts
 
     def forward(self) -> None:
-        """perform forward operator and make predictions"""
+        """Perform forward operator and make predictions"""
         with torch.set_grad_enabled(True):
             outputs = self.c.model(self.inputs)
-            self.loss = self.c.criterion(outputs, self.labels)
+            if config.EVIDENTIAL:
+                y = torch.eye(len(config.CLASS_NAMES)).to(config.DEVICE)
+                y = y[self.labels]
+                self.loss = cocpit.loss.edl_digamma_loss(
+                    outputs, y.float(), self.epochs
+                )
+            else:
+                self.criterion = nn.CrossEntropyLoss()
+                self.loss = self.criterion(outputs, self.labels)
             _, self.preds = torch.max(outputs, 1)
+            # self.probs = F.softmax(outputs, dim=1).max(dim=1)
+            # self.uncertainty(outputs)
             self.loss.backward()  # compute updates for each parameter
             self.c.optimizer.step()  # make the updates for each parameter
 
+    def uncertainty(self, outputs: torch.Tensor) -> None:
+        """
+        Calculate uncertainty, which is inversely proportional to the total evidence
+        Model more confident the more evidence output by relu activation
+
+        Args:
+            outputs (torch.Tensor): output from model
+        """
+        evidence = F.relu(outputs)
+        alpha = (
+            evidence + 1
+        )  # alpha summed over classes is the Dirichlet strength
+        # uncertainty
+        self.u = len(config.CLASS_NAMES) / torch.sum(
+            alpha, dim=1, keepdim=True
+        )
+
     def iterate_batches(self, print_label_count: bool = False) -> None:
-        """iterate over a batch in a dataloader and train
+        """Iterate over a batch in a dataloader and train
 
         Args:
             print_label_count (bool): if True print class counts when iterating batches
@@ -89,18 +120,8 @@ class Train(Metrics):
         """
         Write acc and loss to csv file within model, epoch, kfold iteration
         """
-        #  directory for saving training accuracy and loss csv's
-        ACC_SAVE_DIR = f"{config.BASE_DIR}/saved_accuracies/{config.TAG}/"
-        if not os.path.exists(ACC_SAVE_DIR):
-            os.makedirs(ACC_SAVE_DIR)
-        # filename for saving training accuracy and loss
-        ACC_SAVENAME_TRAIN = (
-            f"{ACC_SAVE_DIR}train_acc_loss_e{max(config.MAX_EPOCHS)}_"
-            f"bs{max(config.BATCH_SIZE)}_k{config.KFOLD}_"
-            f"{len(config.MODEL_NAMES)}model(s).csv"
-        )
-
-        with open(ACC_SAVENAME_TRAIN, "a", newline="") as file:
+        
+        with open(config.ACC_SAVENAME_TRAIN, "a", newline="") as file:
             writer = csv.writer(file)
             writer.writerow(
                 [
@@ -115,10 +136,12 @@ class Train(Metrics):
             file.close()
 
     def run(self) -> None:
-        """call above functions to run training"""
+        """Train model and save output"""
         self.iterate_batches()
         self.epoch_metrics()
         self.log_epoch_metrics("epoch_acc_train", "epoch_loss_train")
         self.print_epoch_metrics("Train")
         if config.SAVE_ACC:
+            if not os.path.exists(config.ACC_SAVE_DIR):
+                os.makedirs(config.ACC_SAVE_DIR)
             self.write_output()

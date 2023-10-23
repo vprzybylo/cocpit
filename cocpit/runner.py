@@ -3,16 +3,12 @@ train the CNN model(s)
 """
 import itertools
 import time
-from typing import List, Optional
-
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-from sklearn.metrics import classification_report
-
 import cocpit
 import cocpit.config as config  # isort:split
-from cocpit.plotting_scripts import confusion_matrix as confusion_matrix
+from typing import List
+from cocpit.plotting_scripts import report as report
+import matplotlib.pyplot as plt
+import pickle
 
 plt_params = {
     "axes.labelsize": "x-large",
@@ -25,106 +21,11 @@ plt.rcParams.update(plt_params)
 
 
 def determine_phases() -> List[str]:
-    """determine if there is both a training and validation phase
+    """Determine if there is both a training and validation phase
 
     Returns:
         List[str]: either training or training and validation phase"""
     return ["train"] if config.VALID_SIZE < 0.1 else ["train", "val"]
-
-
-def conf_matrix(
-    labels: List[List],
-    preds: List[List],
-    norm: Optional[str] = None,
-    savename: str = f"{config.BASE_DIR}/plots/conf_matrix.png",
-) -> None:
-    """
-    log a confusion matrix to comet ml after the last epoch
-        - found under the graphics tab
-    if using kfold, it will concatenate all validation dataloaders
-    if not using kfold, it will only plot the validation dataset (e.g, 20%)
-
-    Args:
-        labels (List[List]): nested list of truth labels across batches from the last epoch
-        preds (List[List]): nested list of predicted labels across batches from the last epoch
-        norm (str): 'true', 'pred', or None.
-            Normalizes confusion matrix over the true (rows),
-            predicted (columns) conditions or all the population.
-            If None, confusion matrix will not be normalized.
-    """
-    # needed to flatten across batches
-    _ = confusion_matrix.conf_matrix(
-        [item for sublist in list(itertools.chain(*labels)) for item in sublist],
-        [item for sublist in list(itertools.chain(*preds)) for item in sublist],
-        norm=norm,
-        save_fig=True,
-    )
-
-    # log to comet
-    if config.LOG_EXP:
-        config.experiment.log_image(
-            savename,
-            name="confusion matrix",
-            image_format="pdf",
-        )
-
-
-def class_report(
-    model_name: str,
-    labels: List[List],
-    preds: List[List],
-    fold: int,
-    savename: str = f"{config.BASE_DIR}/plots/classification_report.png",
-) -> None:
-    """
-    create classification report from sklearn
-    add model name and fold iteration to the report
-
-    Args:
-        model_name (str): name of model architecture
-        labels (List[List]): nested list of truth labels across batches from the last epoch
-        preds (List[List]): nested list of predicted labels across batches from the last epoch
-        fold (int): which fold to use in resampling procedure
-    """
-
-    # needed to flatten across batches and epochs
-    clf_report = classification_report(
-        [item for sublist in list(itertools.chain(*labels)) for item in sublist],
-        [item for sublist in list(itertools.chain(*preds)) for item in sublist],
-        digits=3,
-        target_names=config.CLASS_NAMES,
-        output_dict=True,
-    )
-
-    # transpose classes as columns and convert to df
-    clf_report = pd.DataFrame(clf_report).iloc[:-1, :].T
-    cocpit.plotting_scripts.classification_report.classification_report_classes(
-        clf_report,
-        savename=savename,
-        save_fig=True,
-    )
-
-    # add fold iteration and model name
-    clf_report["fold"] = fold
-    clf_report["model"] = model_name
-
-    if config.SAVE_ACC:
-        # directory for saving training accuracy and loss csv's
-        ACC_SAVE_DIR = f"{config.BASE_DIR}/saved_accuracies/{config.TAG}/"
-        # output filename for precision, recall, F1 file
-        METRICS_SAVENAME = (
-            f"{ACC_SAVE_DIR}val_metrics_e{max(config.MAX_EPOCHS)}_"
-            f"bs{max(config.BATCH_SIZE)}_k{config.KFOLD}_"
-            f"{len(config.MODEL_NAMES)}model(s).csv"
-        )
-        clf_report.to_csv(METRICS_SAVENAME, mode="a")
-
-    # log to comet
-    if config.LOG_EXP:
-        config.experiment.log_image(
-            name="classification report",
-            image_format="pdf",
-        )
 
 
 def main(
@@ -149,6 +50,8 @@ def main(
     val_best_acc = 0.0
     val_labels = []
     val_preds = []
+    val_uncertainties = []
+    val_probs = []
     for epoch in range(epochs):
         since_epoch = time.time()
         t = cocpit.timing.EpochTime(since_total, since_epoch)
@@ -166,10 +69,33 @@ def main(
                 if epoch == epochs - 1:
                     val_labels.append(val.epoch_labels)
                     val_preds.append(val.epoch_preds)
+                    val_uncertainties.append(val.epoch_uncertainties)
+                    val_probs.append(val.epoch_probs)
             t.print_time_one_epoch()
 
-    conf_matrix(val_labels, val_preds)
-    class_report(model_name, val_labels, val_preds, kfold)
+    # flatten across batches
+    val_uncertainties = report.flatten(val_uncertainties)
+    val_probs = report.flatten(val_probs)
+    val_labels = report.flatten(val_labels)
+    val_preds = report.flatten(val_preds)
+
+    # plots
+    report.conf_matrix(val_labels, val_preds)
+    report.class_report(model_name, val_labels, val_preds, kfold)
+    with open("val_probs.pickle", "wb") as handle:
+        pickle.dump(val_probs, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    with open("val_uncertainties.pickle", "wb") as handle:
+        pickle.dump(
+            val_uncertainties, handle, protocol=pickle.HIGHEST_PROTOCOL
+        )
+    with open("val_labels.pickle", "wb") as handle:
+        pickle.dump(val_labels, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    with open("val_preds.pickle", "wb") as handle:
+        pickle.dump(val_preds, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    # report.uncertainty_prob_scatter(val_probs, val_uncertainties)
+    # report.hist(val_probs)
+    # report.hist(val_uncertainties)
 
     try:
         t.print_time_all_epochs()
